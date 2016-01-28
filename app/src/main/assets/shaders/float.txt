@@ -1,0 +1,10 @@
+Storing/reading float in range [0.0,1.0] as 16-bit value in texture.
+
+Store:
+value = calculations...
+color.r = value
+color.g = fraction(value* 255)
+
+Read:
+color = lookupTexture...
+value = color.r + color.g / 255
