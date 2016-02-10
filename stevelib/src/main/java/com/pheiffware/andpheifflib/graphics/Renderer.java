@@ -42,11 +42,6 @@ public class Renderer
 		}
 	}
 
-	/**
-	 * @param frameBufferHandle
-	 * @param colorRenderTextureHandle
-	 * 
-	 */
 	protected void bindFrameBuffer()
 	{
 		ImageUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);

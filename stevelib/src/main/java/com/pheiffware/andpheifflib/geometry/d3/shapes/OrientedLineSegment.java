@@ -8,7 +8,7 @@ package com.pheiffware.andpheifflib.geometry.d3.shapes;
 import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
 
 /**
- * Represents a line segment between p1 and p2.
+ * Represents a line segment between p1 and p2 with an orientation.  Also holds information about the line tangent, etc.
  */
 public final class OrientedLineSegment extends LineSegment
 {

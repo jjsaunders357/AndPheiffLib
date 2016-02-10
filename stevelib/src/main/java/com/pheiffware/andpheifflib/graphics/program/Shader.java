@@ -23,9 +23,7 @@ public class Shader
 	/**
 	 * Creates a shader. Keeps a reference for deallocation later.
 	 * 
-	 * @param gl
 	 * @param shaderType
-	 * @param path
 	 * @return
 	 * @throws GraphicsException
 	 * @throws IOException
