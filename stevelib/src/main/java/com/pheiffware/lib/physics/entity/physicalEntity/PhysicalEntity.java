@@ -4,8 +4,7 @@
  */
 package com.pheiffware.lib.physics.entity.physicalEntity;
 
-
-import com.pheiffware.lib.geometry.d3.Vec3D;
+import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.physics.InteractionException;
 import com.pheiffware.lib.physics.entity.Entity;
 
@@ -80,7 +79,8 @@ public abstract class PhysicalEntity extends Entity
 	/**
 	 * Move the entity's center and update all other related information such as
 	 * bounding volume.
-	 * 
+	 *
+	 * @param translation
 	 */
 	public abstract void move(final double tx, final double ty, final double tz);
 

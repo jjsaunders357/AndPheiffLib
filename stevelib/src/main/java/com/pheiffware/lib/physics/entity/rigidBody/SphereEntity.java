@@ -1,8 +1,7 @@
 package com.pheiffware.lib.physics.entity.rigidBody;
 
-
-import com.pheiffware.lib.geometry.d3.Vec3D;
-import com.pheiffware.lib.geometry.d3.shapes.Sphere;
+import com.pheiffware.lib.geometry.Vec3D;
+import com.pheiffware.lib.geometry.shapes.Sphere;
 import com.pheiffware.lib.physics.InteractionException;
 import com.pheiffware.lib.physics.entity.physicalEntity.PhysicalEntity;
 import com.pheiffware.lib.physics.entity.physicalEntity.PhysicalEntityCollision;

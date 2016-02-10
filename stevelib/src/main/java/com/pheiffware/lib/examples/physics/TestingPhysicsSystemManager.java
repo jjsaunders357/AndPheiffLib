@@ -4,21 +4,22 @@
  */
 package com.pheiffware.lib.examples.physics;
 
+import java.util.List;
+import java.util.Random;
+
+import com.pheiffware.lib.Utils;
 import com.pheiffware.lib.log.PLog;
 import com.pheiffware.lib.physics.PhysicsSystem;
-import com.pheiffware.lib.physics.PhysicsSystemManager;
-
-import java.util.Random;
+import com.pheiffware.lib.physics.entity.Entity;
+import com.pheiffware.lib.simulation.DeterministicSimulationRunner;
+import com.pheiffware.lib.simulation.SimulationRunner;
 
 /**
  * Designed to run the simulator in a background thread in a precise and
  * consistent way. Allows multiple test scenarios to be setup and run.
  */
-public class TestingPhysicsSystemManager extends PhysicsSystemManager
+public class TestingPhysicsSystemManager
 {
-	// The fixed time step used on every update. Guarantees consistency.
-	private final double fixedTimeStep;
-
 	// Randomizes the order in which entities appear in the PhysicSystem list
 	// for each scenario
 	private final boolean randomizeEntityOrder;
@@ -26,123 +27,67 @@ public class TestingPhysicsSystemManager extends PhysicsSystemManager
 	// The physics scenarios to run through
 	private final TestPhysicsScenario[] physicsScenarios;
 
-	// The index of the current scenario being run
-	private int scenarioIndex = -1;
-
 	// Use this ratio to delay updates to the simulation so that it flows with
 	// this ratio to real time
-	private final double realTimeToSimTimeRatio;
+	private final double maxSimTimePerSecond;
 
-	// The number of time steps run for this scenario
-	private int scenarioNumTimeSteps;
+	private final PhysicsSystem physicsSystem;
+	private SimulationRunner<List<Entity>> simulationRunner = null;
 
-	// The total time spent performing update calculations during this scenario
-	private double scenarioCalcTimens = 0.0f;
-
-	// When the current scenario started
-	private long scenarioStartedTimeStamp;
-
-	// Used to randomly reorder physical entities
-	private Random random;
-
-	public TestingPhysicsSystemManager(double fixedTimeStep,
-			double realTimeToSimTimeRatio, boolean randomizeEntityOrder,
-			TestPhysicsScenario[] physicsScenarios)
+	public TestingPhysicsSystemManager(double maxSimTimePerSecond, boolean randomizeEntityOrder, TestPhysicsScenario[] physicsScenarios)
 	{
-		super();
-		this.fixedTimeStep = fixedTimeStep;
 		this.randomizeEntityOrder = randomizeEntityOrder;
 		this.physicsScenarios = physicsScenarios;
-		this.realTimeToSimTimeRatio = realTimeToSimTimeRatio;
-		random = new Random();
+		this.maxSimTimePerSecond = maxSimTimePerSecond;
+		physicsSystem = new PhysicsSystem();
 	}
 
-	public TestingPhysicsSystemManager(double fixedTimeStep,
-			double realTimeToSimTimeRatio, boolean randomizeEntityOrder,
-			TestPhysicsScenario[] physicsScenarios, long seed)
-	{
-		super();
-		this.fixedTimeStep = fixedTimeStep;
-		this.randomizeEntityOrder = randomizeEntityOrder;
-		this.physicsScenarios = physicsScenarios;
-		this.realTimeToSimTimeRatio = realTimeToSimTimeRatio;
-		random = new Random(seed);
-	}
-
-	@Override
-	public void start()
-	{
-		scenarioStartedTimeStamp = System.nanoTime();
-		super.start();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * physics.managers.PhysicsSystemManager#updateImplement(physics.PhysicsSystem
-	 * )
+	/**
+	 * Starts the simulation.
 	 */
-	@Override
-	protected void updateImplement(PhysicsSystem physicsSystem)
-	{
-		if (scenarioIndex == -1
-				|| physicsSystem.getTotalRunTime() >= physicsScenarios[scenarioIndex]
-						.getScenarioRuntime())
-		{
-			scenarioIndex++;
-			if (scenarioIndex == physicsScenarios.length)
-			{
-				stopNonBlocking();
-				return;
+	public void start() {
+		new Thread() {
+			public void run() {
+				for (int i = 0; i < physicsScenarios.length; i++) {
+					physicsSystem.reset();
+					physicsScenarios[i].setup(physicsSystem);
+					if (randomizeEntityOrder) {
+						physicsSystem.randomizeEntityProcessingOrder_TESTING_ONLY(new Random());
+					}
+					changeScenario(physicsScenarios[i]);
+					simulationRunner.awaitCompletion();
+					PLog.info("Ups : " + physicsScenarios[i].getNumSteps() / Utils.getTimeElapsed(simulationRunner.getRealStartTime()));
+				}
 			}
-			physicsSystem.reset();
-			physicsScenarios[scenarioIndex].setup(physicsSystem);
-			if (randomizeEntityOrder)
-			{
-				physicsSystem
-						.randomizeEntityProcessingOrder_TESTING_ONLY(random);
-			}
-			scenarioNumTimeSteps = 0;
-			scenarioCalcTimens = 0;
-			scenarioStartedTimeStamp = System.nanoTime();
-		}
+		}.start();
 
-		long start = System.nanoTime();
-		physicsSystem.update(fixedTimeStep);
-		scenarioCalcTimens += System.nanoTime() - start;
-		scenarioNumTimeSteps++;
+	}
 
-		// Stacked with drop
-		// ~100 ups
-		// ~180 ups
-		// ~300 ups
-		// ~330 - 350 ups
-		// ~450 ups
-		// ~680 ups
-		// ~640 ups
-		// ~680 ups
-		// ******
-		// ConstrainedStackedObjects(20.0f, 40.5f, 500.5f, 20, 7, 800, 0.9f)
-		// TestingPhysicsSystemManager uses seed of 12345
-		// Settles to about
-		// ~660 ups
-		// ~980 ups
-		// ~1050 ups
-		// ~1004 ups
-		if ((scenarioNumTimeSteps & 255) == 0)
-		{
-			PLog.info("Ups : " + scenarioNumTimeSteps
-					/ (scenarioCalcTimens / 1000000000.0));
-		}
+	private synchronized void changeScenario(TestPhysicsScenario testPhysicsScenario) {
+		double timeStep = testPhysicsScenario.getRuntime() / testPhysicsScenario.getNumSteps();
+		simulationRunner = new DeterministicSimulationRunner<List<Entity>>(physicsSystem, maxSimTimePerSecond, timeStep,
+				testPhysicsScenario.getNumSteps());
+		simulationRunner.start();
+	}
 
-		double realTimeElapsed;
-		double simTimeElapsed;
-		do
-		{
-			realTimeElapsed = (System.nanoTime() - scenarioStartedTimeStamp) / 10000000000.0f;
-			simTimeElapsed = fixedTimeStep * scenarioNumTimeSteps;
-		} while (realTimeElapsed / simTimeElapsed < realTimeToSimTimeRatio);
+	public synchronized List<Entity> getState() {
+		// Waits until the 1st simulation starts
+		while (simulationRunner == null)
+			;
+		return simulationRunner.getState();
+	}
 
+	public void endCurrentScenario() {
+		// Waits until the 1st simulation starts
+		while (simulationRunner == null)
+			;
+		simulationRunner.stop();
+	}
+
+	public void applyExternalInput(String key, Object value) {
+		// Waits until the 1st simulation starts
+		while (simulationRunner == null)
+			;
+		simulationRunner.applyExternalInput(key, value);
 	}
 }

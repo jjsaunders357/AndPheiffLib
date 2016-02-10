@@ -1,6 +1,5 @@
 package com.pheiffware.lib.physics.entity;
 
-
 import com.pheiffware.lib.physics.PhysicsSystem;
 
 public abstract class Entity implements Cloneable

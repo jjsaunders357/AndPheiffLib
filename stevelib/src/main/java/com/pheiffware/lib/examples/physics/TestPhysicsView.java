@@ -17,9 +17,8 @@ import android.graphics.RectF;
 import android.view.View;
 import android.view.ViewDebug.ExportedProperty;
 
-import com.pheiffware.lib.geometry.d3.Vec3D;
-import com.pheiffware.lib.geometry.d3.shapes.OrientedLineSegment;
-import com.pheiffware.lib.physics.PhysicsSystemManager;
+import com.pheiffware.lib.geometry.Vec3D;
+import com.pheiffware.lib.geometry.shapes.LineSegment;
 import com.pheiffware.lib.physics.entity.Entity;
 import com.pheiffware.lib.physics.entity.rigidBody.LineSegmentEntity;
 import com.pheiffware.lib.physics.entity.rigidBody.PolygonEntity;
@@ -31,14 +30,14 @@ import com.pheiffware.lib.physics.entity.rigidBody.SphereEntity;
 public class TestPhysicsView extends View
 {
 
-	private PhysicsSystemManager physicsSystemManager;
+	private TestingPhysicsSystemManager physicsSystemManager;
 	private Paint fillPaint;
 	private Paint outlinePaint;
 
 	/**
 	 * @param context
 	 */
-	public TestPhysicsView(Context context, PhysicsSystemManager physicsSystemManager)
+	public TestPhysicsView(Context context, TestingPhysicsSystemManager physicsSystemManager)
 	{
 		super(context);
 		fillPaint = new Paint();
@@ -65,7 +64,7 @@ public class TestPhysicsView extends View
 	protected void onDraw(Canvas canvas)
 	{
 		canvas.drawColor(Color.BLACK);
-		List<Entity> entities = physicsSystemManager.copyForRender();
+		List<Entity> entities = physicsSystemManager.getState();
 		for (Entity entity : entities)
 		{
 			draw(canvas, entity);
@@ -86,6 +85,7 @@ public class TestPhysicsView extends View
 		}
 		else if (entity instanceof LineSegmentEntity)
 		{
+
 			draw(canvas, ((LineSegmentEntity) entity).getLineSegment());
 		}
 		else if (entity instanceof PolygonEntity)
@@ -112,7 +112,7 @@ public class TestPhysicsView extends View
 		canvas.drawOval(rectF, fillPaint);
 	}
 
-	private void draw(Canvas canvas, OrientedLineSegment lineSegment)
+	private void draw(Canvas canvas, LineSegment lineSegment)
 	{
 		Vec3D unitNormal = lineSegment.getUnitNormal();
 		canvas.drawLine((float)lineSegment.p1.x, (float)lineSegment.p1.y, (float)lineSegment.p2.x, (float)lineSegment.p2.y, fillPaint);
@@ -123,7 +123,7 @@ public class TestPhysicsView extends View
 
 	private void draw(Canvas canvas, PolygonEntity polygon)
 	{
-		for (OrientedLineSegment lineSegment : polygon.getLineSegments())
+		for (LineSegment lineSegment : polygon.getLineSegments())
 		{
 			draw(canvas, lineSegment);
 		}

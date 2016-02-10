@@ -1,16 +1,16 @@
 package com.pheiffware.lib.physics;
 
-
-import com.pheiffware.lib.log.PLog;
-import com.pheiffware.lib.physics.entity.Entity;
-import com.pheiffware.lib.physics.entity.physicalEntity.PhysicalEntity;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class PhysicsSystem
+import com.pheiffware.lib.log.PLog;
+import com.pheiffware.lib.physics.entity.Entity;
+import com.pheiffware.lib.physics.entity.physicalEntity.PhysicalEntity;
+import com.pheiffware.lib.simulation.Simulation;
+
+public class PhysicsSystem implements Simulation<List<Entity>>
 {
 	private static final int maxNumEntities = 1000;
 	private int numEntities;
@@ -44,16 +44,34 @@ public class PhysicsSystem
 		totalRunTime = 0f;
 	}
 
+	@Override
+	public void performTimeStep(double elapsedTime) {
+		try {
+			totalRunTime += elapsedTime;
+			try {
+				runAI(elapsedTime);
+				updateMotion(elapsedTime);
+				resolveCollisions(elapsedTime);
+			} catch (InteractionException e) {
+				PLog.error("FAIL!", e);
+				System.exit(0);
+			}
+		} catch (Exception e) {
+			PLog.error("FAIL!", e);
+			System.exit(0);
+		}
+	}
+
 	/**
 	 * Copies the state of all entities, at least well enough that they can be
 	 * drawn and are safe for access (may not be full serialization).
 	 */
-	public List<Entity> copyForRender()
+	@Override
+	public List<Entity> copyState()
 	{
 		try
 		{
-			List<Entity> copyOfEntities = new ArrayList<Entity>(entities.length
-					+ staticEntities.length + dynamicEntities.length);
+			List<Entity> copyOfEntities = new ArrayList<Entity>(entities.length + staticEntities.length + dynamicEntities.length);
 			for (int i = 0; i < numEntities; i++)
 			{
 				copyOfEntities.add(entities[i].copyForRender());
@@ -70,24 +88,11 @@ public class PhysicsSystem
 		}
 		catch (Exception e)
 		{
-			PLog.error("Cannot copy for rendering", e);
+			PLog.error("FAIL!", e);
+			System.exit(0);
 			return new ArrayList<Entity>();
 		}
-	}
 
-	public void update(double elapsedTime)
-	{
-		totalRunTime += elapsedTime;
-		try
-		{
-			runAI(elapsedTime);
-			updateMotion(elapsedTime);
-			resolveCollisions(elapsedTime);
-		}
-		catch (InteractionException e)
-		{
-			PLog.error("Interaction cannot be computed", e);
-		}
 	}
 
 	private void runAI(double elapsedTime)
@@ -118,8 +123,7 @@ public class PhysicsSystem
 		}
 	}
 
-	private void resolveCollisions(double elapsedTime)
-			throws InteractionException
+	private void resolveCollisions(double elapsedTime) throws InteractionException
 	{
 		for (int i = 0; i < numStaticEntities; i++)
 		{
@@ -188,8 +192,7 @@ public class PhysicsSystem
 	 */
 	public void randomizeEntityProcessingOrder_TESTING_ONLY(Random random)
 	{
-		List<PhysicalEntity> physicalEntityList = new ArrayList<PhysicalEntity>(
-				numDynamicEntities);
+		List<PhysicalEntity> physicalEntityList = new ArrayList<PhysicalEntity>(numDynamicEntities);
 		for (int i = 0; i < numDynamicEntities; i++)
 		{
 			physicalEntityList.add(dynamicEntities[i]);
@@ -209,5 +212,10 @@ public class PhysicsSystem
 	public int getNumPhysicalEntities()
 	{
 		return numDynamicEntities;
+	}
+
+	@Override
+	public void applyExternalInput(String key, Object value) {
+		// Do nothing by default
 	}
 }

@@ -4,12 +4,10 @@
  */
 package com.pheiffware.lib.physics.entity.rigidBody;
 
-
-//TODO: Make this movement algorithm more generally applied to any entity
-
-import com.pheiffware.lib.geometry.d3.Vec3D;
+import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.physics.PhysicsSystem;
 
+//TODO: Make this movement algorithm more generally applied to any entity
 /**
  * 
  */

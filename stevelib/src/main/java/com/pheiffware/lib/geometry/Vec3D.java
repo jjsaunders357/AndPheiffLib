@@ -1,15 +1,19 @@
-package com.pheiffware.lib.geometry.d3;
+package com.pheiffware.lib.geometry;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
+import java.io.Serializable;
+
 /**
  * Represents a 3d vector/point. For efficiency (especially on Android), this
  * class is mutable.
  */
-public class Vec3D
+public class Vec3D implements Serializable
 {
+	private static final long serialVersionUID = 377896764022380713L;
+
 	public static final Vec3D add(final Vec3D v1, final Vec3D v2)
 	{
 		return new Vec3D(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
@@ -27,8 +31,7 @@ public class Vec3D
 
 	public static final Vec3D cross(final Vec3D v1, final Vec3D v2)
 	{
-		return new Vec3D(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z,
-				v1.x * v2.y - v1.y * v2.x);
+		return new Vec3D(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
 	}
 
 	/**
@@ -41,8 +44,7 @@ public class Vec3D
 	 */
 	public static final double subDot(Vec3D vec1, Vec3D vec2, Vec3D dotVec)
 	{
-		return (vec1.x - vec2.x) * dotVec.x + (vec1.y - vec2.y) * dotVec.y
-				+ (vec1.z - vec2.z) * dotVec.z;
+		return (vec1.x - vec2.x) * dotVec.x + (vec1.y - vec2.y) * dotVec.y + (vec1.z - vec2.z) * dotVec.z;
 	}
 
 	public static final Vec3D scale(Vec3D vec, double scale)
@@ -58,16 +60,15 @@ public class Vec3D
 	public static double distanceSquared(final Vec3D v1, final Vec3D v2)
 	{
 		double xdiff = (v1.x - v2.x);
-		double ydiff = (v1.x - v2.x);
-		double zdiff = (v1.x - v2.x);
+		double ydiff = (v1.y - v2.y);
+		double zdiff = (v1.z - v2.z);
 		return xdiff * xdiff + ydiff * ydiff + zdiff * zdiff;
 	}
 
 	public static Vec3D normalize(final Vec3D v1)
 	{
 		final double magnitude = v1.magnitude();
-		final Vec3D result = new Vec3D(v1.x / magnitude, v1.y / magnitude, v1.z
-				/ magnitude);
+		final Vec3D result = new Vec3D(v1.x / magnitude, v1.y / magnitude, v1.z / magnitude);
 		return result;
 	}
 
@@ -184,11 +185,11 @@ public class Vec3D
 		this.z -= z;
 	}
 
-	public final void subFromScaledVector(final Vec3D vec, final double scaleVec)
+	public final void subFromScaledVector(final Vec3D vec, final double scale)
 	{
-		x -= vec.x * scaleVec;
-		y -= vec.y * scaleVec;
-		z -= vec.z * scaleVec;
+		x -= vec.x * scale;
+		y -= vec.y * scale;
+		z -= vec.z * scale;
 	}
 
 	public final void subFrom(final Vec3D vec)
@@ -203,6 +204,10 @@ public class Vec3D
 		x *= scale;
 		y *= scale;
 		z *= scale;
+	}
+
+	public double dotBy(Vec3D vec) {
+		return x * vec.x + y * vec.y + z * vec.z;
 	}
 
 	/**
@@ -236,6 +241,13 @@ public class Vec3D
 	// **************************2D special functions**************************
 	// These all operate on the vector's x,y components, treating them as though
 	// they are in a plane.
+
+	public final void rotate902D() {
+		double temp = x;
+		x = y;
+		y = -temp;
+	}
+
 	public final double getAngle2D()
 	{
 		return Math.atan2(y, x);
@@ -263,8 +275,7 @@ public class Vec3D
 		rotate2D(c, s);
 	}
 
-	public final void rotateAround2D(final double angleRadians,
-			final Vec3D centerOfRotation)
+	public final void rotateAround2D(final double angleRadians, final Vec3D centerOfRotation)
 	{
 		x -= centerOfRotation.x;
 		y -= centerOfRotation.y;

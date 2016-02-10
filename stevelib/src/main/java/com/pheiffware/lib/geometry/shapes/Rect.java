@@ -1,4 +1,4 @@
-package com.pheiffware.lib.geometry.d3.shapes;
+package com.pheiffware.lib.geometry.shapes;
 
 public class Rect
 {

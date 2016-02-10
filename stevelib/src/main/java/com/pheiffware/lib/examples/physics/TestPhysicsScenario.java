@@ -11,11 +11,13 @@ import com.pheiffware.lib.physics.PhysicsSystem;
  */
 public abstract class TestPhysicsScenario
 {
-	private final float scenarioRuntime;
+	private final double runTime;
+	private final int numSteps;
 
-	public TestPhysicsScenario(float scenarioRuntime)
+	public TestPhysicsScenario(double scenarioRuntime, int numSteps)
 	{
-		this.scenarioRuntime = scenarioRuntime;
+		this.runTime = scenarioRuntime;
+		this.numSteps = numSteps;
 	}
 
 	void resetPhysicsSystem(PhysicsSystem physicsSystem)
@@ -26,8 +28,13 @@ public abstract class TestPhysicsScenario
 
 	public abstract void setup(PhysicsSystem physicsSystem);
 
-	public float getScenarioRuntime()
+	public final double getRuntime()
 	{
-		return scenarioRuntime;
+		return runTime;
 	}
+
+	public final int getNumSteps() {
+		return numSteps;
+	}
+
 }

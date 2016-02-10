@@ -1,10 +1,9 @@
 package com.pheiffware.lib.physics.entity.physicalEntity;
 
+import com.pheiffware.lib.geometry.Vec3D;
+import com.pheiffware.lib.geometry.intersect.IntersectionInfo;
 
 //TODO: If unitVelocity dot collisionTangent < cos (specialAngle) then rather than bounce, transfer all velocity so that it is along new tangent.  This will allow ramps to work without oddities.  If you are NOT under this special circumstance, then do the normal thing and completely ignore this rule.
-
-import com.pheiffware.lib.geometry.d3.Vec3D;
-import com.pheiffware.lib.geometry.d3.intersect.IntersectionInfo;
 
 /**
  * Describes information about a rigid body collision and provides calculation
@@ -151,7 +150,10 @@ public class PhysicalEntityCollision
 	 * Moves 2 entities' so that they are just touching given a collision.
 	 * 
 	 * Note: The first entity's mass may be infinity, but not the second.
-	 * 
+	 *
+	 * @param collision
+	 * @param entity1
+	 * @param entity2
 	 */
 	private void unEmbed()
 	{

@@ -1,7 +1,6 @@
-package com.pheiffware.lib.geometry.d3.shapes;
+package com.pheiffware.lib.geometry.shapes;
 
-
-import com.pheiffware.lib.geometry.d3.Vec3D;
+import com.pheiffware.lib.geometry.Vec3D;
 
 public class Sphere
 {

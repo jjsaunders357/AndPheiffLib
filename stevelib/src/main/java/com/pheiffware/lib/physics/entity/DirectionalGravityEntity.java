@@ -4,8 +4,7 @@
  */
 package com.pheiffware.lib.physics.entity;
 
-
-import com.pheiffware.lib.geometry.d3.Vec3D;
+import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.physics.PhysicsSystem;
 import com.pheiffware.lib.physics.entity.physicalEntity.PhysicalEntity;
 

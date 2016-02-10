@@ -12,6 +12,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
+import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.GLUtils;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.ImageUtils;
@@ -19,7 +20,6 @@ import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.buffer.PrimitiveIndexBuffer;
 import com.pheiffware.lib.graphics.program.Program;
 import com.pheiffware.lib.graphics.program.Shader;
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
 
 /**
  *

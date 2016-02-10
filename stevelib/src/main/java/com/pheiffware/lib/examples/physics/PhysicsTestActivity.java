@@ -28,25 +28,19 @@ public class PhysicsTestActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
 
-        // Debug.startMethodTracing("sphere");
-        //@formatter:off
+        int numSteps = 3000;
+        // @formatter:off
         TestPhysicsScenario[] physicsScenarios = new TestPhysicsScenario[]
-                {
-                        new PolygonScenario(5.0f),
-                        new StackedObjects(3.0f, 40.5f, 500.5f, 20, 5, 800, 0.9f),
-                        new CompressedStackedObjects(8.0f, 40.5f, 500.5f, 20, 5, 800,
-                                0.9f, 2500.0f, 300, 50),
-                        new ConstrainedStackedObjectsDrop(5.0f, 40.5f, 500.5f, 20, 8,
-                                800, 0.9f),
-                        new ConstrainedStackedObjects(3.0f, 40.5f, 500.5f, 20, 7, 800,
-                                0.9f), new PoolScenario(1.5f, 40, 500, 20, 5, 0.9f),
-                        new ElevatorWithLoad(1.5f), new BouncingBall(1.0f),
-                        new Elevator(1.0f), new SingleBallSitGround(),
-                        new GeneralScenario1(3.0f), new GeneralScenario2(8.0f),
-                        new SingleBallOnRamp(3.0f) };
-        //@formatter:on
-        physicsSystemManager = new TestingPhysicsSystemManager(0.0002f, 0.1f,
-                true, physicsScenarios);
+                {new PolygonScenario(5.0f, numSteps), new StackedObjects(3.0f, numSteps, 40.5f, 500.5f, 20, 5, 800, 0.9f),
+                        new CompressedStackedObjects(8.0f, numSteps, 40.5f, 500.5f, 20, 5, 800, 0.9f, 2500.0f, 300, 50),
+                        new ConstrainedStackedObjectsDrop(5.0f, numSteps, 40.5f, 500.5f, 20, 8, 800, 0.9f),
+                        new ConstrainedStackedObjects(3.0f, numSteps, 40.5f, 500.5f, 20, 7, 800, 0.9f),
+                        new PoolScenario(1.5f, numSteps, 40, 500, 20, 5, 0.9f), new ElevatorWithLoad(1.5f, numSteps), new BouncingBall(1.0f, numSteps),
+                        new Elevator(1.0f, numSteps), new SingleBallSitGround(), new GeneralScenario1(3.0f, numSteps), new GeneralScenario2(8.0f, numSteps),
+                        new SingleBallOnRamp(3.0f, numSteps)};
+        // @formatter:on
+        physicsSystemManager = new TestingPhysicsSystemManager(1.6, true, physicsScenarios);
+        physicsSystemManager.start();
 
         testView = new TestPhysicsView(this, physicsSystemManager);
         setContentView(R.layout.activity_physics);
@@ -63,6 +57,7 @@ public class PhysicsTestActivity extends AppCompatActivity {
     {
         super.onDestroy();
         // Debug.stopMethodTracing();
-        physicsSystemManager.stop();
+        //TODO: Create stopping mechanism
+        //physicsSystemManager.stop();
     }
 }
