@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 
 import com.pheiffware.andpheifflib.sphere.view.EngineGLView;
 
-public class GLActivity extends AppCompatActivity {
+public class GLTestActivity extends AppCompatActivity {
 
     private EngineGLView engineGLView;
 

@@ -20,7 +20,7 @@ import com.pheiffware.andpheifflib.testing.physics.testScenarios.SingleBallOnRam
 import com.pheiffware.andpheifflib.testing.physics.testScenarios.SingleBallSitGround;
 import com.pheiffware.andpheifflib.testing.physics.testScenarios.StackedObjects;
 
-public class PhysicsActivity extends AppCompatActivity {
+public class PhysicsTestActivity extends AppCompatActivity {
     private TestPhysicsView testView;
     private TestingPhysicsSystemManager physicsSystemManager;
 
