@@ -5,7 +5,7 @@
 package com.pheiffware.andpheifflib.physics.entity.physicalEntity;
 
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
 import com.pheiffware.andpheifflib.physics.InteractionException;
 import com.pheiffware.andpheifflib.physics.entity.Entity;
 
@@ -55,7 +55,7 @@ public abstract class PhysicalEntity extends Entity
 		else
 		{
 			inverseMass = 1.0f / mass;
-			sqrtMass = (double) Math.sqrt(mass);
+			sqrtMass = Math.sqrt(mass);
 		}
 		accumulatedForce = new Vec3D(0, 0, 0);
 	}

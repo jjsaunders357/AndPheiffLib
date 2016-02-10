@@ -1,8 +1,8 @@
 package com.pheiffware.andpheifflib.physics.entity.rigidBody;
 
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
-import com.pheiffware.andpheifflib.geometry.shapes.Sphere;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.shapes.Sphere;
 import com.pheiffware.andpheifflib.physics.InteractionException;
 import com.pheiffware.andpheifflib.physics.entity.physicalEntity.PhysicalEntity;
 import com.pheiffware.andpheifflib.physics.entity.physicalEntity.PhysicalEntityCollision;
@@ -30,7 +30,7 @@ public class SphereEntity extends PhysicalEntity
 		double ydiff = sphere2.sphere.center.y - sphere1.sphere.center.y;
 		double zdiff = sphere2.sphere.center.z - sphere1.sphere.center.z;
 
-		double distance = (double) Math.sqrt(xdiff * xdiff + ydiff * ydiff
+		double distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff
 				+ zdiff * zdiff);
 		double penetration = sphere2.sphere.radius + sphere1.sphere.radius
 				- distance;

@@ -3,8 +3,8 @@ package com.pheiffware.andpheifflib.physics.entity.physicalEntity;
 
 //TODO: If unitVelocity dot collisionTangent < cos (specialAngle) then rather than bounce, transfer all velocity so that it is along new tangent.  This will allow ramps to work without oddities.  If you are NOT under this special circumstance, then do the normal thing and completely ignore this rule.
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
-import com.pheiffware.andpheifflib.geometry.intersect.IntersectionInfo;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.intersect.IntersectionInfo;
 
 /**
  * Describes information about a rigid body collision and provides calculation

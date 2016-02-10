@@ -5,7 +5,7 @@
 package com.pheiffware.andpheifflib.physics.entity.rigidBody;
 
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
 
 /**
  * A static wall.

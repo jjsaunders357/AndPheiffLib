@@ -4,11 +4,11 @@
  */
 package com.pheiffware.andpheifflib.physics.entity.rigidBody;
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
-import com.pheiffware.andpheifflib.geometry.intersect.IntersectCalc;
-import com.pheiffware.andpheifflib.geometry.intersect.IntersectionInfo;
-import com.pheiffware.andpheifflib.geometry.shapes.OrientedLineSegment;
-import com.pheiffware.andpheifflib.geometry.shapes.Sphere;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.intersect.IntersectCalc;
+import com.pheiffware.andpheifflib.geometry.d3.intersect.IntersectionInfo;
+import com.pheiffware.andpheifflib.geometry.d3.shapes.OrientedLineSegment;
+import com.pheiffware.andpheifflib.geometry.d3.shapes.Sphere;
 import com.pheiffware.andpheifflib.physics.InteractionException;
 import com.pheiffware.andpheifflib.physics.entity.physicalEntity.PhysicalEntity;
 import com.pheiffware.andpheifflib.physics.entity.physicalEntity.PhysicalEntityCollision;

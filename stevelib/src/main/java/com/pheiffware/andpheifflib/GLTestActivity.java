@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
 
-import com.pheiffware.andpheifflib.sphere.view.EngineGLView;
+import com.pheiffware.andpheifflib.testing.andGraphics.TestGraphicsView;
 
 public class GLTestActivity extends AppCompatActivity {
 
-    private EngineGLView engineGLView;
+    private TestGraphicsView testGraphicsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -17,10 +17,10 @@ public class GLTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity.
-        engineGLView = new EngineGLView(this);
+        testGraphicsView = new TestGraphicsView(this);
         setContentView(R.layout.activity_gl);
         LinearLayout rootView = (LinearLayout) findViewById(R.id.root);
-        rootView.addView(engineGLView, 0);
+        rootView.addView(testGraphicsView, 0);
         Log.e("Life-cycle", "CREATE");
     }
 
@@ -35,7 +35,7 @@ public class GLTestActivity extends AppCompatActivity {
     protected void onPause()
     {
         super.onPause();
-        engineGLView.onPause();
+        testGraphicsView.onPause();
         Log.e("Life-cycle", "PAUSE");
     }
 
@@ -50,7 +50,7 @@ public class GLTestActivity extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
-        engineGLView.onResume();
+        testGraphicsView.onResume();
         Log.e("Life-cycle", "RESUME");
     }
 

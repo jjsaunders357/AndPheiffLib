@@ -5,7 +5,7 @@
 package com.pheiffware.andpheifflib.testing.physics.testScenarios;
 
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
 import com.pheiffware.andpheifflib.physics.PhysicsSystem;
 import com.pheiffware.andpheifflib.physics.entity.rigidBody.SphereEntity;
 import com.pheiffware.andpheifflib.physics.entity.rigidBody.WallEntity;

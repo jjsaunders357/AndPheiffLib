@@ -7,7 +7,7 @@ package com.pheiffware.andpheifflib.physics.entity.rigidBody;
 
 //TODO: Make this movement algorithm more generally applied to any entity
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
 import com.pheiffware.andpheifflib.physics.PhysicsSystem;
 
 /**

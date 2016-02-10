@@ -1,7 +1,5 @@
 package com.pheiffware.andpheifflib.geometry.d4;
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
-
 public class Vec4D {
     public double x, y, z, w;
 

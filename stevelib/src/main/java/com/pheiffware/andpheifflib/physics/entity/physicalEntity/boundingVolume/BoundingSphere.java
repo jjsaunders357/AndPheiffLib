@@ -5,7 +5,7 @@
 package com.pheiffware.andpheifflib.physics.entity.physicalEntity.boundingVolume;
 
 
-import com.pheiffware.andpheifflib.geometry.Vec3D;
+import com.pheiffware.andpheifflib.geometry.d3.Vec3D;
 
 /**
  * A bounding sphere around an object.
