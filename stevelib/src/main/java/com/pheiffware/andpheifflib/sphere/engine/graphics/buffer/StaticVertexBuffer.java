@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import android.opengl.GLES20;
 
 import com.pheiffware.andpheifflib.sphere.Utils;
-import com.pheiffware.andpheifflib.sphere.engine.vec3f.Vec3F;
 
 /**
  * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over.
@@ -78,17 +77,6 @@ public class StaticVertexBuffer
 	public final void putFloat(float value)
 	{
 		byteBuffer.putFloat(value);
-	}
-
-	public final void putVec3Fs(ArrayList<Vec3F> vecs)
-	{
-		for (Vec3F vec : vecs)
-		{
-			byteBuffer.putFloat(vec.x);
-			byteBuffer.putFloat(vec.y);
-			byteBuffer.putFloat(vec.z);
-			byteBuffer.putFloat(1);
-		}
 	}
 
 	public void putVec2(int x, int y)

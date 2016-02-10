@@ -36,6 +36,5 @@ public class FatalErrorHandler implements UncaughtExceptionHandler
 	public static void handleFatalError(String message)
 	{
 		Log.e("Critical Failure", message);
-		System.exit(1);
 	}
 }

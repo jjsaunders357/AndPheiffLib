@@ -1,0 +1,8 @@
+Create Reference Library Project - Done
+Buy matlab - Done
+Do remaining calcs - 3
+Consolodate notes - 3
+Reorganize library and merge with existing eclipse code - 12
+Write base graphics library - 40
+Write input code - 8
+Write lighting code - 24

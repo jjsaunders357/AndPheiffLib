@@ -17,13 +17,14 @@ import android.graphics.RectF;
 import android.view.View;
 import android.view.ViewDebug.ExportedProperty;
 
-import com.pheiffware.andpheifflib.sphere.engine.physics.PhysicsSystemManager;
-import com.pheiffware.andpheifflib.sphere.engine.physics.entity.Entity;
-import com.pheiffware.andpheifflib.sphere.engine.physics.entity.rigidBody.LineSegmentEntity;
-import com.pheiffware.andpheifflib.sphere.engine.physics.entity.rigidBody.PolygonEntity;
-import com.pheiffware.andpheifflib.sphere.engine.physics.entity.rigidBody.SphereEntity;
-import com.pheiffware.andpheifflib.sphere.engine.vec3f.LineSegment;
-import com.pheiffware.andpheifflib.sphere.engine.vec3f.Vec3F;
+import com.pheiffware.andpheifflib.geometry.Vec3D;
+import com.pheiffware.andpheifflib.geometry.shapes.LineSegment;
+import com.pheiffware.andpheifflib.geometry.shapes.OrientedLineSegment;
+import com.pheiffware.andpheifflib.physics.PhysicsSystemManager;
+import com.pheiffware.andpheifflib.physics.entity.Entity;
+import com.pheiffware.andpheifflib.physics.entity.rigidBody.LineSegmentEntity;
+import com.pheiffware.andpheifflib.physics.entity.rigidBody.PolygonEntity;
+import com.pheiffware.andpheifflib.physics.entity.rigidBody.SphereEntity;
 
 /**
  *
@@ -102,33 +103,31 @@ public class TestPhysicsView extends View
 	 */
 	private void draw(Canvas canvas, SphereEntity circle)
 	{
-		Vec3F circleCenter = circle.center;
-		RectF rectF = new RectF(circleCenter.x - circle.getRadius(), circleCenter.y - circle.getRadius(), circleCenter.x + circle.getRadius(),
-				circleCenter.y + circle.getRadius());
+		Vec3D circleCenter = circle.getCenter();
+
+		RectF rectF = new RectF(
+								(float)(circleCenter.x - circle.getRadius()),(float)(circleCenter.y - circle.getRadius()),
+				                (float)(circleCenter.x + circle.getRadius()),(float)(circleCenter.y + circle.getRadius())
+		);
+
 		canvas.drawOval(rectF, fillPaint);
 	}
 
-	private void draw(Canvas canvas, LineSegment lineSegment)
+	private void draw(Canvas canvas, OrientedLineSegment lineSegment)
 	{
-		Vec3F unitNormal = lineSegment.getUnitNormal();
-		canvas.drawLine(lineSegment.p1.x, lineSegment.p1.y, lineSegment.p2.x, lineSegment.p2.y, fillPaint);
-		Vec3F center = Vec3F.scale(Vec3F.add(lineSegment.p1, lineSegment.p2), 0.5f);
-		Vec3F normalEndPoint = Vec3F.add(center, Vec3F.scale(unitNormal, 10.0f));
-		canvas.drawLine(center.x, center.y, normalEndPoint.x, normalEndPoint.y, fillPaint);
+		Vec3D unitNormal = lineSegment.getUnitNormal();
+		canvas.drawLine((float)lineSegment.p1.x, (float)lineSegment.p1.y, (float)lineSegment.p2.x, (float)lineSegment.p2.y, fillPaint);
+		Vec3D center = Vec3D.scale(Vec3D.add(lineSegment.p1, lineSegment.p2), 0.5f);
+		Vec3D normalEndPoint = Vec3D.add(center, Vec3D.scale(unitNormal, 10.0f));
+		canvas.drawLine((float)center.x, (float)center.y, (float)normalEndPoint.x,(float)normalEndPoint.y, fillPaint);
 	}
 
 	private void draw(Canvas canvas, PolygonEntity polygon)
 	{
-		for (LineSegment lineSegment : polygon.getLineSegments())
+		for (OrientedLineSegment lineSegment : polygon.getLineSegments())
 		{
 			draw(canvas, lineSegment);
 		}
-
-		float x = polygon.getBoundingSphere().getCenter().x;
-		float y = polygon.getBoundingSphere().getCenter().y;
-		float radius = polygon.getBoundingSphere().getRadius();
-		RectF rectF = new RectF(x - radius, y - radius, x + radius, y + radius);
-		canvas.drawOval(rectF, outlinePaint);
 	}
 
 	@Override
