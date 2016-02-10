@@ -1,4 +1,4 @@
-package com.pheiffware.andpheifflib;
+package com.pheiffware.lib;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.pheiffware.andpheifflib">
+    package="com.pheiffware.lib">
 
     <application
         android:exported="true"
@@ -9,13 +9,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".examples.physics.PhysicsTestActivity">
+        <activity android:name="com.pheiffware.lib.examples.physics.PhysicsTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".examples.andGraphics.GraphicsTestActivity">
+        <activity android:name="com.pheiffware.lib.examples.andGraphics.GraphicsTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
