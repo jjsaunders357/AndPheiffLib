@@ -1,4 +1,4 @@
-package com.pheiffware.lib.physics.entity.rigidBody;
+package com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities;
 
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.geometry.shapes.Sphere;
@@ -21,7 +21,6 @@ public class SphereEntity extends PhysicalEntity
 		sphere = new Sphere(center, radius);
 	}
 
-	// TODO: Optimize
 	public final static void resolveSphereSphereCollision(
 			final SphereEntity sphere1, final SphereEntity sphere2)
 	{

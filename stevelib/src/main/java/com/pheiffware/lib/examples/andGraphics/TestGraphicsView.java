@@ -28,7 +28,7 @@ public class TestGraphicsView extends GLSurfaceView
 	{
 		super(context);
 		setEGLContextClientVersion(2);
-		setRenderer(new TestRenderer3(context.getAssets()));
+		setRenderer(new TestRenderer2(context.getAssets()));
 		setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 	}
 }

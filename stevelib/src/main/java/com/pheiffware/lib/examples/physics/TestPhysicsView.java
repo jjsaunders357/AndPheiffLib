@@ -20,9 +20,9 @@ import android.view.ViewDebug.ExportedProperty;
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.geometry.shapes.LineSegment;
 import com.pheiffware.lib.physics.entity.Entity;
-import com.pheiffware.lib.physics.entity.rigidBody.LineSegmentEntity;
-import com.pheiffware.lib.physics.entity.rigidBody.PolygonEntity;
-import com.pheiffware.lib.physics.entity.rigidBody.SphereEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.LineSegmentEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.PolygonEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.SphereEntity;
 
 /**
  *

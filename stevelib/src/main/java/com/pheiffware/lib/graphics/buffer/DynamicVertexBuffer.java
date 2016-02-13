@@ -107,7 +107,7 @@ public class DynamicVertexBuffer
 		// Transfer data
 		GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, transferSize, byteBuffer, GLES20.GL_DYNAMIC_DRAW);
 
-		// TODO: Remove in final version
+		// TODO: Remove in final version (just let state linger)
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 	}
 

@@ -5,7 +5,7 @@
 package com.pheiffware.lib.graphics.buffer;
 
 /**
- * A combination of a packed buffer vertex and one or more single attribute vertex buffers. All static attributes should be put in the packed buffer
+ * A combination of a packed vertex buffer and one or more single attribute vertex buffers. All static attributes should be put in the packed buffer
  * while the dynamic ones are put in the dynamic buffers.
  */
 // TODO: Add bulk copy operations. Note that when putting into a wrapping float buffer, this must manually advance the backing byte buffer.

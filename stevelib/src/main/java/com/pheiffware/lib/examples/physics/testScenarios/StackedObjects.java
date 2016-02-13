@@ -8,8 +8,8 @@ import com.pheiffware.lib.examples.physics.TestPhysicsScenario;
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.physics.PhysicsSystem;
 import com.pheiffware.lib.physics.entity.DirectionalGravityEntity;
-import com.pheiffware.lib.physics.entity.rigidBody.SphereEntity;
-import com.pheiffware.lib.physics.entity.rigidBody.WallEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.SphereEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.WallEntity;
 
 /**
  *

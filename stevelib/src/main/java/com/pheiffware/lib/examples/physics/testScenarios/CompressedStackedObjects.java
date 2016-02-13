@@ -6,8 +6,8 @@ package com.pheiffware.lib.examples.physics.testScenarios;
 
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.physics.PhysicsSystem;
-import com.pheiffware.lib.physics.entity.rigidBody.LineSegmentElevatorEntity;
-import com.pheiffware.lib.physics.entity.rigidBody.LineSegmentEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.LineSegmentElevatorEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.LineSegmentEntity;
 
 /**
  *

@@ -132,10 +132,7 @@ public class StaticVertexBuffer
 	}
 
 	/**
-	 * Transfer contents loaded by putAttribute* calls into graphics library. Also frees client side memory after transfer (using low-level buffer
-	 * hack).
-	 * 
-	 * @param gl
+	 * Transfer contents loaded by putAttribute* calls into graphics library. Also frees client side memory after transfer if possible.
 	 */
 	public void transfer()
 	{

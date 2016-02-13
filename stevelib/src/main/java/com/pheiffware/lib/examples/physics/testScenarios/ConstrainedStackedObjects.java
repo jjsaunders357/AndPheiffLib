@@ -6,7 +6,7 @@ package com.pheiffware.lib.examples.physics.testScenarios;
 
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.physics.PhysicsSystem;
-import com.pheiffware.lib.physics.entity.rigidBody.WallEntity;
+import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.WallEntity;
 
 /**
  *

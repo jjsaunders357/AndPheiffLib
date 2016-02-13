@@ -3,7 +3,6 @@ package com.pheiffware.lib.physics.entity.physicalEntity;
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.geometry.intersect.IntersectionInfo;
 
-//TODO: If unitVelocity dot collisionTangent < cos (specialAngle) then rather than bounce, transfer all velocity so that it is along new tangent.  This will allow ramps to work without oddities.  If you are NOT under this special circumstance, then do the normal thing and completely ignore this rule.
 
 /**
  * Describes information about a rigid body collision and provides calculation
@@ -11,7 +10,7 @@ import com.pheiffware.lib.geometry.intersect.IntersectionInfo;
  */
 public class PhysicalEntityCollision
 {
-	// TODO: Reexamine if this is necessary
+	//If velocity relative to surface is smaller than this, then it is completely ignored and set to 0.  This allows ramps to work without oddities.
 	private static final double MAX_RELATIVE_STATIC_VELOCITIES = 5f;
 
 	/**
@@ -150,10 +149,6 @@ public class PhysicalEntityCollision
 	 * Moves 2 entities' so that they are just touching given a collision.
 	 * 
 	 * Note: The first entity's mass may be infinity, but not the second.
-	 *
-	 * @param collision
-	 * @param entity1
-	 * @param entity2
 	 */
 	private void unEmbed()
 	{
@@ -186,14 +181,4 @@ public class PhysicalEntityCollision
 				collisionNormal.y * separationMagnitude2, collisionNormal.z
 						* separationMagnitude2);
 	}
-
-	// Vec3F tangentialVelocity = new Vec3F(entity1.velocity);
-	// tangentialVelocity.subFrom(entity2.velocity);
-	// tangentialVelocity.crossByLeft(collisionNormal);
-	// tangentialVelocity.crossByRight(collisionNormal);
-	//
-	// // TODO: Only relevant for 2D
-	// tangentialVelocity.z = 0;
-	// tangentialVelocity.normalize();
-
 }

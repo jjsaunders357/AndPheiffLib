@@ -39,19 +39,13 @@ public class ColorTextureTechnique extends Technique
 		primitiveBuffer.drawAll(GLPrimitiveType);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.pheiffware.sphereadventure.engine.graphics.Technique#init()
-	 */
 	@Override
 	public void init()
 	{
-		// TODO Auto-generated method stub
+
 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.pheiffware.sphereadventure.engine.graphics.Technique#addMesh(com.pheiffware.sphereadventure.engine.mesh.Mesh)
-	 */
 	@Override
 	public void addMesh(Mesh mesh)
 	{

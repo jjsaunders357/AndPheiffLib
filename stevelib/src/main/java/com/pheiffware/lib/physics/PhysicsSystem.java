@@ -149,7 +149,6 @@ public class PhysicsSystem implements Simulation<List<Entity>>
 		}
 	}
 
-	// TODO: Real,dynamic add/remove capability
 	public void addEntity(Entity entity)
 	{
 		if (entity instanceof PhysicalEntity)
@@ -178,6 +177,7 @@ public class PhysicsSystem implements Simulation<List<Entity>>
 		dynamicEntities[numDynamicEntities] = physicalEntity;
 		numDynamicEntities++;
 	}
+	// TODO: Real,dynamic add/remove capability
 
 	public double getTotalRunTime()
 	{

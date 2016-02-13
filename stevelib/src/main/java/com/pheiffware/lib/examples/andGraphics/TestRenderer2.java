@@ -106,8 +106,9 @@ public class TestRenderer2 implements Renderer
 	@Override
 	public void onDrawFrame(GL10 gl)
 	{
-		ImageUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);
-		int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
+        //Set to render to texture.
+        ImageUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);
+        int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
 		if (status != GLES20.GL_FRAMEBUFFER_COMPLETE)
 		{
 			FatalErrorHandler.handleFatalError("Framebuffer failure");
@@ -117,8 +118,9 @@ public class TestRenderer2 implements Renderer
 		GLES20.glUseProgram(testProgram);
 		float[] cameraProjectionMatrix = GLUtils.generateProjectionMatrix(70.0f, 1, 1, 10, true);
 
-		GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"), 1, false, cameraProjectionMatrix, 0);
-		ImageUtils.uniformTexture2D(testProgram, "texture", faceTextureHandle);
+        //Vertex positions and texture coordinates static.  This encodes a color to mix in.  In this case we want a pure texture render.
+        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"), 1, false, cameraProjectionMatrix, 0);
+        ImageUtils.uniformTexture2D(testProgram, "texture", faceTextureHandle);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);

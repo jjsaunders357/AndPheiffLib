@@ -11,7 +11,6 @@ import com.pheiffware.lib.physics.entity.Entity;
 /**
  * An entity with the concept of mass, force, acceleration, etc.
  */
-// TODO: Remove rigid body package.
 public abstract class PhysicalEntity extends Entity
 {
 	// Consider object stopped if its velocity falls below this
@@ -80,7 +79,6 @@ public abstract class PhysicalEntity extends Entity
 	 * Move the entity's center and update all other related information such as
 	 * bounding volume.
 	 *
-	 * @param translation
 	 */
 	public abstract void move(final double tx, final double ty, final double tz);
 
