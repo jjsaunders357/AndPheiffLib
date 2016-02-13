@@ -7,6 +7,8 @@ package com.pheiffware.lib.graphics;
 import android.graphics.Rect;
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
+
 /**
  * Displays the state of the physics system on the main render target (and possibly other render targets).
  */
@@ -44,7 +46,7 @@ public class Renderer
 
 	protected void bindFrameBuffer()
 	{
-		ImageUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);
+		PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);
 	}
 
 	protected void setupViewport()

@@ -1,58 +1,13 @@
-package com.pheiffware.lib.graphics;
+package com.pheiffware.lib.graphics.utils;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 /**
- * Created by Steve on 2/9/2016.
+ * Created by Steve on 2/13/2016.
  */
-public class GLUtils
+public class GraphicsMathUtils
 {
-
-    /**
-     * Computes the size of an opengl type.
-     *
-     * @param type
-     * @return
-     */
-    public static int GLTypeToSize(int type)
-    {
-        switch (type)
-        {
-        case GLES20.GL_FLOAT:
-            return 4;
-        case GLES20.GL_FLOAT_VEC2:
-            return 8;
-        case GLES20.GL_FLOAT_VEC3:
-            return 12;
-        case GLES20.GL_FLOAT_VEC4:
-            return 16;
-        case GLES20.GL_INT:
-            return 4;
-        case GLES20.GL_INT_VEC2:
-            return 8;
-        case GLES20.GL_INT_VEC3:
-            return 12;
-        case GLES20.GL_INT_VEC4:
-            return 16;
-        case GLES20.GL_BOOL:
-            return 1;
-        case GLES20.GL_BOOL_VEC2:
-            return 1;
-        case GLES20.GL_BOOL_VEC3:
-            return 1;
-        case GLES20.GL_BOOL_VEC4:
-            return 1;
-        case GLES20.GL_FLOAT_MAT2:
-            return 16;
-        case GLES20.GL_FLOAT_MAT3:
-            return 36;
-        case GLES20.GL_FLOAT_MAT4:
-            return 64;
-        default:
-            return 0;
-        }
-    }
 
     public static float[] createTranslationMatrix(float x, float y, float z)
     {
@@ -113,4 +68,5 @@ public class GLUtils
         Matrix.frustumM(matrix, 0, left, right, bottom, top, zNear, zFar);
         return matrix;
     }
+
 }

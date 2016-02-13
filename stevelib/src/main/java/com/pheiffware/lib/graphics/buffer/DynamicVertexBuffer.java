@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.GLUtils;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.Utils;
 
 /**
@@ -44,7 +44,7 @@ public class DynamicVertexBuffer
 		attributeIndex = GLES20.glGetAttribLocation(programHandle, attribute);
 		this.dim = dim;
 		this.type = type;
-		vertexByteSize = dim * GLUtils.GLTypeToSize(type);
+		vertexByteSize = dim * PheiffGLUtils.GLTypeToSize(type);
 
 		byteBuffer = ByteBuffer.allocateDirect(maxVertices * vertexByteSize);
 		byteBuffer.order(ByteOrder.nativeOrder());

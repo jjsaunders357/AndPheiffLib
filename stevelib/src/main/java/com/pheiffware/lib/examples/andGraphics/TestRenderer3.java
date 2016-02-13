@@ -13,12 +13,11 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
-import com.pheiffware.lib.graphics.GLUtils;
+import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.buffer.PrimitiveIndexBuffer;
 import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.program.Program;
-import com.pheiffware.lib.graphics.program.Shader;
+import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.mesh.Mesh;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 
@@ -50,13 +49,13 @@ public class TestRenderer3 implements Renderer
 
 		try
 		{
-			int vertexShaderHandle = Shader.createShader(
-					GLES20.GL_VERTEX_SHADER, assetManager,
-					"shaders/test_vertex_mnc.glsl");
-			int fragmentShaderHandle = Shader.createShader(
-					GLES20.GL_FRAGMENT_SHADER, assetManager,
-					"shaders/test_fragment_mnc.glsl");
-			testProgram = Program.createProgram(vertexShaderHandle,
+			int vertexShaderHandle = ProgramUtils.createShader(
+					assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_mnc.glsl"
+			);
+			int fragmentShaderHandle = ProgramUtils.createShader(
+					assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_mnc.glsl"
+			);
+			testProgram = ProgramUtils.createProgram(vertexShaderHandle,
 					fragmentShaderHandle);
 			meshes = Mesh.loadMeshes(assetManager, "meshes/spheres.mesh");
 		}
@@ -98,8 +97,8 @@ public class TestRenderer3 implements Renderer
 	{
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 		GLES20.glUseProgram(testProgram);
-		float[] matrix = GLUtils.createTranslationMatrix(0, 0, -2);
-		matrix = GLUtils.multiplyMatrix(projectionMatrix, matrix);
+		float[] matrix = GraphicsMathUtils.createTranslationMatrix(0, 0, -2);
+		matrix = GraphicsMathUtils.multiplyMatrix(projectionMatrix, matrix);
 		GLES20.glUniformMatrix4fv(
 				GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"),
 				1, false, matrix, 0);
@@ -119,7 +118,7 @@ public class TestRenderer3 implements Renderer
 	{
 		Log.i("OPENGL", "Surface changed");
 		GLES20.glViewport(0, 0, width, height);
-		projectionMatrix = GLUtils.generateProjectionMatrix(60.0f, width
+		projectionMatrix = GraphicsMathUtils.generateProjectionMatrix(60.0f, width
 				/ (float) height, 1, 10, false);
 	}
 

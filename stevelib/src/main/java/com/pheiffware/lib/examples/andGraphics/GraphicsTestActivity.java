@@ -18,8 +18,6 @@ public class GraphicsTestActivity extends AppCompatActivity {
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity.
 
-        //TODO: Figure out where this goes
-        //Settings.instance.setFilterQuality(Settings.FilterQuality.HIGH);
         testGraphicsView = new TestGraphicsView(this);
         setContentView(R.layout.activity_gl);
         LinearLayout rootView = (LinearLayout) findViewById(R.id.root);

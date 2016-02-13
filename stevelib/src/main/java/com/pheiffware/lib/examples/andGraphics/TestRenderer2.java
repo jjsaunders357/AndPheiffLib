@@ -12,12 +12,13 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
-import com.pheiffware.lib.graphics.GLUtils;
+import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
+import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.ImageUtils;
+import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
-import com.pheiffware.lib.graphics.program.Program;
-import com.pheiffware.lib.graphics.program.Shader;
+import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 
 /**
@@ -55,15 +56,21 @@ public class TestRenderer2 implements Renderer
 
 		try
 		{
-			int vertexShaderHandle = Shader.createShader(GLES20.GL_VERTEX_SHADER, assetManager, "shaders/test_vertex_matrix_texture_color.glsl");
-			int fragmentShaderHandle = Shader
-					.createShader(GLES20.GL_FRAGMENT_SHADER, assetManager, "shaders/test_fragment_matrix_texture_color.glsl");
-			testProgram = Program.createProgram(vertexShaderHandle, fragmentShaderHandle);
-			faceTextureHandle = ImageUtils.loadAssetImageIntoTexture(assetManager, "images/face.png", true);
-			colorRenderTextureHandle = ImageUtils.createColorRenderTexture(512, 512, false);
-			depthRenderTextureHandle = ImageUtils.createDepthRenderTexture(512, 512);
-			frameBufferHandle = ImageUtils.createFrameBuffer();
-		}
+            int vertexShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_matrix_texture_color.glsl");
+            int fragmentShaderHandle = ProgramUtils
+                    .createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
+            testProgram = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
+
+            //Creates a clamped texture, from a file, with mipmapping
+            faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+
+            //Creates color texture render target, without alpha channel
+            colorRenderTextureHandle = TextureUtils.genTextureForColorRendering(512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+
+            //Creates a depth texture render target, without alpha channel
+            depthRenderTextureHandle = TextureUtils.genTextureForDepthRendering(512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            frameBufferHandle = PheiffGLUtils.createFrameBuffer();
+        }
 		catch (GraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
@@ -107,7 +114,7 @@ public class TestRenderer2 implements Renderer
 	public void onDrawFrame(GL10 gl)
 	{
         //Set to render to texture.
-        ImageUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);
+        PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);
         int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
 		if (status != GLES20.GL_FRAMEBUFFER_COMPLETE)
 		{
@@ -116,12 +123,12 @@ public class TestRenderer2 implements Renderer
 		GLES20.glViewport(0, 0, 512, 512);
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 		GLES20.glUseProgram(testProgram);
-		float[] cameraProjectionMatrix = GLUtils.generateProjectionMatrix(70.0f, 1, 1, 10, true);
+        float[] cameraProjectionMatrix = GraphicsMathUtils.generateProjectionMatrix(70.0f, 1, 1, 10, true);
 
         //Vertex positions and texture coordinates static.  This encodes a color to mix in.  In this case we want a pure texture render.
         GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"), 1, false, cameraProjectionMatrix, 0);
-        ImageUtils.uniformTexture2D(testProgram, "texture", faceTextureHandle);
-		cb.putDynamicVec4(0, 0, 0, 0, 0);
+        TextureUtils.uniformTexture2D(testProgram, "texture", faceTextureHandle, 0);
+        cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
@@ -130,15 +137,15 @@ public class TestRenderer2 implements Renderer
 		cb.transferDynamic();
 		cb.bind();
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
-		ImageUtils.bindFrameBuffer(0, -1, -1);
+        PheiffGLUtils.bindFrameBuffer(0, -1, -1);
 
 		GLES20.glViewport(0, 0, viewWidth, viewHeight);
-		projectionMatrix = GLUtils.generateProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
-		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        projectionMatrix = GraphicsMathUtils.generateProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 		GLES20.glUseProgram(testProgram);
 		GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"), 1, false, projectionMatrix, 0);
-		ImageUtils.uniformTexture2D(testProgram, "texture", colorRenderTextureHandle);
-		cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
+        TextureUtils.uniformTexture2D(testProgram, "texture", colorRenderTextureHandle, 0);
+        cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
 		cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);

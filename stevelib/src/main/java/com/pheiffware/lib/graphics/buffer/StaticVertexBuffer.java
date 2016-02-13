@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.GLUtils;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.Utils;
 
 /**
@@ -56,7 +56,7 @@ public class StaticVertexBuffer
 			attributeDims[i] = dims[i];
 			attributeTypes[i] = types[i];
 			attributeByteOffsets[i] = attributeByteOffset;
-			int attributeByteSize = dims[i] * GLUtils.GLTypeToSize(types[i]);
+			int attributeByteSize = dims[i] * PheiffGLUtils.GLTypeToSize(types[i]);
 			attributeByteOffset += attributeByteSize;
 		}
 		vertexByteSize = attributeByteOffset;
