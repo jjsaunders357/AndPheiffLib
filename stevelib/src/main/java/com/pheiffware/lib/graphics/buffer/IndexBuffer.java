@@ -13,16 +13,16 @@ import android.opengl.GLES20;
 import com.pheiffware.lib.Utils;
 
 /**
- * Simple element buffer for triangles.
+ * Simple element buffer for triangles or other primitives.  Holds index references to other buffers.
  */
-public class PrimitiveIndexBuffer
+public class IndexBuffer
 {
 	private final int bufferHandle;
 	private final ByteBuffer byteBuffer;
 	private final ShortBuffer shortBuffer;
 	private int numVerticesTransfered;
 
-	public PrimitiveIndexBuffer(int maxVertices)
+	public IndexBuffer(int maxVertices)
 	{
 		byteBuffer = ByteBuffer.allocateDirect(maxVertices * 2);
 		byteBuffer.order(ByteOrder.nativeOrder());

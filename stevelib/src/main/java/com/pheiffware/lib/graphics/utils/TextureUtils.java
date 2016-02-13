@@ -12,7 +12,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.FilterQuality;
 
 /**
@@ -55,18 +55,18 @@ public class TextureUtils
      * @param sWrapMode typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @param tWrapMode typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
-     * @throws GraphicsException
-	 */
+     * @throws FatalGraphicsException
+     */
     public static int genTextureFromImage(AssetManager assetManager, String imageAssetPath, boolean generateMipMaps,
-                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException {
-		Bitmap bitmap;
+                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws FatalGraphicsException {
+        Bitmap bitmap;
 		try
 		{
             bitmap = loadAssetImage(assetManager, imageAssetPath);
         }
 		catch (IOException exception)
 		{
-			throw new GraphicsException(exception);
+            throw new FatalGraphicsException(exception);
         }
         int textureHandle = genTexture();
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);

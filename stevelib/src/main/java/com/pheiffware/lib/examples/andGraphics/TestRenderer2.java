@@ -13,9 +13,10 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
-import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
@@ -60,7 +61,8 @@ public class TestRenderer2 implements Renderer
             int fragmentShaderHandle = ProgramUtils
                     .createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
             testProgram = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
-
+            Program pstats = new Program(testProgram);
+            System.out.println(pstats);
             //Creates a clamped texture, from a file, with mipmapping
             faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
@@ -70,21 +72,19 @@ public class TestRenderer2 implements Renderer
             //Creates a depth texture render target, without alpha channel
             depthRenderTextureHandle = TextureUtils.genTextureForDepthRendering(512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
             frameBufferHandle = PheiffGLUtils.createFrameBuffer();
-        }
-		catch (GraphicsException exception)
-		{
+        } catch (FatalGraphicsException exception) {
 			FatalErrorHandler.handleFatalError(exception);
 		}
 
 		float x = 1f, y = 1f, z = 1.1f;
 		//@formatter:off 
 		cb = new CombinedVertexBuffer(testProgram, 200, 
-				new String[] { "vertexPosition", "vertexTexCoord" }, 
-				new int[] { 4, 2 }, 
-				new int[] {GLES20.GL_FLOAT, GLES20.GL_FLOAT }, 
-				new String[] { "vertexColor" }, 
-				new int[] { 4 }, 
-				new int[] { GLES20.GL_FLOAT });
+				new String[] { "vertexPosition", "vertexTexCoord" },
+                new int[]{4, 2},
+                new int[]{GLES20.GL_FLOAT, GLES20.GL_FLOAT},
+                new String[] { "vertexColor" },
+                new int[]{4},
+                new int[] { GLES20.GL_FLOAT });
 		//@formatter:on
 
 		cb.putStaticVec4(-x, -y, -z, 1);

@@ -15,10 +15,10 @@ import android.util.Log;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
-import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
-import com.pheiffware.lib.graphics.buffer.PrimitiveIndexBuffer;
+import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 
 /**
@@ -27,7 +27,7 @@ import com.pheiffware.lib.graphics.utils.ProgramUtils;
 public class TestRenderer1 implements Renderer
 {
 	private int testProgram;
-	private PrimitiveIndexBuffer pb;
+	private IndexBuffer pb;
 	private CombinedVertexBuffer cb;
 	private float globalTestColor = 0.0f;
 	private float[] projectionMatrix;
@@ -57,20 +57,19 @@ public class TestRenderer1 implements Renderer
 					.createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
 			testProgram = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
 			faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-		}
-		catch (GraphicsException exception)
+		} catch (FatalGraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
 		}
 
-		pb = new PrimitiveIndexBuffer(2000);
+		pb = new IndexBuffer(2000);
 
 		float x = 1f, y = 1f, z = 1.1f;
 		//@formatter:off 
 		cb = new CombinedVertexBuffer(testProgram, 2000, 
-				new String[] { "vertexPosition", "vertexTexCoord" }, 
-				new int[] { 4, 2 }, 
-				new int[] {GLES20.GL_FLOAT, GLES20.GL_FLOAT }, 
+				new String[] { "vertexPosition", "vertexTexCoord" },
+				new int[]{4, 2},
+				new int[]{GLES20.GL_FLOAT, GLES20.GL_FLOAT},
 				new String[] { "vertexColor" }, 
 				new int[] { 4 }, 
 				new int[] { GLES20.GL_FLOAT });

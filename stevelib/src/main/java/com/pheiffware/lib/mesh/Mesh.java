@@ -13,14 +13,14 @@ import java.util.Map;
 
 import android.content.res.AssetManager;
 
-import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.FatalGraphicsException;
 
 /**
  * Holds a triangular mesh. Used to load raw mesh information from files.
  */
 public class Mesh
 {
-	public static Map<String, Mesh> loadMeshes(AssetManager assetManager, String assetFileName) throws GraphicsException
+	public static Map<String, Mesh> loadMeshes(AssetManager assetManager, String assetFileName) throws FatalGraphicsException
 	{
 		try
 		{
@@ -37,7 +37,7 @@ public class Mesh
 				}
 				else
 				{
-					throw new GraphicsException("Cannot load mesh of type: \"" + meshType + "\"");
+					throw new FatalGraphicsException("Cannot load mesh of type: \"" + meshType + "\"");
 				}
 				meshType = reader.readLine();
 			}
@@ -45,11 +45,11 @@ public class Mesh
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			throw new GraphicsException(e);
+			throw new FatalGraphicsException(e);
 		}
 		catch (IOException e)
 		{
-			throw new GraphicsException(e);
+			throw new FatalGraphicsException(e);
 		}
 	}
 

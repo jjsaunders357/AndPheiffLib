@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.utils;
 
 import android.opengl.GLES20;
-import android.opengl.Matrix;
 
 /**
  * Created by Steve on 2/9/2016.
@@ -9,12 +8,101 @@ import android.opengl.Matrix;
 public class PheiffGLUtils {
 
     /**
-     * Returns the size of a given opengl type.
+     * Get the dimension of a gl type
+     * Example:
+     * GL_FLOAT_VEC2 has dimension 2
+     * @param type gl type constant
+     * @return dimension
+     */
+    public static int getGLTypeDims(int type) {
+        switch (type) {
+            case GLES20.GL_FLOAT:
+                return 1;
+            case GLES20.GL_FLOAT_VEC2:
+                return 2;
+            case GLES20.GL_FLOAT_VEC3:
+                return 3;
+            case GLES20.GL_FLOAT_VEC4:
+                return 4;
+            case GLES20.GL_INT:
+                return 1;
+            case GLES20.GL_INT_VEC2:
+                return 2;
+            case GLES20.GL_INT_VEC3:
+                return 3;
+            case GLES20.GL_INT_VEC4:
+                return 4;
+            case GLES20.GL_BOOL:
+                return 1;
+            case GLES20.GL_BOOL_VEC2:
+                return 2;
+            case GLES20.GL_BOOL_VEC3:
+                return 3;
+            case GLES20.GL_BOOL_VEC4:
+                return 4;
+            case GLES20.GL_FLOAT_MAT2:
+                return 4;
+            case GLES20.GL_FLOAT_MAT3:
+                return 9;
+            case GLES20.GL_FLOAT_MAT4:
+                return 16;
+            default:
+                throw new RuntimeException("Cannot get size of unsupported opengl type: " + type);
+        }
+    }
+
+    /**
+     * Get the "base type" for a gl type
+     * Example, for GL_FLOAT_VEC4, the base type is GL_FLOAT.
+     *
+     * @param type the gl type
+     * @return the corresponding base type
+     */
+    public static int getGLBaseType(int type) {
+        switch (type) {
+            case GLES20.GL_FLOAT:
+                return GLES20.GL_FLOAT;
+            case GLES20.GL_FLOAT_VEC2:
+                return GLES20.GL_FLOAT;
+            case GLES20.GL_FLOAT_VEC3:
+                return GLES20.GL_FLOAT;
+            case GLES20.GL_FLOAT_VEC4:
+                return GLES20.GL_FLOAT;
+            case GLES20.GL_INT:
+                return GLES20.GL_INT;
+            case GLES20.GL_INT_VEC2:
+                return GLES20.GL_INT;
+            case GLES20.GL_INT_VEC3:
+                return GLES20.GL_INT;
+            case GLES20.GL_INT_VEC4:
+                return GLES20.GL_INT;
+            case GLES20.GL_BOOL:
+                return GLES20.GL_BOOL;
+            case GLES20.GL_BOOL_VEC2:
+                return GLES20.GL_BOOL;
+            case GLES20.GL_BOOL_VEC3:
+                return GLES20.GL_BOOL;
+            case GLES20.GL_BOOL_VEC4:
+                return GLES20.GL_BOOL;
+            case GLES20.GL_FLOAT_MAT2:
+                return GLES20.GL_FLOAT;
+            case GLES20.GL_FLOAT_MAT3:
+                return GLES20.GL_FLOAT;
+            case GLES20.GL_FLOAT_MAT4:
+                return GLES20.GL_FLOAT;
+            default:
+                throw new RuntimeException("Cannot get size of unsupported opengl type: " + type);
+        }
+    }
+
+    /**
+     * Get the size of a gl type
      *
      * @param type a type such as GLES20.GL_FLOAT
      * @return size in bytes of the type
      */
-    public static int GLTypeToSize(int type) {
+    public static int getGLTypeSize(int type)
+    {
         switch (type) {
             case GLES20.GL_FLOAT:
                 return 4;

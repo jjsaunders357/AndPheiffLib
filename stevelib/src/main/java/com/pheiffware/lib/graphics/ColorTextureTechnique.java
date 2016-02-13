@@ -5,7 +5,7 @@
 package com.pheiffware.lib.graphics;
 
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
-import com.pheiffware.lib.graphics.buffer.PrimitiveIndexBuffer;
+import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.mesh.Mesh;
 
 /**
@@ -14,11 +14,11 @@ import com.pheiffware.lib.mesh.Mesh;
 public class ColorTextureTechnique extends Technique
 {
 	private final int programHandle;
-	public final PrimitiveIndexBuffer primitiveBuffer;
+	public final IndexBuffer primitiveBuffer;
 	public final CombinedVertexBuffer vertexBuffer;
 	private int GLPrimitiveType;
 
-	public ColorTextureTechnique(int programHandle, PrimitiveIndexBuffer primitiveBuffer, CombinedVertexBuffer vertexBuffer)
+	public ColorTextureTechnique(int programHandle, IndexBuffer primitiveBuffer, CombinedVertexBuffer vertexBuffer)
 	{
 		this.programHandle = programHandle;
 		this.primitiveBuffer = primitiveBuffer;

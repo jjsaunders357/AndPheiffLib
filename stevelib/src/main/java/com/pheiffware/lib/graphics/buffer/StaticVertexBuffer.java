@@ -13,10 +13,10 @@ import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.Utils;
 
 /**
- * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over.
- * 
- * This does not have to include all attributes of a given program as others can be handled by dynamic buffers OR by constant values.
- * 
+ * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over with a given program.
+ *
+ * This does not have to include all attributes of the given program as some attributes may dynamically change and be handled in dynamic buffers.
+ *
  * Usage should look like:
  * 
  * One time setup:
@@ -30,34 +30,39 @@ import com.pheiffware.lib.Utils;
  * Per frame (or update period)
  * 
  * buffer.bind(gl);
+ *
+ * YOU CANNOT put more data in once transfer is called!
  */
 public class StaticVertexBuffer
 {
-	private final int bufferHandle;
-	private final ByteBuffer byteBuffer;
+    //GL handle to the buffer object
+    private final int bufferHandle;
 
-	private int[] attributeIndices;
-	private int[] attributeDims;
+    //Java ByteBuffer used to fill static buffer.
+    private final ByteBuffer byteBuffer;
+
+    private int[] attributePositions;
+    private int[] attributeDims;
 	private int[] attributeTypes;
 	private int[] attributeByteOffsets;
 	private int vertexByteSize;
 
 	public StaticVertexBuffer(int programHandle, int maxVertices, String[] attributes, int[] dims, int[] types)
 	{
-		attributeIndices = new int[dims.length];
-		attributeDims = new int[dims.length];
+        attributePositions = new int[dims.length];
+        attributeDims = new int[dims.length];
 		attributeTypes = new int[dims.length];
 		attributeByteOffsets = new int[dims.length];
 
 		int attributeByteOffset = 0;
 		for (int i = 0; i < dims.length; i++)
 		{
-			attributeIndices[i] = GLES20.glGetAttribLocation(programHandle, attributes[i]);
-			attributeDims[i] = dims[i];
+            attributePositions[i] = GLES20.glGetAttribLocation(programHandle, attributes[i]);
+            attributeDims[i] = dims[i];
 			attributeTypes[i] = types[i];
 			attributeByteOffsets[i] = attributeByteOffset;
-			int attributeByteSize = dims[i] * PheiffGLUtils.GLTypeToSize(types[i]);
-			attributeByteOffset += attributeByteSize;
+            int attributeByteSize = dims[i] * PheiffGLUtils.getGLTypeSize(types[i]);
+            attributeByteOffset += attributeByteSize;
 		}
 		vertexByteSize = attributeByteOffset;
 
@@ -121,19 +126,27 @@ public class StaticVertexBuffer
 		}
 	}
 
-	public final void bind()
+    /**
+     * Binds this buffer with all specified attributes, such that it will work with the given program.
+     */
+    public final void bind()
 	{
-		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
+        System.out.println("bind:\n");
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
 		for (int i = 0; i < attributeDims.length; i++)
 		{
-			GLES20.glEnableVertexAttribArray(attributeIndices[i]);
-			GLES20.glVertexAttribPointer(attributeIndices[i], attributeDims[i], attributeTypes[i], false, vertexByteSize, attributeByteOffsets[i]);
-		}
+            GLES20.glEnableVertexAttribArray(attributePositions[i]);
+            GLES20.glVertexAttribPointer(attributePositions[i], attributeDims[i], attributeTypes[i], false, vertexByteSize, attributeByteOffsets[i]);
+            System.out.println("dim:" + attributeDims[i]);
+            System.out.println("type:" + attributeTypes[i]);
+            System.out.println("offset:" + attributeByteOffsets[i]);
+        }
 	}
 
 	/**
-	 * Transfer contents loaded by putAttribute* calls into graphics library. Also frees client side memory after transfer if possible.
-	 */
+     * Transfer contents loaded by putAttribute* calls into graphics library.
+     * CAN ONLY BE CALLED ONCE!  After this method is called, no more put/transfer operations should occur.
+     */
 	public void transfer()
 	{
 		// Bind to the buffer. Future commands will affect this buffer specifically.
@@ -155,12 +168,18 @@ public class StaticVertexBuffer
 		Utils.deallocateDirectByteBuffer(byteBuffer);
 	}
 
-	public void release()
+    /**
+     * Destroys this buffer resource with openGL
+     */
+    public void release()
 	{
 		GLES20.glDeleteBuffers(1, new int[] { bufferHandle }, 0);
 	}
 
-	public int getHandle()
+    /**
+     * @return GL handle of buffer object.
+     */
+    public int getHandle()
 	{
 		return bufferHandle;
 	}

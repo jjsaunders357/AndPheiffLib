@@ -44,7 +44,7 @@ public class DynamicVertexBuffer
 		attributeIndex = GLES20.glGetAttribLocation(programHandle, attribute);
 		this.dim = dim;
 		this.type = type;
-		vertexByteSize = dim * PheiffGLUtils.GLTypeToSize(type);
+		vertexByteSize = dim * PheiffGLUtils.getGLTypeSize(type);
 
 		byteBuffer = ByteBuffer.allocateDirect(maxVertices * vertexByteSize);
 		byteBuffer.order(ByteOrder.nativeOrder());

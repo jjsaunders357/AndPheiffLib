@@ -14,8 +14,8 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
-import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.buffer.PrimitiveIndexBuffer;
+import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.mesh.Mesh;
@@ -27,7 +27,7 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
 public class TestRenderer3 implements Renderer
 {
 	private int testProgram;
-	private PrimitiveIndexBuffer pb;
+	private IndexBuffer pb;
 	private StaticVertexBuffer sb;
 	private Map<String, Mesh> meshes;
 	private float[] projectionMatrix;
@@ -58,14 +58,13 @@ public class TestRenderer3 implements Renderer
 			testProgram = ProgramUtils.createProgram(vertexShaderHandle,
 					fragmentShaderHandle);
 			meshes = Mesh.loadMeshes(assetManager, "meshes/spheres.mesh");
-		}
-		catch (GraphicsException exception)
+		} catch (FatalGraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
 		}
 		Mesh sphereMesh = meshes.get("sphere4");
 		float[] colors = sphereMesh.generateMultiColorValues();
-		pb = new PrimitiveIndexBuffer(sphereMesh.getNumPrimitives());
+		pb = new IndexBuffer(sphereMesh.getNumPrimitives());
 		pb.putIndices(sphereMesh.primitiveIndices);
 		pb.transfer();
 
