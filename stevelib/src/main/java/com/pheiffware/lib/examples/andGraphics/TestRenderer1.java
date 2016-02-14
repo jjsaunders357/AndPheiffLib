@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
@@ -27,18 +28,18 @@ import com.pheiffware.lib.graphics.utils.ProgramUtils;
  */
 public class TestRenderer1 implements Renderer
 {
+    private final ManGL manGL;
     private Program testProgram;
     private IndexBuffer pb;
 	private CombinedVertexBuffer cb;
 	private float globalTestColor = 0.0f;
 	private float[] projectionMatrix;
-	private AssetManager assetManager;
 	private int faceTextureHandle;
 
-	public TestRenderer1(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
-	}
+    public TestRenderer1(ManGL manGL)
+    {
+        this.manGL = manGL;
+    }
 
 	/* (non-Javadoc)
 	 * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
@@ -53,13 +54,10 @@ public class TestRenderer1 implements Renderer
 
 		try
 		{
-			int vertexShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_matrix_texture_color.glsl");
-			int fragmentShaderHandle = ProgramUtils
-					.createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
-            int testProgramHandle = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
-            testProgram = new Program(testProgramHandle);
-            faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-		} catch (FatalGraphicsException exception)
+            testProgram = manGL.createProgram("testProgram", "shaders/test_vertex_matrix_texture_color.glsl", "shaders/test_fragment_matrix_texture_color.glsl");
+            System.out.println(testProgram);
+            faceTextureHandle = TextureUtils.genTextureFromImage(manGL.getAssetManager(), "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+        } catch (FatalGraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
 		}
@@ -134,10 +132,5 @@ public class TestRenderer1 implements Renderer
 		Log.i("OPENGL", "Surface changed");
 		GLES20.glViewport(0, 0, width, height);
 		projectionMatrix = GraphicsMathUtils.generateProjectionMatrix(60.0f, width / (float) height, 1, 10, false);
-	}
-
-	public final void setAssetManager(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
 	}
 }

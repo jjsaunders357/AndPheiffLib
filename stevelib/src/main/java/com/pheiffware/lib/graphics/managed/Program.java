@@ -12,16 +12,19 @@ import java.util.TreeMap;
  * Wraps the concept of an opengl program into a convenient object.
  * Created by Steve on 2/13/2016.
  */
-public class Program {
+public class Program
+{
     private final int handle;
     private final Map<String, Uniform> uniforms;
     private final Map<String, Attribute> attributes;
 
-    public Program(int vertexShaderHandle, int fragmentShaderHandle) throws FatalGraphicsException {
+    public Program(int vertexShaderHandle, int fragmentShaderHandle) throws FatalGraphicsException
+    {
         this(ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle));
     }
 
-    public Program(int programHandle) {
+    public Program(int programHandle)
+    {
         this.handle = programHandle;
 
         int[] numUniformsArray = new int[1];
@@ -51,7 +54,7 @@ public class Program {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Program " + handle + ":\n");
+        builder.append("Program handle=" + handle + ":\n");
         builder.append("Uniforms:\n");
         for (Uniform uniform : uniforms.values()) {
             builder.append(uniform + "\n");

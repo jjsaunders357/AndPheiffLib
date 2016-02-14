@@ -13,6 +13,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
+import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
@@ -27,17 +28,17 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
  */
 public class TestRenderer3 implements Renderer
 {
+    private final ManGL manGL;
     private Program testProgram;
     private IndexBuffer pb;
 	private StaticVertexBuffer sb;
 	private Map<String, Mesh> meshes;
 	private float[] projectionMatrix;
-	private AssetManager assetManager;
 
-	public TestRenderer3(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
-	}
+    public TestRenderer3(ManGL manGL)
+    {
+        this.manGL = manGL;
+    }
 
 	@Override
 	public void onSurfaceCreated(GL10 gl,
@@ -50,17 +51,9 @@ public class TestRenderer3 implements Renderer
 
 		try
 		{
-			int vertexShaderHandle = ProgramUtils.createShader(
-					assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_mnc.glsl"
-			);
-			int fragmentShaderHandle = ProgramUtils.createShader(
-					assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_mnc.glsl"
-			);
-            int testProgramHandle = ProgramUtils.createProgram(vertexShaderHandle,
-                    fragmentShaderHandle);
-            testProgram = new Program(testProgramHandle);
-            meshes = Mesh.loadMeshes(assetManager, "meshes/spheres.mesh");
-		} catch (FatalGraphicsException exception)
+            testProgram = manGL.createProgram("testProgram3D", "shaders/test_vertex_mnc.glsl", "shaders/test_fragment_mnc.glsl");
+            meshes = Mesh.loadMeshes(manGL.getAssetManager(), "meshes/spheres.mesh");
+        } catch (FatalGraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
 		}
@@ -120,10 +113,4 @@ public class TestRenderer3 implements Renderer
 		projectionMatrix = GraphicsMathUtils.generateProjectionMatrix(60.0f, width
 				/ (float) height, 1, 10, false);
 	}
-
-	public final void setAssetManager(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
-	}
-
 }

@@ -7,19 +7,17 @@ package com.pheiffware.lib.examples.andGraphics;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
-import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 
 /**
@@ -27,11 +25,10 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
  */
 public class TestRenderer2 implements Renderer
 {
-    private Program testProgram;
+    private final ManGL manGL;
     private CombinedVertexBuffer cb;
 	private float globalTestColor = 0.0f;
 	private float[] projectionMatrix;
-	private AssetManager assetManager;
 	private int faceTextureHandle;
 	private int colorRenderTextureHandle;
 	private int depthRenderTextureHandle;
@@ -39,10 +36,10 @@ public class TestRenderer2 implements Renderer
 	private int viewWidth;
 	private int viewHeight;
 
-	public TestRenderer2(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
-	}
+    public TestRenderer2(ManGL manGL)
+    {
+        this.manGL = manGL;
+    }
 
 	/* (non-Javadoc)
 	 * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
@@ -57,14 +54,11 @@ public class TestRenderer2 implements Renderer
 
 		try
 		{
-            int vertexShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_matrix_texture_color.glsl");
-            int fragmentShaderHandle = ProgramUtils
-                    .createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
-            int testProgramHandle = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
-            testProgram = new Program(testProgramHandle);
-            System.out.println(testProgram);
+            manGL.createProgram("testProgram", "shaders/test_vertex_matrix_texture_color.glsl", "shaders/test_fragment_matrix_texture_color.glsl");
+            System.out.println(manGL.getProgram("testProgram"));
+
             //Creates a clamped texture, from a file, with mipmapping
-            faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            faceTextureHandle = TextureUtils.genTextureFromImage(manGL.getAssetManager(), "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             //Creates color texture render target, without alpha channel
             colorRenderTextureHandle = TextureUtils.genTextureForColorRendering(512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
@@ -78,7 +72,7 @@ public class TestRenderer2 implements Renderer
 
 		float x = 1f, y = 1f, z = 1.1f;
         //@formatter:off
-        cb = new CombinedVertexBuffer(testProgram, 200,
+        cb = new CombinedVertexBuffer(manGL.getProgram("testProgram"), 200,
                 new String[] { "vertexPosition", "vertexTexCoord" },
                 new String[]{"vertexColor"});
         //@formatter:on
@@ -109,6 +103,7 @@ public class TestRenderer2 implements Renderer
 	@Override
 	public void onDrawFrame(GL10 gl)
 	{
+        int testProgramHandle = manGL.getProgram("testProgram").getHandle();
         //Set to render to texture.
         PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, 0);
         int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
@@ -118,12 +113,12 @@ public class TestRenderer2 implements Renderer
 		}
 		GLES20.glViewport(0, 0, 512, 512);
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        GLES20.glUseProgram(testProgram.getHandle());
+        GLES20.glUseProgram(testProgramHandle);
         float[] cameraProjectionMatrix = GraphicsMathUtils.generateProjectionMatrix(70.0f, 1, 1, 10, true);
 
         //Vertex positions and texture coordinates static.  This encodes a color to mix in.  In this case we want a pure texture render.
-        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"), 1, false, cameraProjectionMatrix, 0);
-        TextureUtils.uniformTexture2D(testProgram.getHandle(), "texture", faceTextureHandle, 0);
+        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgramHandle, "transformViewMatrix"), 1, false, cameraProjectionMatrix, 0);
+        TextureUtils.uniformTexture2D(testProgramHandle, "texture", faceTextureHandle, 0);
         cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
@@ -138,9 +133,9 @@ public class TestRenderer2 implements Renderer
 		GLES20.glViewport(0, 0, viewWidth, viewHeight);
         projectionMatrix = GraphicsMathUtils.generateProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        GLES20.glUseProgram(testProgram.getHandle());
-        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"), 1, false, projectionMatrix, 0);
-        TextureUtils.uniformTexture2D(testProgram.getHandle(), "texture", colorRenderTextureHandle, 0);
+        GLES20.glUseProgram(testProgramHandle);
+        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgramHandle, "transformViewMatrix"), 1, false, projectionMatrix, 0);
+        TextureUtils.uniformTexture2D(testProgramHandle, "texture", colorRenderTextureHandle, 0);
         cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
@@ -164,10 +159,5 @@ public class TestRenderer2 implements Renderer
 		Log.i("OPENGL", "Surface changed");
 		viewWidth = width;
 		viewHeight = height;
-	}
-
-	public final void setAssetManager(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
 	}
 }
