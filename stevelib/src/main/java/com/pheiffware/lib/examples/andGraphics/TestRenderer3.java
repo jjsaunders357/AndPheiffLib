@@ -13,6 +13,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
+import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
@@ -26,8 +27,8 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
  */
 public class TestRenderer3 implements Renderer
 {
-	private int testProgram;
-	private IndexBuffer pb;
+    private Program testProgram;
+    private IndexBuffer pb;
 	private StaticVertexBuffer sb;
 	private Map<String, Mesh> meshes;
 	private float[] projectionMatrix;
@@ -55,9 +56,10 @@ public class TestRenderer3 implements Renderer
 			int fragmentShaderHandle = ProgramUtils.createShader(
 					assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_mnc.glsl"
 			);
-			testProgram = ProgramUtils.createProgram(vertexShaderHandle,
-					fragmentShaderHandle);
-			meshes = Mesh.loadMeshes(assetManager, "meshes/spheres.mesh");
+            int testProgramHandle = ProgramUtils.createProgram(vertexShaderHandle,
+                    fragmentShaderHandle);
+            testProgram = new Program(testProgramHandle);
+            meshes = Mesh.loadMeshes(assetManager, "meshes/spheres.mesh");
 		} catch (FatalGraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
@@ -71,14 +73,12 @@ public class TestRenderer3 implements Renderer
 		// @formatter:off
 		sb = new StaticVertexBuffer(testProgram, sphereMesh.getNumVertices(),
 				new String[]
-				{ "vertexPosition", "vertexNormal", "vertexColor" }, new int[]
-				{ 4, 4, 4 }, new int[]
-				{ GLES20.GL_FLOAT, GLES20.GL_FLOAT, GLES20.GL_FLOAT });
-		// @formatter:on
+                        {"vertexPosition", "vertexNormal", "vertexColor"});
+        // @formatter:on
 
-		sb.putFloats(0, sphereMesh.vertices);
-		sb.putFloats(0, sphereMesh.normals);
-		sb.putFloats(2, colors);
+        sb.putFloats("vertexPosition", sphereMesh.vertices);
+        sb.putFloats("vertexNormal", sphereMesh.normals);
+        sb.putFloats("vertexColor", colors);
 
 		sb.transfer();
 
@@ -95,12 +95,12 @@ public class TestRenderer3 implements Renderer
 	public void onDrawFrame(GL10 gl)
 	{
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-		GLES20.glUseProgram(testProgram);
-		float[] matrix = GraphicsMathUtils.createTranslationMatrix(0, 0, -2);
+        GLES20.glUseProgram(testProgram.getHandle());
+        float[] matrix = GraphicsMathUtils.createTranslationMatrix(0, 0, -2);
 		matrix = GraphicsMathUtils.multiplyMatrix(projectionMatrix, matrix);
 		GLES20.glUniformMatrix4fv(
-				GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"),
-				1, false, matrix, 0);
+                GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"),
+                1, false, matrix, 0);
 		sb.bind();
 		pb.drawAll(GLES20.GL_TRIANGLES);
 	}

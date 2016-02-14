@@ -27,8 +27,8 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
  */
 public class TestRenderer2 implements Renderer
 {
-	private int testProgram;
-	private CombinedVertexBuffer cb;
+    private Program testProgram;
+    private CombinedVertexBuffer cb;
 	private float globalTestColor = 0.0f;
 	private float[] projectionMatrix;
 	private AssetManager assetManager;
@@ -60,9 +60,9 @@ public class TestRenderer2 implements Renderer
             int vertexShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_matrix_texture_color.glsl");
             int fragmentShaderHandle = ProgramUtils
                     .createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
-            testProgram = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
-            Program pstats = new Program(testProgram);
-            System.out.println(pstats);
+            int testProgramHandle = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
+            testProgram = new Program(testProgramHandle);
+            System.out.println(testProgram);
             //Creates a clamped texture, from a file, with mipmapping
             faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
@@ -77,11 +77,9 @@ public class TestRenderer2 implements Renderer
 		}
 
 		float x = 1f, y = 1f, z = 1.1f;
-		//@formatter:off 
-		cb = new CombinedVertexBuffer(testProgram, 200, 
-				new String[] { "vertexPosition", "vertexTexCoord" },
-                new int[]{4, 2},
-                new int[]{GLES20.GL_FLOAT, GLES20.GL_FLOAT},
+        //@formatter:off
+        cb = new CombinedVertexBuffer(testProgram, 200,
+                new String[] { "vertexPosition", "vertexTexCoord" },
                 new String[] { "vertexColor" },
                 new int[]{4},
                 new int[] { GLES20.GL_FLOAT });
@@ -122,12 +120,12 @@ public class TestRenderer2 implements Renderer
 		}
 		GLES20.glViewport(0, 0, 512, 512);
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-		GLES20.glUseProgram(testProgram);
+        GLES20.glUseProgram(testProgram.getHandle());
         float[] cameraProjectionMatrix = GraphicsMathUtils.generateProjectionMatrix(70.0f, 1, 1, 10, true);
 
         //Vertex positions and texture coordinates static.  This encodes a color to mix in.  In this case we want a pure texture render.
-        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"), 1, false, cameraProjectionMatrix, 0);
-        TextureUtils.uniformTexture2D(testProgram, "texture", faceTextureHandle, 0);
+        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"), 1, false, cameraProjectionMatrix, 0);
+        TextureUtils.uniformTexture2D(testProgram.getHandle(), "texture", faceTextureHandle, 0);
         cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
@@ -142,9 +140,9 @@ public class TestRenderer2 implements Renderer
 		GLES20.glViewport(0, 0, viewWidth, viewHeight);
         projectionMatrix = GraphicsMathUtils.generateProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-		GLES20.glUseProgram(testProgram);
-		GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"), 1, false, projectionMatrix, 0);
-        TextureUtils.uniformTexture2D(testProgram, "texture", colorRenderTextureHandle, 0);
+        GLES20.glUseProgram(testProgram.getHandle());
+        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"), 1, false, projectionMatrix, 0);
+        TextureUtils.uniformTexture2D(testProgram.getHandle(), "texture", colorRenderTextureHandle, 0);
         cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);

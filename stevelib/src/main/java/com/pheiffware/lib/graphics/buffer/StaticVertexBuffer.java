@@ -6,9 +6,13 @@ package com.pheiffware.lib.graphics.buffer;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.graphics.managed.Attribute;
+import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.Utils;
 
@@ -35,35 +39,34 @@ import com.pheiffware.lib.Utils;
  */
 public class StaticVertexBuffer
 {
+    //Program object this buffer was setup for
+    private final Program program;
+
     //GL handle to the buffer object
     private final int bufferHandle;
 
     //Java ByteBuffer used to fill static buffer.
     private final ByteBuffer byteBuffer;
 
-    private int[] attributePositions;
-    private int[] attributeDims;
-	private int[] attributeTypes;
-	private int[] attributeByteOffsets;
-	private int vertexByteSize;
+    //Total size of each vertex in this buffer
+    private int vertexByteSize;
 
-	public StaticVertexBuffer(int programHandle, int maxVertices, String[] attributes, int[] dims, int[] types)
-	{
-        attributePositions = new int[dims.length];
-        attributeDims = new int[dims.length];
-		attributeTypes = new int[dims.length];
-		attributeByteOffsets = new int[dims.length];
+    //Byte offset, within each vertex of each attribute
+    private Map<String, Integer> attributeByteOffsets;
+
+    //The names of the attributes being managed by this buffer
+    private String[] attributeNames;
+
+    public StaticVertexBuffer(Program program, int maxVertices, String[] attributeNames) {
+        this.attributeNames = attributeNames;
+        this.program = program;
+        attributeByteOffsets = new HashMap<>(attributeNames.length * 2);
 
 		int attributeByteOffset = 0;
-		for (int i = 0; i < dims.length; i++)
-		{
-            attributePositions[i] = GLES20.glGetAttribLocation(programHandle, attributes[i]);
-            attributeDims[i] = dims[i];
-			attributeTypes[i] = types[i];
-			attributeByteOffsets[i] = attributeByteOffset;
-            int attributeByteSize = dims[i] * PheiffGLUtils.getGLTypeSize(types[i]);
-            attributeByteOffset += attributeByteSize;
-		}
+        for (String attributeName : attributeNames) {
+            attributeByteOffsets.put(attributeName, attributeByteOffset);
+            attributeByteOffset += program.getAttribute(attributeName).byteSize;
+        }
 		vertexByteSize = attributeByteOffset;
 
 		byteBuffer = ByteBuffer.allocateDirect(maxVertices * vertexByteSize);
@@ -101,20 +104,18 @@ public class StaticVertexBuffer
 	/**
 	 * For a given attributeIndex (defined by order in constructor) put an array of floats in the appropriate buffer location.
 	 * Note, this is very inefficient, but is fine for one time setup.
-	 * 
-	 * @param attributeIndex
-	 * @param values
+	 *
+     * @param attributeName
+     * @param values
 	 */
-	public final void putFloats(int attributeIndex, float[] values)
-	{
-		putFloats(attributeIndex, values, 0, values.length);
-	}
+    public final void putFloats(String attributeName, float[] values) {
+        putFloats(attributeByteOffsets.get(attributeName), program.getAttribute(attributeName).dims, values, 0, values.length);
+    }
 
-	public final void putFloats(int attributeIndex, float[] values, int offset, int length)
-	{
-		int putPosition = attributeByteOffsets[attributeIndex];
-		int dims = attributeDims[attributeIndex];
-		int end = offset + length;
+    public final void putFloats(int attributeByteOffset, int attributeDims, float[] values, int offset, int length) {
+        int putPosition = attributeByteOffset;
+        int dims = attributeDims;
+        int end = offset + length;
 		for (int i = offset; i < end; i += dims)
 		{
 			byteBuffer.position(putPosition);
@@ -131,15 +132,15 @@ public class StaticVertexBuffer
      */
     public final void bind()
 	{
-        System.out.println("bind:\n");
+//        System.out.println("bind:\n");
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
-		for (int i = 0; i < attributeDims.length; i++)
-		{
-            GLES20.glEnableVertexAttribArray(attributePositions[i]);
-            GLES20.glVertexAttribPointer(attributePositions[i], attributeDims[i], attributeTypes[i], false, vertexByteSize, attributeByteOffsets[i]);
-            System.out.println("dim:" + attributeDims[i]);
-            System.out.println("type:" + attributeTypes[i]);
-            System.out.println("offset:" + attributeByteOffsets[i]);
+        for (String attributeName : attributeNames) {
+            Attribute attribute = program.getAttribute(attributeName);
+            GLES20.glEnableVertexAttribArray(attribute.location);
+            GLES20.glVertexAttribPointer(attribute.location, attribute.dims, attribute.baseType, false, vertexByteSize, attributeByteOffsets.get(attributeName));
+//            System.out.println("dim:" + attributeDims[i]);
+//            System.out.println("type:" + attributeTypes[i]);
+//            System.out.println("offset:" + attributeByteOffsets[i]);
         }
 	}
 

@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
@@ -26,8 +27,8 @@ import com.pheiffware.lib.graphics.utils.ProgramUtils;
  */
 public class TestRenderer1 implements Renderer
 {
-	private int testProgram;
-	private IndexBuffer pb;
+    private Program testProgram;
+    private IndexBuffer pb;
 	private CombinedVertexBuffer cb;
 	private float globalTestColor = 0.0f;
 	private float[] projectionMatrix;
@@ -55,8 +56,9 @@ public class TestRenderer1 implements Renderer
 			int vertexShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_matrix_texture_color.glsl");
 			int fragmentShaderHandle = ProgramUtils
 					.createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
-			testProgram = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
-			faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            int testProgramHandle = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
+            testProgram = new Program(testProgramHandle);
+            faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 		} catch (FatalGraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
@@ -65,14 +67,12 @@ public class TestRenderer1 implements Renderer
 		pb = new IndexBuffer(2000);
 
 		float x = 1f, y = 1f, z = 1.1f;
-		//@formatter:off 
-		cb = new CombinedVertexBuffer(testProgram, 2000, 
-				new String[] { "vertexPosition", "vertexTexCoord" },
-				new int[]{4, 2},
-				new int[]{GLES20.GL_FLOAT, GLES20.GL_FLOAT},
-				new String[] { "vertexColor" }, 
-				new int[] { 4 }, 
-				new int[] { GLES20.GL_FLOAT });
+        //@formatter:off
+        cb = new CombinedVertexBuffer(testProgram, 2000,
+                new String[] { "vertexPosition", "vertexTexCoord" },
+                new String[]{"vertexColor"},
+                new int[]{4},
+                new int[] { GLES20.GL_FLOAT });
 		//@formatter:on
 
 		cb.putStaticVec4(-x, -y, -z, 1);
@@ -111,10 +111,10 @@ public class TestRenderer1 implements Renderer
 	public void onDrawFrame(GL10 gl)
 	{
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-		GLES20.glUseProgram(testProgram);
-		GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram, "transformViewMatrix"), 1, false, projectionMatrix, 0);
-		TextureUtils.uniformTexture2D(testProgram, "texture", faceTextureHandle, 0);
-		cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
+        GLES20.glUseProgram(testProgram.getHandle());
+        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"), 1, false, projectionMatrix, 0);
+        TextureUtils.uniformTexture2D(testProgram.getHandle(), "texture", faceTextureHandle, 0);
+        cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
 		cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);

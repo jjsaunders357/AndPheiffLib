@@ -4,6 +4,8 @@
 */
 package com.pheiffware.lib.graphics.buffer;
 
+import com.pheiffware.lib.graphics.managed.Program;
+
 /**
  * A combination of a packed vertex buffer and one or more single attribute vertex buffers. All static attributes should be put in the packed buffer
  * while the dynamic ones are put in the dynamic buffers.
@@ -14,24 +16,18 @@ public class CombinedVertexBuffer
 	private StaticVertexBuffer staticVertexBuffer;
 	private DynamicVertexBuffer[] dynamicVertexBuffers;
 
-	public CombinedVertexBuffer(int programHandle, int maxVertices, String[] staticAttributes, int[] staticDims, int[] staticTypes,
-			String[] dynamicAttributes, int[] dynamicDims, int[] dynamicTypes)
+	public CombinedVertexBuffer(Program program, int maxVertices, String[] staticAttributes, String[] dynamicAttributes, int[] dynamicDims, int[] dynamicTypes)
 	{
-		if (staticAttributes.length != staticDims.length || staticDims.length != staticTypes.length)
-		{
-			throw new RuntimeException("Size mismatch in buffer attribute arrays");
-		}
-
 		if (dynamicAttributes.length != dynamicDims.length || dynamicDims.length != dynamicTypes.length)
 		{
 			throw new RuntimeException("Size mismatch in buffer attribute arrays");
 		}
 
-		staticVertexBuffer = new StaticVertexBuffer(programHandle, maxVertices, staticAttributes, staticDims, staticTypes);
+		staticVertexBuffer = new StaticVertexBuffer(program, maxVertices, staticAttributes);
 		dynamicVertexBuffers = new DynamicVertexBuffer[dynamicAttributes.length];
 		for (int i = 0; i < dynamicAttributes.length; i++)
 		{
-			dynamicVertexBuffers[i] = new DynamicVertexBuffer(programHandle, maxVertices, dynamicAttributes[i], dynamicDims[i], dynamicTypes[i]);
+			dynamicVertexBuffers[i] = new DynamicVertexBuffer(program.getHandle(), maxVertices, dynamicAttributes[i], dynamicDims[i], dynamicTypes[i]);
 		}
 	}
 

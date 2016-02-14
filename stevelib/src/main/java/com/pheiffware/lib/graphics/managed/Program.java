@@ -38,6 +38,9 @@ public class Program {
         }
     }
 
+    public Attribute getAttribute(String attributeName) {
+        return attributes.get(attributeName);
+    }
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -51,5 +54,10 @@ public class Program {
             builder.append(attribute + "\n");
         }
         return builder.toString();
+    }
+
+
+    public int getHandle() {
+        return handle;
     }
 }
