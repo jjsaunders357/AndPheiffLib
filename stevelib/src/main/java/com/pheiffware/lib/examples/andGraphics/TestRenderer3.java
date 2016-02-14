@@ -29,41 +29,41 @@ public class TestRenderer3 implements Renderer
     private final ManGL manGL;
     private Program testProgram;
     private IndexBuffer pb;
-	private StaticVertexBuffer sb;
-	private Map<String, Mesh> meshes;
-	private float[] projectionMatrix;
+    private StaticVertexBuffer sb;
+    private Map<String, Mesh> meshes;
+    private float[] projectionMatrix;
 
     public TestRenderer3(ManGL manGL)
     {
         this.manGL = manGL;
     }
 
-	@Override
-	public void onSurfaceCreated(GL10 gl,
-			javax.microedition.khronos.egl.EGLConfig config)
-	{
-		Log.i("OPENGL", "Surface created");
-		FatalErrorHandler.installUncaughtExceptionHandler();
-		// Wait for vertical retrace
-		GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    @Override
+    public void onSurfaceCreated(GL10 gl,
+                                 javax.microedition.khronos.egl.EGLConfig config)
+    {
+        Log.i("OPENGL", "Surface created");
+        FatalErrorHandler.installUncaughtExceptionHandler();
+        // Wait for vertical retrace
+        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-		try
-		{
+        try
+        {
             testProgram = manGL.getProgram("testProgram3D", "shaders/test_vertex_mnc.glsl", "shaders/test_fragment_mnc.glsl");
             meshes = Mesh.loadMeshes(manGL.getAssetManager(), "meshes/spheres.mesh");
         } catch (FatalGraphicsException exception)
-		{
-			FatalErrorHandler.handleFatalError(exception);
-		}
-		Mesh sphereMesh = meshes.get("sphere4");
-		float[] colors = sphereMesh.generateMultiColorValues();
-		pb = new IndexBuffer(sphereMesh.getNumPrimitives());
-		pb.putIndices(sphereMesh.primitiveIndices);
-		pb.transfer();
+        {
+            FatalErrorHandler.handleFatalError(exception);
+        }
+        Mesh sphereMesh = meshes.get("sphere4");
+        float[] colors = sphereMesh.generateMultiColorValues();
+        pb = new IndexBuffer(sphereMesh.getNumPrimitives());
+        pb.putIndices(sphereMesh.primitiveIndices);
+        pb.transfer();
 
-		// @formatter:off
-		sb = new StaticVertexBuffer(testProgram, sphereMesh.getNumVertices(),
-				new String[]
+        // @formatter:off
+        sb = new StaticVertexBuffer(testProgram, sphereMesh.getNumVertices(),
+                new String[]
                         {"vertexPosition", "vertexNormal", "vertexColor"});
         // @formatter:on
 
@@ -71,43 +71,43 @@ public class TestRenderer3 implements Renderer
         sb.putFloats("vertexNormal", sphereMesh.normals);
         sb.putFloats("vertexColor", colors);
 
-		sb.transfer();
+        sb.transfer();
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.microedition.
-	 * khronos.opengles.GL10)
-	 */
-	@Override
-	public void onDrawFrame(GL10 gl)
-	{
-		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.microedition.
+     * khronos.opengles.GL10)
+     */
+    @Override
+    public void onDrawFrame(GL10 gl)
+    {
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUseProgram(testProgram.getHandle());
         float[] matrix = MathUtils.createTranslationMatrix(0, 0, -2);
         matrix = MathUtils.multiplyMatrix(projectionMatrix, matrix);
         GLES20.glUniformMatrix4fv(
                 GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"),
                 1, false, matrix, 0);
-		sb.bind();
-		pb.drawAll(GLES20.GL_TRIANGLES);
-	}
+        sb.bind();
+        pb.drawAll(GLES20.GL_TRIANGLES);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.microedition
-	 * .khronos.opengles.GL10, int, int)
-	 */
-	@Override
-	public void onSurfaceChanged(GL10 gl, int width, int height)
-	{
-		Log.i("OPENGL", "Surface changed");
-		GLES20.glViewport(0, 0, width, height);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.microedition
+     * .khronos.opengles.GL10, int, int)
+     */
+    @Override
+    public void onSurfaceChanged(GL10 gl, int width, int height)
+    {
+        Log.i("OPENGL", "Surface changed");
+        GLES20.glViewport(0, 0, width, height);
         projectionMatrix = MathUtils.generateProjectionMatrix(60.0f, width
                 / (float) height, 1, 10, false);
     }
