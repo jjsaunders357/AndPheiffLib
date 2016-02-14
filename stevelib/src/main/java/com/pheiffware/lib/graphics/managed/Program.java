@@ -2,6 +2,9 @@ package com.pheiffware.lib.graphics.managed;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.utils.ProgramUtils;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,26 +17,30 @@ public class Program {
     private final Map<String, Uniform> uniforms;
     private final Map<String, Attribute> attributes;
 
-    public Program(int handle) {
-        this.handle = handle;
+    public Program(int vertexShaderHandle, int fragmentShaderHandle) throws FatalGraphicsException {
+        this(ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle));
+    }
+
+    public Program(int programHandle) {
+        this.handle = programHandle;
 
         int[] numUniformsArray = new int[1];
-        GLES20.glGetProgramiv(handle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
+        GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
 
         int numActiveUniforms = numUniformsArray[0];
         uniforms = new TreeMap<>();
 
         for (int i = 0; i < numActiveUniforms; i++) {
-            Uniform uniform = new Uniform(handle, i);
+            Uniform uniform = new Uniform(programHandle, i);
             uniforms.put(uniform.name, uniform);
         }
 
         int[] numAttributesArray = new int[1];
-        GLES20.glGetProgramiv(handle, GLES20.GL_ACTIVE_ATTRIBUTES, numAttributesArray, 0);
+        GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_ATTRIBUTES, numAttributesArray, 0);
         int numActiveAttributes = numAttributesArray[0];
         attributes = new TreeMap<>();
         for (int i = 0; i < numActiveAttributes; i++) {
-            Attribute attribute = new Attribute(handle, i);
+            Attribute attribute = new Attribute(programHandle, i);
             attributes.put(attribute.name, attribute);
         }
     }

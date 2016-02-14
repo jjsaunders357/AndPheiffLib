@@ -80,10 +80,8 @@ public class TestRenderer2 implements Renderer
         //@formatter:off
         cb = new CombinedVertexBuffer(testProgram, 200,
                 new String[] { "vertexPosition", "vertexTexCoord" },
-                new String[] { "vertexColor" },
-                new int[]{4},
-                new int[] { GLES20.GL_FLOAT });
-		//@formatter:on
+                new String[]{"vertexColor"});
+        //@formatter:on
 
 		cb.putStaticVec4(-x, -y, -z, 1);
 		cb.putStaticVec2(0, 1);

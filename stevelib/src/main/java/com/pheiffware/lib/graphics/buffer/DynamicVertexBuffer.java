@@ -9,6 +9,8 @@ import java.nio.ByteOrder;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.graphics.managed.Attribute;
+import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.Utils;
 
@@ -34,20 +36,13 @@ public class DynamicVertexBuffer
 	private final int bufferHandle;
 	private final ByteBuffer byteBuffer;
 
-	private int attributeIndex;
-	private int dim;
-	private int type;
-	private int vertexByteSize;
+    private final Attribute attribute;
 
-	public DynamicVertexBuffer(int programHandle, int maxVertices, String attribute, int dim, int type)
-	{
-		attributeIndex = GLES20.glGetAttribLocation(programHandle, attribute);
-		this.dim = dim;
-		this.type = type;
-		vertexByteSize = dim * PheiffGLUtils.getGLTypeSize(type);
+    public DynamicVertexBuffer(Program program, int maxVertices, String attributeName) {
+        attribute = program.getAttribute(attributeName);
 
-		byteBuffer = ByteBuffer.allocateDirect(maxVertices * vertexByteSize);
-		byteBuffer.order(ByteOrder.nativeOrder());
+        byteBuffer = ByteBuffer.allocateDirect(maxVertices * attribute.byteSize);
+        byteBuffer.order(ByteOrder.nativeOrder());
 
 		int[] buffer = new int[1];
 		GLES20.glGenBuffers(1, buffer, 0);
@@ -84,9 +79,9 @@ public class DynamicVertexBuffer
 	public final void bind()
 	{
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
-		GLES20.glEnableVertexAttribArray(attributeIndex);
-		GLES20.glVertexAttribPointer(attributeIndex, dim, type, false, vertexByteSize, 0);
-	}
+        GLES20.glEnableVertexAttribArray(attribute.location);
+        GLES20.glVertexAttribPointer(attribute.location, attribute.dims, attribute.baseType, false, attribute.byteSize, 0);
+    }
 
 	/**
 	 * Transfer contents loaded by putAttribute* calls into graphics library. Also frees client side memory after transfer (using low-level buffer

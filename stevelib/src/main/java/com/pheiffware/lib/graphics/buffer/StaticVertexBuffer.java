@@ -132,15 +132,11 @@ public class StaticVertexBuffer
      */
     public final void bind()
 	{
-//        System.out.println("bind:\n");
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
         for (String attributeName : attributeNames) {
             Attribute attribute = program.getAttribute(attributeName);
             GLES20.glEnableVertexAttribArray(attribute.location);
             GLES20.glVertexAttribPointer(attribute.location, attribute.dims, attribute.baseType, false, vertexByteSize, attributeByteOffsets.get(attributeName));
-//            System.out.println("dim:" + attributeDims[i]);
-//            System.out.println("type:" + attributeTypes[i]);
-//            System.out.println("offset:" + attributeByteOffsets[i]);
         }
 	}
 

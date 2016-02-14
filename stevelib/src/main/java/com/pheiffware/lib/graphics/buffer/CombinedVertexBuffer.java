@@ -16,18 +16,13 @@ public class CombinedVertexBuffer
 	private StaticVertexBuffer staticVertexBuffer;
 	private DynamicVertexBuffer[] dynamicVertexBuffers;
 
-	public CombinedVertexBuffer(Program program, int maxVertices, String[] staticAttributes, String[] dynamicAttributes, int[] dynamicDims, int[] dynamicTypes)
+	public CombinedVertexBuffer(Program program, int maxVertices, String[] staticAttributeNames, String[] dynamicAttributeNames)
 	{
-		if (dynamicAttributes.length != dynamicDims.length || dynamicDims.length != dynamicTypes.length)
+		staticVertexBuffer = new StaticVertexBuffer(program, maxVertices, staticAttributeNames);
+		dynamicVertexBuffers = new DynamicVertexBuffer[dynamicAttributeNames.length];
+		for (int i = 0; i < dynamicAttributeNames.length; i++)
 		{
-			throw new RuntimeException("Size mismatch in buffer attribute arrays");
-		}
-
-		staticVertexBuffer = new StaticVertexBuffer(program, maxVertices, staticAttributes);
-		dynamicVertexBuffers = new DynamicVertexBuffer[dynamicAttributes.length];
-		for (int i = 0; i < dynamicAttributes.length; i++)
-		{
-			dynamicVertexBuffers[i] = new DynamicVertexBuffer(program.getHandle(), maxVertices, dynamicAttributes[i], dynamicDims[i], dynamicTypes[i]);
+			dynamicVertexBuffers[i] = new DynamicVertexBuffer(program, maxVertices, dynamicAttributeNames[i]);
 		}
 	}
 
