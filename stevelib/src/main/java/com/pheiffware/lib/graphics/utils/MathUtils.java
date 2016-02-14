@@ -6,7 +6,7 @@ import android.opengl.Matrix;
 /**
  * Created by Steve on 2/13/2016.
  */
-public class GraphicsMathUtils
+public class MathUtils
 {
 
     public static float[] createTranslationMatrix(float x, float y, float z)

@@ -7,38 +7,37 @@ package com.pheiffware.lib.examples.andGraphics;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
-import com.pheiffware.lib.graphics.utils.GraphicsMathUtils;
+import com.pheiffware.lib.graphics.managed.Texture;
+import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.utils.ProgramUtils;
 
 /**
  *
  */
 public class TestRenderer1 implements Renderer
 {
+    private final ManGL manGL;
     private Program testProgram;
     private IndexBuffer pb;
 	private CombinedVertexBuffer cb;
 	private float globalTestColor = 0.0f;
 	private float[] projectionMatrix;
-	private AssetManager assetManager;
-	private int faceTextureHandle;
+    private Texture faceTexture;
 
-	public TestRenderer1(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
-	}
+    public TestRenderer1(ManGL manGL)
+    {
+        this.manGL = manGL;
+    }
 
 	/* (non-Javadoc)
 	 * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
@@ -53,13 +52,10 @@ public class TestRenderer1 implements Renderer
 
 		try
 		{
-			int vertexShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_VERTEX_SHADER, "shaders/test_vertex_matrix_texture_color.glsl");
-			int fragmentShaderHandle = ProgramUtils
-					.createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, "shaders/test_fragment_matrix_texture_color.glsl");
-            int testProgramHandle = ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
-            testProgram = new Program(testProgramHandle);
-            faceTextureHandle = TextureUtils.genTextureFromImage(assetManager, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-		} catch (FatalGraphicsException exception)
+            testProgram = manGL.getProgram("testProgram", "shaders/test_vertex_matrix_texture_color.glsl", "shaders/test_fragment_matrix_texture_color.glsl");
+            System.out.println(testProgram);
+            faceTexture = manGL.getImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+        } catch (FatalGraphicsException exception)
 		{
 			FatalErrorHandler.handleFatalError(exception);
 		}
@@ -110,11 +106,11 @@ public class TestRenderer1 implements Renderer
 	{
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUseProgram(testProgram.getHandle());
-        GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"), 1, false, projectionMatrix, 0);
-        TextureUtils.uniformTexture2D(testProgram.getHandle(), "texture", faceTextureHandle, 0);
+        testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix);
+        testProgram.setUniformTexture2D("texture", faceTexture, 0);
         cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
-		cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
-		cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
+        cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
+        cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
 		cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
 		cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
 		cb.putDynamicVec4(0, 0, 0, 0, 0);
@@ -133,11 +129,6 @@ public class TestRenderer1 implements Renderer
 	{
 		Log.i("OPENGL", "Surface changed");
 		GLES20.glViewport(0, 0, width, height);
-		projectionMatrix = GraphicsMathUtils.generateProjectionMatrix(60.0f, width / (float) height, 1, 10, false);
-	}
-
-	public final void setAssetManager(AssetManager assetManager)
-	{
-		this.assetManager = assetManager;
-	}
+        projectionMatrix = MathUtils.generateProjectionMatrix(60.0f, width / (float) height, 1, 10, false);
+    }
 }

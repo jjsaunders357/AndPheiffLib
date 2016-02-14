@@ -2,6 +2,9 @@ package com.pheiffware.lib.graphics.utils;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.fatalError.FatalErrorHandler;
+import com.pheiffware.lib.graphics.FatalGraphicsException;
+
 /**
  * Created by Steve on 2/9/2016.
  */
@@ -197,6 +200,15 @@ public class PheiffGLUtils {
         if (frameBufferHandle != 0) {
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, colorRenderTextureHandle, 0);
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_TEXTURE_2D, depthRenderTextureHandle, 0);
+        }
+    }
+
+    public static void assertFrameBufferStatus() throws FatalGraphicsException
+    {
+        int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
+        if (status != GLES20.GL_FRAMEBUFFER_COMPLETE)
+        {
+            throw new FatalGraphicsException("Framebuffer failure.  Status = " + status);
         }
     }
 }

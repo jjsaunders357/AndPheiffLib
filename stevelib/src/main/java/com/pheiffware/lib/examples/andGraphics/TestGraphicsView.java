@@ -7,6 +7,9 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 
+import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.managed.ManGL;
+
 /**
  * Extension of the canned surface view for OpenGL provided by Android. Key points:
  * 1. When pausing, call onPause().
@@ -28,7 +31,7 @@ public class TestGraphicsView extends GLSurfaceView
 	{
 		super(context);
 		setEGLContextClientVersion(2);
-		setRenderer(new TestRenderer2(context.getAssets()));
-		setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        setRenderer(new TestRenderer3(new ManGL(context.getAssets(), FilterQuality.MEDIUM)));
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 	}
 }
