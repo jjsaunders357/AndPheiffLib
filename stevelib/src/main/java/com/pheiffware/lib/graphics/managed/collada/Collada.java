@@ -13,6 +13,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +33,91 @@ public class Collada
     //Map from image ids to file names
     private final Map<String, String> imageFileNames = new HashMap<>();
     //Map from effect ids to effect data (effect data is identical to materials)
-    private final Map<String, Material> effects = new HashMap<>();
+    private final Map<String, ColladaEffect> effects = new HashMap<>();
     //Map from material ids to material data
     private final Map<String, Material> materials = new HashMap<>();
+
+
+    public void loadCollada(AssetManager assetManager, String assetFileName) throws ColladaParseException
+    {
+        InputStream input = null;
+        try
+        {
+            input = assetManager.open(assetFileName);
+        }
+        catch (IOException e)
+        {
+            throw new ColladaParseException(e);
+        }
+        loadCollada(input);
+    }
+
+    public void loadCollada(InputStream input) throws ColladaParseException
+    {
+        Document doc = loadColladaDocument(input);
+        Element libraryImagesElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_images");
+        loadMapFromElement(imageFileNames, libraryImagesElement, "image", new ColladaLibraryImageFactory());
+        Element libraryEffectsElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_effects");
+        loadMapFromElement(effects, libraryEffectsElement, "effect", new ColladaEffectFactory());
+        Element libraryMaterialsElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_materials");
+        loadMapFromElement(materials, libraryMaterialsElement, "material", new ColladaMaterialFactory(imageFileNames, effects));
+    }
+
+    private Document loadColladaDocument(InputStream input) throws ColladaParseException
+    {
+        try
+        {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.parse(input);
+            //validator.validate(new DOMSource(doc));
+            return doc;
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new ColladaParseException("Parser misconfigured", e);
+        }
+        catch (IOException e)
+        {
+            throw new ColladaParseException(e);
+        }
+        catch (SAXException e)
+        {
+            throw new ColladaParseException("XML Parse Exception", e);
+        }
+
+    }
+
+
+    /**
+     * Go through an Element which contains sub-elements of a known type with "id" attributes.  For each sub-element, turn it into an object with given factory and put it in a map using id as the key.
+     *
+     * @param map                  Where to store resulting id --> T pairs
+     * @param rootElement          The element in which to search for sub-elements
+     * @param subTagName           The name of sub-element tags
+     * @param elementObjectFactory Given a sub-element, this produces an object of type T
+     * @param <T>                  The value type to store in the map.
+     * @throws ColladaParseException
+     */
+    public static <T> void loadMapFromElement(Map<String, T> map, Element rootElement, String subTagName, ElementObjectFactory<T> elementObjectFactory) throws ColladaParseException
+    {
+        NodeList nodes = rootElement.getElementsByTagName(subTagName);
+        for (int i = 0; i < nodes.getLength(); i++)
+        {
+            try
+            {
+                Element element = (Element) nodes.item(i);
+                String id = element.getAttribute("id");
+                T elementObject = elementObjectFactory.createFromElement(id, element);
+                map.put(id, elementObject);
+            }
+            catch (ClassCastException e)
+            {
+                throw new ColladaParseException(rootElement.getTagName() + " had a sub-node which was not an element");
+            }
+        }
+    }
 
     /**
      * Look for a sub-element with given name under given element.  If it doesn't exist throw an exception.
@@ -44,7 +127,7 @@ public class Collada
      * @return found sub element
      * @throws ColladaParseException Can't find sub-element
      */
-    private static Element assertGetSingleSubElement(Element element, String subElementName) throws ColladaParseException
+    public static Element assertGetSingleSubElement(Element element, String subElementName) throws ColladaParseException
     {
         NodeList subElementList = element.getElementsByTagName(subElementName);
         if (subElementList.getLength() == 0)
@@ -67,7 +150,7 @@ public class Collada
      * @return found sub element
      * @throws ColladaParseException If node is found, but it is not an Element
      */
-    private static Element getSingleSubElement(Element element, String subElementName) throws ColladaParseException
+    public static Element getSingleSubElement(Element element, String subElementName) throws ColladaParseException
     {
         NodeList subElementList = element.getElementsByTagName(subElementName);
         if (subElementList.getLength() == 0)
@@ -89,7 +172,7 @@ public class Collada
      * @return float[4]
      * @throws ColladaParseException
      */
-    private static GColor getColorSubElement(Element element) throws ColladaParseException
+    public static GColor getColorSubElement(Element element) throws ColladaParseException
     {
         Element colorElement = getSingleSubElement(element, "color");
         if (colorElement == null)
@@ -118,7 +201,7 @@ public class Collada
      * @return float
      * @throws ColladaParseException
      */
-    private static float getFloatSubElement(Element element) throws ColladaParseException
+    public static float getFloatSubElement(Element element) throws ColladaParseException
     {
         Element floatElement = getSingleSubElement(element, "float");
         if (floatElement == null)
@@ -132,236 +215,6 @@ public class Collada
         }
         String floatString = childNodes.item(0).getNodeValue();
         return Float.valueOf(floatString);
-    }
-
-    private <T> void loadMapFromElement(Map<String, T> map, Element rootElement, String subTagName, ElementObjectFactory<T> elementObjectFactory) throws ColladaParseException
-    {
-        NodeList nodes = rootElement.getElementsByTagName(subTagName);
-        for (int i = 0; i < nodes.getLength(); i++)
-        {
-            try
-            {
-                Element element = (Element) nodes.item(i);
-                String id = element.getAttribute("id");
-                T elementObject = elementObjectFactory.createFromElement(id, element);
-                map.put(id, elementObject);
-            }
-            catch (ClassCastException e)
-            {
-                throw new ColladaParseException(rootElement.getTagName() + " had a sub-node which was not an element");
-            }
-        }
-    }
-
-
-    public void loadCollada(AssetManager assetManager, String assetFileName) throws FatalGraphicsException, ColladaParseException
-    {
-        Document doc = null;
-        try
-        {
-            doc = loadColladaDocument(assetManager, assetFileName);
-        }
-        catch (SAXException e)
-        {
-            throw new ColladaParseException("XML Parse Exception", e);
-        }
-        Element libraryImagesElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_images");
-        loadMapFromElement(imageFileNames, libraryImagesElement, "image", new ColladaImageFileNameFactory());
-        Element libraryEffectsElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_effects");
-        loadMapFromElement(effects, libraryEffectsElement, "effect", new ColladaEffectFactory());
-        Element libraryMaterialsElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_materials");
-        loadMapFromElement(materials, libraryEffectsElement, "material", new ColladaMaterialFactory());
-    }
-
-    private Document loadColladaDocument(AssetManager assetManager, String assetFileName) throws FatalGraphicsException, SAXException
-    {
-        try
-        {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder docBuilder = factory.newDocumentBuilder();
-            Document doc = docBuilder.parse(assetManager.open(assetFileName));
-            //validator.validate(new DOMSource(doc));
-            return doc;
-        }
-        catch (ParserConfigurationException e)
-        {
-            throw new FatalGraphicsException("Parser misconfigured", e);
-        }
-        catch (IOException e)
-        {
-            throw new FatalGraphicsException(e);
-        }
-
-    }
-
-
-    private interface ElementObjectFactory<T>
-    {
-        T createFromElement(String id, Element element) throws ColladaParseException;
-    }
-
-    /**
-     * Used to extract actual image file names from the library_images tag.
-     */
-    private class ColladaImageFileNameFactory implements ElementObjectFactory<String>
-    {
-        @Override
-        public String createFromElement(String id, Element element) throws ColladaParseException
-        {
-            /*
-            Example
-            <image id="ID13">
-                <init_from>test_sk/Steel.png</init_from>
-            </image>
-             */
-            Element init_from = assertGetSingleSubElement(element, "init_from");
-            String imageFileName = init_from.getFirstChild().getTextContent();
-            return imageFileName;
-        }
-    }
-
-    /**
-     * Used to extract "effects", which are equivalent to materials for our purposes from library_effects
-     */
-    private class ColladaEffectFactory implements ElementObjectFactory<Material>
-    {
-        @Override
-        public Material createFromElement(String id, Element element) throws ColladaParseException
-        {
-            /*
-                Sketchup effect example
-                <effect id="ID12">
-                    <profile_COMMON>
-                        <newparam sid="ID14">
-                            <surface type="2D">
-                                <init_from>ID13</init_from>   ////This id is an image reference
-                            </surface>
-                        </newparam>
-                        <newparam sid="ID15">
-                            <sampler2D>
-                                <source>ID14</source>
-                            </sampler2D>
-                        </newparam>
-                        <technique sid="COMMON">
-                            <lambert>
-                                <diffuse>
-                                    <texture texture="ID15" texcoord="UVSET0" />   ////This is either a texture or a color.  If a color then the above "newparam" won't be present.
-                                </diffuse>
-                            </lambert>
-                        </technique>
-                    </profile_COMMON>
-                </effect>
-
-                Blender effect example
-                <effect id="Steel-effect">
-                  <profile_COMMON>
-                    <newparam sid="steel_png-surface">
-                      <surface type="2D">
-                        <init_from>steel_png</init_from>
-                      </surface>
-                    </newparam>
-                    <newparam sid="steel_png-sampler">
-                      <sampler2D>
-                        <source>steel_png-surface</source>
-                      </sampler2D>
-                    </newparam>
-                    <technique sid="common">
-                      <phong>
-                        <emission>
-                          <color sid="emission">0 0 0 1</color>
-                        </emission>
-                        <ambient>
-                          <color sid="ambient">0 0 0 1</color>
-                        </ambient>
-                        <diffuse>
-                          <texture texture="steel_png-sampler" texcoord="UVMap"/>
-                        </diffuse>
-                        <specular>
-                          <color sid="specular">0.5 0.5 0.5 1</color>
-                        </specular>
-                        <shininess>
-                          <float sid="shininess">50</float>
-                        </shininess>
-                        <index_of_refraction>
-                          <float sid="index_of_refraction">1</float>
-                        </index_of_refraction>
-                      </phong>
-                    </technique>
-                  </profile_COMMON>
-                </effect>
-             */
-            Element profileCommon = assertGetSingleSubElement(element, "profile_COMMON");
-            String imageFileName = getImageFileName(profileCommon);
-
-
-            Element technique = assertGetSingleSubElement(profileCommon, "technique");
-            Element phong = getSingleSubElement(technique, "phong");
-            GColor ambientColor;
-            GColor diffuseColor;
-            GColor specularColor;
-            float shininess;
-
-            if (phong != null)
-            {
-                ambientColor = getColorSubElement(assertGetSingleSubElement(phong, "ambient"));
-                diffuseColor = getColorSubElement(assertGetSingleSubElement(phong, "diffuse"));
-                specularColor = getColorSubElement(assertGetSingleSubElement(phong, "specular"));
-                shininess = getFloatSubElement(assertGetSingleSubElement(phong, "shininess"));
-            }
-            else
-            {
-                Element lambert = assertGetSingleSubElement(technique, "lambert");
-                ambientColor = new GColor(1.0f, 1.0f, 1.0f, 1.0f);
-                diffuseColor = getColorSubElement(assertGetSingleSubElement(lambert, "diffuse"));
-                specularColor = new GColor(1.0f, 1.0f, 1.0f, 1.0f);
-                shininess = 1;
-            }
-            return new Material(imageFileName, ambientColor, diffuseColor, specularColor, shininess);
-        }
-
-        private String getImageFileName(Element technique) throws ColladaParseException
-        {
-            //Extract image reference or null if this technique does not contain an image
-            NodeList newparamNodes = technique.getElementsByTagName("newparam");
-            for (int i = 0; i < newparamNodes.getLength(); i++)
-            {
-                Element newparamElement = (Element) newparamNodes.item(i);
-                Element surface = getSingleSubElement(newparamElement, "surface");
-                if (surface != null)
-                {
-                    String type = surface.getAttribute("type");
-                    if (type.equals("2D"))
-                    {
-                        Element init_from = getSingleSubElement(newparamElement, "init_from");
-                        String imageReference = init_from.getFirstChild().getTextContent();
-                        String imageFileName = imageFileNames.get(imageReference);
-                        return imageFileName;
-                    }
-                }
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Used to extract material objects from within library_materials tag.
-     */
-    private class ColladaMaterialFactory implements ElementObjectFactory<Material>
-    {
-        @Override
-        public Material createFromElement(String id, Element element) throws ColladaParseException
-        {
-            /*
-            <material id="ID4" name="material">
-                <instance_effect url="#ID3" />
-            </material>
-            */
-            Element instance_effect = assertGetSingleSubElement(element, "instance_effect");
-            String url = instance_effect.getAttribute("url");
-            String effectKey = url.substring(1);
-            return effects.get(effectKey);
-        }
     }
 
     private static Validator createValidator()

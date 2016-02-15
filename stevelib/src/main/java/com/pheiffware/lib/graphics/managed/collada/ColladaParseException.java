@@ -6,6 +6,11 @@ package com.pheiffware.lib.graphics.managed.collada;
  */
 public class ColladaParseException extends Exception
 {
+    public ColladaParseException(Throwable throwable)
+    {
+        super(throwable);
+    }
+
     public ColladaParseException(String detailMessage, Throwable throwable)
     {
         super(detailMessage, throwable);
