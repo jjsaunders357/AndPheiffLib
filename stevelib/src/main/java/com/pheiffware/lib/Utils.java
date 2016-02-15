@@ -21,6 +21,8 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
@@ -125,5 +127,10 @@ public class Utils
             throw new AssertionError("Copy Error", e);
         }
 
+    }
+
+    public static URL getAssetURL(String assetPath) throws MalformedURLException
+    {
+        return new URL("file:///android_asset/" + assetPath);
     }
 }

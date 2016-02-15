@@ -4,27 +4,31 @@
  */
 package com.pheiffware.lib.examples.andGraphics;
 
-import java.util.Map;
-
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
-import com.pheiffware.lib.graphics.managed.ManGL;
-import com.pheiffware.lib.graphics.managed.Program;
-import com.pheiffware.lib.graphics.utils.MathUtils;
+import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
+import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.managed.collada.Collada;
+import com.pheiffware.lib.graphics.managed.collada.ColladaParseException;
+import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.mesh.MeshLegacy;
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
+
+import org.xml.sax.SAXException;
+
+import java.util.Map;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  *
  */
-public class TestRenderer3 implements Renderer
+public class TestRenderer4 implements Renderer
 {
     private final ManGL manGL;
     private Program testProgram;
@@ -33,7 +37,7 @@ public class TestRenderer3 implements Renderer
     private Map<String, MeshLegacy> meshes;
     private float[] projectionMatrix;
 
-    public TestRenderer3(ManGL manGL)
+    public TestRenderer4(ManGL manGL)
     {
         this.manGL = manGL;
     }
@@ -50,28 +54,30 @@ public class TestRenderer3 implements Renderer
         try
         {
             testProgram = manGL.getProgram("testProgram3D", "shaders/test_vertex_mnc.glsl", "shaders/test_fragment_mnc.glsl");
-            meshes = MeshLegacy.loadMeshesLegacy(manGL.getAssetManager(), "meshes/spheres.mesh");
-        } catch (FatalGraphicsException exception)
+            Collada collada = new Collada();
+            collada.loadCollada(manGL.getAssetManager(), "meshes/test_blend.dae");
+        }
+        catch (FatalGraphicsException | ColladaParseException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }
-        MeshLegacy sphereMeshLegacy = meshes.get("sphere4");
-        float[] colors = sphereMeshLegacy.generateMultiColorValues();
-        pb = new IndexBuffer(sphereMeshLegacy.getNumPrimitives());
-        pb.putIndices(sphereMeshLegacy.primitiveIndices);
-        pb.transfer();
-
-        // @formatter:off
-        sb = new StaticVertexBuffer(testProgram, sphereMeshLegacy.getNumVertices(),
-                new String[]
-                        {"vertexPosition", "vertexNormal", "vertexColor"});
-        // @formatter:on
-
-        sb.putFloats("vertexPosition", sphereMeshLegacy.vertices);
-        sb.putFloats("vertexNormal", sphereMeshLegacy.normals);
-        sb.putFloats("vertexColor", colors);
-
-        sb.transfer();
+//        MeshLegacy meshLegacy = meshes.get("cube");
+//        float[] colors = meshLegacy.generateMultiColorValues();
+//        pb = new IndexBuffer(meshLegacy.getNumPrimitives());
+//        pb.putIndices(meshLegacy.primitiveIndices);
+//        pb.transfer();
+//
+//        // @formatter:off
+//        sb = new StaticVertexBuffer(testProgram, meshLegacy.getNumVertices(),
+//                new String[]
+//                        {"vertexPosition", "vertexNormal", "vertexColor"});
+//        // @formatter:on
+//
+//        sb.putFloats("vertexPosition", meshLegacy.vertices);
+//        sb.putFloats("vertexNormal", meshLegacy.normals);
+//        sb.putFloats("vertexColor", colors);
+//
+//        sb.transfer();
 
     }
 
@@ -85,15 +91,15 @@ public class TestRenderer3 implements Renderer
     @Override
     public void onDrawFrame(GL10 gl)
     {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        GLES20.glUseProgram(testProgram.getHandle());
-        float[] matrix = MathUtils.createTranslationMatrix(0, 0, -2);
-        matrix = MathUtils.multiplyMatrix(projectionMatrix, matrix);
-        GLES20.glUniformMatrix4fv(
-                GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"),
-                1, false, matrix, 0);
-        sb.bind();
-        pb.drawAll(GLES20.GL_TRIANGLES);
+//        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+//        GLES20.glUseProgram(testProgram.getHandle());
+//        float[] matrix = MathUtils.createTranslationMatrix(0, 0, -2);
+//        matrix = MathUtils.multiplyMatrix(projectionMatrix, matrix);
+//        GLES20.glUniformMatrix4fv(
+//                GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"),
+//                1, false, matrix, 0);
+//        sb.bind();
+//        pb.drawAll(GLES20.GL_TRIANGLES);
     }
 
     /*

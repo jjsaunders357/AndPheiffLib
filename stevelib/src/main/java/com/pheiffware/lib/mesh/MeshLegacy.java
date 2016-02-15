@@ -18,22 +18,23 @@ import com.pheiffware.lib.graphics.FatalGraphicsException;
 /**
  * Holds a triangular mesh. Used to load raw mesh information from files.
  */
-public class Mesh
+public class MeshLegacy
 {
-	public static Map<String, Mesh> loadMeshes(AssetManager assetManager, String assetFileName) throws FatalGraphicsException
+
+	public static Map<String, MeshLegacy> loadMeshesLegacy(AssetManager assetManager, String assetFileName) throws FatalGraphicsException
 	{
 		try
 		{
-			Map<String, Mesh> meshMap = new HashMap<String, Mesh>();
+			Map<String, MeshLegacy> meshMap = new HashMap<String, MeshLegacy>();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open(assetFileName), "UTF-8"));
 			String meshType = reader.readLine();
 			while (meshType != null)
 			{
 				if (meshType.equals("MESH_VNI"))
 				{
-					Mesh mesh = new Mesh();
-					mesh.load(reader);
-					meshMap.put(mesh.ID, mesh);
+					MeshLegacy meshLegacy = new MeshLegacy();
+					meshLegacy.load(reader);
+					meshMap.put(meshLegacy.ID, meshLegacy);
 				}
 				else
 				{
@@ -93,7 +94,7 @@ public class Mesh
 	public float[] normals;
 	public short[] primitiveIndices;
 
-	public Mesh()
+	public MeshLegacy()
 	{
 	}
 

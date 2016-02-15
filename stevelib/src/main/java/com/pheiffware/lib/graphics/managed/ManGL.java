@@ -7,9 +7,21 @@ import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
+import com.pheiffware.lib.mesh.MeshLegacy;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.Validator;
 
 /**
  * A core object which manages references to and between graphics objects.
@@ -22,13 +34,14 @@ public class ManGL
     private final Map<String, Integer> fragmentShaders = new HashMap<>();
     private final Map<String, Program> programs = new HashMap<>();
     private final Map<String, Texture> textures = new HashMap<>();
+    private final Map<String, MeshLegacy> meshMap = new HashMap<String, MeshLegacy>();
     private final FilterQuality defaultFilterQuality;
-
     public ManGL(AssetManager assetManager, FilterQuality defaultFilterQuality)
     {
         this.assetManager = assetManager;
         this.defaultFilterQuality = defaultFilterQuality;
     }
+
 
     /**
      * Creates a vertex shader from the given asset path if not already loaded.
@@ -206,6 +219,7 @@ public class ManGL
     {
         return getDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
     }
+
 
     @Deprecated
     public AssetManager getAssetManager()

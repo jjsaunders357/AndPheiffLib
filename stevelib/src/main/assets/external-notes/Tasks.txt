@@ -1,7 +1,9 @@
 Create Reference Library Project - Done
 Buy matlab - Done
-Reorganize library and merge with existing eclipse code - 8/12
-Create Initial Model/Load Mesh - 0/10
+Reorganize library and merge with existing eclipse code - 10/12
+Learn Basic Blender - 0/4
+Create Initial Model - 0/2
+Export/Load meshLegacy code - 0/5
 Do remaining calcs - 3
 Consolodate notes - 3
 Write base graphics library - 40
