@@ -13,8 +13,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.managed.Attribute;
 import com.pheiffware.lib.graphics.managed.Program;
-import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
-import com.pheiffware.lib.Utils;
+import com.pheiffware.lib.utils.Utils;
 
 /**
  * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over with a given program.

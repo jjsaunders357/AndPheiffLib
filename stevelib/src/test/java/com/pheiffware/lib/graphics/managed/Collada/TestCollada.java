@@ -1,26 +1,17 @@
 package com.pheiffware.lib.graphics.managed.Collada;
 
-import android.content.res.AssetManager;
-import android.provider.DocumentsContract;
-import android.test.InstrumentationTestCase;
-
 import com.pheiffware.lib.graphics.managed.collada.Collada;
 import com.pheiffware.lib.graphics.managed.collada.ColladaAccessor;
 import com.pheiffware.lib.graphics.managed.collada.ColladaInput;
 import com.pheiffware.lib.graphics.managed.collada.ColladaMeshUncollator;
-import com.pheiffware.lib.graphics.managed.collada.ColladaParseException;
+import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.lib.graphics.managed.collada.ColladaSource;
-import com.pheiffware.lib.graphics.managed.collada.ColladaSourceFactory;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 
 import org.junit.Test;
-import org.w3c.dom.Element;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +22,7 @@ import static org.junit.Assert.assertArrayEquals;
 public class TestCollada
 {
     @Test
-    public void testc() throws ColladaParseException, FileNotFoundException
+    public void testc() throws XMLParseException, FileNotFoundException
     {
         FileInputStream input = new FileInputStream("src/main/assets/meshes/test_sketch.dae");
         Collada c = new Collada();

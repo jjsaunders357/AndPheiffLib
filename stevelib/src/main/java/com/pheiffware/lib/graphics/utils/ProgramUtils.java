@@ -11,7 +11,7 @@ import java.nio.IntBuffer;
 import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.Utils;
+import com.pheiffware.lib.utils.Utils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
 
 /**

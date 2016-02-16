@@ -2,7 +2,7 @@
  * Created by Stephen Pheiffer.
  * Do not edit, distribute, modify or use without his permission.
 */
-package com.pheiffware.lib;
+package com.pheiffware.lib.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

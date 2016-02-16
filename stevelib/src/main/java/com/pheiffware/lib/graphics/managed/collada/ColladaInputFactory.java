@@ -1,5 +1,8 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
+import com.pheiffware.lib.utils.dom.ElementObjectFactory;
+import com.pheiffware.lib.utils.dom.XMLParseException;
+
 import org.w3c.dom.Element;
 
 import java.util.Map;
@@ -17,7 +20,7 @@ public class ColladaInputFactory implements ElementObjectFactory<ColladaInput>
     }
 
     @Override
-    public ColladaInput createFromElement(Element element) throws ColladaParseException
+    public ColladaInput createFromElement(Element element) throws XMLParseException
     {
         String semantic = element.getAttribute("semantic");
         //Remove '#'

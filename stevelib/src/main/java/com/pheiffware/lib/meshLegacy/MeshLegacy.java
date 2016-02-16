@@ -2,7 +2,7 @@
  * Created by Stephen Pheiffer.
  * Do not edit, distribute, modify or use without his permission.
 */
-package com.pheiffware.lib.mesh;
+package com.pheiffware.lib.meshLegacy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import com.pheiffware.lib.graphics.FatalGraphicsException;
 /**
  * Holds a triangular mesh. Used to load raw mesh information from files.
  */
+@Deprecated
 public class MeshLegacy
 {
 

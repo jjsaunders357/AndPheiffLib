@@ -1,4 +1,4 @@
-package com.pheiffware.lib.log;
+package com.pheiffware.lib.utils.log;
 
 /**
  * Any code which logs goes through here.  The assumption is that if you are interested in logging the 1st line of your main() method will be:

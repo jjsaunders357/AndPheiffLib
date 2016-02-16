@@ -18,7 +18,7 @@ import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.mesh.MeshLegacy;
+import com.pheiffware.lib.meshLegacy.MeshLegacy;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 
 /**

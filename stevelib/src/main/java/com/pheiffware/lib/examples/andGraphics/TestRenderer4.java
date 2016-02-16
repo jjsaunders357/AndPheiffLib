@@ -15,11 +15,9 @@ import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.collada.Collada;
-import com.pheiffware.lib.graphics.managed.collada.ColladaParseException;
+import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.lib.graphics.utils.MathUtils;
-import com.pheiffware.lib.mesh.MeshLegacy;
-
-import org.xml.sax.SAXException;
+import com.pheiffware.lib.meshLegacy.MeshLegacy;
 
 import java.util.Map;
 
@@ -57,7 +55,7 @@ public class TestRenderer4 implements Renderer
             Collada collada = new Collada();
             collada.loadCollada(manGL.getAssetManager(), "meshes/test_blend.dae");
         }
-        catch (FatalGraphicsException | ColladaParseException exception)
+        catch (FatalGraphicsException | XMLParseException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }

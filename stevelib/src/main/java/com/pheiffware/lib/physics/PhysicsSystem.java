@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import com.pheiffware.lib.log.PLog;
+import com.pheiffware.lib.utils.log.PLog;
 import com.pheiffware.lib.physics.entity.Entity;
 import com.pheiffware.lib.physics.entity.physicalEntity.PhysicalEntity;
 import com.pheiffware.lib.simulation.Simulation;

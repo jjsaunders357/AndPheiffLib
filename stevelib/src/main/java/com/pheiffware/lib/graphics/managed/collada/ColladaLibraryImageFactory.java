@@ -1,5 +1,9 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
+import com.pheiffware.lib.utils.dom.DomUtils;
+import com.pheiffware.lib.utils.dom.ElementObjectFactory;
+import com.pheiffware.lib.utils.dom.XMLParseException;
+
 import org.w3c.dom.Element;
 
 /**
@@ -9,9 +13,9 @@ import org.w3c.dom.Element;
 public class ColladaLibraryImageFactory implements ElementObjectFactory<String>
 {
     @Override
-    public String createFromElement(Element element) throws ColladaParseException
+    public String createFromElement(Element element) throws XMLParseException
     {
-        Element init_from = Collada.assertGetSingleSubElement(element, "init_from");
+        Element init_from = DomUtils.assertGetSingleSubElement(element, "init_from");
         String imageFileName = init_from.getFirstChild().getTextContent();
         return imageFileName;
     }

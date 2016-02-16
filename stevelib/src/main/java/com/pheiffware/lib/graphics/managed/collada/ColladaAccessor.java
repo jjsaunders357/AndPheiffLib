@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
+import com.pheiffware.lib.utils.dom.XMLParseException;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -21,7 +23,7 @@ public class ColladaAccessor
         this.count = count;
     }
 
-    public ColladaAccessor(Element element) throws ColladaParseException
+    public ColladaAccessor(Element element) throws XMLParseException
     {
         String strideString = element.getAttribute("stride");
         if (strideString.equals(""))
@@ -41,7 +43,7 @@ public class ColladaAccessor
             Element param = (Element) params.item(i);
             if (!param.getAttribute("type").equals("float"))
             {
-                throw new ColladaParseException("Can't handle non-float accessor data");
+                throw new XMLParseException("Can't handle non-float accessor data");
             }
             if (!param.getAttribute("name").equals(""))
             {

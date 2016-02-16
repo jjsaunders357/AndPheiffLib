@@ -10,7 +10,7 @@ import java.nio.ShortBuffer;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.Utils;
+import com.pheiffware.lib.utils.Utils;
 
 /**
  * Simple element buffer for triangles or other primitives.  Holds index references to other buffers.

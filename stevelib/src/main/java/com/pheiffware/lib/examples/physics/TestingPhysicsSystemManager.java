@@ -7,8 +7,8 @@ package com.pheiffware.lib.examples.physics;
 import java.util.List;
 import java.util.Random;
 
-import com.pheiffware.lib.Utils;
-import com.pheiffware.lib.log.PLog;
+import com.pheiffware.lib.utils.Utils;
+import com.pheiffware.lib.utils.log.PLog;
 import com.pheiffware.lib.physics.PhysicsSystem;
 import com.pheiffware.lib.physics.entity.Entity;
 import com.pheiffware.lib.simulation.DeterministicSimulationRunner;

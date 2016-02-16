@@ -2,6 +2,9 @@ package com.pheiffware.lib.graphics.managed.collada;
 
 
 import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.utils.dom.DomUtils;
+import com.pheiffware.lib.utils.dom.ElementObjectFactory;
+import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -13,15 +16,15 @@ import org.w3c.dom.NodeList;
 public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
 {
     @Override
-    public ColladaEffect createFromElement(Element element) throws ColladaParseException
+    public ColladaEffect createFromElement(Element element) throws XMLParseException
     {
 
-        Element profileCommon = Collada.assertGetSingleSubElement(element, "profile_COMMON");
+        Element profileCommon = DomUtils.assertGetSingleSubElement(element, "profile_COMMON");
         String imageFileReference = getImageFileReference(profileCommon);
 
 
-        Element technique = Collada.assertGetSingleSubElement(profileCommon, "technique");
-        Element phong = Collada.getSingleSubElement(technique, "phong");
+        Element technique = DomUtils.assertGetSingleSubElement(profileCommon, "technique");
+        Element phong = DomUtils.getSingleSubElement(technique, "phong");
         GColor ambientColor;
         GColor diffuseColor;
         GColor specularColor;
@@ -29,36 +32,36 @@ public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
 
         if (phong != null)
         {
-            ambientColor = Collada.getColorSubElement(Collada.assertGetSingleSubElement(phong, "ambient"));
-            diffuseColor = Collada.getColorSubElement(Collada.assertGetSingleSubElement(phong, "diffuse"));
-            specularColor = Collada.getColorSubElement(Collada.assertGetSingleSubElement(phong, "specular"));
-            shininess = Collada.getFloatSubElement(Collada.assertGetSingleSubElement(phong, "shininess"));
+            ambientColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "ambient"));
+            diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "diffuse"));
+            specularColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "specular"));
+            shininess = DomUtils.getFloatSubElement(DomUtils.assertGetSingleSubElement(phong, "shininess"));
         }
         else
         {
-            Element lambert = Collada.assertGetSingleSubElement(technique, "lambert");
+            Element lambert = DomUtils.assertGetSingleSubElement(technique, "lambert");
             ambientColor = new GColor(1.0f, 1.0f, 1.0f, 1.0f);
-            diffuseColor = Collada.getColorSubElement(Collada.assertGetSingleSubElement(lambert, "diffuse"));
+            diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(lambert, "diffuse"));
             specularColor = new GColor(1.0f, 1.0f, 1.0f, 1.0f);
             shininess = 1;
         }
         return new ColladaEffect(imageFileReference, ambientColor, diffuseColor, specularColor, shininess);
     }
 
-    private String getImageFileReference(Element technique) throws ColladaParseException
+    private String getImageFileReference(Element technique) throws XMLParseException
     {
         //Extract image reference or null if this technique does not contain an image
         NodeList newparamNodes = technique.getElementsByTagName("newparam");
         for (int i = 0; i < newparamNodes.getLength(); i++)
         {
             Element newparamElement = (Element) newparamNodes.item(i);
-            Element surface = Collada.getSingleSubElement(newparamElement, "surface");
+            Element surface = DomUtils.getSingleSubElement(newparamElement, "surface");
             if (surface != null)
             {
                 String type = surface.getAttribute("semantic");
                 if (type.equals("2D"))
                 {
-                    Element init_from = Collada.getSingleSubElement(newparamElement, "init_from");
+                    Element init_from = DomUtils.getSingleSubElement(newparamElement, "init_from");
                     String imageReference = init_from.getFirstChild().getTextContent();
                     return imageReference;
                 }

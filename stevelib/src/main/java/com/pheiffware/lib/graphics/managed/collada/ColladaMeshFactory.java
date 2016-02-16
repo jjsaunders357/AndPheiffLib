@@ -1,6 +1,9 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.utils.dom.DomUtils;
+import com.pheiffware.lib.utils.dom.ElementObjectFactory;
+import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
 
@@ -20,44 +23,44 @@ import java.util.Map;
 public class ColladaMeshFactory implements ElementObjectFactory<Mesh>
 {
     @Override
-    public Mesh createFromElement(Element element) throws ColladaParseException
+    public Mesh createFromElement(Element element) throws XMLParseException
     {
         //Load source tags
         Map<String, ColladaSource> sources = new HashMap<>();
-        Element meshElement = Collada.assertGetSingleSubElement(element, "mesh");
-        Collada.putSubElementsInMap(sources, meshElement, "source", "id", new ColladaSourceFactory());
+        Element meshElement = DomUtils.assertGetSingleSubElement(element, "mesh");
+        DomUtils.putSubElementsInMap(sources, meshElement, "source", "id", new ColladaSourceFactory());
 
         //Load inputs/indices from polylist or triangles
         Map<String, ColladaInput> inputs = new HashMap<>();
         Element indicesElement;
         int vertexCount;
-        Element polylist = Collada.getSingleSubElement(meshElement, "polylist");
+        Element polylist = DomUtils.getSingleSubElement(meshElement, "polylist");
         if (polylist != null)
         {
-            Collada.putSubElementsInMap(inputs, polylist, "input", "semantic", new ColladaInputFactory(sources, null));
-            indicesElement = Collada.assertGetSingleSubElement(polylist, "p");
+            DomUtils.putSubElementsInMap(inputs, polylist, "input", "semantic", new ColladaInputFactory(sources, null));
+            indicesElement = DomUtils.assertGetSingleSubElement(polylist, "p");
 
             //All polygons must be triangles or we can't handle this mesh
-            Element vcountElement = Collada.assertGetSingleSubElement(meshElement, "vcount");
-            float[] polygonVertexCounts = Collada.getFloatsFromElement(vcountElement);
+            Element vcountElement = DomUtils.assertGetSingleSubElement(meshElement, "vcount");
+            float[] polygonVertexCounts = DomUtils.getFloatsFromElement(vcountElement);
             vertexCount = 0;
             for (int i = 0; i < polygonVertexCounts.length; i++)
             {
                 if (polygonVertexCounts[i] != 3)
                 {
-                    throw new ColladaParseException("\"vcount\" tag contained value which was not 3");
+                    throw new XMLParseException("\"vcount\" tag contained value which was not 3");
                 }
                 vertexCount += polygonVertexCounts[i];
             }
         }
         else
         {
-            Element triangles = Collada.assertGetSingleSubElement(meshElement, "triangles");
+            Element triangles = DomUtils.assertGetSingleSubElement(meshElement, "triangles");
             vertexCount = Integer.valueOf(triangles.getAttribute("count")) * 3;
-            Collada.putSubElementsInMap(inputs, triangles, "input", "semantic", new ColladaInputFactory(sources, null));
-            indicesElement = Collada.assertGetSingleSubElement(triangles, "p");
+            DomUtils.putSubElementsInMap(inputs, triangles, "input", "semantic", new ColladaInputFactory(sources, null));
+            indicesElement = DomUtils.assertGetSingleSubElement(triangles, "p");
         }
-        short[] collatedIndices = Collada.getShortsFromElement(indicesElement);
+        short[] collatedIndices = DomUtils.getShortsFromElement(indicesElement);
 
         //Remove VERTEX input.  It merely holds an offset value which will be used by inputs in the special VERTEX tag.
         if (inputs.size() == 0)
@@ -67,10 +70,10 @@ public class ColladaMeshFactory implements ElementObjectFactory<Mesh>
         ColladaInput vertexInput = inputs.remove("VERTEX");
         if (vertexInput == null)
         {
-            throw new ColladaParseException("Missing VERTEX input from triangles/polylist tag");
+            throw new XMLParseException("Missing VERTEX input from triangles/polylist tag");
         }
-        Element vertices = Collada.assertGetSingleSubElement(meshElement, "vertices");
-        Collada.putSubElementsInMap(inputs, vertices, "input", "semantic", new ColladaInputFactory(sources, vertexInput.offset));
+        Element vertices = DomUtils.assertGetSingleSubElement(meshElement, "vertices");
+        DomUtils.putSubElementsInMap(inputs, vertices, "input", "semantic", new ColladaInputFactory(sources, vertexInput.offset));
         ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(collatedIndices, vertexCount, inputs);
         return colladaMeshUncollator.createMesh();
         //TODO: Handle multiple semantics with same name (multiple texture coordinates)

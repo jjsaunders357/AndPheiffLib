@@ -1,4 +1,4 @@
-package com.pheiffware.lib.log;
+package com.pheiffware.lib.utils.log;
 
 public interface LogHandler {
     void error(String message, Exception e);

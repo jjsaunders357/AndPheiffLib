@@ -1,4 +1,4 @@
-package com.pheiffware.lib.log;
+package com.pheiffware.lib.utils.log;
 
 /**
  * By default logging does nothing.

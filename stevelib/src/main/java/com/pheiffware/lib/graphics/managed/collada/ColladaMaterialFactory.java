@@ -1,6 +1,9 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
 import com.pheiffware.lib.graphics.managed.mesh.Material;
+import com.pheiffware.lib.utils.dom.DomUtils;
+import com.pheiffware.lib.utils.dom.ElementObjectFactory;
+import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
 
@@ -21,10 +24,10 @@ public class ColladaMaterialFactory implements ElementObjectFactory<Material>
     }
 
     @Override
-    public Material createFromElement(Element element) throws ColladaParseException
+    public Material createFromElement(Element element) throws XMLParseException
     {
         String name = element.getAttribute("name");
-        Element instance_effect = Collada.assertGetSingleSubElement(element, "instance_effect");
+        Element instance_effect = DomUtils.assertGetSingleSubElement(element, "instance_effect");
         String url = instance_effect.getAttribute("url");
         String effectKey = url.substring(1);
         ColladaEffect effect = effects.get(effectKey);

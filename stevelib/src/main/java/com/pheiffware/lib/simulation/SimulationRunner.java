@@ -1,6 +1,6 @@
 package com.pheiffware.lib.simulation;
 
-import com.pheiffware.lib.Utils;
+import com.pheiffware.lib.utils.Utils;
 
 /**
  * Manages a simulation by running it in a background thread.  This deals with the threading/synchronization issues related to this.

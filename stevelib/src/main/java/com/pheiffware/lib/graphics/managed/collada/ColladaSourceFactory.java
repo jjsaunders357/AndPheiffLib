@@ -1,7 +1,10 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
+import com.pheiffware.lib.utils.dom.DomUtils;
+import com.pheiffware.lib.utils.dom.ElementObjectFactory;
+import com.pheiffware.lib.utils.dom.XMLParseException;
+
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Created by Steve on 2/15/2016.
@@ -9,20 +12,20 @@ import org.w3c.dom.NodeList;
 public class ColladaSourceFactory implements ElementObjectFactory<ColladaSource>
 {
     @Override
-    public ColladaSource createFromElement(Element element) throws ColladaParseException
+    public ColladaSource createFromElement(Element element) throws XMLParseException
     {
-        Element techniqueCommon = Collada.getSingleSubElement(element, "technique_common");
+        Element techniqueCommon = DomUtils.getSingleSubElement(element, "technique_common");
         if (techniqueCommon == null)
         {
             return null;
         }
 
 
-        Element floatsElement = Collada.assertGetSingleSubElement(element, "float_array");
+        Element floatsElement = DomUtils.assertGetSingleSubElement(element, "float_array");
         String floatsID = floatsElement.getAttribute("id");
-        float[] rawFloats = Collada.getFloatsFromElement(floatsElement);
+        float[] rawFloats = DomUtils.getFloatsFromElement(floatsElement);
 
-        Element accessorElement = Collada.assertGetSingleSubElement(element, "accessor");
+        Element accessorElement = DomUtils.assertGetSingleSubElement(element, "accessor");
         ColladaAccessor accessor = new ColladaAccessor(accessorElement);
 
 
