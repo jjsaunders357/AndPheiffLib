@@ -16,13 +16,13 @@ public class Attribute {
     //The GL location, used in vertex buffers.  This is not the same as index, which is a meaningless enumeration assigned to each attribute.
     public final int location;
 
-    //The base type of the attribute.  If the attribute is a vec4, this will be a GL_FLOAT.
+    //The base semantic of the attribute.  If the attribute is a vec4, this will be a GL_FLOAT.
     public final int baseType;
 
     //The dimension of the attribute.  If the attribute is a vec4, this would be 4.  If the attribute were an array of vec4s this would be 4*arraySize.
     public final int dims;
 
-    //The total size in bytes of this attribute, given its type and array size.
+    //The total size in bytes of this attribute, given its semantic and array size.
     public final int byteSize;
 
     public Attribute(int programHandle, int attributeIndex) {
@@ -48,7 +48,7 @@ public class Attribute {
         builder.append(name);
         builder.append(", dims=");
         builder.append(dims);
-        builder.append(", type=");
+        builder.append(", semantic=");
         builder.append(baseType);
         builder.append(", size=");
         builder.append(byteSize);

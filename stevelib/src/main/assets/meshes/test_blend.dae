@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.75.0 commit date:2015-07-07, commit time:14:56, hash:c27589e</authoring_tool>
     </contributor>
-    <created>2016-02-15T01:52:22</created>
-    <modified>2016-02-15T01:52:22</modified>
+    <created>2016-02-15T22:30:33</created>
+    <modified>2016-02-15T22:30:33</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -105,6 +105,9 @@
     <image id="steel_png" name="steel_png">
       <init_from>steel.png</init_from>
     </image>
+    <image id="face_png" name="face_png">
+      <init_from>face.png</init_from>
+    </image>
   </library_images>
   <library_effects>
     <effect id="Steel-effect">
@@ -169,6 +172,42 @@
         </technique>
       </profile_COMMON>
     </effect>
+    <effect id="Crazy-effect">
+      <profile_COMMON>
+        <newparam sid="face_png-surface">
+          <surface type="2D">
+            <init_from>face_png</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="face_png-sampler">
+          <sampler2D>
+            <source>face_png-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="face_png-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.5 0.5 0.5 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">50</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
   </library_effects>
   <library_materials>
     <material id="Steel-material" name="Steel">
@@ -176,6 +215,9 @@
     </material>
     <material id="Purple-material" name="Purple">
       <instance_effect url="#Purple-effect"/>
+    </material>
+    <material id="Crazy-material" name="Crazy">
+      <instance_effect url="#Crazy-effect"/>
     </material>
   </library_materials>
   <library_geometries>
@@ -202,7 +244,7 @@
           </technique_common>
         </source>
         <source id="CubeTexMesh-mesh-map-0">
-          <float_array id="CubeTexMesh-mesh-map-0-array" count="72">0.9998999 9.998e-5 0.9998999 0.9999001 9.998e-5 0.9999001 0 0 0 0 0 0 9.998e-5 0.9999001 1.0004e-4 9.998e-5 0.9999001 9.998e-5 9.998e-5 0.9999001 1.0004e-4 9.998e-5 0.9999001 9.998e-5 9.998e-5 9.998e-5 0.9999001 9.998e-5 0.9999001 0.9999001 0.9999001 0.9999001 1.0004e-4 0.9999001 9.998e-5 9.998e-5 1.0001e-4 1.00099e-4 0.9998999 9.998e-5 9.998e-5 0.9999001 0 0 0 0 0 0 0.9999001 0.9999001 9.998e-5 0.9999001 0.9999001 9.998e-5 0.9999001 0.9999001 9.998e-5 0.9999001 0.9999001 9.998e-5 1.0004e-4 0.9999001 9.998e-5 9.998e-5 0.9999001 0.9999001 0.9999001 9.998e-5 0.9999001 0.9999001 9.998e-5 9.998e-5</float_array>
+          <float_array id="CubeTexMesh-mesh-map-0-array" count="72">0 0 0.9999999 0 1 0.9999999 0 2.08616e-7 0.9999999 0 1 0.9999998 0 2.68221e-7 0.9999997 0 1 0.9999998 0.9999999 0 1 0.9999999 0 1 1 1 0 1 0 0 0.9999999 0 1 0.9999999 1.49012e-7 1 0 1 0 0 1 0.9999999 0 1 0 2.08616e-7 1 0.9999998 3.8743e-7 1 0 2.68221e-7 1 0.9999998 0 0 0.9999999 0 0 1 1 0 1 1 0 0 0 1.49012e-7 0.9999999 0 1.49012e-7 1</float_array>
           <technique_common>
             <accessor source="#CubeTexMesh-mesh-map-0-array" count="36" stride="2">
               <param name="S" type="float"/>
@@ -310,14 +352,24 @@
             </accessor>
           </technique_common>
         </source>
+        <source id="Plane-mesh-map-0">
+          <float_array id="Plane-mesh-map-0-array" count="12">0 1.49012e-7 0.9999999 0 1 0.9999999 1.49012e-7 1 0 1.49012e-7 1 0.9999999</float_array>
+          <technique_common>
+            <accessor source="#Plane-mesh-map-0-array" count="6" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
         <vertices id="Plane-mesh-vertices">
           <input semantic="POSITION" source="#Plane-mesh-positions"/>
         </vertices>
         <polylist material="Purple-material" count="2">
           <input semantic="VERTEX" source="#Plane-mesh-vertices" offset="0"/>
           <input semantic="NORMAL" source="#Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Plane-mesh-map-0" offset="2" set="0"/>
           <vcount>3 3 </vcount>
-          <p>1 0 3 0 2 0 0 0 1 0 2 0</p>
+          <p>1 0 0 3 0 1 2 0 2 0 0 3 1 0 4 2 0 5</p>
         </polylist>
       </mesh>
     </geometry>
@@ -327,14 +379,29 @@
     <visual_scene id="Scene" name="Scene">
       <node id="Camera" name="Camera" type="NODE">
         <matrix sid="transform">0.8875477 -0.1610049 0.4316671 0.4718921 0.4607157 0.3101662 -0.8315877 -10.33424 1.18651e-6 0.9369496 0.3494648 3.949155 0 0 0 1</matrix>
+        <translate sid="location">0.4718921 -10.33424 3.949155</translate>
+        <rotate sid="rotationZ">0 0 1 27.4333</rotate>
+        <rotate sid="rotationY">0 1 0 -6.79821e-5</rotate>
+        <rotate sid="rotationX">1 0 0 69.54542</rotate>
+        <scale sid="scale">0.9999999 1 1</scale>
         <instance_camera url="#Camera-camera"/>
       </node>
       <node id="Lamp" name="Lamp" type="NODE">
         <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
+        <translate sid="location">4.076245 1.005454 5.903862</translate>
+        <rotate sid="rotationZ">0 0 1 106.9363</rotate>
+        <rotate sid="rotationY">0 1 0 3.163707</rotate>
+        <rotate sid="rotationX">1 0 0 37.26105</rotate>
+        <scale sid="scale">1 0.9999999 1</scale>
         <instance_light url="#Lamp-light"/>
       </node>
       <node id="CubeTex" name="CubeTex" type="NODE">
         <matrix sid="transform">1 0 0 -4.505322 0 1 0 -2.809219 0 0 1 0.3005205 0 0 0 1</matrix>
+        <translate sid="location">-4.505322 -2.809219 0.3005205</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
         <instance_geometry url="#CubeTexMesh-mesh" name="CubeTex">
           <bind_material>
             <technique_common>
@@ -347,10 +414,20 @@
       </node>
       <node id="CubeNoMat" name="CubeNoMat" type="NODE">
         <matrix sid="transform">1 0 0 -4.328813 0 1 0 1.973417 0 0 1 0.2699398 0 0 0 1</matrix>
+        <translate sid="location">-4.328813 1.973417 0.2699398</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
         <instance_geometry url="#CubeNoMatMesh-mesh" name="CubeNoMat"/>
       </node>
       <node id="CubePurple" name="CubePurple" type="NODE">
         <matrix sid="transform">1 0 0 -4.779211 0 1 0 -0.4646573 0 0 1 0.7965328 0 0 0 1</matrix>
+        <translate sid="location">-4.779211 -0.4646573 0.7965328</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
         <instance_geometry url="#CubePurpleMesh-mesh" name="CubePurple">
           <bind_material>
             <technique_common>
@@ -361,10 +438,20 @@
       </node>
       <node id="Plane" name="Plane" type="NODE">
         <matrix sid="transform">1 0 0 -2.199939 0 1 0 4.548608 0 0 1 0.6102273 0 0 0 1</matrix>
+        <translate sid="location">-2.199939 4.548608 0.6102273</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
         <instance_geometry url="#Plane-mesh" name="Plane">
           <bind_material>
             <technique_common>
-              <instance_material symbol="Purple-material" target="#Purple-material"/>
+              <instance_material symbol="Crazy-material" target="#Crazy-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="Purple-material" target="#Purple-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
             </technique_common>
           </bind_material>
         </instance_geometry>

@@ -13,7 +13,7 @@ import org.w3c.dom.NodeList;
 public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
 {
     @Override
-    public ColladaEffect createFromElement(String id, Element element) throws ColladaParseException
+    public ColladaEffect createFromElement(Element element) throws ColladaParseException
     {
 
         Element profileCommon = Collada.assertGetSingleSubElement(element, "profile_COMMON");
@@ -55,7 +55,7 @@ public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
             Element surface = Collada.getSingleSubElement(newparamElement, "surface");
             if (surface != null)
             {
-                String type = surface.getAttribute("type");
+                String type = surface.getAttribute("semantic");
                 if (type.equals("2D"))
                 {
                     Element init_from = Collada.getSingleSubElement(newparamElement, "init_from");
@@ -72,7 +72,7 @@ Sketchup effect example:
     <effect id="ID12">
         <profile_COMMON>
             <newparam sid="ID14">
-                <surface type="2D">
+                <surface semantic="2D">
                     <init_from>ID13</init_from>   ////This id is an image reference
                 </surface>
             </newparam>
@@ -95,7 +95,7 @@ Blender effect example:
     <effect id="Steel-effect">
       <profile_COMMON>
         <newparam sid="steel_png-surface">
-          <surface type="2D">
+          <surface semantic="2D">
             <init_from>steel_png</init_from>
           </surface>
         </newparam>

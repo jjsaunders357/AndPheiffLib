@@ -72,7 +72,7 @@ public class TestPhysicsView extends View
 	}
 
 	/**
-	 * Draw an entity, based on its type
+	 * Draw an entity, based on its semantic
 	 * 
 	 * @param canvas
 	 * @param entity

@@ -11,10 +11,10 @@ import com.pheiffware.lib.graphics.FatalGraphicsException;
 public class PheiffGLUtils {
 
     /**
-     * Get the dimension of a gl type
+     * Get the dimension of a gl semantic
      * Example:
      * GL_FLOAT_VEC2 has dimension 2
-     * @param type gl type constant
+     * @param type gl semantic constant
      * @return dimension
      */
     public static int getGLTypeDims(int type) {
@@ -50,16 +50,16 @@ public class PheiffGLUtils {
             case GLES20.GL_FLOAT_MAT4:
                 return 16;
             default:
-                throw new RuntimeException("Cannot get size of unsupported opengl type: " + type);
+                throw new RuntimeException("Cannot get size of unsupported opengl semantic: " + type);
         }
     }
 
     /**
-     * Get the "base type" for a gl type
-     * Example, for GL_FLOAT_VEC4, the base type is GL_FLOAT.
+     * Get the "base semantic" for a gl semantic
+     * Example, for GL_FLOAT_VEC4, the base semantic is GL_FLOAT.
      *
-     * @param type the gl type
-     * @return the corresponding base type
+     * @param type the gl semantic
+     * @return the corresponding base semantic
      */
     public static int getGLBaseType(int type) {
         switch (type) {
@@ -94,15 +94,15 @@ public class PheiffGLUtils {
             case GLES20.GL_FLOAT_MAT4:
                 return GLES20.GL_FLOAT;
             default:
-                throw new RuntimeException("Cannot get size of unsupported opengl type: " + type);
+                throw new RuntimeException("Cannot get size of unsupported opengl semantic: " + type);
         }
     }
 
     /**
-     * Get the size of a gl type
+     * Get the size of a gl semantic
      *
-     * @param type a type such as GLES20.GL_FLOAT
-     * @return size in bytes of the type
+     * @param type a semantic such as GLES20.GL_FLOAT
+     * @return size in bytes of the semantic
      */
     public static int getGLTypeSize(int type)
     {
@@ -138,7 +138,7 @@ public class PheiffGLUtils {
             case GLES20.GL_FLOAT_MAT4:
                 return 64;
             default:
-                throw new RuntimeException("Cannot get size of unsupported opengl type: " + type);
+                throw new RuntimeException("Cannot get size of unsupported opengl semantic: " + type);
         }
     }
 

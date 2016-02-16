@@ -2,9 +2,9 @@ package com.pheiffware.lib.graphics.managed.collada;
 
 import android.content.res.AssetManager;
 
-import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
+import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,33 +34,40 @@ public class Collada
     private final Map<String, String> imageFileNames = new HashMap<>();
     //Map from effect ids to effect data (effect data is identical to materials)
     private final Map<String, ColladaEffect> effects = new HashMap<>();
+
+    //TODO: Add name lookup, id is meaningless
     //Map from material ids to material data
     private final Map<String, Material> materials = new HashMap<>();
+    //Map from mesh ids to meshes
+    private Map<String, Mesh> meshes = new HashMap<>();
 
 
     public void loadCollada(AssetManager assetManager, String assetFileName) throws ColladaParseException
     {
-        InputStream input = null;
         try
         {
-            input = assetManager.open(assetFileName);
+            loadCollada(assetManager.open(assetFileName));
         }
         catch (IOException e)
         {
             throw new ColladaParseException(e);
         }
-        loadCollada(input);
     }
 
     public void loadCollada(InputStream input) throws ColladaParseException
     {
         Document doc = loadColladaDocument(input);
         Element libraryImagesElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_images");
-        loadMapFromElement(imageFileNames, libraryImagesElement, "image", new ColladaLibraryImageFactory());
+        putSubElementsInMap(imageFileNames, libraryImagesElement, "image", "id", new ColladaLibraryImageFactory());
         Element libraryEffectsElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_effects");
-        loadMapFromElement(effects, libraryEffectsElement, "effect", new ColladaEffectFactory());
+        putSubElementsInMap(effects, libraryEffectsElement, "effect", "id", new ColladaEffectFactory());
         Element libraryMaterialsElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_materials");
-        loadMapFromElement(materials, libraryMaterialsElement, "material", new ColladaMaterialFactory(imageFileNames, effects));
+        putSubElementsInMap(materials, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, effects));
+        Element libraryGeometriesElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_geometries");
+        putSubElementsInMap(meshes, libraryGeometriesElement, "geometry", "id", new ColladaMeshFactory());
+        Element instancesElement = assertGetSingleSubElement(doc.getDocumentElement(), "library_geometries");
+        putSubElementsInMap(meshes, libraryGeometriesElement, "geometry", "id", new ColladaMeshFactory());
+
     }
 
     private Document loadColladaDocument(InputStream input) throws ColladaParseException
@@ -91,16 +98,17 @@ public class Collada
 
 
     /**
-     * Go through an Element which contains sub-elements of a known type with "id" attributes.  For each sub-element, turn it into an object with given factory and put it in a map using id as the key.
+     * Go through an Element which contains sub-elements of a known semantic with "id" attributes.  For each sub-element, turn it into an object with given factory and put it in a map using id as the key.
      *
      * @param map                  Where to store resulting id --> T pairs
      * @param rootElement          The element in which to search for sub-elements
      * @param subTagName           The name of sub-element tags
-     * @param elementObjectFactory Given a sub-element, this produces an object of type T
-     * @param <T>                  The value type to store in the map.
+     * @param keyAttribute         Each subtag should have this attribute which is used as the key to intersert into map.
+     * @param elementObjectFactory Given a sub-element, this produces an object of semantic T
+     * @param <T>                  The value semantic to store in the map.
      * @throws ColladaParseException
      */
-    public static <T> void loadMapFromElement(Map<String, T> map, Element rootElement, String subTagName, ElementObjectFactory<T> elementObjectFactory) throws ColladaParseException
+    public static <T> void putSubElementsInMap(Map<String, T> map, Element rootElement, String subTagName, String keyAttribute, ElementObjectFactory<T> elementObjectFactory) throws ColladaParseException
     {
         NodeList nodes = rootElement.getElementsByTagName(subTagName);
         for (int i = 0; i < nodes.getLength(); i++)
@@ -108,9 +116,12 @@ public class Collada
             try
             {
                 Element element = (Element) nodes.item(i);
-                String id = element.getAttribute("id");
-                T elementObject = elementObjectFactory.createFromElement(id, element);
-                map.put(id, elementObject);
+                String id = element.getAttribute(keyAttribute);
+                T elementObject = elementObjectFactory.createFromElement(element);
+                if (elementObject != null)
+                {
+                    map.put(id, elementObject);
+                }
             }
             catch (ClassCastException e)
             {
@@ -179,19 +190,66 @@ public class Collada
         {
             return null;
         }
-        NodeList childNodes = colorElement.getChildNodes();
+        float[] components = getFloatsFromElement(colorElement);
+        return new GColor(components);
+    }
+
+    public static int[] getIntsFromElement(Element element) throws ColladaParseException
+    {
+        NodeList childNodes = element.getChildNodes();
         if (childNodes.getLength() != 1)
         {
-            throw new ColladaParseException("Color node did not have text node child");
+            throw new ColladaParseException("Node did not have text node child");
         }
-        String colorString = childNodes.item(0).getNodeValue();
-        String[] rgbaString = colorString.split(" ");
-        float[] color = new float[4];
-        color[0] = Float.valueOf(rgbaString[0]);
-        color[1] = Float.valueOf(rgbaString[1]);
-        color[2] = Float.valueOf(rgbaString[2]);
-        color[3] = Float.valueOf(rgbaString[3]);
-        return new GColor(color);
+        String intsString = childNodes.item(0).getNodeValue();
+        String[] arrayOfFloatStrings = intsString.split(" ");
+        int[] ints = new int[arrayOfFloatStrings.length];
+        for (int i = 0; i < arrayOfFloatStrings.length; i++)
+        {
+            ints[i] = Integer.valueOf(arrayOfFloatStrings[i]);
+        }
+        return ints;
+    }
+
+    public static short[] getShortsFromElement(Element element) throws ColladaParseException
+    {
+        NodeList childNodes = element.getChildNodes();
+        if (childNodes.getLength() != 1)
+        {
+            throw new ColladaParseException("Node did not have text node child");
+        }
+        String shortsString = childNodes.item(0).getNodeValue();
+        String[] arrayOfFloatStrings = shortsString.split(" ");
+        short[] shorts = new short[arrayOfFloatStrings.length];
+        for (short i = 0; i < arrayOfFloatStrings.length; i++)
+        {
+            shorts[i] = Short.valueOf(arrayOfFloatStrings[i]);
+        }
+        return shorts;
+    }
+
+    /**
+     * Get an array of floats from the text node of an element
+     *
+     * @param element Element to extract from
+     * @return float[]
+     * @throws ColladaParseException
+     */
+    public static float[] getFloatsFromElement(Element element) throws ColladaParseException
+    {
+        NodeList childNodes = element.getChildNodes();
+        if (childNodes.getLength() != 1)
+        {
+            throw new ColladaParseException("Node did not have text node child");
+        }
+        String floatsString = childNodes.item(0).getNodeValue();
+        String[] arrayOfFloatStrings = floatsString.split(" ");
+        float[] floats = new float[arrayOfFloatStrings.length];
+        for (int i = 0; i < arrayOfFloatStrings.length; i++)
+        {
+            floats[i] = Float.valueOf(arrayOfFloatStrings[i]);
+        }
+        return floats;
     }
 
     /**
@@ -238,4 +296,6 @@ public class Collada
 //            throw new FatalGraphicsException("Collada schema file cannot be found at URL",e);
 //        }
     }
+
+
 }

@@ -21,13 +21,9 @@ public class ColladaMaterialFactory implements ElementObjectFactory<Material>
     }
 
     @Override
-    public Material createFromElement(String id, Element element) throws ColladaParseException
+    public Material createFromElement(Element element) throws ColladaParseException
     {
-            /*
-            <material id="ID4" name="material">
-                <instance_effect url="#ID3" />
-            </material>
-            */
+        String name = element.getAttribute("name");
         Element instance_effect = Collada.assertGetSingleSubElement(element, "instance_effect");
         String url = instance_effect.getAttribute("url");
         String effectKey = url.substring(1);
@@ -36,6 +32,11 @@ public class ColladaMaterialFactory implements ElementObjectFactory<Material>
         //Will be null in imageReference is null
         String imageFileName = imageFileNames.get(effect.imageFileNameKey);
 
-        return new Material(imageFileName, effect.ambientColor, effect.diffuseColor, effect.specularColor, effect.shininess);
+        return new Material(name, imageFileName, effect.ambientColor, effect.diffuseColor, effect.specularColor, effect.shininess);
     }
+/*Example:
+    <material id="ID4" name="material">
+        <instance_effect url="#ID3" />
+    </material>
+*/
 }

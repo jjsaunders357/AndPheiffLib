@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 public class ColladaLibraryImageFactory implements ElementObjectFactory<String>
 {
     @Override
-    public String createFromElement(String id, Element element) throws ColladaParseException
+    public String createFromElement(Element element) throws ColladaParseException
     {
         Element init_from = Collada.assertGetSingleSubElement(element, "init_from");
         String imageFileName = init_from.getFirstChild().getTextContent();

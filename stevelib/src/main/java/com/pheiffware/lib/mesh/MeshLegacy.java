@@ -38,7 +38,7 @@ public class MeshLegacy
 				}
 				else
 				{
-					throw new FatalGraphicsException("Cannot load mesh of type: \"" + meshType + "\"");
+					throw new FatalGraphicsException("Cannot load mesh of semantic: \"" + meshType + "\"");
 				}
 				meshType = reader.readLine();
 			}

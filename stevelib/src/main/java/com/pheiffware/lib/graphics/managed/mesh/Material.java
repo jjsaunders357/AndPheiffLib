@@ -9,14 +9,17 @@ import org.w3c.dom.Element;
  */
 public class Material
 {
+    //Recognizable name used in creation software (id is unique, but possibly meaningless).
+    public final String name;
     public final String imageFileName;
     public final GColor ambientColor;
     public final GColor diffuseColor;
     public final GColor specularColor;
     public final float shininess;
 
-    public Material(String imageFileName, GColor ambientColor, GColor diffuseColor, GColor specularColor, float shininess)
+    public Material(String name, String imageFileName, GColor ambientColor, GColor diffuseColor, GColor specularColor, float shininess)
     {
+        this.name = name;
         this.imageFileName = imageFileName;
         this.ambientColor = ambientColor;
         this.diffuseColor = diffuseColor;

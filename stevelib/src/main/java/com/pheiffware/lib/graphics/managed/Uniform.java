@@ -46,7 +46,7 @@ public class Uniform
         builder.append(name);
         builder.append(", dims=");
         builder.append(dims);
-        builder.append(", type=");
+        builder.append(", semantic=");
         builder.append(baseType);
         builder.append(", location=");
         builder.append(location);

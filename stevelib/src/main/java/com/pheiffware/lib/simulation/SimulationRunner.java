@@ -6,7 +6,7 @@ import com.pheiffware.lib.Utils;
  * Manages a simulation by running it in a background thread.  This deals with the threading/synchronization issues related to this.
  * How the simulation is actually run is done by the runSimulation() method calling this class' timeStep() method as appropriate.
  *
- * @param <SimState> The type of state returned from the simulation.
+ * @param <SimState> The semantic of state returned from the simulation.
  * @author Steve
  */
 public abstract class SimulationRunner<SimState> implements Runnable {
