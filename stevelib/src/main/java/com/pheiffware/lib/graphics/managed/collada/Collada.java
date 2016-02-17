@@ -3,7 +3,8 @@ package com.pheiffware.lib.graphics.managed.collada;
 import android.content.res.AssetManager;
 
 import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
+import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -34,12 +35,17 @@ public class Collada
     //Map from effect ids to effect data (effect data is identical to materials)
     private final Map<String, ColladaEffect> effects = new HashMap<>();
 
-    //TODO: Add name lookup, id is meaningless
     //Map from material ids to material data
-    private final Map<String, Material> materials = new HashMap<>();
-    //Map from mesh ids to meshes
-    private Map<String, Mesh> meshes = new HashMap<>();
+    private final Map<String, Material> materialsByIDMap = new HashMap<>();
 
+    //Map from material ids to material data
+    private final Map<String, Material> materialsByNameMap = new HashMap<>();
+
+    //Map from mesh ids to meshes
+    private Map<String, MeshGroup> meshCollection3Ds = new HashMap<>();
+
+    //Holds actual objects
+    private Map<String, Object3D> objects = new HashMap<>();
 
     public void loadCollada(AssetManager assetManager, String assetFileName) throws XMLParseException
     {
@@ -61,12 +67,19 @@ public class Collada
         Element libraryEffectsElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_effects");
         DomUtils.putSubElementsInMap(effects, libraryEffectsElement, "effect", "id", new ColladaEffectFactory());
         Element libraryMaterialsElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_materials");
-        DomUtils.putSubElementsInMap(materials, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, effects));
+        DomUtils.putSubElementsInMap(materialsByIDMap, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, effects));
         Element libraryGeometriesElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_geometries");
-        DomUtils.putSubElementsInMap(meshes, libraryGeometriesElement, "geometry", "id", new ColladaMeshFactory());
-        Element instancesElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_geometries");
-        DomUtils.putSubElementsInMap(meshes, libraryGeometriesElement, "geometry", "id", new ColladaMeshFactory());
+        DomUtils.putSubElementsInMap(meshCollection3Ds, libraryGeometriesElement, "geometry", "id", new ColladaMeshGroupFactory(materialsByIDMap));
 
+        Element library_visual_scenes = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_visual_scenes");
+        Element visual_scene = DomUtils.assertGetSingleSubElement(library_visual_scenes, "visual_scene");
+        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(visual_scene);
+
+        //Map material's by name
+        for (Material material : materialsByIDMap.values())
+        {
+            materialsByNameMap.put(material.name, material);
+        }
     }
 
     private Document loadColladaDocument(InputStream input) throws XMLParseException

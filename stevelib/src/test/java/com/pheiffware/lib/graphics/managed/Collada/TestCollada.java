@@ -59,7 +59,7 @@ public class TestCollada
         //Input 3 has 3 items each size 3 {0,1,2}, {3,4,5}, {6,7,8}
         inputs.put("input3", new ColladaInput("input3", new ColladaSource(3, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8}), 1));
 
-        ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(collatedIndices, vertexCount, inputs);
+        ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(inputs, collatedIndices, vertexCount);
         Mesh mesh = colladaMeshUncollator.createMesh();
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4}, mesh.primitiveIndices);
         assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh.data.get("input1"), 0);

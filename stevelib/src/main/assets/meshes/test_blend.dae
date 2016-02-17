@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.75.0 commit date:2015-07-07, commit time:14:56, hash:c27589e</authoring_tool>
     </contributor>
-    <created>2016-02-15T23:01:15</created>
-    <modified>2016-02-15T23:01:15</modified>
+    <created>2016-02-15T23:35:47</created>
+    <modified>2016-02-15T23:35:47</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -224,9 +224,9 @@
     <geometry id="CubeTexMesh-mesh" name="CubeTexMesh">
       <mesh>
         <source id="CubeTexMesh-mesh-positions">
-          <float_array id="CubeTexMesh-mesh-positions-array" count="24">-1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 -1 -1 1 -1 1 1 1 -1 1 1 1</float_array>
+          <float_array id="CubeTexMesh-mesh-positions-array" count="48">-1.273889 1.344562 -0.5039877 -1.273889 1.344562 1.496012 -1.273889 3.344562 -0.5039877 -1.273889 3.344562 1.496012 0.7261109 1.344562 -0.5039877 0.7261109 1.344562 1.496012 0.7261109 3.344562 -0.5039877 0.7261109 3.344562 1.496012 -1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 -1 -1 1 -1 1 1 1 -1 1 1 1</float_array>
           <technique_common>
-            <accessor source="#CubeTexMesh-mesh-positions-array" count="8" stride="3">
+            <accessor source="#CubeTexMesh-mesh-positions-array" count="16" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
@@ -234,9 +234,9 @@
           </technique_common>
         </source>
         <source id="CubeTexMesh-mesh-normals">
-          <float_array id="CubeTexMesh-mesh-normals-array" count="18">-1 0 0 0 1 0 1 0 0 0 -1 0 0 0 -1 0 0 1</float_array>
+          <float_array id="CubeTexMesh-mesh-normals-array" count="42">-0.5773503 0.5773503 0.5773503 -0.5773503 0.5773503 -0.5773503 -0.5773503 -0.5773503 -0.5773503 0.5773503 0.5773503 0.5773503 0.5773503 0.5773503 -0.5773503 0.5773503 -0.5773503 0.5773503 0.5773503 -0.5773503 -0.5773503 -0.5773503 -0.5773503 0.5773503 -1 0 0 0 1 0 1 0 0 0 -1 0 0 0 -1 0 0 1</float_array>
           <technique_common>
-            <accessor source="#CubeTexMesh-mesh-normals-array" count="6" stride="3">
+            <accessor source="#CubeTexMesh-mesh-normals-array" count="14" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
@@ -244,9 +244,9 @@
           </technique_common>
         </source>
         <source id="CubeTexMesh-mesh-map-0">
-          <float_array id="CubeTexMesh-mesh-map-0-array" count="72">0 0 0.9999999 0 1 0.9999999 0 2.08616e-7 0.9999999 0 1 0.9999998 0 2.68221e-7 0.9999997 0 1 0.9999998 0.9999999 0 1 0.9999999 0 1 1 1 0 1 0 0 0.9999999 0 1 0.9999999 1.49012e-7 1 0 1 0 0 1 0.9999999 0 1 0 2.08616e-7 1 0.9999998 3.8743e-7 1 0 2.68221e-7 1 0.9999998 0 0 0.9999999 0 0 1 1 0 1 1 0 0 0 1.49012e-7 0.9999999 0 1.49012e-7 1</float_array>
+          <float_array id="CubeTexMesh-mesh-map-0-array" count="144">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9999999 0 1 0.9999999 0 2.08616e-7 0.9999999 0 1 0.9999998 0 2.68221e-7 0.9999997 0 1 0.9999998 0.9999999 0 1 0.9999999 0 1 1 1 0 1 0 0 0.9999999 0 1 0.9999999 1.49012e-7 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0.9999999 0 1 0 2.08616e-7 1 0.9999998 3.8743e-7 1 0 2.68221e-7 1 0.9999998 0 0 0.9999999 0 0 1 1 0 1 1 0 0 0 1.49012e-7 0.9999999 0 1.49012e-7 1</float_array>
           <technique_common>
-            <accessor source="#CubeTexMesh-mesh-map-0-array" count="36" stride="2">
+            <accessor source="#CubeTexMesh-mesh-map-0-array" count="72" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
@@ -260,7 +260,14 @@
           <input semantic="NORMAL" source="#CubeTexMesh-mesh-normals" offset="1"/>
           <input semantic="TEXCOORD" source="#CubeTexMesh-mesh-map-0" offset="2" set="0"/>
           <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
-          <p>3 0 0 2 0 1 0 0 2 7 1 3 6 1 4 2 1 5 5 2 6 4 2 7 6 2 8 1 3 9 0 3 10 4 3 11 2 4 12 6 4 13 4 4 14 7 5 15 3 5 16 1 5 17 1 0 18 3 0 19 0 0 20 3 1 21 7 1 22 2 1 23 7 2 24 5 2 25 6 2 26 5 3 27 1 3 28 4 3 29 0 4 30 2 4 31 4 4 32 5 5 33 7 5 34 1 5 35</p>
+          <p>11 8 18 10 8 19 8 8 20 15 9 21 14 9 22 10 9 23 13 10 24 12 10 25 14 10 26 9 11 27 8 11 28 12 11 29 10 12 30 14 12 31 12 12 32 15 13 33 11 13 34 9 13 35 9 8 54 11 8 55 8 8 56 11 9 57 15 9 58 10 9 59 15 10 60 13 10 61 14 10 62 13 11 63 9 11 64 12 11 65 8 12 66 10 12 67 12 12 68 13 13 69 15 13 70 9 13 71</p>
+        </polylist>
+        <polylist material="Purple-material" count="12">
+          <input semantic="VERTEX" source="#CubeTexMesh-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#CubeTexMesh-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#CubeTexMesh-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>3 0 0 2 1 1 0 2 2 7 3 3 6 4 4 2 1 5 5 5 6 4 6 7 6 4 8 1 7 9 0 2 10 4 6 11 2 1 12 6 4 13 4 6 14 7 3 15 3 0 16 1 7 17 1 7 36 3 0 37 0 2 38 3 0 39 7 3 40 2 1 41 7 3 42 5 5 43 6 4 44 5 5 45 1 7 46 4 6 47 0 2 48 2 1 49 4 6 50 5 5 51 7 3 52 1 7 53</p>
         </polylist>
       </mesh>
     </geometry>
@@ -294,39 +301,6 @@
           <input semantic="NORMAL" source="#CubeNoMatMesh-mesh-normals" offset="1"/>
           <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
           <p>3 0 2 0 0 0 7 1 6 1 2 1 5 2 4 2 6 2 1 3 0 3 4 3 2 4 6 4 4 4 7 5 3 5 1 5 1 0 3 0 0 0 3 1 7 1 2 1 7 2 5 2 6 2 5 3 1 3 4 3 0 4 2 4 4 4 5 5 7 5 1 5</p>
-        </polylist>
-      </mesh>
-    </geometry>
-    <geometry id="CubePurpleMesh-mesh" name="CubePurpleMesh">
-      <mesh>
-        <source id="CubePurpleMesh-mesh-positions">
-          <float_array id="CubePurpleMesh-mesh-positions-array" count="24">-1 -1 -1 -1 -1 1 -1 1 -1 -1 1 1 1 -1 -1 1 -1 1 1 1 -1 1 1 1</float_array>
-          <technique_common>
-            <accessor source="#CubePurpleMesh-mesh-positions-array" count="8" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="CubePurpleMesh-mesh-normals">
-          <float_array id="CubePurpleMesh-mesh-normals-array" count="24">-0.5773503 0.5773503 0.5773503 -0.5773503 0.5773503 -0.5773503 -0.5773503 -0.5773503 -0.5773503 0.5773503 0.5773503 0.5773503 0.5773503 0.5773503 -0.5773503 0.5773503 -0.5773503 0.5773503 0.5773503 -0.5773503 -0.5773503 -0.5773503 -0.5773503 0.5773503</float_array>
-          <technique_common>
-            <accessor source="#CubePurpleMesh-mesh-normals-array" count="8" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <vertices id="CubePurpleMesh-mesh-vertices">
-          <input semantic="POSITION" source="#CubePurpleMesh-mesh-positions"/>
-        </vertices>
-        <polylist material="Purple-material" count="12">
-          <input semantic="VERTEX" source="#CubePurpleMesh-mesh-vertices" offset="0"/>
-          <input semantic="NORMAL" source="#CubePurpleMesh-mesh-normals" offset="1"/>
-          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
-          <p>3 0 2 1 0 2 7 3 6 4 2 1 5 5 4 6 6 4 1 7 0 2 4 6 2 1 6 4 4 6 7 3 3 0 1 7 1 7 3 0 0 2 3 0 7 3 2 1 7 3 5 5 6 4 5 5 1 7 4 6 0 2 2 1 4 6 5 5 7 3 1 7</p>
         </polylist>
       </mesh>
     </geometry>
@@ -387,25 +361,28 @@
         <instance_camera url="#Camera-camera"/>
       </node>
       <node id="Lamp" name="Lamp" type="NODE">
-        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
-        <translate sid="location">4.076245 1.005454 5.903862</translate>
+        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 -0.6573229 0.9551712 -0.1998834 0.2183912 -4.836433 -0.05518906 0.6045247 0.7946723 3.145922 0 0 0 1</matrix>
+        <translate sid="location">-0.6573229 -4.836433 3.145922</translate>
         <rotate sid="rotationZ">0 0 1 106.9363</rotate>
         <rotate sid="rotationY">0 1 0 3.163707</rotate>
         <rotate sid="rotationX">1 0 0 37.26105</rotate>
         <scale sid="scale">1 0.9999999 1</scale>
         <instance_light url="#Lamp-light"/>
       </node>
-      <node id="CubeTex" name="CubeTex" type="NODE">
+      <node id="JoinedCubes" name="JoinedCubes" type="NODE">
         <matrix sid="transform">1 0 0 -4.505322 0 1 0 -2.809219 0 0 1 0.3005205 0 0 0 1</matrix>
         <translate sid="location">-4.505322 -2.809219 0.3005205</translate>
         <rotate sid="rotationZ">0 0 1 0</rotate>
         <rotate sid="rotationY">0 1 0 0</rotate>
         <rotate sid="rotationX">1 0 0 0</rotate>
         <scale sid="scale">1 1 1</scale>
-        <instance_geometry url="#CubeTexMesh-mesh" name="CubeTex">
+        <instance_geometry url="#CubeTexMesh-mesh" name="JoinedCubes">
           <bind_material>
             <technique_common>
               <instance_material symbol="Steel-material" target="#Steel-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="Purple-material" target="#Purple-material">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>
@@ -421,24 +398,9 @@
         <scale sid="scale">1 1 1</scale>
         <instance_geometry url="#CubeNoMatMesh-mesh" name="CubeNoMat"/>
       </node>
-      <node id="CubePurple" name="CubePurple" type="NODE">
-        <matrix sid="transform">1 0 0 -4.779211 0 1 0 -0.4646573 0 0 1 0.7965328 0 0 0 1</matrix>
-        <translate sid="location">-4.779211 -0.4646573 0.7965328</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
-        <instance_geometry url="#CubePurpleMesh-mesh" name="CubePurple">
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="Purple-material" target="#Purple-material"/>
-            </technique_common>
-          </bind_material>
-        </instance_geometry>
-      </node>
       <node id="Plane" name="Plane" type="NODE">
-        <matrix sid="transform">1 0 0 -2.199939 0 1 0 4.548608 0 0 1 0.6102273 0 0 0 1</matrix>
-        <translate sid="location">-2.199939 4.548608 0.6102273</translate>
+        <matrix sid="transform">1 0 0 -0.8458132 0 1 0 -1.573471 0 0 1 0.06127155 0 0 0 1</matrix>
+        <translate sid="location">-0.8458132 -1.573471 0.06127155</translate>
         <rotate sid="rotationZ">0 0 1 0</rotate>
         <rotate sid="rotationY">0 1 0 0</rotate>
         <rotate sid="rotationX">1 0 0 0</rotate>
@@ -447,6 +409,46 @@
           <bind_material>
             <technique_common>
               <instance_material symbol="Crazy-material" target="#Crazy-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="Purple-material" target="#Purple-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Dup1" name="Dup1" type="NODE">
+        <matrix sid="transform">1 0 0 -1.365816 0 1 0 8.993331 0 0 1 0.2561069 0 0 0 1</matrix>
+        <translate sid="location">-1.365816 8.993331 0.2561069</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#CubeTexMesh-mesh" name="Dup1">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Steel-material" target="#Steel-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="Purple-material" target="#Purple-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Dup2" name="Dup2" type="NODE">
+        <matrix sid="transform">1 0 0 1.650226 0 1 0 9.073104 0 0 1 -0.05228877 0 0 0 1</matrix>
+        <translate sid="location">1.650226 9.073104 -0.05228877</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#CubeTexMesh-mesh" name="Dup2">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Steel-material" target="#Steel-material">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
               <instance_material symbol="Purple-material" target="#Purple-material">

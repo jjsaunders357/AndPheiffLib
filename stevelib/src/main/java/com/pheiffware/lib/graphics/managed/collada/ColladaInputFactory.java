@@ -14,7 +14,7 @@ public class ColladaInputFactory implements ElementObjectFactory<ColladaInput>
 {
     private final Map<String, ColladaSource> sources;
 
-    public ColladaInputFactory(Map<String, ColladaSource> sources, Integer offset)
+    public ColladaInputFactory(Map<String, ColladaSource> sources)
     {
         this.sources = sources;
     }

@@ -9,61 +9,30 @@ import java.util.Map;
 
 /**
  * Does the ugly job of untangling the ridiculous Collada input meshes vertex index data.
- * Collada index data is:
- * 1. Collated - There is a different index scheme for each aspect of each vertex.  (an aspect is something like position, normal, etc).
- * 2. Non uniform - Each aspect uses different vertex indices into source uncollatedData array.  Opengl requires only one uniform index buffer.  (Direct3D doesn't allow this either which is why its a terrible scheme).
- * <p/>
- * This produces new arrays of floats for each type of input such as POSITION, NORMAL, etc and maps them to the corresponding name.
- * Each array of floats is the same length in terms of number item counts.  For example, a position array might have 12 elements, but a texture uncollatedData array would have 8.
- * One consistent index buffer can be used to index into these arrays.
- * <p/>
- * To do this it looks for the total number of unique combinations of indices for each vertex.  For each unique combination there is one vertex worth of data in each aspect's array of floats
+ *
  * Created by Steve on 2/15/2016.
  */
 public class ColladaMeshUncollator
 {
+    private final ColladaRawMeshData colladaRawMeshData;
     private final Map<String, float[]> uncollatedData = new HashMap<>();
-    private final int collatedIndexStride;
     private short[] uncollatedIndices;
     private short numUniqueIndices;
 
-//    /**
-//     * Computes the input which has the maximum item count.  This is not the number of floats, but rather the number of groups of floats such as POSITIONS or TEXTCOORDS.
-//     * All inputs need to be scaled up to this size.
-//     * @param inputs
-//     * @return the input with the maximum count
-//     */
-//    private ColladaInput computeMaxCountInput(Collection<ColladaInput> inputs)
-//    {
-//        ColladaInput maxCountInput = null;
-//        int maxCount = -1;
-//        for (ColladaInput input : inputs)
-//        {
-//            if (input.source.count > maxCount)
-//            {
-//                maxCount = input.source.count;
-//                maxCountInput = input;
-//            }
-//        }
-//        return maxCountInput;
-//    }
-
     /**
      * Creates a new index for each unique combination of indices within a stride.
-     *
-     * @param collatedIndices     interleaved indices from which to exact the official uniform list
-     * @param collatedIndexStride
      */
-    private void generateUncollatedIndices(short[] collatedIndices, int collatedIndexStride)
+    private void generateUncollatedIndices()
     {
-        uncollatedIndices = new short[collatedIndices.length / collatedIndexStride];
-
+        uncollatedIndices = new short[colladaRawMeshData.vertexCount];
         Map<VertexIndexGroup, Short> indexMap = new HashMap<>();
         int uncollatedIndex = 0;
         numUniqueIndices = 0;
-        for (int collatedIndex = 0; collatedIndex < collatedIndices.length; collatedIndex += this.collatedIndexStride)
+        short[] collatedIndices = colladaRawMeshData.collatedIndices;
+        int collatedIndexStride = colladaRawMeshData.vertexStride;
+        for (int collatedIndex = 0; collatedIndex < collatedIndices.length; collatedIndex += collatedIndexStride)
         {
-            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(collatedIndices, collatedIndex, this.collatedIndexStride);
+            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(collatedIndices, collatedIndex, collatedIndexStride);
             Short uniqueIndex = indexMap.get(vertexIndexGroup);
             if (uniqueIndex == null)
             {
@@ -78,13 +47,13 @@ public class ColladaMeshUncollator
 
     /**
      * For each input, lookup its collated value for each vertex and store at the corresponding uncollated index
-     *
-     * @param collatedIndices
-     * @param inputs
+
      */
-    private void generateUncollatedData(short[] collatedIndices, Map<String, ColladaInput> inputs)
+    private void generateUncollatedData()
     {
-        for (Map.Entry<String, ColladaInput> entry : inputs.entrySet())
+        short[] collatedIndices = colladaRawMeshData.collatedIndices;
+        int collatedIndexStride = colladaRawMeshData.vertexStride;
+        for (Map.Entry<String, ColladaInput> entry : colladaRawMeshData.inputs.entrySet())
         {
             String key = entry.getKey();
             ColladaInput input = entry.getValue();
@@ -101,11 +70,16 @@ public class ColladaMeshUncollator
         }
     }
 
-    public ColladaMeshUncollator(short[] collatedIndices, int vertexCount, Map<String, ColladaInput> inputs)
+    public ColladaMeshUncollator(Map<String, ColladaInput> vertexDataInputs, short[] collatedIndices, int vertexCount)
     {
-        collatedIndexStride = collatedIndices.length / vertexCount;
-        generateUncollatedIndices(collatedIndices, collatedIndexStride);
-        generateUncollatedData(collatedIndices, inputs);
+        this(new ColladaRawMeshData(vertexDataInputs, collatedIndices, vertexCount));
+    }
+
+    public ColladaMeshUncollator(ColladaRawMeshData colladaRawMeshData)
+    {
+        this.colladaRawMeshData = colladaRawMeshData;
+        generateUncollatedIndices();
+        generateUncollatedData();
     }
 
     public Mesh createMesh()
