@@ -56,7 +56,7 @@ public class Collada
     private final Map<String, ColladaGeometry> geometries = new HashMap<>();
 
     //Map from node ids to completely defined meshGroups
-    private final Map<String, MeshGroup> meshGroupMaps = new HashMap<>();
+    private final Map<String, MeshGroup> meshGroups = new HashMap<>();
 
     public void loadCollada(AssetManager assetManager, String assetFileName) throws XMLParseException
     {
@@ -100,14 +100,13 @@ public class Collada
         Element libraryMaterialsElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_materials");
         DomUtils.putSubElementsInMap(materials, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, colladaEffects));
         Element libraryGeometriesElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_geometries");
-        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaMeshGroupFactory());
-
+        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory());
 
         Element library_nodes = DomUtils.getSingleSubElement(doc.getDocumentElement(), "library_nodes");
         if (library_nodes != null)
         {
             ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(library_nodes, materials, geometries, tool == TOOL.BLENDER);
-            meshGroupMaps.putAll(colladaNodeProcessor.getMeshGroupsMap());
+            meshGroups.putAll(colladaNodeProcessor.getMeshGroupsMap());
         }
 
 
@@ -169,9 +168,9 @@ public class Collada
         return geometries;
     }
 
-    public Map<String, MeshGroup> getMeshGroupMaps()
+    public Map<String, MeshGroup> getMeshGroups()
     {
-        return meshGroupMaps;
+        return meshGroups;
     }
 
 }

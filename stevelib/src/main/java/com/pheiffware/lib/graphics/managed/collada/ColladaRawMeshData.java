@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public class ColladaRawMeshData
 {
+
     /**
      * From a polylist element and set of already loaded vertex inputs, create a complete ColladaRawMeshData object.  This object contains all the raw information required to create Mesh.
-     *
      * @param polyListElement       the element to parse from
      * @param sources               an already parsed map of data sources
      * @param verticesElementInputs an already parsed map of input from the vertices tag
@@ -54,6 +54,7 @@ public class ColladaRawMeshData
     /**
      * From a triangle element and set of already loaded vertex inputs, create a complete ColladaRawMeshData object.  This object contains all the raw information required to create Mesh.
      *
+
      * @param triangleElement       the element to parse from
      * @param sources               an already parsed map of data sources
      * @param verticesElementInputs an already parsed map of input from the vertices tag
@@ -78,6 +79,7 @@ public class ColladaRawMeshData
     /**
      * Takes the essential data from either a parsed polylist or triangles tag and does rest of the work.  This is mostly removing the mostly useless VERTEX input, getting its offset
      * and then replacing this useless input with copies of vertexInputs, which have had their offsets set to the useless VERTEX input's value.
+     *
      *
      * @param collatedIndices       index references to the input data
      * @param vertexCount           number of vertices, used to determine vertex stride
@@ -107,7 +109,6 @@ public class ColladaRawMeshData
         return new ColladaRawMeshData(polyElementInputs, collatedIndices, vertexCount);
     }
 
-
     //A combined set of input from the external vertices and vertices in a polylist/triangles tag
     public final Map<String, ColladaInput> inputs;
     //Index references to the input data
@@ -119,7 +120,6 @@ public class ColladaRawMeshData
 
     public ColladaRawMeshData(Map<String, ColladaInput> vertexDataInputs, short[] collatedIndices, int vertexCount)
     {
-
         this.inputs = vertexDataInputs;
         this.collatedIndices = collatedIndices;
         this.vertexCount = vertexCount;

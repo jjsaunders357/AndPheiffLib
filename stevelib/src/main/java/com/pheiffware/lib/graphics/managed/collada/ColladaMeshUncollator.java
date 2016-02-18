@@ -2,8 +2,6 @@ package com.pheiffware.lib.graphics.managed.collada;
 
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 

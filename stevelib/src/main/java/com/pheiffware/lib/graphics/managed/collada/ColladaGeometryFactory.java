@@ -18,13 +18,11 @@ import java.util.Map;
  *
  * Created by Steve on 2/15/2016.
  */
-public class ColladaMeshGroupFactory implements ElementObjectFactory<ColladaGeometry>
+public class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
 {
     @Override
     public ColladaGeometry createFromElement(Element element) throws XMLParseException
     {
-        //TODO: Figure out how to register materials.  Sketchup does this wrong!  Blender actually uses this data correctly.
-
         //Parse source tags
         Map<String, ColladaSource> sources = new HashMap<>();
         Element meshElement = DomUtils.assertGetSingleSubElement(element, "mesh");

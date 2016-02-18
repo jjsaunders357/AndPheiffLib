@@ -14,6 +14,11 @@ public class MeshGroup
 {
     private final Map<Material, List<Mesh>> meshes = new HashMap<>();
 
+    public MeshGroup()
+    {
+
+    }
+
     private List<Mesh> getMeshList(Material material)
     {
         List<Mesh> meshList = meshes.get(material);
@@ -24,6 +29,7 @@ public class MeshGroup
         }
         return meshList;
     }
+
     public void add(Material material, Mesh mesh)
     {
         List<Mesh> meshList = getMeshList(material);
@@ -39,4 +45,10 @@ public class MeshGroup
             destMeshList.addAll(sourceMeshList);
         }
     }
+
+    public List<Mesh> getMesh(Material material)
+    {
+        return meshes.get(material);
+    }
+
 }

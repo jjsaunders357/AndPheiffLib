@@ -38,4 +38,10 @@ public class Material
     {
         return name.equals(((Material) o).name);
     }
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
 }

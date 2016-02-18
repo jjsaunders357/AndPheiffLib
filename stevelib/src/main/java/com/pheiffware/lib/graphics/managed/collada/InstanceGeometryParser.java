@@ -39,6 +39,10 @@ public class InstanceGeometryParser
     {
         String geometryID = element.getAttribute("url").substring(1);
         ColladaGeometry colladaGeometry = geometries.get(geometryID);
+        if (colladaGeometry == null)
+        {
+            throw new XMLParseException("Undefined geometry id referenced: " + geometryID);
+        }
         if (ignoreMaterials)
         {
             return colladaGeometry.createMeshGroup(materials);

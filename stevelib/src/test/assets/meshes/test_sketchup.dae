@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+    <asset>
+        <contributor>
+            <author>Blender User</author>
+            <authoring_tool>SketchUp - actually hand typed by me for testing</authoring_tool>
+        </contributor>
+    </asset>
+    <library_materials>
+        <material id="mat_text1_id" name="mat_text1_name">
+            <instance_effect url="#effect_text1_id" />
+        </material>
+        <material id="mat_text2_id" name="mat_text2_name">
+            <instance_effect url="#effect_text2_id" />
+        </material>
+        <material id="mat_purple_id" name="mat_purple_name">
+            <instance_effect url="#effect_purple" />
+        </material>
+    </library_materials>
+    <library_effects>
+        <effect id="effect_text1_id">
+            <profile_COMMON>
+                <newparam sid="ID33">
+                    <surface type="2D">
+                        <init_from>image1_id</init_from>
+                    </surface>
+                </newparam>
+                <newparam sid="ID34">
+                    <sampler2D>
+                        <source>ID33</source>
+                    </sampler2D>
+                </newparam>
+                <technique sid="COMMON">
+                    <lambert>
+                        <diffuse>
+                            <texture texture="ID34" texcoord="UVSET0" />
+                        </diffuse>
+                    </lambert>
+                </technique>
+            </profile_COMMON>
+        </effect>
+        <effect id="effect_text2_id">
+            <profile_COMMON>
+                <newparam sid="ID12">
+                    <surface type="2D">
+                        <init_from>image2_id</init_from>
+                    </surface>
+                </newparam>
+                <newparam sid="ID13">
+                    <sampler2D>
+                        <source>ID12-surface</source>
+                    </sampler2D>
+                </newparam>
+                <technique sid="common">
+                    <phong>
+                        <emission>
+                            <color sid="emission">0 0 0 1</color>
+                        </emission>
+                        <ambient>
+                            <color sid="ambient">0 0 0 1</color>
+                        </ambient>
+                        <diffuse>
+                            <texture texture="ID13" texcoord="UVMap"/>
+                        </diffuse>
+                        <specular>
+                            <color sid="specular">0.5 0.5 0.5 1</color>
+                        </specular>
+                        <shininess>
+                            <float sid="shininess">20</float>
+                        </shininess>
+                        <index_of_refraction>
+                            <float sid="index_of_refraction">1</float>
+                        </index_of_refraction>
+                    </phong>
+                </technique>
+            </profile_COMMON>
+        </effect>
+        <effect id="effect_purple">
+            <profile_COMMON>
+                <technique sid="common">
+                    <phong>
+                        <emission>
+                            <color sid="emission">0 0 0 1</color>
+                        </emission>
+                        <ambient>
+                            <color sid="ambient">0 0 0 1</color>
+                        </ambient>
+                        <diffuse>
+                            <color sid="diffuse">0.5 0 0.5 1</color>
+                        </diffuse>
+                        <specular>
+                            <color sid="specular">0.5 0.5 0.5 1</color>
+                        </specular>
+                        <shininess>
+                            <float sid="shininess">20</float>
+                        </shininess>
+                        <index_of_refraction>
+                            <float sid="index_of_refraction">1</float>
+                        </index_of_refraction>
+                    </phong>
+                </technique>
+            </profile_COMMON>
+        </effect>
+    </library_effects>
+    <library_images>
+        <image id="image1_id" name="image1_name">
+            <init_from>image1.png</init_from>
+        </image>
+        <image id="image2_id" name="image2_name">
+            <init_from>image2.png</init_from>
+        </image>
+    </library_images>
+    <library_geometries>
+    <geometry id="geo1_id" name="geo1_name">
+        <mesh>
+            <source id="input1">
+                <float_array id="blah" count="12">0 1 2 3 4 5 6 7 8 9 10 11</float_array>
+                <technique_common>
+                    <accessor source="#blah" count="4" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input2">
+                <float_array id="blah2" count="6">0 99 1 2 99 3</float_array>
+                <technique_common>
+                    <accessor source="#blah2" count="2" stride="3">
+                        <param name="X" type="float"/>
+                        <param type="float"/> <!--Example of missing parameter.  Hopefully no one actually does this.  It causes the 99's to be skipped-->
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input3">
+                <float_array id="blah3" count="9">0 1 2 3 4 5 6 7 8</float_array>
+                <technique_common>
+                    <accessor source="#blah3" count="3" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <!--vertices, is a useless concept.  Inputs can be declared here instead of in polylist,
+            which complicates things unnecessarily.-->
+            <vertices id="who cares">
+                <input semantic="POSITION" source="#input1"/>
+            </vertices>
+            <!--VERTEX input should be replaced by all inputs in vertices element.
+            However, the offset for VERTEX should be used for all input declared in vertices.-->
+            <polylist material="completely made up id" count="12">
+                <input semantic="VERTEX" source="#who cares" offset="1"/>
+                <input semantic="NORMAL" source="#input3" offset="0"/>
+                <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
+                <vcount>3 3 3</vcount>
+                <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
+            </polylist>
+        </mesh>
+    </geometry>
+    <geometry id="geo2_id" name="geo2_name">
+        <mesh>
+            <source id="input1">
+                <float_array id="blah" count="12">0 1 2 3 4 5 6 7 8 9 10 11</float_array>
+                <technique_common>
+                    <accessor source="#blah" count="4" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input2">
+                <float_array id="blah2" count="6">0 99 1 2 99 3</float_array>
+                <technique_common>
+                    <accessor source="#blah2" count="2" stride="3">
+                        <param name="X" type="float"/>
+                        <param type="float"/> <!--Example of missing parameter.  Hopefully no one actually does this.  It causes the 99's to be skipped-->
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input3">
+                <float_array id="blah3" count="9">0 1 2 3 4 5 6 7 8</float_array>
+                <technique_common>
+                    <accessor source="#blah3" count="3" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <!--vertices, is a useless concept.  Inputs can be declared here instead of in polylist,
+            which complicates things unnecessarily.-->
+            <vertices id="who cares">
+                <input semantic="POSITION" source="#input1"/>
+            </vertices>
+            <!--VERTEX input should be replaced by all inputs in vertices element.
+            However, the offset for VERTEX should be used for all input declared in vertices.-->
+            <polylist material="completely made up id" count="12">
+                <input semantic="VERTEX" source="#who cares" offset="1"/>
+                <input semantic="NORMAL" source="#input3" offset="0"/>
+                <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
+                <vcount>3 3 3</vcount>
+                <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
+            </polylist>
+        </mesh>
+    </geometry>
+    <geometry id="geo3_id" name="geo3_name">
+        <mesh>
+            <source id="input1">
+                <float_array id="blah" count="12">0 1 2 3 4 5 6 7 8 9 10 11</float_array>
+                <technique_common>
+                    <accessor source="#blah" count="4" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input2">
+                <float_array id="blah2" count="6">0 99 1 2 99 3</float_array>
+                <technique_common>
+                    <accessor source="#blah2" count="2" stride="3">
+                        <param name="X" type="float"/>
+                        <param type="float"/> <!--Example of missing parameter.  Hopefully no one actually does this.  It causes the 99's to be skipped-->
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input3">
+                <float_array id="blah3" count="9">0 1 2 3 4 5 6 7 8</float_array>
+                <technique_common>
+                    <accessor source="#blah3" count="3" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <!--vertices, is a useless concept.  Inputs can be declared here instead of in polylist,
+            which complicates things unnecessarily.-->
+            <vertices id="who cares">
+                <input semantic="POSITION" source="#input1"/>
+            </vertices>
+            <!--VERTEX input should be replaced by all inputs in vertices element.
+            However, the offset for VERTEX should be used for all input declared in vertices.-->
+            <polylist material="completely made up id" count="12">
+                <input semantic="VERTEX" source="#who cares" offset="1"/>
+                <input semantic="NORMAL" source="#input3" offset="0"/>
+                <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
+                <vcount>3 3 3</vcount>
+                <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
+            </polylist>
+        </mesh>
+    </geometry>
+    </library_geometries>
+    <library_nodes>
+        <node id="lib_node1_id" name="lib_node1_name">
+            <instance_geometry url="#geo1_id">
+                <bind_material>
+                    <technique_common>
+                        <instance_material symbol="Made up name" target="#mat_text1_id">
+                            <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                        </instance_material>
+                    </technique_common>
+                </bind_material>
+            </instance_geometry>
+        </node>
+        <node id="lib_node2_id" name="lib_node2_name">
+            <instance_geometry url="#geo1_id">
+                <bind_material>
+                    <technique_common>
+                        <instance_material symbol="Made up name" target="#mat_text2_id">
+                            <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                        </instance_material>
+                    </technique_common>
+                </bind_material>
+            </instance_geometry>
+        </node>
+        <node id="lib_node3_id" name="lib_node3_name">
+            <instance_geometry url="#geo2_id">
+                <bind_material>
+                    <technique_common>
+                        <instance_material symbol="Made up name" target="#mat_text1_id">
+                            <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                        </instance_material>
+                    </technique_common>
+                </bind_material>
+            </instance_geometry>
+        </node>
+        <node id="lib_node_comp_id" name="component">
+            <instance_geometry url="#geo2_id">
+                <bind_material>
+                    <technique_common>
+                        <instance_material symbol="Material2" target="#mat_text1_id">
+                            <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                        </instance_material>
+                    </technique_common>
+                </bind_material>
+            </instance_geometry>
+            <instance_geometry url="#geo3_id">
+                <bind_material>
+                    <technique_common>
+                        <instance_material symbol="Material2" target="#mat_text2_id">
+                            <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                        </instance_material>
+                    </technique_common>
+                </bind_material>
+            </instance_geometry>
+        </node>
+        <node id="lib_node_comp_group_id" name="groupAndComponent">
+            <node id="groupCompSubNode1_id" name="annonymous group/component sub node 1">
+                <!--Matrix just stretches x by factor of 2-->
+                <matrix>2 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+                <instance_node url="#lib_node1_id" />
+            </node>
+            <node id="groupCompSubNode2_id" name="annonymous group/component sub node 2">
+                <!--Matrix just stretches y by factor of 2-->
+                <matrix>1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 1</matrix>
+                <instance_node url="#lib_node2_id" />
+            </node>
+            <node id="groupCompSubNode3_id" name="annonymous group/component sub node 3">
+                <matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+                <instance_node url="#lib_node3_id" />
+            </node>
+        </node>
+    </library_nodes>
+
+
+</COLLADA>
