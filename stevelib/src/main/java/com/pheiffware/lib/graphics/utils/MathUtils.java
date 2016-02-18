@@ -9,6 +9,8 @@ import android.opengl.Matrix;
 public class MathUtils
 {
 
+    public static final float[] IDENTITY_MATRIX4 = new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
     public static float[] createTranslationMatrix(float x, float y, float z)
     {
         float[] result = new float[16];

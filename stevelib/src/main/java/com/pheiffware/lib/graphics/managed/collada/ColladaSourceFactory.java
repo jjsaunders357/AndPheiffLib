@@ -25,11 +25,11 @@ public class ColladaSourceFactory implements ElementObjectFactory<ColladaSource>
         String floatsID = floatsElement.getAttribute("id");
         float[] rawFloats = DomUtils.getFloatsFromElement(floatsElement);
 
-        Element accessorElement = DomUtils.assertGetSingleSubElement(element, "accessor");
+        Element accessorElement = DomUtils.assertGetSingleSubElement(techniqueCommon, "accessor");
         ColladaAccessor accessor = new ColladaAccessor(accessorElement);
 
 
-        return new ColladaSource(accessor.count, accessor.stride, accessor.collateData(rawFloats));
+        return new ColladaSource(accessor.count, accessor.stride, accessor.removeUnusedData(rawFloats));
     }
 
 }

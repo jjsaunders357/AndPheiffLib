@@ -16,4 +16,15 @@ public class GColor
     {
         comps = new float[]{red, green, blue, alpha};
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        GColor other = (GColor) o;
+        return comps[0] == other.comps[0] &&
+                comps[1] == other.comps[1] &&
+                comps[2] == other.comps[2] &&
+                comps[3] == other.comps[3];
+
+    }
 }

@@ -7,7 +7,8 @@ import com.pheiffware.lib.utils.dom.ElementObjectFactory;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+
+import java.util.List;
 
 /**
  * Used to extract ColladaEffect from <effects></effects> tags.
@@ -25,9 +26,9 @@ public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
 
         Element technique = DomUtils.assertGetSingleSubElement(profileCommon, "technique");
         Element phong = DomUtils.getSingleSubElement(technique, "phong");
-        GColor ambientColor;
-        GColor diffuseColor;
-        GColor specularColor;
+        GColor ambientColor = null;
+        GColor diffuseColor = null;
+        GColor specularColor = null;
         float shininess;
 
         if (phong != null)
@@ -35,15 +36,26 @@ public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
             ambientColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "ambient"));
             diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "diffuse"));
             specularColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "specular"));
-            shininess = DomUtils.getFloatSubElement(DomUtils.assertGetSingleSubElement(phong, "shininess"));
+            //In percent
+            shininess = DomUtils.getFloatSubElement(DomUtils.assertGetSingleSubElement(phong, "shininess")) / 100.0f;
         }
         else
         {
             Element lambert = DomUtils.assertGetSingleSubElement(technique, "lambert");
-            ambientColor = new GColor(1.0f, 1.0f, 1.0f, 1.0f);
             diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(lambert, "diffuse"));
-            specularColor = new GColor(1.0f, 1.0f, 1.0f, 1.0f);
-            shininess = 1;
+            shininess = Collada.DEFAULT_SHININESS;
+        }
+        if (ambientColor == null)
+        {
+            ambientColor = Collada.DEFAULT_AMBIENT;
+        }
+        if (diffuseColor == null)
+        {
+            diffuseColor = Collada.DEFAULT_DIFFUSE_TEXTURE;
+        }
+        if (specularColor == null)
+        {
+            specularColor = Collada.DEFAULT_SPECULAR;
         }
         return new ColladaEffect(imageFileReference, ambientColor, diffuseColor, specularColor, shininess);
     }
@@ -51,17 +63,16 @@ public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
     private String getImageFileReference(Element technique) throws XMLParseException
     {
         //Extract image reference or null if this technique does not contain an image
-        NodeList newparamNodes = technique.getElementsByTagName("newparam");
-        for (int i = 0; i < newparamNodes.getLength(); i++)
+        List<Element> newparamElements = DomUtils.getSubElements(technique, "newparam");
+        for (Element newparamElement : newparamElements)
         {
-            Element newparamElement = (Element) newparamNodes.item(i);
             Element surface = DomUtils.getSingleSubElement(newparamElement, "surface");
             if (surface != null)
             {
-                String type = surface.getAttribute("semantic");
+                String type = surface.getAttribute("type");
                 if (type.equals("2D"))
                 {
-                    Element init_from = DomUtils.getSingleSubElement(newparamElement, "init_from");
+                    Element init_from = DomUtils.assertGetSingleSubElement(surface, "init_from");
                     String imageReference = init_from.getFirstChild().getTextContent();
                     return imageReference;
                 }

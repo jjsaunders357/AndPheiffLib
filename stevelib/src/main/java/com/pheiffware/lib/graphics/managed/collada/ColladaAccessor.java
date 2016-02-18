@@ -1,24 +1,30 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
+import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+
+import java.util.List;
 
 /**
  * Created by Steve on 2/15/2016.
  */
 public class ColladaAccessor
 {
+    //The rawStride used to walk through the raw data BEFORE USELESS INFORMATION is REMOVED.
+    private final int rawStride;
+    //This is the rawStride to use after removing useless data items
     public final int stride;
-    public final int dataItemsPerStride;
+    //Marks which data items are actually used (as opposed to USELESS).
     public final boolean[] isDataItem;
+    //How many data blocks (strides) there are.
     public final int count;
 
-    public ColladaAccessor(int stride, int dataItemsPerStride, boolean[] isDataItem, int count)
+    public ColladaAccessor(int rawStride, int stride, boolean[] isDataItem, int count)
     {
+        this.rawStride = rawStride;
         this.stride = stride;
-        this.dataItemsPerStride = dataItemsPerStride;
         this.isDataItem = isDataItem;
         this.count = count;
     }
@@ -28,19 +34,20 @@ public class ColladaAccessor
         String strideString = element.getAttribute("stride");
         if (strideString.equals(""))
         {
-            stride = 1;
+            rawStride = 1;
         }
         else
         {
-            stride = Integer.valueOf(strideString);
+            rawStride = Integer.valueOf(strideString);
         }
         count = Integer.valueOf(element.getAttribute("count"));
-        NodeList params = element.getElementsByTagName("param");
-        isDataItem = new boolean[params.getLength()];
+
+        List<Element> params = DomUtils.getSubElements(element, "param");
+        isDataItem = new boolean[params.size()];
         int dataItemsPerStrideCounter = 0;
-        for (int i = 0; i < params.getLength(); i++)
+        for (int i = 0; i < params.size(); i++)
         {
-            Element param = (Element) params.item(i);
+            Element param = params.get(i);
             if (!param.getAttribute("type").equals("float"))
             {
                 throw new XMLParseException("Can't handle non-float accessor data");
@@ -51,12 +58,18 @@ public class ColladaAccessor
                 dataItemsPerStrideCounter++;
             }
         }
-        dataItemsPerStride = dataItemsPerStrideCounter;
+        stride = dataItemsPerStrideCounter;
     }
 
-    public float[] collateData(float[] input)
+    /**
+     * Removes useless data from input array and produces new array.  This new array will correspond to stride.
+     *
+     * @param rawFloats
+     * @return
+     */
+    public float[] removeUnusedData(float[] rawFloats)
     {
-        float[] output = new float[count * dataItemsPerStride];
+        float[] output = new float[count * stride];
         int destIndexStart = 0;
         for (int dataItem = 0; dataItem < isDataItem.length; dataItem++)
         {
@@ -67,9 +80,9 @@ public class ColladaAccessor
                 destIndexStart++;
                 for (int i = 0; i < count; i++)
                 {
-                    output[destIndex] = input[sourceIndex];
-                    destIndex += dataItemsPerStride;
-                    sourceIndex += stride;
+                    output[destIndex] = rawFloats[sourceIndex];
+                    destIndex += stride;
+                    sourceIndex += rawStride;
                 }
             }
         }

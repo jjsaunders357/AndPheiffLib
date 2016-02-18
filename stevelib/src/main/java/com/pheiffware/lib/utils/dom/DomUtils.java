@@ -1,18 +1,141 @@
 package com.pheiffware.lib.utils.dom;
 
+import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.utils.Utils;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 /**
  * Created by Steve on 2/15/2016.
  */
 public class DomUtils
 {
+    /**
+     * Loads an DOM XML Document from the given stream and validates it.
+     * @param input
+     * @return
+     * @throws XMLParseException
+     */
+    public static Document loadDocumentFromStream(InputStream input) throws XMLParseException
+    {
+        return loadDocumentFromStream(input, null);
+    }
+
+    /**
+     * Loads an DOM XML Document from the given stream and validates it.
+     *
+     * @param input
+     * @param validator Used to perform validation, if null, no validation happens
+     * @return
+     * @throws XMLParseException
+     */
+    public static Document loadDocumentFromStream(InputStream input, Validator validator) throws XMLParseException
+    {
+        try
+        {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.parse(input);
+            if (validator != null)
+            {
+                validator.validate(new DOMSource(doc));
+            }
+            return doc;
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new XMLParseException(e);
+        }
+        catch (IOException e)
+        {
+            throw new XMLParseException(e);
+        }
+        catch (SAXException e)
+        {
+            throw new XMLParseException(e);
+        }
+    }
+
+    public static Validator createValidator(String assetName)
+    {
+//         Due to broken, F**KED up, reasons, cannot get Schema factory!
+        return null;
+//        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//
+//        Validator validator;
+//        try
+//        {
+//            Schema schema = schemaFactory.newSchema(Utils.getAssetURL(assetName));
+//            return schema.newValidator();
+//        }
+//        catch (SAXException e)
+//        {
+//            throw new XMLParseException("Cannot parse schema",e);
+//        }
+//        catch (MalformedURLException e)
+//        {
+//            throw new XMLParseException("Collada schema file cannot be found at URL",e);
+//        }
+    }
+
+    /**
+     * Get the text contained within a leaf element's tag (get value from child text node).
+     *
+     * @param element
+     * @return
+     */
+    public static String getElementText(Element element)
+    {
+        return element.getFirstChild().getTextContent();
+    }
+
+    /**
+     * For a given element, this retrieves the child elements with the given tag name. THIS IS NOT RECURSIVE!
+     *
+     * @param element    The element to search under
+     * @param subTagName The tag name to search for
+     * @return A list of sub-elements
+     */
+    public static List<Element> getSubElements(Element element, String subTagName)
+    {
+        List<Element> subElements = new ArrayList<>();
+
+        for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling())
+        {
+            if (child.getNodeType() == Node.ELEMENT_NODE)
+            {
+                Element childElement = (Element) child;
+                if (childElement.getTagName().equals(subTagName))
+                {
+                    subElements.add(childElement);
+                }
+            }
+        }
+        return subElements;
+    }
+
     /**
      * Go through an Element which contains sub-elements of a known semantic with "id" attributes.  For each sub-element, turn it into an object with given factory and put it in a map using id as the key.
      *
@@ -26,70 +149,75 @@ public class DomUtils
      */
     public static <T> void putSubElementsInMap(Map<String, T> map, Element rootElement, String subTagName, String keyAttribute, ElementObjectFactory<T> elementObjectFactory) throws XMLParseException
     {
-        NodeList nodes = rootElement.getElementsByTagName(subTagName);
-        for (int i = 0; i < nodes.getLength(); i++)
+        for (Node child = rootElement.getFirstChild(); child != null; child = child.getNextSibling())
         {
-            try
+            if (child.getNodeType() == Node.ELEMENT_NODE)
             {
-                Element element = (Element) nodes.item(i);
-                String id = element.getAttribute(keyAttribute);
-                T elementObject = elementObjectFactory.createFromElement(element);
-                if (elementObject != null)
+                Element childElement = (Element) child;
+                if (childElement.getTagName().equals(subTagName))
                 {
-                    map.put(id, elementObject);
+                    String id = childElement.getAttribute(keyAttribute);
+                    T elementObject = elementObjectFactory.createFromElement(childElement);
+                    if (elementObject != null)
+                    {
+                        map.put(id, elementObject);
+                    }
                 }
             }
-            catch (ClassCastException e)
-            {
-                throw new XMLParseException(rootElement.getTagName() + " had a sub-node which was not an element");
-            }
         }
+    }
+
+    public static Element assertGetSubElementChain(Element element, String... subTagNames) throws XMLParseException
+    {
+        for (String subTagName : subTagNames)
+        {
+            element = assertGetSingleSubElement(element, subTagName);
+        }
+        return element;
     }
 
     /**
      * Look for a sub-element with given name under given element.  If it doesn't exist throw an exception.
      *
      * @param element        Element to search in
-     * @param subElementName name of sub-element to search for
+     * @param subTagName name of sub-element to search for
      * @return found sub element
      * @throws XMLParseException Can't find sub-element
      */
-    public static Element assertGetSingleSubElement(Element element, String subElementName) throws XMLParseException
+    public static Element assertGetSingleSubElement(Element element, String subTagName) throws XMLParseException
     {
-        NodeList subElementList = element.getElementsByTagName(subElementName);
-        if (subElementList.getLength() == 0)
+        Element childElement = getSingleSubElement(element, subTagName);
+        if (childElement == null)
         {
-            throw new XMLParseException(element.getTagName() + " did not contain " + subElementName);
+            throw new XMLParseException(element.getTagName() + " did not contain " + subTagName);
         }
-        Node subNode = subElementList.item(0);
-        if (subNode.getNodeType() != Node.ELEMENT_NODE)
+        else
         {
-            throw new XMLParseException(element.getTagName() + " had a sub-node which was not an element");
+            return childElement;
         }
-        return (Element) subNode;
     }
 
     /**
      * Look for a sub-element with given name under given element.  If it doesn't exist, return null.
      *
      * @param element        Element to search in
-     * @param subElementName name of sub-element to search for
+     * @param subTagName name of sub-element to search for
      * @return found sub element
-     * @throws XMLParseException If node is found, but it is not an Element
      */
-    public static Element getSingleSubElement(Element element, String subElementName) throws XMLParseException
+    public static Element getSingleSubElement(Element element, String subTagName)
     {
-        NodeList subElementList = element.getElementsByTagName(subElementName);
-        if (subElementList.getLength() == 0)
+        for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling())
         {
-            return null;
+            if (child.getNodeType() == Node.ELEMENT_NODE)
+            {
+                Element childElement = (Element) child;
+                if (childElement.getTagName().equals(subTagName))
+                {
+                    return childElement;
+                }
+            }
         }
-        Node subNode = subElementList.item(0);
-        if (subNode.getNodeType() != Node.ELEMENT_NODE)
-        {
-            throw new XMLParseException(element.getTagName() + " had a sub-node which was not an element");
-        }
-        return (Element) subNode;
+        return null;
     }
 
     /**

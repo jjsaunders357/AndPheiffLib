@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
  */
 public class Material
 {
-    //Recognizable name used in creation software (id is unique, but possibly meaningless).
+    //Recognizable name used in creation software (ids are unique, but possibly meaningless).
     public final String name;
     public final String imageFileName;
     public final GColor ambientColor;
@@ -25,5 +25,17 @@ public class Material
         this.diffuseColor = diffuseColor;
         this.specularColor = specularColor;
         this.shininess = shininess;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return name.equals(((Material) o).name);
     }
 }

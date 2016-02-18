@@ -2,9 +2,9 @@ package com.pheiffware.lib.graphics.managed.collada;
 
 import android.content.res.AssetManager;
 
+import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -28,24 +28,35 @@ import javax.xml.validation.Validator;
  */
 public class Collada
 {
-    private static final Validator validator = createValidator();
+    //Any material which does not define shininess gets this value
+    public static final float DEFAULT_SHININESS = 0.5f;
+
+    //Any material with a texture will have this as its default diffuse color
+    public static final GColor DEFAULT_DIFFUSE_TEXTURE = new GColor(1f, 1f, 1f, 1f);
+    public static final GColor DEFAULT_AMBIENT = new GColor(0f, 0f, 0f, 1f);
+    public static final GColor DEFAULT_SPECULAR = new GColor(1f, 1f, 1f, 1f);
+
+    public enum TOOL
+    {
+        BLENDER, SKETCHUP
+    }
+
+    private static final Validator validator = DomUtils.createValidator("meshes\\collada_schema_1_4_1.xsd");
 
     //Map from image ids to file names
     private final Map<String, String> imageFileNames = new HashMap<>();
+
     //Map from effect ids to effect data (effect data is identical to materials)
-    private final Map<String, ColladaEffect> effects = new HashMap<>();
+    private final Map<String, ColladaEffect> colladaEffects = new HashMap<>();
 
     //Map from material ids to material data
-    private final Map<String, Material> materialsByIDMap = new HashMap<>();
+    private final Map<String, Material> materials = new HashMap<>();
 
-    //Map from material ids to material data
-    private final Map<String, Material> materialsByNameMap = new HashMap<>();
+    //Map from ids to ColladaGeometry
+    private final Map<String, ColladaGeometry> geometries = new HashMap<>();
 
-    //Map from mesh ids to meshes
-    private Map<String, MeshGroup> meshCollection3Ds = new HashMap<>();
-
-    //Holds actual objects
-    private Map<String, Object3D> objects = new HashMap<>();
+    //Map from node ids to completely defined meshGroups
+    private final Map<String, MeshGroup> meshGroupMaps = new HashMap<>();
 
     public void loadCollada(AssetManager assetManager, String assetFileName) throws XMLParseException
     {
@@ -59,27 +70,50 @@ public class Collada
         }
     }
 
+    private TOOL parseTool(Element element) throws XMLParseException
+    {
+        Element authoringToolElement = DomUtils.assertGetSubElementChain(element, "asset", "contributor", "authoring_tool");
+        String toolString = DomUtils.getElementText(authoringToolElement);
+
+        if (toolString.startsWith("SketchUp"))
+        {
+            return TOOL.SKETCHUP;
+        }
+        else if (toolString.startsWith("Blender"))
+        {
+            return TOOL.BLENDER;
+        }
+        else
+        {
+            throw new XMLParseException("Cannot parse files which are not made by Sketchup or Blender properly");
+        }
+    }
+
     public void loadCollada(InputStream input) throws XMLParseException
     {
         Document doc = loadColladaDocument(input);
+        TOOL tool = parseTool(doc.getDocumentElement());
         Element libraryImagesElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_images");
         DomUtils.putSubElementsInMap(imageFileNames, libraryImagesElement, "image", "id", new ColladaLibraryImageFactory());
         Element libraryEffectsElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_effects");
-        DomUtils.putSubElementsInMap(effects, libraryEffectsElement, "effect", "id", new ColladaEffectFactory());
+        DomUtils.putSubElementsInMap(colladaEffects, libraryEffectsElement, "effect", "id", new ColladaEffectFactory());
         Element libraryMaterialsElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_materials");
-        DomUtils.putSubElementsInMap(materialsByIDMap, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, effects));
+        DomUtils.putSubElementsInMap(materials, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, colladaEffects));
         Element libraryGeometriesElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_geometries");
-        DomUtils.putSubElementsInMap(meshCollection3Ds, libraryGeometriesElement, "geometry", "id", new ColladaMeshGroupFactory(materialsByIDMap));
+        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaMeshGroupFactory());
 
-        Element library_visual_scenes = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_visual_scenes");
-        Element visual_scene = DomUtils.assertGetSingleSubElement(library_visual_scenes, "visual_scene");
-        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(visual_scene);
 
-        //Map material's by name
-        for (Material material : materialsByIDMap.values())
+        Element library_nodes = DomUtils.getSingleSubElement(doc.getDocumentElement(), "library_nodes");
+        if (library_nodes != null)
         {
-            materialsByNameMap.put(material.name, material);
+            ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(library_nodes, materials, geometries, tool == TOOL.BLENDER);
+            meshGroupMaps.putAll(colladaNodeProcessor.getMeshGroupsMap());
         }
+
+
+//        Element library_visual_scenes = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_visual_scenes");
+//        Element visual_scene = DomUtils.assertGetSingleSubElement(library_visual_scenes, "visual_scene");
+//        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(visual_scene, materials, geometries, tool==TOOL.BLENDER);
     }
 
     private Document loadColladaDocument(InputStream input) throws XMLParseException
@@ -108,28 +142,36 @@ public class Collada
 
     }
 
-
-    private static Validator createValidator()
+    public Map<String, String> getImageFileNames()
     {
-        return null;
-        // Due to broken, F**KED up, reasons, cannot get Schema factory!
-//        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-//
-//        Validator validator;
-//        try
-//        {
-//            Schema schema = schemaFactory.newSchema(Utils.getAssetURL("meshes\\collada_schema_1_4_1.xsd"));
-//            return schema.newValidator();
-//        }
-//        catch (SAXException e)
-//        {
-//            throw new FatalGraphicsException("Cannot parse schema for Collada files",e);
-//        }
-//        catch (MalformedURLException e)
-//        {
-//            throw new FatalGraphicsException("Collada schema file cannot be found at URL",e);
-//        }
+        return imageFileNames;
     }
 
+    public Map<String, ColladaEffect> getColladaEffects()
+    {
+        return colladaEffects;
+    }
+
+    public Map<String, Material> getMaterialsByName()
+    {
+        //Map from material ids to material data
+        Map<String, Material> materialsByNameMap = new HashMap<>();
+        //Map material's by name
+        for (Material material : materials.values())
+        {
+            materialsByNameMap.put(material.name, material);
+        }
+        return materialsByNameMap;
+    }
+
+    public Map<String, ColladaGeometry> getGeometries()
+    {
+        return geometries;
+    }
+
+    public Map<String, MeshGroup> getMeshGroupMaps()
+    {
+        return meshGroupMaps;
+    }
 
 }

@@ -1,8 +1,6 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.ElementObjectFactory;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -11,29 +9,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-/*
-        <vertices id="ID18">
-            <input semantic="POSITION" source="#ID16" />
-            <input semantic="NORMAL" source="#ID17" />
-        </vertices>
- */
-
 /**
+ * Parses "geometry" tags and extracts MeshGroup objects.  These map material to meshes to render in the material.
+ * In blender, the actual material is specified in the
+ *
  * Created by Steve on 2/15/2016.
  */
-public class ColladaMeshGroupFactory implements ElementObjectFactory<MeshGroup>
+public class ColladaMeshGroupFactory implements ElementObjectFactory<ColladaGeometry>
 {
-    private final Map<String, Material> materialsByIDMap;
-
-    public ColladaMeshGroupFactory(Map<String, Material> materialsByIDMap)
-    {
-        this.materialsByIDMap = materialsByIDMap;
-    }
-
     @Override
-    public MeshGroup createFromElement(Element element) throws XMLParseException
+    public ColladaGeometry createFromElement(Element element) throws XMLParseException
     {
         //TODO: Figure out how to register materials.  Sketchup does this wrong!  Blender actually uses this data correctly.
 
@@ -47,37 +35,33 @@ public class ColladaMeshGroupFactory implements ElementObjectFactory<MeshGroup>
         Element vertices = DomUtils.assertGetSingleSubElement(meshElement, "vertices");
         DomUtils.putSubElementsInMap(vertexInputs, vertices, "input", "semantic", new ColladaInputFactory(sources));
 
-        MeshGroup meshCollection3D = new MeshGroup();
+        ColladaGeometry colladaMeshGroup = new ColladaGeometry();
 
-        NodeList polyLists = meshElement.getElementsByTagName("polylist");
-        for (int i = 0; i < polyLists.getLength(); i++)
+        List<Element> polylists = DomUtils.getSubElements(meshElement, "polylist");
+        for (Element polyListElement : polylists)
         {
-            Element polyListElement = (Element) polyLists.item(i);
             String materialID = polyListElement.getAttribute("material");
-            Material material = materialsByIDMap.get(materialID);
             ColladaRawMeshData colladaRawMeshData = ColladaRawMeshData.fromPolyListElement(polyListElement, sources, vertexInputs);
             if (colladaRawMeshData != null)
             {
                 ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaRawMeshData);
                 Mesh mesh = colladaMeshUncollator.createMesh();
-                meshCollection3D.add(material, mesh);
+                colladaMeshGroup.add(materialID, mesh);
             }
         }
-        NodeList triangles = meshElement.getElementsByTagName("triangles");
-        for (int i = 0; i < triangles.getLength(); i++)
+        List<Element> triangles = DomUtils.getSubElements(meshElement, "triangles");
+        for (Element trianglesElement : triangles)
         {
-            Element trianglesElement = (Element) triangles.item(i);
             String materialID = trianglesElement.getAttribute("material");
-            Material material = materialsByIDMap.get(materialID);
             ColladaRawMeshData colladaRawMeshData = ColladaRawMeshData.fromTrianglesElement(trianglesElement, sources, vertexInputs);
             if (colladaRawMeshData != null)
             {
                 ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaRawMeshData);
                 Mesh mesh = colladaMeshUncollator.createMesh();
-                meshCollection3D.add(material, mesh);
+                colladaMeshGroup.add(materialID, mesh);
             }
         }
-        return meshCollection3D;
+        return colladaMeshGroup;
     }
 
 
