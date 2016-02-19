@@ -92,27 +92,35 @@ public class Collada
     public void loadCollada(InputStream input) throws XMLParseException
     {
         Document doc = loadColladaDocument(input);
-        TOOL tool = parseTool(doc.getDocumentElement());
-        Element libraryImagesElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_images");
+        Element rootElement = doc.getDocumentElement();
+        TOOL tool = parseTool(rootElement);
+        Element libraryImagesElement = DomUtils.assertGetSingleSubElement(rootElement, "library_images");
         DomUtils.putSubElementsInMap(imageFileNames, libraryImagesElement, "image", "id", new ColladaLibraryImageFactory());
-        Element libraryEffectsElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_effects");
+        Element libraryEffectsElement = DomUtils.assertGetSingleSubElement(rootElement, "library_effects");
         DomUtils.putSubElementsInMap(colladaEffects, libraryEffectsElement, "effect", "id", new ColladaEffectFactory());
-        Element libraryMaterialsElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_materials");
+        Element libraryMaterialsElement = DomUtils.assertGetSingleSubElement(rootElement, "library_materials");
         DomUtils.putSubElementsInMap(materials, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, colladaEffects));
-        Element libraryGeometriesElement = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_geometries");
+        Element libraryGeometriesElement = DomUtils.assertGetSingleSubElement(rootElement, "library_geometries");
         DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory());
 
-        Element library_nodes = DomUtils.getSingleSubElement(doc.getDocumentElement(), "library_nodes");
+        Element library_nodes = DomUtils.getSingleSubElement(rootElement, "library_nodes");
         if (library_nodes != null)
         {
             ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(library_nodes, materials, geometries, tool == TOOL.BLENDER);
             meshGroups.putAll(colladaNodeProcessor.getMeshGroupsMap());
+
+            //Apply all top-level transforms to library objects.
+            //It is unlikely there will be any top-level meshgroups with transforms,
+            //but if these are referenced and further transformed, this would be a problem.
+            for (MeshGroup meshGroup : meshGroups.values())
+            {
+                meshGroup.applyMatrixTransform(meshGroup.getInitialTransformMatrix());
+            }
+            //Should not be any top-level annonymous meshes in library and if there are, they can't be referenced, so ignore.
         }
-
-
-//        Element library_visual_scenes = DomUtils.assertGetSingleSubElement(doc.getDocumentElement(), "library_visual_scenes");
-//        Element visual_scene = DomUtils.assertGetSingleSubElement(library_visual_scenes, "visual_scene");
+//        Element visual_scene = DomUtils.assertGetSubElementChain(rootElement, "library_visual_scenes","visual_scene");
 //        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(visual_scene, materials, geometries, tool==TOOL.BLENDER);
+
     }
 
     private Document loadColladaDocument(InputStream input) throws XMLParseException

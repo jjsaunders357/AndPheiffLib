@@ -12,11 +12,13 @@ import java.util.Map;
  */
 public class MeshGroup
 {
+    //The initial transform this object had when loaded.  This has NOT been applied to the loaded mesh.
+    private final float[] initialTransformMatrix;
     private final Map<Material, List<Mesh>> meshes = new HashMap<>();
 
-    public MeshGroup()
+    public MeshGroup(float[] initialTransformMatrix)
     {
-
+        this.initialTransformMatrix = initialTransformMatrix;
     }
 
     private List<Mesh> getMeshList(Material material)
@@ -46,9 +48,19 @@ public class MeshGroup
         }
     }
 
+
+    public void applyMatrixTransform(float[] transformMatrix)
+    {
+        //TODO: Apply matrix transformation to child meshgroup
+    }
+
     public List<Mesh> getMesh(Material material)
     {
         return meshes.get(material);
     }
 
+    public float[] getInitialTransformMatrix()
+    {
+        return initialTransformMatrix;
+    }
 }

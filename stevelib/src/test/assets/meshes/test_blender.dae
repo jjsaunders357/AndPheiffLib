@@ -166,7 +166,32 @@
             </polylist>
         </mesh>
     </geometry>
-    </library_geometries>
-
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="dual_id" name="dual" type="NODE">
+        <instance_geometry url="#geo1_id" name="who cares">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="mat_text1_id" target="#mat_text1_id">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="mat_text2_id" target="#mat_text2_id">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="parent_id" name="parent_name" type="NODE">
+        <matrix sid="transform">2 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#geo1_id" name="Parent"/>
+        <node id="child_id" name="child_name" type="NODE">
+          <matrix sid="transform">2 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+          <instance_geometry url="#geo2_id" name="Child"/>
+        </node>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
 
 </COLLADA>

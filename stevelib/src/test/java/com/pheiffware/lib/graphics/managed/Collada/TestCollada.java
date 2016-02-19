@@ -83,7 +83,6 @@ public class TestCollada
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.data.get("TEXCOORD"), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.data.get("NORMAL"), 0);
 
-        //All other meshes are ignored as they are just repeats of the same data
 
 
     }
@@ -148,18 +147,24 @@ public class TestCollada
         MeshGroup lib_node_comp_group = meshGroups.get("lib_node_comp_group_id");
         MeshGroup groupCompSubNode1 = meshGroups.get("groupCompSubNode1_id");
         MeshGroup groupCompSubNode2 = meshGroups.get("groupCompSubNode2_id");
+        MeshGroup groupCompSubNode3 = meshGroups.get("groupCompSubNode3_id");
 
-        assertEquals(lib_node1.getMesh(mat1).get(0), mesh1);
-        assertEquals(lib_node2.getMesh(mat2).get(0), mesh1);
-        assertEquals(lib_node3.getMesh(mat1).get(0), mesh2);
-        assertEquals(lib_node_comp.getMesh(mat1).get(0), mesh2);
-        assertEquals(lib_node_comp.getMesh(mat2).get(0), mesh3);
-        assert lib_node_comp_group.getMesh(mat1).contains(mesh1);
-        assert lib_node_comp_group.getMesh(mat1).contains(mesh2);
-        assert lib_node_comp_group.getMesh(mat2).contains(mesh1);
-        assertEquals(lib_node_comp_group.getMesh(mat1).size(), 2);
-        assertEquals(lib_node_comp_group.getMesh(mat2).size(), 1);
+        //mesh1, has a 1 for the 2nd element in the position data, mesh2 has 2 and so on.
+        assertEquals(lib_node1.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(lib_node2.getMesh(mat2).get(0).data.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(lib_node3.getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(lib_node_comp.getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(lib_node_comp.getMesh(mat2).get(0).data.get("POSITION")[1], 3.0, 0.0);
 
+        //TODO: Once matrix transformations have been applied, the signatures of these will change by factors of 1,2 and 3 (scale y)
+        assertEquals(lib_node_comp_group.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(lib_node_comp_group.getMesh(mat1).get(1).data.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(lib_node_comp_group.getMesh(mat2).get(0).data.get("POSITION")[1], 1.0, 0.0);
+
+        //These should NOT be visible at top-level as they are intermediate nodes
+        assert groupCompSubNode1 == null;
+        assert groupCompSubNode2 == null;
+        assert groupCompSubNode3 == null;
     }
 
     @Test

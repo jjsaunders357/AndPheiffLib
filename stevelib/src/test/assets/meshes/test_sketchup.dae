@@ -114,6 +114,7 @@
     <geometry id="geo1_id" name="geo1_name">
         <mesh>
             <source id="input1">
+                <!--2nd float is a 1 for "geo1".  This is used to test which mesh ends up in final output-->
                 <float_array id="blah" count="12">0 1 2 3 4 5 6 7 8 9 10 11</float_array>
                 <technique_common>
                     <accessor source="#blah" count="4" stride="3">
@@ -162,7 +163,8 @@
     <geometry id="geo2_id" name="geo2_name">
         <mesh>
             <source id="input1">
-                <float_array id="blah" count="12">0 1 2 3 4 5 6 7 8 9 10 11</float_array>
+                <!--Signature changed, 2nd float is a 2 for "geo2".  This is used to test which mesh ends up in final output-->
+                <float_array id="blah" count="12">0 2 2 3 4 5 6 7 8 9 10 11</float_array>
                 <technique_common>
                     <accessor source="#blah" count="4" stride="3">
                         <param name="X" type="float"/>
@@ -210,7 +212,8 @@
     <geometry id="geo3_id" name="geo3_name">
         <mesh>
             <source id="input1">
-                <float_array id="blah" count="12">0 1 2 3 4 5 6 7 8 9 10 11</float_array>
+                <!--Signature changed, 2nd float is a 3 for "geo3".  This is used to test which mesh ends up in final output-->
+                <float_array id="blah" count="12">0 3 2 3 4 5 6 7 8 9 10 11</float_array>
                 <technique_common>
                     <accessor source="#blah" count="4" stride="3">
                         <param name="X" type="float"/>
@@ -312,17 +315,18 @@
         </node>
         <node id="lib_node_comp_group_id" name="groupAndComponent">
             <node id="groupCompSubNode1_id" name="annonymous group/component sub node 1">
-                <!--Matrix just stretches x by factor of 2-->
-                <matrix>2 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+                <!--Matrix stretches y by factor of 1-->
+                <matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
                 <instance_node url="#lib_node1_id" />
             </node>
             <node id="groupCompSubNode2_id" name="annonymous group/component sub node 2">
-                <!--Matrix just stretches y by factor of 2-->
+                <!--Matrix stretches y by factor of 2-->
                 <matrix>1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 1</matrix>
                 <instance_node url="#lib_node2_id" />
             </node>
             <node id="groupCompSubNode3_id" name="annonymous group/component sub node 3">
-                <matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+                <!--Matrix stretches y by factor of 3-->
+                <matrix>1 0 0 0 0 3 0 0 0 0 1 0 0 0 0 1</matrix>
                 <instance_node url="#lib_node3_id" />
             </node>
         </node>

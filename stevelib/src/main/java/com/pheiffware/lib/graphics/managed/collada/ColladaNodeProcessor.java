@@ -7,8 +7,9 @@ import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,31 +25,70 @@ public class ColladaNodeProcessor
 {
     private final Map<String, Material> materials;
     private final InstanceGeometryParser instanceGeometryParser;
-    private final Map<String, MeshGroupRetrievable> meshGroupRetrievableMap = new HashMap<>();
+    private final Map<String, IncompleteNode> incompleteNodeMap = new HashMap<>();
     private final Map<String, MeshGroup> meshGroupsMap = new HashMap<>();
+    private final List<MeshGroup> annonymousMeshGroups = new ArrayList<>();
 
-    public ColladaNodeProcessor(Element element, Map<String, Material> materials, Map<String, ColladaGeometry> geometries, boolean ignoreMaterials) throws XMLParseException
+    public ColladaNodeProcessor(Element element, Map<String, Material> materials, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments) throws XMLParseException
     {
         this.materials = materials;
-        instanceGeometryParser = new InstanceGeometryParser(materials, geometries, ignoreMaterials);
-        processNode(element, true);
-        retrieveAllMeshGroups();
+        instanceGeometryParser = new InstanceGeometryParser(materials, geometries, ignoreMaterialAssignments);
+        List<MeshGroupRetrievable> topLevelMeshGroupRetrievables = getMeshGroupRetrievables(element, true);
+        for (MeshGroupRetrievable topLevelMeshGroupRetrievable : topLevelMeshGroupRetrievables)
+        {
+            if (!topLevelMeshGroupRetrievable.hasId())
+            {
+                annonymousMeshGroups.add(topLevelMeshGroupRetrievable.retrieveMeshGroup());
+            }
+        }
+        registerAllNamedMeshGroups();
     }
 
-    private void retrieveAllMeshGroups()
+    private void registerAllNamedMeshGroups()
     {
-        for (Map.Entry<String, MeshGroupRetrievable> entry : meshGroupRetrievableMap.entrySet())
+        for (Map.Entry<String, IncompleteNode> entry : incompleteNodeMap.entrySet())
         {
-            MeshGroup meshGroup = entry.getValue().retrieveMeshGroup();
-            meshGroupsMap.put(entry.getKey(), meshGroup);
+            IncompleteNode incompleteNode = entry.getValue();
+            if (incompleteNode.topLevel)
+            {
+                MeshGroup meshGroup = incompleteNode.retrieveMeshGroup();
+                meshGroupsMap.put(entry.getKey(), meshGroup);
+            }
         }
     }
 
-    private IncompleteNode processNode(Element element, boolean root) throws XMLParseException
+    private List<MeshGroupRetrievable> getMeshGroupRetrievables(Element element, boolean topLevel) throws XMLParseException
     {
-        List<Element> instance_nodes = DomUtils.getSubElements(element, "instance_node");
-        List<Element> nodes = DomUtils.getSubElements(element, "node");
-        List<Element> instance_geometries = DomUtils.getSubElements(element, "instance_geometry");
+        List<MeshGroupRetrievable> meshGroupRetrievables = new LinkedList<>();
+        for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling())
+        {
+            if (child.getNodeType() == Node.ELEMENT_NODE)
+            {
+                Element childElement = (Element) child;
+                if (childElement.getTagName().equals("node"))
+                {
+                    MeshGroupRetrievable meshGroupRetrievable = processNodeElementAndRegister(childElement, topLevel);
+                    meshGroupRetrievables.add(meshGroupRetrievable);
+
+                }
+                else if (childElement.getTagName().equals("instance_node"))
+                {
+                    String referenceNodeID = childElement.getAttribute("url").substring(1);
+                    MeshGroupRetrievable meshGroupRetrievable = new NodeInstance(referenceNodeID);
+                    meshGroupRetrievables.add(meshGroupRetrievable);
+                }
+                else if (childElement.getTagName().equals("instance_geometry"))
+                {
+                    MeshGroup meshGroup = instanceGeometryParser.parseInstanceGeometry(childElement);
+                    meshGroupRetrievables.add(new SimpleMeshGroupRetrievable(meshGroup));
+                }
+            }
+        }
+        return meshGroupRetrievables;
+    }
+
+    private IncompleteNode processNodeElementAndRegister(Element element, boolean topLevel) throws XMLParseException
+    {
         Element matrixElement = DomUtils.getSingleSubElement(element, "matrix");
         float[] transformMatrix;
         if (matrixElement != null)
@@ -59,37 +99,11 @@ public class ColladaNodeProcessor
         {
             transformMatrix = MathUtils.IDENTITY_MATRIX4;
         }
-        IncompleteNode incompleteNode = new IncompleteNode(transformMatrix);
-        for (Element subNodeElement : nodes)
-        {
-            //If this is being processed under root then it is a top-level node
-            MeshGroupRetrievable meshGroupRetrievable = processNodeAndRegister(subNodeElement, root);
-            incompleteNode.addMeshRetrievable(meshGroupRetrievable);
-        }
-        for (Element instanceNodeElement : instance_nodes)
-        {
-            String referenceNodeID = instanceNodeElement.getAttribute("url").substring(1);
-            MeshGroupRetrievable meshGroupRetrievable = new NodeInstance(referenceNodeID);
-            incompleteNode.addMeshRetrievable(meshGroupRetrievable);
-        }
-        for (Element instanceGeometryElement : instance_geometries)
-        {
-            MeshGroup meshGroup = instanceGeometryParser.parseInstanceGeometry(instanceGeometryElement);
-            incompleteNode.addMeshRetrievable(new SimpleMeshGroupRetrievable(meshGroup));
-        }
-        return incompleteNode;
-    }
-
-    private IncompleteNode processNodeAndRegister(Element element, boolean topLevel) throws XMLParseException
-    {
-        //By definition this will not be a root node.
-        IncompleteNode incompleteNode = processNode(element, false);
-        if (topLevel)
-        {
-            incompleteNode.setTopLevel(true);
-        }
+        IncompleteNode incompleteNode = new IncompleteNode(transformMatrix, topLevel);
+        List<MeshGroupRetrievable> meshGroupRetrievables = getMeshGroupRetrievables(element, false);
+        incompleteNode.addMeshRetrievables(meshGroupRetrievables);
         String id = element.getAttribute("id");
-        meshGroupRetrievableMap.put(id, incompleteNode);
+        incompleteNodeMap.put(id, incompleteNode);
         return incompleteNode;
     }
 
@@ -105,21 +119,28 @@ public class ColladaNodeProcessor
         @Override
         public MeshGroup retrieveMeshGroup()
         {
-            MeshGroupRetrievable meshGroupRetrievable = meshGroupRetrievableMap.get(referenceNodeID);
+            MeshGroupRetrievable meshGroupRetrievable = incompleteNodeMap.get(referenceNodeID);
             return meshGroupRetrievable.retrieveMeshGroup();
+        }
+
+        @Override
+        public boolean hasId()
+        {
+            return false;
         }
     }
 
     private class IncompleteNode implements MeshGroupRetrievable
     {
-        private boolean topLevel = false;
         private final float[] transformMatrix;
+        private final boolean topLevel;
         private final List<MeshGroupRetrievable> children = new LinkedList<>();
         private MeshGroup meshGroup = null;
 
-        IncompleteNode(float[] transformMatrix)
+        IncompleteNode(float[] transformMatrix, boolean topLevel)
         {
             this.transformMatrix = transformMatrix;
+            this.topLevel = topLevel;
         }
 
         void addMeshRetrievable(MeshGroupRetrievable meshGroupRetrievable)
@@ -127,26 +148,38 @@ public class ColladaNodeProcessor
             children.add(meshGroupRetrievable);
         }
 
+        public void addMeshRetrievables(List<MeshGroupRetrievable> meshGroupRetrievables)
+        {
+            children.addAll(meshGroupRetrievables);
+        }
+
         @Override
         public MeshGroup retrieveMeshGroup()
         {
             if (meshGroup == null)
             {
-                meshGroup = new MeshGroup();
+                //For nodes which are not top-level collapse all child nodes by transforming them and amalgamating them into one mesh.
+                //Only top-level nodes are ever seen and they have their initial transform specified, but unapplied.
+                meshGroup = new MeshGroup(transformMatrix);
                 for (MeshGroupRetrievable meshGroupRetrievable : children)
                 {
-                    //TODO: Apply matrix transformation to child mesh groups
                     MeshGroup childMeshGroup = meshGroupRetrievable.retrieveMeshGroup();
+                    if (!topLevel)
+                    {
+                        childMeshGroup.applyMatrixTransform(transformMatrix);
+                    }
                     meshGroup.add(childMeshGroup);
                 }
             }
             return meshGroup;
         }
 
-        public void setTopLevel(boolean topLevel)
+        @Override
+        public boolean hasId()
         {
-            this.topLevel = topLevel;
+            return true;
         }
+
     }
 
     private static class SimpleMeshGroupRetrievable implements MeshGroupRetrievable
@@ -163,16 +196,29 @@ public class ColladaNodeProcessor
         {
             return meshGroup;
         }
+
+        @Override
+        public boolean hasId()
+        {
+            return false;
+        }
     }
 
     private interface MeshGroupRetrievable
     {
         MeshGroup retrieveMeshGroup();
+
+        boolean hasId();
     }
 
     public Map<String, MeshGroup> getMeshGroupsMap()
     {
         return meshGroupsMap;
+    }
+
+    public List<MeshGroup> getAnnonymousMeshGroups()
+    {
+        return annonymousMeshGroups;
     }
 }
 /*

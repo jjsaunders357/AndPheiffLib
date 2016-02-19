@@ -18,14 +18,14 @@ import java.util.Map;
 public class InstanceGeometryParser
 {
     private final Map<String, ColladaGeometry> geometries;
-    private final boolean ignoreMaterials;
+    private final boolean ignoreMaterialAssignments;
     private final Map<String, Material> materials;
 
-    public InstanceGeometryParser(Map<String, Material> materials, Map<String, ColladaGeometry> geometries, boolean ignoreMaterials)
+    public InstanceGeometryParser(Map<String, Material> materials, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments)
     {
         this.materials = materials;
         this.geometries = geometries;
-        this.ignoreMaterials = ignoreMaterials;
+        this.ignoreMaterialAssignments = ignoreMaterialAssignments;
     }
 
     /**
@@ -43,7 +43,7 @@ public class InstanceGeometryParser
         {
             throw new XMLParseException("Undefined geometry id referenced: " + geometryID);
         }
-        if (ignoreMaterials)
+        if (ignoreMaterialAssignments)
         {
             return colladaGeometry.createMeshGroup(materials);
         }

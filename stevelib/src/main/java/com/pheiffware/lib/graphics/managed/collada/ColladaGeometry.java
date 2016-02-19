@@ -3,10 +3,9 @@ package com.pheiffware.lib.graphics.managed.collada;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
+import com.pheiffware.lib.graphics.utils.MathUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,8 @@ public class ColladaGeometry
 
     public MeshGroup createMeshGroup(Map<String, Material> materials)
     {
-        MeshGroup meshGroup = new MeshGroup();
+        //No initial transform can be specified in geometry elements
+        MeshGroup meshGroup = new MeshGroup(MathUtils.IDENTITY_MATRIX4);
         for (int i = 0; i < meshes.size(); i++)
         {
             Material material = materials.get(materialIDs.get(i));
@@ -43,7 +43,8 @@ public class ColladaGeometry
     public MeshGroup createMeshGroup(Map<String, Material> materials, String materialID)
     {
         Material material = materials.get(materialID);
-        MeshGroup meshGroup = new MeshGroup();
+        //No initial transform can be specified in geometry elements
+        MeshGroup meshGroup = new MeshGroup(MathUtils.IDENTITY_MATRIX4);
         for (int i = 0; i < meshes.size(); i++)
         {
             meshGroup.add(material, meshes.get(i));
