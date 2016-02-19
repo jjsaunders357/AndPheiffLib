@@ -29,6 +29,9 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Steve on 2/15/2016.
  */
+//TODO: Comment the hell out of this parser
+//TODO: Reorganize parser packages particular NodeParser, which is an enormous class
+//TODO: Once matrix transformations have been applied, the signatures of meshes will change by known multipliers and the test will have to change.
 public class TestCollada
 {
     @Test
@@ -177,7 +180,6 @@ public class TestCollada
         assertEquals(lib_node_comp.getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
         assertEquals(lib_node_comp.getMesh(mat2).get(0).data.get("POSITION")[1], 3.0, 0.0);
 
-        //TODO: Once matrix transformations have been applied, the signatures of these will change by factors of 1,2 and 3 (scale y)
         assertEquals(lib_node_comp_group.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
         assertEquals(lib_node_comp_group.getMesh(mat1).get(1).data.get("POSITION")[1], 2.0, 0.0);
         assertEquals(lib_node_comp_group.getMesh(mat2).get(0).data.get("POSITION")[1], 1.0, 0.0);
