@@ -331,6 +331,50 @@
             </node>
         </node>
     </library_nodes>
-
-
+    <library_visual_scenes>
+        <visual_scene id="ID1">
+            <node name="SketchUp">
+                <instance_geometry url="#geo2_id">
+                    <bind_material>
+                        <technique_common>
+                            <instance_material symbol="Material2" target="#mat_text1_id">
+                                <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                            </instance_material>
+                        </technique_common>
+                    </bind_material>
+                </instance_geometry>
+                <node id="groupOfGroups_id" name="groupOfGroups_name">
+                    <matrix>1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 1</matrix>
+                    <node id="subGroup1_id" name="subGroup1_name">
+                        <matrix>1 0 0 0 0 3 0 0 0 0 1 0 0 0 0 1</matrix>
+                        <instance_geometry url="#geo1_id">
+                            <bind_material>
+                                <technique_common>
+                                    <instance_material symbol="Material2" target="#mat_text1_id">
+                                        <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                                    </instance_material>
+                                </technique_common>
+                            </bind_material>
+                        </instance_geometry>
+                    </node>
+                    <node id="subGroup1_id" name="subGroup1_name">
+                        <matrix>1 0 0 0 0 4 0 0 0 0 1 0 0 0 0 1</matrix>
+                        <instance_geometry url="#geo2_id">
+                            <bind_material>
+                                <technique_common>
+                                    <instance_material symbol="Material2" target="#mat_text2_id">
+                                        <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
+                                    </instance_material>
+                                </technique_common>
+                            </bind_material>
+                        </instance_geometry>
+                    </node>
+                </node>
+                <node id="reference_id" name="refrence_name">
+                        <matrix>1 0 0 0 0 5 0 0 0 0 1 0 0 0 0 1</matrix>
+                    <instance_node url="#lib_node1_id" />
+                </node>
+            </node>
+        </visual_scene>
+    </library_visual_scenes>
 </COLLADA>

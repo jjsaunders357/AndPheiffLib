@@ -139,15 +139,15 @@ public class TestCollada
         Mesh mesh3 = geometries.get("geo3_id").meshes.get(0);
 
         //Check all the library meshGroups to make sure they were combined properly
-        Map<String, MeshGroup> meshGroups = collada.getMeshGroups();
-        MeshGroup lib_node1 = meshGroups.get("lib_node1_id");
-        MeshGroup lib_node2 = meshGroups.get("lib_node2_id");
-        MeshGroup lib_node3 = meshGroups.get("lib_node3_id");
-        MeshGroup lib_node_comp = meshGroups.get("lib_node_comp_id");
-        MeshGroup lib_node_comp_group = meshGroups.get("lib_node_comp_group_id");
-        MeshGroup groupCompSubNode1 = meshGroups.get("groupCompSubNode1_id");
-        MeshGroup groupCompSubNode2 = meshGroups.get("groupCompSubNode2_id");
-        MeshGroup groupCompSubNode3 = meshGroups.get("groupCompSubNode3_id");
+        Map<String, MeshGroup> libMeshGroups = collada.getLibraryMeshGroups();
+        MeshGroup lib_node1 = libMeshGroups.get("lib_node1_id");
+        MeshGroup lib_node2 = libMeshGroups.get("lib_node2_id");
+        MeshGroup lib_node3 = libMeshGroups.get("lib_node3_id");
+        MeshGroup lib_node_comp = libMeshGroups.get("lib_node_comp_id");
+        MeshGroup lib_node_comp_group = libMeshGroups.get("lib_node_comp_group_id");
+        MeshGroup groupCompSubNode1 = libMeshGroups.get("groupCompSubNode1_id");
+        MeshGroup groupCompSubNode2 = libMeshGroups.get("groupCompSubNode2_id");
+        MeshGroup groupCompSubNode3 = libMeshGroups.get("groupCompSubNode3_id");
 
         //mesh1, has a 1 for the 2nd element in the position data, mesh2 has 2 and so on.
         assertEquals(lib_node1.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
@@ -165,6 +165,15 @@ public class TestCollada
         assert groupCompSubNode1 == null;
         assert groupCompSubNode2 == null;
         assert groupCompSubNode3 == null;
+
+        Map<String, MeshGroup> meshGroups = collada.getMeshGroups();
+        List<MeshGroup> annonymousMeshGroups = collada.getAnnonymousMeshGroups();
+        assertEquals(annonymousMeshGroups.get(0).getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
+        MeshGroup groupOfGroups = meshGroups.get("groupOfGroups_id");
+        assertEquals(groupOfGroups.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(groupOfGroups.getMesh(mat2).get(0).data.get("POSITION")[1], 2.0, 0.0);
+        MeshGroup reference = meshGroups.get("reference_id");
+        assertEquals(reference.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
     }
 
     @Test

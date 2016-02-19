@@ -16,48 +16,67 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Given an element which contains nodes (and possibly geometry instances) process all sub-nodes recursively to
- * create a map from ids to complete MeshGroups, with all materials properly assigned.  This completely flattens
- * the hierarchy at the top level.  Sub-nodes/geometry instances are just rolled into parent MeshGroups.
+ * Used to process all nodes under library_nodes and visual_scene elements.  Note: in SketchUp a top-level "SketchUp" node is what is parsed on visual_scene_elements.
+ * This recursively descends through a node hierarchy composed of 3 types of nodes:
+ * 1. nodes: Possibly include initial matrix transformation information and will contain other nodes
+ * 2. geometry-instances: Reference to previously parsed geometry data.  These are always leaves.
+ * 3. node-instances: References to other nodes.  These only occur under library_nodes elements.  These are always leaves.
+ *
+ * This requires 3 passes:
+ * Pass 1: Goes through top level nodes and builds tree for each one.  Also creates a map from id to any node objects encountered.  The roots of these trees are returned.
+ * Pass 2: Goes through the root of each tree returned, retrieves the map and adds it to the list of anonymous mesh groups.  Note: SketchUp creates these for all geometry which is not grouped.
+ * a. For geometry-instances this just returns a mesh group (easily built)
+ * b. For node-instances this looks up the node in the previously built map and returns its meshgroup
+ * c. For nodes themselves, this gets mesh groups from all children and combines them (recursively)
+ * Pass 3: For each instance (top-level) node in the nodeMap, it retrieves the mesh group as described above.  All meshGroups are removed from the list of anonymous mesh groups.
+ *
+ * When processing the main scene, meshgroups already loaded from the library_nodes scene are injected into the node map ahead of time.
  * Created by Steve on 2/16/2016.
  */
 public class ColladaNodeProcessor
 {
-    private final Map<String, Material> materials;
     private final InstanceGeometryParser instanceGeometryParser;
-    private final Map<String, IncompleteNode> incompleteNodeMap = new HashMap<>();
-    private final Map<String, MeshGroup> meshGroupsMap = new HashMap<>();
-    private final List<MeshGroup> annonymousMeshGroups = new ArrayList<>();
+    private final Map<String, ColladaNode> nodeMap = new HashMap<>();
+    private final Map<String, MeshGroup> instanceMeshGroups = new HashMap<>();
+    //List used here instead of Set to make it consistent for testing
+    private final List<MeshGroup> annonymousInstanceMeshGroups = new ArrayList<>();
 
-    public ColladaNodeProcessor(Element element, Map<String, Material> materials, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments) throws XMLParseException
+    public ColladaNodeProcessor(Element element, Map<String, Material> materials, Map<String, ColladaGeometry> geometries, Map<String, MeshGroup> libraryMeshGroups, boolean ignoreMaterialAssignments) throws XMLParseException
     {
-        this.materials = materials;
         instanceGeometryParser = new InstanceGeometryParser(materials, geometries, ignoreMaterialAssignments);
+        injectLibraryNodes(libraryMeshGroups);
         List<MeshGroupRetrievable> topLevelMeshGroupRetrievables = getMeshGroupRetrievables(element, true);
         for (MeshGroupRetrievable topLevelMeshGroupRetrievable : topLevelMeshGroupRetrievables)
         {
-            if (!topLevelMeshGroupRetrievable.hasId())
-            {
-                annonymousMeshGroups.add(topLevelMeshGroupRetrievable.retrieveMeshGroup());
-            }
+            annonymousInstanceMeshGroups.add(topLevelMeshGroupRetrievable.retrieveMeshGroup());
         }
-        registerAllNamedMeshGroups();
+        registerInstanceMeshGroups();
     }
 
-    private void registerAllNamedMeshGroups()
+    private void injectLibraryNodes(Map<String, MeshGroup> libraryMeshGroups)
     {
-        for (Map.Entry<String, IncompleteNode> entry : incompleteNodeMap.entrySet())
+        for (Map.Entry<String, MeshGroup> entry : libraryMeshGroups.entrySet())
         {
-            IncompleteNode incompleteNode = entry.getValue();
-            if (incompleteNode.topLevel)
+            MeshGroup meshGroup = entry.getValue();
+            nodeMap.put(entry.getKey(), new LibraryColladaNode(meshGroup));
+        }
+    }
+
+    private void registerInstanceMeshGroups()
+    {
+        for (Map.Entry<String, ColladaNode> entry : nodeMap.entrySet())
+        {
+            ColladaNode colladaNode = entry.getValue();
+            if (colladaNode.isInstanceNode())
             {
-                MeshGroup meshGroup = incompleteNode.retrieveMeshGroup();
-                meshGroupsMap.put(entry.getKey(), meshGroup);
+                MeshGroup meshGroup = colladaNode.retrieveMeshGroup();
+                instanceMeshGroups.put(entry.getKey(), meshGroup);
+                annonymousInstanceMeshGroups.remove(meshGroup);
             }
         }
     }
 
-    private List<MeshGroupRetrievable> getMeshGroupRetrievables(Element element, boolean topLevel) throws XMLParseException
+    private List<MeshGroupRetrievable> getMeshGroupRetrievables(Element element, boolean createInstanceNodes) throws XMLParseException
     {
         List<MeshGroupRetrievable> meshGroupRetrievables = new LinkedList<>();
         for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling())
@@ -67,7 +86,7 @@ public class ColladaNodeProcessor
                 Element childElement = (Element) child;
                 if (childElement.getTagName().equals("node"))
                 {
-                    MeshGroupRetrievable meshGroupRetrievable = processNodeElementAndRegister(childElement, topLevel);
+                    MeshGroupRetrievable meshGroupRetrievable = processNodeElementAndRegister(childElement, createInstanceNodes);
                     meshGroupRetrievables.add(meshGroupRetrievable);
 
                 }
@@ -87,7 +106,7 @@ public class ColladaNodeProcessor
         return meshGroupRetrievables;
     }
 
-    private IncompleteNode processNodeElementAndRegister(Element element, boolean topLevel) throws XMLParseException
+    private ColladaNode processNodeElementAndRegister(Element element, boolean isInstanceNode) throws XMLParseException
     {
         Element matrixElement = DomUtils.getSingleSubElement(element, "matrix");
         float[] transformMatrix;
@@ -99,12 +118,12 @@ public class ColladaNodeProcessor
         {
             transformMatrix = MathUtils.IDENTITY_MATRIX4;
         }
-        IncompleteNode incompleteNode = new IncompleteNode(transformMatrix, topLevel);
+        ParsedColladaNode parsedColladaNode = new ParsedColladaNode(transformMatrix, isInstanceNode);
         List<MeshGroupRetrievable> meshGroupRetrievables = getMeshGroupRetrievables(element, false);
-        incompleteNode.addMeshRetrievables(meshGroupRetrievables);
+        parsedColladaNode.addMeshRetrievables(meshGroupRetrievables);
         String id = element.getAttribute("id");
-        incompleteNodeMap.put(id, incompleteNode);
-        return incompleteNode;
+        nodeMap.put(id, parsedColladaNode);
+        return parsedColladaNode;
     }
 
     private class NodeInstance implements MeshGroupRetrievable
@@ -119,28 +138,49 @@ public class ColladaNodeProcessor
         @Override
         public MeshGroup retrieveMeshGroup()
         {
-            MeshGroupRetrievable meshGroupRetrievable = incompleteNodeMap.get(referenceNodeID);
+            MeshGroupRetrievable meshGroupRetrievable = nodeMap.get(referenceNodeID);
             return meshGroupRetrievable.retrieveMeshGroup();
-        }
-
-        @Override
-        public boolean hasId()
-        {
-            return false;
         }
     }
 
-    private class IncompleteNode implements MeshGroupRetrievable
+    private interface ColladaNode extends MeshGroupRetrievable
+    {
+        boolean isInstanceNode();
+    }
+
+    private class LibraryColladaNode implements ColladaNode
+    {
+        private final MeshGroup meshGroup;
+
+        public LibraryColladaNode(MeshGroup meshGroup)
+        {
+            this.meshGroup = meshGroup;
+        }
+
+        @Override
+        public boolean isInstanceNode()
+        {
+            return false;
+        }
+
+        @Override
+        public MeshGroup retrieveMeshGroup()
+        {
+            return meshGroup;
+        }
+    }
+
+    private class ParsedColladaNode implements ColladaNode
     {
         private final float[] transformMatrix;
-        private final boolean topLevel;
+        private final boolean instanceNode;
         private final List<MeshGroupRetrievable> children = new LinkedList<>();
         private MeshGroup meshGroup = null;
 
-        IncompleteNode(float[] transformMatrix, boolean topLevel)
+        ParsedColladaNode(float[] transformMatrix, boolean instanceNode)
         {
             this.transformMatrix = transformMatrix;
-            this.topLevel = topLevel;
+            this.instanceNode = instanceNode;
         }
 
         void addMeshRetrievable(MeshGroupRetrievable meshGroupRetrievable)
@@ -164,7 +204,7 @@ public class ColladaNodeProcessor
                 for (MeshGroupRetrievable meshGroupRetrievable : children)
                 {
                     MeshGroup childMeshGroup = meshGroupRetrievable.retrieveMeshGroup();
-                    if (!topLevel)
+                    if (!instanceNode)
                     {
                         childMeshGroup.applyMatrixTransform(transformMatrix);
                     }
@@ -174,12 +214,10 @@ public class ColladaNodeProcessor
             return meshGroup;
         }
 
-        @Override
-        public boolean hasId()
+        public boolean isInstanceNode()
         {
-            return true;
+            return instanceNode;
         }
-
     }
 
     private static class SimpleMeshGroupRetrievable implements MeshGroupRetrievable
@@ -196,29 +234,21 @@ public class ColladaNodeProcessor
         {
             return meshGroup;
         }
-
-        @Override
-        public boolean hasId()
-        {
-            return false;
-        }
     }
 
     private interface MeshGroupRetrievable
     {
         MeshGroup retrieveMeshGroup();
-
-        boolean hasId();
     }
 
-    public Map<String, MeshGroup> getMeshGroupsMap()
+    public Map<String, MeshGroup> getInstanceMeshGroups()
     {
-        return meshGroupsMap;
+        return instanceMeshGroups;
     }
 
-    public List<MeshGroup> getAnnonymousMeshGroups()
+    public List<MeshGroup> getAnnonymousInstanceMeshGroups()
     {
-        return annonymousMeshGroups;
+        return annonymousInstanceMeshGroups;
     }
 }
 /*

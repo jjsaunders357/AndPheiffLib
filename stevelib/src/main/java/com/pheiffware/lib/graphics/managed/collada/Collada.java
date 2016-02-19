@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -35,6 +36,8 @@ public class Collada
     public static final GColor DEFAULT_DIFFUSE_TEXTURE = new GColor(1f, 1f, 1f, 1f);
     public static final GColor DEFAULT_AMBIENT = new GColor(0f, 0f, 0f, 1f);
     public static final GColor DEFAULT_SPECULAR = new GColor(1f, 1f, 1f, 1f);
+    private Map<String, MeshGroup> meshGroups;
+    private List<MeshGroup> annonymousMeshGroups;
 
     public enum TOOL
     {
@@ -55,8 +58,8 @@ public class Collada
     //Map from ids to ColladaGeometry
     private final Map<String, ColladaGeometry> geometries = new HashMap<>();
 
-    //Map from node ids to completely defined meshGroups
-    private final Map<String, MeshGroup> meshGroups = new HashMap<>();
+    //Map from node ids to completely defined libraryMeshGroups
+    private final Map<String, MeshGroup> libraryMeshGroups = new HashMap<>();
 
     public void loadCollada(AssetManager assetManager, String assetFileName) throws XMLParseException
     {
@@ -106,21 +109,22 @@ public class Collada
         Element library_nodes = DomUtils.getSingleSubElement(rootElement, "library_nodes");
         if (library_nodes != null)
         {
-            ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(library_nodes, materials, geometries, tool == TOOL.BLENDER);
-            meshGroups.putAll(colladaNodeProcessor.getMeshGroupsMap());
+            ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(library_nodes, materials, geometries, new HashMap<String, MeshGroup>(), tool == TOOL.BLENDER);
+            libraryMeshGroups.putAll(colladaNodeProcessor.getInstanceMeshGroups());
 
             //Apply all top-level transforms to library objects.
             //It is unlikely there will be any top-level meshgroups with transforms,
             //but if these are referenced and further transformed, this would be a problem.
-            for (MeshGroup meshGroup : meshGroups.values())
+            for (MeshGroup meshGroup : libraryMeshGroups.values())
             {
                 meshGroup.applyMatrixTransform(meshGroup.getInitialTransformMatrix());
             }
             //Should not be any top-level annonymous meshes in library and if there are, they can't be referenced, so ignore.
         }
-//        Element visual_scene = DomUtils.assertGetSubElementChain(rootElement, "library_visual_scenes","visual_scene");
-//        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(visual_scene, materials, geometries, tool==TOOL.BLENDER);
-
+        Element visual_scene = DomUtils.assertGetSubElementChain(rootElement, "library_visual_scenes", "visual_scene", "node");
+        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(visual_scene, materials, geometries, libraryMeshGroups, tool == TOOL.BLENDER);
+        meshGroups = colladaNodeProcessor.getInstanceMeshGroups();
+        annonymousMeshGroups = colladaNodeProcessor.getAnnonymousInstanceMeshGroups();
     }
 
     private Document loadColladaDocument(InputStream input) throws XMLParseException
@@ -176,9 +180,18 @@ public class Collada
         return geometries;
     }
 
+    public Map<String, MeshGroup> getLibraryMeshGroups()
+    {
+        return libraryMeshGroups;
+    }
+
     public Map<String, MeshGroup> getMeshGroups()
     {
         return meshGroups;
     }
 
+    public List<MeshGroup> getAnnonymousMeshGroups()
+    {
+        return annonymousMeshGroups;
+    }
 }
