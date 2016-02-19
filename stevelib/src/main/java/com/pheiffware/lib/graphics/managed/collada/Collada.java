@@ -121,8 +121,17 @@ public class Collada
             }
             //Should not be any top-level annonymous meshes in library and if there are, they can't be referenced, so ignore.
         }
-        Element visual_scene = DomUtils.assertGetSubElementChain(rootElement, "library_visual_scenes", "visual_scene", "node");
-        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(visual_scene, materials, geometries, libraryMeshGroups, tool == TOOL.BLENDER);
+        Element scene = DomUtils.assertGetSubElementChain(rootElement, "library_visual_scenes", "visual_scene");
+        if (tool == TOOL.SKETCHUP)
+        {
+            //SketchUp wraps everything in a "SketchUp" node.
+            scene = DomUtils.assertGetSingleSubElement(scene, "node");
+            if (!scene.getAttribute("name").equals("SketchUp"))
+            {
+                throw new XMLParseException("SketchUp Collada file missing root \"SketchUp\" node in scene");
+            }
+        }
+        ColladaNodeProcessor colladaNodeProcessor = new ColladaNodeProcessor(scene, materials, geometries, libraryMeshGroups, tool == TOOL.BLENDER);
         meshGroups = colladaNodeProcessor.getInstanceMeshGroups();
         annonymousMeshGroups = colladaNodeProcessor.getAnnonymousInstanceMeshGroups();
     }

@@ -184,11 +184,11 @@
         </instance_geometry>
       </node>
       <node id="parent_id" name="parent_name" type="NODE">
-        <matrix sid="transform">2 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <matrix sid="transform">1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 1</matrix>
         <instance_geometry url="#geo1_id" name="Parent"/>
         <node id="child_id" name="child_name" type="NODE">
-          <matrix sid="transform">2 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
-          <instance_geometry url="#geo2_id" name="Child"/>
+          <matrix sid="transform">1 0 0 0 0 3 0 0 0 0 1 0 0 0 0 1</matrix>
+          <instance_geometry url="#geo1_id" name="Child"/>
         </node>
       </node>
     </visual_scene>

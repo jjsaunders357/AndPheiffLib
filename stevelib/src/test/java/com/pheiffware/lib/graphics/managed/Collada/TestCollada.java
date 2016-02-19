@@ -32,6 +32,17 @@ import static org.junit.Assert.assertEquals;
 public class TestCollada
 {
     @Test
+    public void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
+    {
+        FileInputStream input = new FileInputStream("src/main/assets/meshes/test_blend.dae");
+        Collada collada = new Collada();
+        collada.loadCollada(input);
+        input = new FileInputStream("src/main/assets/meshes/test_sketch.dae");
+        collada = new Collada();
+        collada.loadCollada(input);
+    }
+
+    @Test
     public void testCompleteLoadBlender() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
         FileInputStream input = new FileInputStream("src/test/assets/meshes/test_blender.dae");
@@ -83,7 +94,17 @@ public class TestCollada
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.data.get("TEXCOORD"), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.data.get("NORMAL"), 0);
 
+        Map<String, MeshGroup> meshGroups = collada.getMeshGroups();
+        List<MeshGroup> annonymousMeshGroups = collada.getAnnonymousMeshGroups();
+        assertEquals(0, annonymousMeshGroups.size());
 
+        MeshGroup dual = meshGroups.get("dual_id");
+        assertEquals(15, dual.getMesh(mat1).get(0).data.get("POSITION").length);
+        assertEquals(12, dual.getMesh(mat2).get(0).data.get("POSITION").length);
+
+        MeshGroup parent = meshGroups.get("parent_id");
+        assertEquals(15, parent.getMesh(mat1).get(0).data.get("POSITION").length);
+        assertEquals(12, parent.getMesh(mat2).get(0).data.get("POSITION").length);
 
     }
 
