@@ -169,7 +169,7 @@
   </library_geometries>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
-      <node id="dual_id" name="dual" type="NODE">
+      <node id="dual_id" name="dual_name" type="NODE">
         <instance_geometry url="#geo1_id" name="who cares">
           <bind_material>
             <technique_common>

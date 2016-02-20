@@ -17,7 +17,7 @@ import java.util.Map;
  * For sketchup, this information is later combined with other material/instance information to actually determine material.
  * Created by Steve on 2/16/2016.
  */
-public class ColladaGeometry
+class ColladaGeometry
 {
     public final List<String> materialIDs = new ArrayList<>();
     public final List<Mesh> meshes = new ArrayList<>();
@@ -40,9 +40,8 @@ public class ColladaGeometry
         return meshGroup;
     }
 
-    public MeshGroup createMeshGroup(Map<String, Material> materials, String materialID)
+    public MeshGroup createMeshGroup(Material material)
     {
-        Material material = materials.get(materialID);
         //No initial transform can be specified in geometry elements
         MeshGroup meshGroup = new MeshGroup(MathUtils.IDENTITY_MATRIX4);
         for (int i = 0; i < meshes.size(); i++)

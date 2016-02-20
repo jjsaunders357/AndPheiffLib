@@ -11,10 +11,10 @@ import org.w3c.dom.Element;
 import java.util.List;
 
 /**
- * Used to extract ColladaEffect from <effects></effects> tags.
+ * Used to extract ColladaEffect from effects elements.
  * Created by Steve on 2/15/2016.
  */
-public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
+class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
 {
     @Override
     public ColladaEffect createFromElement(Element element) throws XMLParseException
@@ -43,19 +43,19 @@ public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
         {
             Element lambert = DomUtils.assertGetSingleSubElement(technique, "lambert");
             diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(lambert, "diffuse"));
-            shininess = Collada.DEFAULT_SHININESS;
+            shininess = ColladaFactory.DEFAULT_SHININESS;
         }
         if (ambientColor == null)
         {
-            ambientColor = Collada.DEFAULT_AMBIENT;
+            ambientColor = ColladaFactory.DEFAULT_AMBIENT;
         }
         if (diffuseColor == null)
         {
-            diffuseColor = Collada.DEFAULT_DIFFUSE_TEXTURE;
+            diffuseColor = ColladaFactory.DEFAULT_DIFFUSE_TEXTURE;
         }
         if (specularColor == null)
         {
-            specularColor = Collada.DEFAULT_SPECULAR;
+            specularColor = ColladaFactory.DEFAULT_SPECULAR;
         }
         return new ColladaEffect(imageFileReference, ambientColor, diffuseColor, specularColor, shininess);
     }
@@ -73,8 +73,7 @@ public class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
                 if (type.equals("2D"))
                 {
                     Element init_from = DomUtils.assertGetSingleSubElement(surface, "init_from");
-                    String imageReference = init_from.getFirstChild().getTextContent();
-                    return imageReference;
+                    return init_from.getFirstChild().getTextContent();
                 }
             }
         }

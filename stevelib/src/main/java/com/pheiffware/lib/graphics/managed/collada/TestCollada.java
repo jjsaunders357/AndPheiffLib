@@ -1,16 +1,11 @@
-package com.pheiffware.lib.graphics.managed.Collada;
+package com.pheiffware.lib.graphics.managed.collada;
 
 import com.pheiffware.lib.graphics.GColor;
-import com.pheiffware.lib.graphics.managed.collada.Collada;
-import com.pheiffware.lib.graphics.managed.collada.ColladaAccessor;
-import com.pheiffware.lib.graphics.managed.collada.ColladaGeometry;
-import com.pheiffware.lib.graphics.managed.collada.ColladaInput;
-import com.pheiffware.lib.graphics.managed.collada.ColladaMeshUncollator;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-import com.pheiffware.lib.utils.dom.XMLParseException;
-import com.pheiffware.lib.graphics.managed.collada.ColladaSource;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
+import com.pheiffware.lib.graphics.managed.mesh.Object3D;
+import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -27,33 +22,30 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Steve on 2/15/2016.
+ * Created by Steve on 2/20/2016.
  */
-//TODO: Comment the hell out of this parser
-//TODO: Reorganize parser packages particular NodeParser, which is an enormous class
-//TODO: Once matrix transformations have been applied, the signatures of meshes will change by known multipliers and the test will have to change.
 public class TestCollada
 {
     @Test
     public void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
         FileInputStream input = new FileInputStream("src/main/assets/meshes/test_blend.dae");
-        Collada collada = new Collada();
-        collada.loadCollada(input);
+        ColladaFactory colladaFactory = new ColladaFactory();
+        colladaFactory.loadCollada(input);
         input = new FileInputStream("src/main/assets/meshes/test_sketch.dae");
-        collada = new Collada();
-        collada.loadCollada(input);
+        colladaFactory = new ColladaFactory();
+        colladaFactory.loadCollada(input);
     }
 
     @Test
     public void testCompleteLoadBlender() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
         FileInputStream input = new FileInputStream("src/test/assets/meshes/test_blender.dae");
-        Collada collada = new Collada();
-        collada.loadCollada(input);
+        ColladaFactory colladaFactory = new ColladaFactory();
+        Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
-        Map<String, Material> materials = collada.getMaterialsByName();
+        Map<String, Material> materials = collada.materialsByName;
         Material mat1 = materials.get("mat_text1_name");
         Material mat2 = materials.get("mat_text2_name");
         Material matp = materials.get("mat_purple_name");
@@ -61,14 +53,14 @@ public class TestCollada
         assert mat2 != null;
         assert matp != null;
 
-        assertEquals(Collada.DEFAULT_AMBIENT, mat1.ambientColor);
-        assertEquals(Collada.DEFAULT_DIFFUSE_TEXTURE, mat1.diffuseColor);
-        assertEquals(Collada.DEFAULT_SPECULAR, mat1.specularColor);
-        assertEquals(Collada.DEFAULT_SHININESS, mat1.shininess, 0f);
+        assertEquals(ColladaFactory.DEFAULT_AMBIENT, mat1.ambientColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat1.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_SPECULAR, mat1.specularColor);
+        assertEquals(ColladaFactory.DEFAULT_SHININESS, mat1.shininess, 0f);
         assertEquals("image1.png", mat1.imageFileName);
 
         assertEquals(new GColor(0, 0, 0, 1), mat2.ambientColor);
-        assertEquals(Collada.DEFAULT_DIFFUSE_TEXTURE, mat2.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat2.diffuseColor);
         assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
         assertEquals(0.2f, mat2.shininess, 0f);
         assertEquals("image2.png", mat2.imageFileName);
@@ -80,7 +72,7 @@ public class TestCollada
         assert matp.imageFileName == null;
 
         //Check geometry
-        Map<String, ColladaGeometry> geometries = collada.getGeometries();
+        Map<String, ColladaGeometry> geometries = colladaFactory.getGeometries();
         ColladaGeometry geo1 = geometries.get("geo1_id");
         assertEquals("mat_text1_id", geo1.materialIDs.get(0));
         assertEquals("mat_text2_id", geo1.materialIDs.get(1));
@@ -97,15 +89,15 @@ public class TestCollada
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.data.get("TEXCOORD"), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.data.get("NORMAL"), 0);
 
-        Map<String, MeshGroup> meshGroups = collada.getMeshGroups();
-        List<MeshGroup> annonymousMeshGroups = collada.getAnnonymousMeshGroups();
-        assertEquals(0, annonymousMeshGroups.size());
+        Map<String, Object3D> objects = colladaFactory.getObjects();
+        List<Object3D> anonymousMeshGroups = colladaFactory.getAnonymousObjects();
+        assertEquals(0, anonymousMeshGroups.size());
 
-        MeshGroup dual = meshGroups.get("dual_id");
+        MeshGroup dual = objects.get("dual_name").getMeshGroup();
         assertEquals(15, dual.getMesh(mat1).get(0).data.get("POSITION").length);
         assertEquals(12, dual.getMesh(mat2).get(0).data.get("POSITION").length);
 
-        MeshGroup parent = meshGroups.get("parent_id");
+        MeshGroup parent = objects.get("parent_name").getMeshGroup();
         assertEquals(15, parent.getMesh(mat1).get(0).data.get("POSITION").length);
         assertEquals(12, parent.getMesh(mat2).get(0).data.get("POSITION").length);
 
@@ -115,11 +107,11 @@ public class TestCollada
     public void testCompleteLoadSketchup() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
         FileInputStream input = new FileInputStream("src/test/assets/meshes/test_sketchup.dae");
-        Collada collada = new Collada();
-        collada.loadCollada(input);
+        ColladaFactory colladaFactory = new ColladaFactory();
+        Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
-        Map<String, Material> materials = collada.getMaterialsByName();
+        Map<String, Material> materials = collada.materialsByName;
         Material mat1 = materials.get("mat_text1_name");
         Material mat2 = materials.get("mat_text2_name");
         Material matp = materials.get("mat_purple_name");
@@ -127,14 +119,14 @@ public class TestCollada
         assert mat2 != null;
         assert matp != null;
 
-        assertEquals(Collada.DEFAULT_AMBIENT, mat1.ambientColor);
-        assertEquals(Collada.DEFAULT_DIFFUSE_TEXTURE, mat1.diffuseColor);
-        assertEquals(Collada.DEFAULT_SPECULAR, mat1.specularColor);
-        assertEquals(Collada.DEFAULT_SHININESS, mat1.shininess, 0f);
+        assertEquals(ColladaFactory.DEFAULT_AMBIENT, mat1.ambientColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat1.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_SPECULAR, mat1.specularColor);
+        assertEquals(ColladaFactory.DEFAULT_SHININESS, mat1.shininess, 0f);
         assertEquals("image1.png", mat1.imageFileName);
 
         assertEquals(new GColor(0, 0, 0, 1), mat2.ambientColor);
-        assertEquals(Collada.DEFAULT_DIFFUSE_TEXTURE, mat2.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat2.diffuseColor);
         assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
         assertEquals(0.2f, mat2.shininess, 0f);
         assertEquals("image2.png", mat2.imageFileName);
@@ -146,7 +138,7 @@ public class TestCollada
         assert matp.imageFileName == null;
 
         //Check geometry
-        Map<String, ColladaGeometry> geometries = collada.getGeometries();
+        Map<String, ColladaGeometry> geometries = colladaFactory.getGeometries();
         ColladaGeometry geo1 = geometries.get("geo1_id");
 
         //Sketchup just makes stuff up when it assigns materials to geometries.  Ignore this!
@@ -163,7 +155,7 @@ public class TestCollada
         Mesh mesh3 = geometries.get("geo3_id").meshes.get(0);
 
         //Check all the library meshGroups to make sure they were combined properly
-        Map<String, MeshGroup> libMeshGroups = collada.getLibraryMeshGroups();
+        Map<String, MeshGroup> libMeshGroups = colladaFactory.getLibraryMeshGroups();
         MeshGroup lib_node1 = libMeshGroups.get("lib_node1_id");
         MeshGroup lib_node2 = libMeshGroups.get("lib_node2_id");
         MeshGroup lib_node3 = libMeshGroups.get("lib_node3_id");
@@ -189,13 +181,13 @@ public class TestCollada
         assert groupCompSubNode2 == null;
         assert groupCompSubNode3 == null;
 
-        Map<String, MeshGroup> meshGroups = collada.getMeshGroups();
-        List<MeshGroup> annonymousMeshGroups = collada.getAnnonymousMeshGroups();
-        assertEquals(annonymousMeshGroups.get(0).getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
-        MeshGroup groupOfGroups = meshGroups.get("groupOfGroups_id");
+        Map<String, Object3D> objects = colladaFactory.getObjects();
+        List<Object3D> anonymousObjects = colladaFactory.getAnonymousObjects();
+        assertEquals(anonymousObjects.get(0).getMeshGroup().getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
+        MeshGroup groupOfGroups = objects.get("groupOfGroups_name").getMeshGroup();
         assertEquals(groupOfGroups.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
         assertEquals(groupOfGroups.getMesh(mat2).get(0).data.get("POSITION")[1], 2.0, 0.0);
-        MeshGroup reference = meshGroups.get("reference_id");
+        MeshGroup reference = objects.get("reference_name").getMeshGroup();
         assertEquals(reference.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
     }
 
@@ -235,6 +227,4 @@ public class TestCollada
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.data.get("input2"), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.data.get("input3"), 0);
     }
-
-
 }

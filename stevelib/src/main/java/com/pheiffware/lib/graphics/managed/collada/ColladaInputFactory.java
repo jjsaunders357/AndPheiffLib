@@ -8,9 +8,10 @@ import org.w3c.dom.Element;
 import java.util.Map;
 
 /**
+ * Creates ColladaInputs from input elements.
  * Created by Steve on 2/15/2016.
  */
-public class ColladaInputFactory implements ElementObjectFactory<ColladaInput>
+class ColladaInputFactory implements ElementObjectFactory<ColladaInput>
 {
     private final Map<String, ColladaSource> sources;
 

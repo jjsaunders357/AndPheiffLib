@@ -10,9 +10,10 @@ import java.util.Map;
  *
  * Created by Steve on 2/15/2016.
  */
-public class ColladaMeshUncollator
+//TODO: Make part of ColladaGeometry
+class ColladaMeshUncollator
 {
-    private final ColladaRawMeshData colladaRawMeshData;
+    private final ColladaMesh colladaMesh;
     private final Map<String, float[]> uncollatedData = new HashMap<>();
     private short[] uncollatedIndices;
     private short numUniqueIndices;
@@ -22,12 +23,12 @@ public class ColladaMeshUncollator
      */
     private void generateUncollatedIndices()
     {
-        uncollatedIndices = new short[colladaRawMeshData.vertexCount];
+        uncollatedIndices = new short[colladaMesh.vertexCount];
         Map<VertexIndexGroup, Short> indexMap = new HashMap<>();
         int uncollatedIndex = 0;
         numUniqueIndices = 0;
-        short[] collatedIndices = colladaRawMeshData.collatedIndices;
-        int collatedIndexStride = colladaRawMeshData.vertexStride;
+        short[] collatedIndices = colladaMesh.collatedIndices;
+        int collatedIndexStride = colladaMesh.vertexStride;
         for (int collatedIndex = 0; collatedIndex < collatedIndices.length; collatedIndex += collatedIndexStride)
         {
             VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(collatedIndices, collatedIndex, collatedIndexStride);
@@ -49,9 +50,9 @@ public class ColladaMeshUncollator
      */
     private void generateUncollatedData()
     {
-        short[] collatedIndices = colladaRawMeshData.collatedIndices;
-        int collatedIndexStride = colladaRawMeshData.vertexStride;
-        for (Map.Entry<String, ColladaInput> entry : colladaRawMeshData.inputs.entrySet())
+        short[] collatedIndices = colladaMesh.collatedIndices;
+        int collatedIndexStride = colladaMesh.vertexStride;
+        for (Map.Entry<String, ColladaInput> entry : colladaMesh.inputs.entrySet())
         {
             String key = entry.getKey();
             ColladaInput input = entry.getValue();
@@ -70,12 +71,12 @@ public class ColladaMeshUncollator
 
     public ColladaMeshUncollator(Map<String, ColladaInput> vertexDataInputs, short[] collatedIndices, int vertexCount)
     {
-        this(new ColladaRawMeshData(vertexDataInputs, collatedIndices, vertexCount));
+        this(new ColladaMesh(vertexDataInputs, collatedIndices, vertexCount));
     }
 
-    public ColladaMeshUncollator(ColladaRawMeshData colladaRawMeshData)
+    public ColladaMeshUncollator(ColladaMesh colladaMesh)
     {
-        this.colladaRawMeshData = colladaRawMeshData;
+        this.colladaMesh = colladaMesh;
         generateUncollatedIndices();
         generateUncollatedData();
     }

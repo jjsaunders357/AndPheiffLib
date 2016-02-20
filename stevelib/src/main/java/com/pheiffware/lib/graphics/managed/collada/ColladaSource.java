@@ -3,7 +3,7 @@ package com.pheiffware.lib.graphics.managed.collada;
 /**
  * Created by Steve on 2/15/2016.
  */
-public class ColladaSource
+class ColladaSource
 {
     public final int count;
     public final int stride;

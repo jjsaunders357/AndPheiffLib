@@ -1,5 +1,6 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
+import com.pheiffware.lib.graphics.managed.collada.ColladaGeometry;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.utils.dom.DomUtils;
@@ -15,7 +16,7 @@ import java.util.Map;
  * Blender files may specify multiple materials and should completely ignore this information.
  * Created by Steve on 2/17/2016.
  */
-public class InstanceGeometryParser
+class InstanceGeometryParser
 {
     private final Map<String, ColladaGeometry> geometries;
     private final boolean ignoreMaterialAssignments;
@@ -51,7 +52,8 @@ public class InstanceGeometryParser
         {
             Element instance_material = DomUtils.assertGetSubElementChain(element, "bind_material", "technique_common", "instance_material");
             String materialID = instance_material.getAttribute("target").substring(1);
-            return colladaGeometry.createMeshGroup(materials, materialID);
+            Material material = materials.get(materialID);
+            return colladaGeometry.createMeshGroup(material);
         }
     }
 

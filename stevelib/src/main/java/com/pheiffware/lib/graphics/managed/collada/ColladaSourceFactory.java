@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 /**
  * Created by Steve on 2/15/2016.
  */
-public class ColladaSourceFactory implements ElementObjectFactory<ColladaSource>
+class ColladaSourceFactory implements ElementObjectFactory<ColladaSource>
 {
     @Override
     public ColladaSource createFromElement(Element element) throws XMLParseException

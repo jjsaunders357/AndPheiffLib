@@ -6,7 +6,7 @@ import com.pheiffware.lib.graphics.GColor;
  * Holds the name of a reference key to a file name and color information.
  * Created by Steve on 2/15/2016.
  */
-public class ColladaEffect
+class ColladaEffect
 {
     //Collada stores a reference to an entry which stores the file name, rather than directly storing file name.  This can be null if there is no texture.  Not really worth the trouble if you ask me.
     public final String imageFileNameKey;

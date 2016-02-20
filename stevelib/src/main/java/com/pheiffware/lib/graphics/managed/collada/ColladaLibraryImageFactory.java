@@ -7,10 +7,10 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 import org.w3c.dom.Element;
 
 /**
- * Used to extract image file name from an <image></image> tag.
+ * Used to extract image file name from an image element.
  * Created by Steve on 2/15/2016.
  */
-public class ColladaLibraryImageFactory implements ElementObjectFactory<String>
+class ColladaLibraryImageFactory implements ElementObjectFactory<String>
 {
     @Override
     public String createFromElement(Element element) throws XMLParseException

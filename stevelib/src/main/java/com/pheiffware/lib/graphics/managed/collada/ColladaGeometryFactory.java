@@ -6,19 +6,17 @@ import com.pheiffware.lib.utils.dom.ElementObjectFactory;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Parses "geometry" tags and extracts MeshGroup objects.  These map material to meshes to render in the material.
- * In blender, the actual material is specified in the
+ * Parses "geometry" tags and extracts ColladaGeometry objects.
  *
  * Created by Steve on 2/15/2016.
  */
-public class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
+class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
 {
     @Override
     public ColladaGeometry createFromElement(Element element) throws XMLParseException
@@ -33,16 +31,17 @@ public class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeome
         Element vertices = DomUtils.assertGetSingleSubElement(meshElement, "vertices");
         DomUtils.putSubElementsInMap(vertexInputs, vertices, "input", "semantic", new ColladaInputFactory(sources));
 
+        ColladaMeshFactory colladaMeshFactory = new ColladaMeshFactory(sources, vertexInputs);
         ColladaGeometry colladaMeshGroup = new ColladaGeometry();
 
         List<Element> polylists = DomUtils.getSubElements(meshElement, "polylist");
         for (Element polyListElement : polylists)
         {
             String materialID = polyListElement.getAttribute("material");
-            ColladaRawMeshData colladaRawMeshData = ColladaRawMeshData.fromPolyListElement(polyListElement, sources, vertexInputs);
-            if (colladaRawMeshData != null)
+            ColladaMesh colladaMesh = colladaMeshFactory.fromPolyListElement(polyListElement);
+            if (colladaMesh != null)
             {
-                ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaRawMeshData);
+                ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaMesh);
                 Mesh mesh = colladaMeshUncollator.createMesh();
                 colladaMeshGroup.add(materialID, mesh);
             }
@@ -51,10 +50,10 @@ public class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeome
         for (Element trianglesElement : triangles)
         {
             String materialID = trianglesElement.getAttribute("material");
-            ColladaRawMeshData colladaRawMeshData = ColladaRawMeshData.fromTrianglesElement(trianglesElement, sources, vertexInputs);
-            if (colladaRawMeshData != null)
+            ColladaMesh colladaMesh = colladaMeshFactory.fromTrianglesElement(trianglesElement);
+            if (colladaMesh != null)
             {
-                ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaRawMeshData);
+                ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaMesh);
                 Mesh mesh = colladaMeshUncollator.createMesh();
                 colladaMeshGroup.add(materialID, mesh);
             }

@@ -15,6 +15,7 @@ import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.collada.Collada;
+import com.pheiffware.lib.graphics.managed.collada.ColladaFactory;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.meshLegacy.MeshLegacy;
@@ -52,8 +53,8 @@ public class TestRenderer4 implements Renderer
         try
         {
             testProgram = manGL.getProgram("testProgram3D", "shaders/test_vertex_mnc.glsl", "shaders/test_fragment_mnc.glsl");
-            Collada collada = new Collada();
-            collada.loadCollada(manGL.getAssetManager(), "meshes/test_blend.dae");
+            ColladaFactory colladaFactory = new ColladaFactory();
+            colladaFactory.loadCollada(manGL.getAssetManager(), "meshes/test_blend.dae");
         }
         catch (FatalGraphicsException | XMLParseException exception)
         {

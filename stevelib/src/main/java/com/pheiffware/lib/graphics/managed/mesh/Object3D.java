@@ -6,6 +6,21 @@ package com.pheiffware.lib.graphics.managed.mesh;
 public class Object3D
 {
     private float[] matrix;
-    MeshGroup geometry;
+    private final MeshGroup meshGroup;
 
+    public Object3D(float[] matrix, MeshGroup meshGroup)
+    {
+        this.matrix = matrix;
+        this.meshGroup = meshGroup;
+    }
+
+    public float[] getMatrix()
+    {
+        return matrix;
+    }
+
+    public MeshGroup getMeshGroup()
+    {
+        return meshGroup;
+    }
 }

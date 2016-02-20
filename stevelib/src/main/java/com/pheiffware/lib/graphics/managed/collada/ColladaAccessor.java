@@ -8,9 +8,10 @@ import org.w3c.dom.Element;
 import java.util.List;
 
 /**
+ * Holds information from ColladaAccessor elements.
  * Created by Steve on 2/15/2016.
  */
-public class ColladaAccessor
+class ColladaAccessor
 {
     //The rawStride used to walk through the raw data BEFORE USELESS INFORMATION is REMOVED.
     private final int rawStride;
@@ -89,3 +90,10 @@ public class ColladaAccessor
         return output;
     }
 }
+/*Example:
+    <accessor source="#blah2" count="2" stride="3">
+        <param name="X" type="float"/>
+        <param type="float"/> <!--Example of missing parameter.  Within each group of 3 numbers the middle one is unused-->
+        <param name="Z" type="float"/>
+    </accessor>
+ */

@@ -370,7 +370,7 @@
                         </instance_geometry>
                     </node>
                 </node>
-                <node id="reference_id" name="refrence_name">
+                <node id="reference_id" name="reference_name">
                         <matrix>1 0 0 0 0 5 0 0 0 0 1 0 0 0 0 1</matrix>
                     <instance_node url="#lib_node1_id" />
                 </node>
