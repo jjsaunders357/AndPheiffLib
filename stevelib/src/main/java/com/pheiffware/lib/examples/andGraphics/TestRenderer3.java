@@ -49,7 +49,7 @@ public class TestRenderer3 implements Renderer
 
         try
         {
-            testProgram = manGL.getProgram("testProgram3D", "shaders/test_vertex_mnc.glsl", "shaders/test_fragment_mnc.glsl");
+            testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mnc.glsl", "shaders/frag_mnc.glsl");
             meshes = MeshLegacy.loadMeshesLegacy(manGL.getAssetManager(), "meshes/spheres.mesh");
         } catch (FatalGraphicsException exception)
         {

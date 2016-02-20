@@ -1,9 +1,17 @@
 Create Reference Library Project - Done
 Buy matlab - Done
 Reorganize library and merge with existing eclipse code - 10/12
-Collada - 32/60
-Do remaining calcs - 3
-Consolodate notes - 3
-Write base graphics library - 40
-Write input code - 8
-Write lighting code - 24
+Collada - 56/60
+Touch input - 0/8
+Standard 3d shaders - 0/8
+Camera - 0/6
+General android - 16
+Migrate to OpenGL ES 3 (if it makes sense) - 0/4
+Collada and Rendering System - 0/20
+Basic sphere code - 4
+Basic sphere vertex shaders - 8
+Basic sphere fragment shaders - 12
+Model load/warp - 12
+Sphere lighting shaders - 24
+Do remaining sphere calcs - 6
+Consolodate sphere notes - 6

@@ -103,4 +103,14 @@ public class Program
     {
         TextureUtils.uniformTexture2D(handle, uniformName, texture.getHandle(), textureUnitIndex);
     }
+
+    public void setUniformVec3(String uniformName, float[] floats)
+    {
+        GLES20.glUniform3fv(getUniform(uniformName).location, 1, floats, 0);
+    }
+
+    public void setUniformVec4(String uniformName, float[] floats)
+    {
+        GLES20.glUniform4fv(getUniform(uniformName).location, 1, floats, 0);
+    }
 }

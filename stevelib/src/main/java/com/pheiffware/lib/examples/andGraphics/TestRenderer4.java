@@ -52,31 +52,34 @@ public class TestRenderer4 implements Renderer
 
         try
         {
-            testProgram = manGL.getProgram("testProgram3D", "shaders/test_vertex_mnc.glsl", "shaders/test_fragment_mnc.glsl");
+            testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+            meshes = MeshLegacy.loadMeshesLegacy(manGL.getAssetManager(), "meshes/spheres.mesh");
             ColladaFactory colladaFactory = new ColladaFactory();
-            colladaFactory.loadCollada(manGL.getAssetManager(), "meshes/test_blend.dae");
+            Collada collada = colladaFactory.loadCollada(manGL.getAssetManager(), "meshes/test_blend.dae");
+
         }
         catch (FatalGraphicsException | XMLParseException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }
-//        MeshLegacy meshLegacy = meshes.get("cube");
-//        float[] colors = meshLegacy.generateMultiColorValues();
-//        pb = new IndexBuffer(meshLegacy.getNumPrimitives());
-//        pb.putIndices(meshLegacy.primitiveIndices);
-//        pb.transfer();
-//
-//        // @formatter:off
-//        sb = new StaticVertexBuffer(testProgram, meshLegacy.getNumVertices(),
-//                new String[]
-//                        {"vertexPosition", "vertexNormal", "vertexColor"});
-//        // @formatter:on
-//
-//        sb.putFloats("vertexPosition", meshLegacy.vertices);
-//        sb.putFloats("vertexNormal", meshLegacy.normals);
-//        sb.putFloats("vertexColor", colors);
-//
-//        sb.transfer();
+        //MeshLegacy meshLegacy = meshes.get("cube");
+        MeshLegacy meshLegacy = meshes.get("sphere4");
+        float[] colors = meshLegacy.generateSingleColorValues(0.0f, 0.6f, 0.9f, 1.0f);
+        pb = new IndexBuffer(meshLegacy.getNumPrimitives());
+        pb.putIndices(meshLegacy.primitiveIndices);
+        pb.transfer();
+
+        // @formatter:off
+        sb = new StaticVertexBuffer(testProgram, meshLegacy.getNumVertices(),
+                new String[]
+                        {"vertexPosition", "vertexNormal", "vertexColor"});
+        // @formatter:on
+
+        sb.putFloats("vertexPosition", meshLegacy.vertices);
+        sb.putFloats("vertexNormal", meshLegacy.normals);
+        sb.putFloats("vertexColor", colors);
+
+        sb.transfer();
 
     }
 
@@ -90,15 +93,19 @@ public class TestRenderer4 implements Renderer
     @Override
     public void onDrawFrame(GL10 gl)
     {
-//        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-//        GLES20.glUseProgram(testProgram.getHandle());
-//        float[] matrix = MathUtils.createTranslationMatrix(0, 0, -2);
-//        matrix = MathUtils.multiplyMatrix(projectionMatrix, matrix);
+        //Default view volume is based on sitting at origin and looking in negative z direction
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        testProgram.bind();
+        //Translate sphere in negative z direction so we can see it
+        float[] matrix = MathUtils.createTranslationMatrix(0, 0, -2);
+        matrix = MathUtils.multiplyMatrix(projectionMatrix, matrix);
 //        GLES20.glUniformMatrix4fv(
 //                GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"),
 //                1, false, matrix, 0);
-//        sb.bind();
-//        pb.drawAll(GLES20.GL_TRIANGLES);
+        testProgram.setUniformMatrix4("transformViewMatrix", matrix, false);
+        testProgram.setUniformVec3("lightPosition", new float[]{-2, 2, 4});
+        sb.bind();
+        pb.drawAll(GLES20.GL_TRIANGLES);
     }
 
     /*

@@ -18,7 +18,6 @@ import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 
@@ -58,7 +57,7 @@ public class TestRenderer2 implements Renderer
 
         try
         {
-            testProgram = manGL.getProgram("testProgram", "shaders/test_vertex_matrix_texture_color.glsl", "shaders/test_fragment_matrix_texture_color.glsl");
+            testProgram = manGL.getProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
             System.out.println(manGL.getProgram("testProgram"));
             faceTexture = manGL.getImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 

@@ -52,7 +52,7 @@ public class TestRenderer1 implements Renderer
 
         try
         {
-            testProgram = manGL.getProgram("testProgram", "shaders/test_vertex_matrix_texture_color.glsl", "shaders/test_fragment_matrix_texture_color.glsl");
+            testProgram = manGL.getProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
             System.out.println(testProgram);
             faceTexture = manGL.getImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
         } catch (FatalGraphicsException exception)

@@ -14,6 +14,7 @@ import java.util.Map;
 import android.content.res.AssetManager;
 
 import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GColor;
 
 /**
  * Holds a triangular mesh. Used to load raw mesh information from files.
@@ -137,7 +138,26 @@ public class MeshLegacy
 		{
 			primitiveIndices[i] = Short.valueOf(primitiveIndexStrings[i]);
 		}
-	}
+    }
+
+    /**
+     * Creates an array holding the same color for each vertex.
+     *
+     * @return
+     */
+    public final float[] generateSingleColorValues(float r, float g, float b, float a)
+    {
+        float[] colors = new float[getNumVertices() * 4];
+        int index = 0;
+        for (int i = 0; i < getNumVertices(); i++)
+        {
+            colors[index++] = r;
+            colors[index++] = g;
+            colors[index++] = b;
+            colors[index++] = a;
+        }
+        return colors;
+    }
 
 	/**
 	 * Creates an ugly, yet visible set of colors for all vertices.

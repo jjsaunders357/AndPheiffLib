@@ -28,7 +28,8 @@ public class ProgramUtils
      * @return GL handle to program
      * @throws FatalGraphicsException
      */
-    public static int createProgram(AssetManager assetManager, String vertexAssetPath, String fragmentAssetPath) throws FatalGraphicsException {
+    public static int createProgram(AssetManager assetManager, String vertexAssetPath, String fragmentAssetPath) throws FatalGraphicsException
+    {
         int vertexShaderHandle = createShader(assetManager, GLES20.GL_VERTEX_SHADER, vertexAssetPath);
         int fragmentShaderHandle = createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, fragmentAssetPath);
         return createProgram(vertexShaderHandle, fragmentShaderHandle);
@@ -42,15 +43,16 @@ public class ProgramUtils
      * @return GL handle to program
      * @throws FatalGraphicsException
      */
-    public static int createProgram(int vertexShaderHandle, int fragmentShaderHandle) throws FatalGraphicsException {
-		int handle = GLES20.glCreateProgram();
+    public static int createProgram(int vertexShaderHandle, int fragmentShaderHandle) throws FatalGraphicsException
+    {
+        int handle = GLES20.glCreateProgram();
 
-		GLES20.glAttachShader(handle, vertexShaderHandle);
-		GLES20.glAttachShader(handle, fragmentShaderHandle);
-		GLES20.glLinkProgram(handle);
+        GLES20.glAttachShader(handle, vertexShaderHandle);
+        GLES20.glAttachShader(handle, fragmentShaderHandle);
+        GLES20.glLinkProgram(handle);
         assertProgramStatus(handle);
         GLES20.glUseProgram(handle);
-		return handle;
+        return handle;
     }
 
     /**
@@ -59,10 +61,12 @@ public class ProgramUtils
      * @param programHandle GL handle to program
      * @throws FatalGraphicsException
      */
-    private static void assertProgramStatus(int programHandle) throws FatalGraphicsException {
+    private static void assertProgramStatus(int programHandle) throws FatalGraphicsException
+    {
         IntBuffer linkStatus = IntBuffer.allocate(1);
         GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus);
-        if (linkStatus.get(0) == 0) {
+        if (linkStatus.get(0) == 0)
+        {
             String infoLog = GLES20.glGetProgramInfoLog(programHandle);
             GLES20.glDeleteShader(programHandle);
             throw new FatalGraphicsException("The program failed to link: " + infoLog);
@@ -79,13 +83,15 @@ public class ProgramUtils
      * @return GL handle to shader
      * @throws FatalGraphicsException
      */
-    public static int createShader(AssetManager assetManager, int shaderType, String shaderAssetPath) throws FatalGraphicsException {
-        try {
+    public static int createShader(AssetManager assetManager, int shaderType, String shaderAssetPath) throws FatalGraphicsException
+    {
+        try
+        {
             return createShader(shaderType, Utils.loadAssetAsString(assetManager, shaderAssetPath));
-        } catch (UnsupportedEncodingException exception) {
-            throw new FatalGraphicsException("Cannot load shader", exception);
-        } catch (IOException exception) {
-            throw new FatalGraphicsException("Cannot load shader", exception);
+        }
+        catch (IOException | FatalGraphicsException exception)
+        {
+            throw new FatalGraphicsException("Cannot load shader: " + shaderAssetPath, exception);
         }
     }
 
@@ -97,7 +103,8 @@ public class ProgramUtils
      * @return GL handle to shader
      * @throws FatalGraphicsException
      */
-    public static int createShader(int shaderType, String code) throws FatalGraphicsException {
+    public static int createShader(int shaderType, String code) throws FatalGraphicsException
+    {
         int shaderHandle = GLES20.glCreateShader(shaderType);
         GLES20.glShaderSource(shaderHandle, code);
         GLES20.glCompileShader(shaderHandle);
@@ -111,14 +118,16 @@ public class ProgramUtils
      * @param shaderHandle GL handle to shader
      * @throws FatalGraphicsException
      */
-    private static void assertShaderStatus(int shaderHandle) throws FatalGraphicsException {
+    private static void assertShaderStatus(int shaderHandle) throws FatalGraphicsException
+    {
         IntBuffer statusBuffer = IntBuffer.allocate(1);
         GLES20.glGetShaderiv(shaderHandle, GLES20.GL_COMPILE_STATUS, statusBuffer);
         int status = statusBuffer.get(0);
-        if (status != GLES20.GL_TRUE) {
+        if (status != GLES20.GL_TRUE)
+        {
             String infoLog = GLES20.glGetShaderInfoLog(shaderHandle);
             GLES20.glDeleteShader(shaderHandle);
             throw new FatalGraphicsException("Shader failed to compile!: " + infoLog);
         }
-	}
+    }
 }
