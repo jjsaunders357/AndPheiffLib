@@ -57,9 +57,9 @@ class ColladaMeshFactory
             }
             vertexCount += polygonVertexCounts[i];
         }
-        short[] collatedIndices = DomUtils.getShortsFromElement(indicesElement);
+        short[] interleavedIndices = DomUtils.getShortsFromElement(indicesElement);
         String materialID = polyListElement.getAttribute("material");
-        return generateRawMeshData(collatedIndices, vertexCount, inputs);
+        return generateRawMeshData(interleavedIndices, vertexCount, inputs);
     }
 
     /**
@@ -80,21 +80,21 @@ class ColladaMeshFactory
         }
         int vertexCount = Integer.valueOf(triangleElement.getAttribute("count")) * 3;
         Element indicesElement = DomUtils.assertGetSingleSubElement(triangleElement, "p");
-        short[] collatedIndices = DomUtils.getShortsFromElement(indicesElement);
-        return generateRawMeshData(collatedIndices, vertexCount, inputs);
+        short[] interleavedIndices = DomUtils.getShortsFromElement(indicesElement);
+        return generateRawMeshData(interleavedIndices, vertexCount, inputs);
     }
 
     /**
      * Takes the essential data from either a parsed polylist or triangles tag and does rest of the work.  This is mostly removing the mostly useless VERTEX input, getting its offset
      * and then replacing this useless input with copies of vertexInputs, which have had their offsets set to the useless VERTEX input's value.
      *
-     * @param collatedIndices   index references to the input data
+     * @param interleavedIndices   index references to the input data
      * @param vertexCount       number of vertices, used to determine vertex stride
      * @param polyElementInputs an already parsed map of inputs from the polylist/triangles tag
      * @return a complete ColladaMesh object which can be used to construct a mesh or null if there is no data
      * @throws XMLParseException
      */
-    private ColladaMesh generateRawMeshData(short[] collatedIndices, int vertexCount, Map<String, ColladaInput> polyElementInputs) throws XMLParseException
+    private ColladaMesh generateRawMeshData(short[] interleavedIndices, int vertexCount, Map<String, ColladaInput> polyElementInputs) throws XMLParseException
     {
         //Remove VERTEX input as it is a stand in for the vertexInputs passed in.  However, get its offset and apply it to all other inputs.
         ColladaInput uselessVertexInput = polyElementInputs.remove("VERTEX");
@@ -112,6 +112,6 @@ class ColladaMeshFactory
             polyElementInputs.put(entry.getKey(), new ColladaInput(vertexInput.semantic, vertexInput.source, vertexInputOffset));
         }
 
-        return new ColladaMesh(polyElementInputs, collatedIndices, vertexCount);
+        return new ColladaMesh(polyElementInputs, interleavedIndices, vertexCount);
     }
 }

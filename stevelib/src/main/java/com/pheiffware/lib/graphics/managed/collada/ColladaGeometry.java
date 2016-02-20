@@ -19,6 +19,7 @@ import java.util.Map;
  */
 class ColladaGeometry
 {
+    //Parallel lists of materials and meshes.  This cannot be a map because in SketchUp the materials are meaningless and repeat (meaning we would lose meshes).  However, in blenders the materials matter and we don't want to lose them.
     public final List<String> materialIDs = new ArrayList<>();
     public final List<Mesh> meshes = new ArrayList<>();
 

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Holds part of a Collada node hierarchy which describe the relationship between objects.
  * Created by Steve on 2/20/2016.
  */
 class ColladaNode implements MeshGroupProxy
@@ -46,6 +47,12 @@ class ColladaNode implements MeshGroupProxy
         return transformMatrix;
     }
 
+    /**
+     * Iterates through child objects, getting their meshes and adding them to its own.  The result is cached and used for the next query.
+     *
+     * @param flatten If specified, then children are flattened by applying the given matrix transform.  Only top-level nodes may not be flattened if they are to be turned into Object3D instances.
+     * @return
+     */
     @Override
     public MeshGroup retrieveMeshGroup(boolean flatten)
     {

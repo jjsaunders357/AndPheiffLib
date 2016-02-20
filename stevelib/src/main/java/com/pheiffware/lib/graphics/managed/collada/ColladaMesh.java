@@ -14,24 +14,21 @@ import java.util.Map;
  */
 class ColladaMesh
 {
-
-
-
     //A combined set of input from the external vertices and vertices in a polylist/triangles tag
     public final Map<String, ColladaInput> inputs;
     //Index references to the input data
-    public final short[] collatedIndices;
+    public final short[] interleavedIndices;
     //How many vertices are referenced total
     public final int vertexCount;
-    //How to step through the collatedIndices
+    //How to step through the interleavedIndices
     public final int vertexStride;
 
-    public ColladaMesh(Map<String, ColladaInput> vertexDataInputs, short[] collatedIndices, int vertexCount)
+    public ColladaMesh(Map<String, ColladaInput> vertexDataInputs, short[] interleavedIndices, int vertexCount)
     {
         this.inputs = vertexDataInputs;
-        this.collatedIndices = collatedIndices;
+        this.interleavedIndices = interleavedIndices;
         this.vertexCount = vertexCount;
-        this.vertexStride = collatedIndices.length / vertexCount;
+        this.vertexStride = interleavedIndices.length / vertexCount;
     }
 }
 

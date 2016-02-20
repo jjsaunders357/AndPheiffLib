@@ -6,32 +6,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Does the ugly job of untangling the ridiculous Collada input meshes vertex index data.
+ * Does the ugly job of untangling the ridiculous Collada input meshes vertex index data.  The test cases demonstrate this better though examples than I can explain here.
  *
  * Created by Steve on 2/15/2016.
  */
 //TODO: Make part of ColladaGeometry
-class ColladaMeshUncollator
+class ColladaMeshNormalizer
 {
     private final ColladaMesh colladaMesh;
     private final Map<String, float[]> uncollatedData = new HashMap<>();
-    private short[] uncollatedIndices;
+    private short[] uninterleavedIndices;
     private short numUniqueIndices;
 
     /**
      * Creates a new index for each unique combination of indices within a stride.
      */
-    private void generateUncollatedIndices()
+    private void generateUninterleavedIndices()
     {
-        uncollatedIndices = new short[colladaMesh.vertexCount];
+        uninterleavedIndices = new short[colladaMesh.vertexCount];
         Map<VertexIndexGroup, Short> indexMap = new HashMap<>();
         int uncollatedIndex = 0;
         numUniqueIndices = 0;
-        short[] collatedIndices = colladaMesh.collatedIndices;
+        short[] interleavedIndices = colladaMesh.interleavedIndices;
         int collatedIndexStride = colladaMesh.vertexStride;
-        for (int collatedIndex = 0; collatedIndex < collatedIndices.length; collatedIndex += collatedIndexStride)
+        for (int collatedIndex = 0; collatedIndex < interleavedIndices.length; collatedIndex += collatedIndexStride)
         {
-            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(collatedIndices, collatedIndex, collatedIndexStride);
+            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(interleavedIndices, collatedIndex, collatedIndexStride);
             Short uniqueIndex = indexMap.get(vertexIndexGroup);
             if (uniqueIndex == null)
             {
@@ -39,7 +39,7 @@ class ColladaMeshUncollator
                 numUniqueIndices++;
                 indexMap.put(vertexIndexGroup, uniqueIndex);
             }
-            uncollatedIndices[uncollatedIndex] = uniqueIndex;
+            uninterleavedIndices[uncollatedIndex] = uniqueIndex;
             uncollatedIndex++;
         }
     }
@@ -50,7 +50,7 @@ class ColladaMeshUncollator
      */
     private void generateUncollatedData()
     {
-        short[] collatedIndices = colladaMesh.collatedIndices;
+        short[] interleavedIndices = colladaMesh.interleavedIndices;
         int collatedIndexStride = colladaMesh.vertexStride;
         for (Map.Entry<String, ColladaInput> entry : colladaMesh.inputs.entrySet())
         {
@@ -58,32 +58,32 @@ class ColladaMeshUncollator
             ColladaInput input = entry.getValue();
             float[] destFloats = new float[numUniqueIndices * input.source.stride];
             int collatedIndex = input.offset;
-            for (int i = 0; i < uncollatedIndices.length; i++)
+            for (int i = 0; i < uninterleavedIndices.length; i++)
             {
-                short sourceIndex = collatedIndices[collatedIndex];
+                short sourceIndex = interleavedIndices[collatedIndex];
                 collatedIndex += collatedIndexStride;
-                short destIndex = uncollatedIndices[i];
+                short destIndex = uninterleavedIndices[i];
                 input.transfer(sourceIndex, destFloats, destIndex);
             }
             uncollatedData.put(key, destFloats);
         }
     }
 
-    public ColladaMeshUncollator(Map<String, ColladaInput> vertexDataInputs, short[] collatedIndices, int vertexCount)
+    public ColladaMeshNormalizer(Map<String, ColladaInput> vertexDataInputs, short[] interleavedIndices, int vertexCount)
     {
-        this(new ColladaMesh(vertexDataInputs, collatedIndices, vertexCount));
+        this(new ColladaMesh(vertexDataInputs, interleavedIndices, vertexCount));
     }
 
-    public ColladaMeshUncollator(ColladaMesh colladaMesh)
+    public ColladaMeshNormalizer(ColladaMesh colladaMesh)
     {
         this.colladaMesh = colladaMesh;
-        generateUncollatedIndices();
-        generateUncollatedData();
     }
 
-    public Mesh createMesh()
+    public Mesh generateMesh()
     {
-        return new Mesh(uncollatedIndices, uncollatedData);
+        generateUninterleavedIndices();
+        generateUncollatedData();
+        return new Mesh(uninterleavedIndices, uncollatedData);
     }
 
     /**
@@ -93,12 +93,12 @@ class ColladaMeshUncollator
     {
         private final short[] indices;
 
-        public VertexIndexGroup(short[] collatedIndices, int start, int length)
+        public VertexIndexGroup(short[] interleavedIndices, int start, int length)
         {
             indices = new short[length];
             for (int i = 0; i < indices.length; i++)
             {
-                indices[i] = collatedIndices[start + i];
+                indices[i] = interleavedIndices[start + i];
             }
         }
 

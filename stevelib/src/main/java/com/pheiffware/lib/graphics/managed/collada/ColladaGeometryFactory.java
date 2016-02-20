@@ -41,8 +41,8 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromPolyListElement(polyListElement);
             if (colladaMesh != null)
             {
-                ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaMesh);
-                Mesh mesh = colladaMeshUncollator.createMesh();
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh);
+                Mesh mesh = colladaMeshNormalizer.generateMesh();
                 colladaMeshGroup.add(materialID, mesh);
             }
         }
@@ -53,8 +53,8 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromTrianglesElement(trianglesElement);
             if (colladaMesh != null)
             {
-                ColladaMeshUncollator colladaMeshUncollator = new ColladaMeshUncollator(colladaMesh);
-                Mesh mesh = colladaMeshUncollator.createMesh();
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh);
+                Mesh mesh = colladaMeshNormalizer.generateMesh();
                 colladaMeshGroup.add(materialID, mesh);
             }
         }
