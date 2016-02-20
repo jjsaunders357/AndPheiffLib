@@ -10,7 +10,6 @@ import java.util.Map;
  *
  * Created by Steve on 2/15/2016.
  */
-//TODO: Make part of ColladaGeometry
 class ColladaMeshNormalizer
 {
     private final ColladaMesh colladaMesh;
