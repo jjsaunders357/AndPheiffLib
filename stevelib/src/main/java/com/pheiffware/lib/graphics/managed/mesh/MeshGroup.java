@@ -54,7 +54,7 @@ public class MeshGroup
         //TODO: Apply matrix transformation to child meshgroup
     }
 
-    public List<Mesh> getMesh(Material material)
+    public List<Mesh> getMeshes(Material material)
     {
         return meshes.get(material);
     }

@@ -125,7 +125,7 @@ public class MeshLegacy
 			normals[i * 4 + 0] = Float.valueOf(normalStrings[i * 3]);
 			normals[i * 4 + 1] = Float.valueOf(normalStrings[i * 3 + 1]);
 			normals[i * 4 + 2] = Float.valueOf(normalStrings[i * 3 + 2]);
-			normals[i * 4 + 3] = 1;
+			normals[i * 4 + 3] = 0;
 		}
 
 		String numPrimitiveIndicesString = reader.readLine();

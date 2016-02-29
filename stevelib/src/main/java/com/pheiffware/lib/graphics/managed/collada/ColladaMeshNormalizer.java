@@ -5,49 +5,57 @@ import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: Put this code into the ColladaMesh (we don't need a separate class).
 /**
  * Does the ugly job of untangling the ridiculous Collada input meshes vertex index data.  The test cases demonstrate this better though examples than I can explain here.
- *
+ * <p/>
+ * The result is a list of indices, each of which, references data in the various arrays stored in the data map.
  * Created by Steve on 2/15/2016.
  */
 class ColladaMeshNormalizer
 {
+    //Original mesh as loaded from Collada
     private final ColladaMesh colladaMesh;
-    private final Map<String, float[]> uncollatedData = new HashMap<>();
-    private short[] uninterleavedIndices;
-    private short numUniqueIndices;
+    //The number of unique vertices.  Each array in vertex data is this length
+    private short numUniqueVertices;
+    //Data for each unique vertex.  A map from names like POSITION, NORMAL, TEXCOORD, etc to actual arrays holding vertex data.  The same vertex may be referenced multiple times in the vertexIndices array.
+    private final Map<String, float[]> vertexData = new HashMap<>();
+    //Indices to the data itself.  These are grouped together to form triangle primitives
+    private short[] vertexDataIndices;
 
     /**
-     * Creates a new index for each unique combination of indices within a stride.
+     * For each unique combination of indices within a stride (a unique vertex), create a new universal vertex index.
+     * Write these universal vertex indices, in order, in vertexDataIndices.  Also stores the total number of unique vertices in numUniqueVertices.
      */
-    private void generateUninterleavedIndices()
+    private void generateUniversalVertexIndices()
     {
-        uninterleavedIndices = new short[colladaMesh.vertexCount];
-        Map<VertexIndexGroup, Short> indexMap = new HashMap<>();
-        int uncollatedIndex = 0;
-        numUniqueIndices = 0;
+        vertexDataIndices = new short[colladaMesh.vertexCount];
+
+        //Map from unique group of indices to a unified unique index
+        Map<VertexIndexGroup, Short> uniqueIndexMap = new HashMap<>();
+        int vertexIndex = 0;
+        numUniqueVertices = 0;
         short[] interleavedIndices = colladaMesh.interleavedIndices;
         int collatedIndexStride = colladaMesh.vertexStride;
         for (int collatedIndex = 0; collatedIndex < interleavedIndices.length; collatedIndex += collatedIndexStride)
         {
             VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(interleavedIndices, collatedIndex, collatedIndexStride);
-            Short uniqueIndex = indexMap.get(vertexIndexGroup);
+            Short uniqueIndex = uniqueIndexMap.get(vertexIndexGroup);
             if (uniqueIndex == null)
             {
-                uniqueIndex = numUniqueIndices;
-                numUniqueIndices++;
-                indexMap.put(vertexIndexGroup, uniqueIndex);
+                uniqueIndex = numUniqueVertices;
+                numUniqueVertices++;
+                uniqueIndexMap.put(vertexIndexGroup, uniqueIndex);
             }
-            uninterleavedIndices[uncollatedIndex] = uniqueIndex;
-            uncollatedIndex++;
+            vertexDataIndices[vertexIndex] = uniqueIndex;
+            vertexIndex++;
         }
     }
 
     /**
-     * For each input, lookup its collated value for each vertex and store at the corresponding uncollated index
-
+     * Once unique, universal, indices have been generated, this takes the raw data and maps it to these new indices
      */
-    private void generateUncollatedData()
+    private void generateUniqueVertexData()
     {
         short[] interleavedIndices = colladaMesh.interleavedIndices;
         int collatedIndexStride = colladaMesh.vertexStride;
@@ -55,16 +63,16 @@ class ColladaMeshNormalizer
         {
             String key = entry.getKey();
             ColladaInput input = entry.getValue();
-            float[] destFloats = new float[numUniqueIndices * input.source.stride];
+            float[] destFloats = new float[numUniqueVertices * input.source.stride];
             int collatedIndex = input.offset;
-            for (int i = 0; i < uninterleavedIndices.length; i++)
+            for (int i = 0; i < vertexDataIndices.length; i++)
             {
                 short sourceIndex = interleavedIndices[collatedIndex];
                 collatedIndex += collatedIndexStride;
-                short destIndex = uninterleavedIndices[i];
+                short destIndex = vertexDataIndices[i];
                 input.transfer(sourceIndex, destFloats, destIndex);
             }
-            uncollatedData.put(key, destFloats);
+            vertexData.put(key, destFloats);
         }
     }
 
@@ -80,9 +88,9 @@ class ColladaMeshNormalizer
 
     public Mesh generateMesh()
     {
-        generateUninterleavedIndices();
-        generateUncollatedData();
-        return new Mesh(uninterleavedIndices, uncollatedData);
+        generateUniversalVertexIndices();
+        generateUniqueVertexData();
+        return new Mesh(numUniqueVertices, vertexData, vertexDataIndices);
     }
 
     /**

@@ -113,4 +113,9 @@ public class Program
     {
         GLES20.glUniform4fv(getUniform(uniformName).location, 1, floats, 0);
     }
+
+    public void setUniformFloat(String uniformName, float value)
+    {
+        GLES20.glUniform1f(getUniform(uniformName).location, value);
+    }
 }

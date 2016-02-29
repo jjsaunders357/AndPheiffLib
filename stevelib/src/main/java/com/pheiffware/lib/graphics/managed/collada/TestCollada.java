@@ -29,10 +29,10 @@ public class TestCollada
     @Test
     public void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
-        FileInputStream input = new FileInputStream("src/main/assets/meshes/test_blend.dae");
+        FileInputStream input = new FileInputStream("src/main/assets/meshes/weird_blender_example.dae");
         ColladaFactory colladaFactory = new ColladaFactory();
         colladaFactory.loadCollada(input);
-        input = new FileInputStream("src/main/assets/meshes/test_sketch.dae");
+        input = new FileInputStream("src/main/assets/meshes/weird_sketchup_example.dae");
         colladaFactory = new ColladaFactory();
         colladaFactory.loadCollada(input);
     }
@@ -78,28 +78,28 @@ public class TestCollada
         assertEquals("mat_text2_id", geo1.materialIDs.get(1));
 
         Mesh mesh1 = geo1.meshes.get(0);
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.primitiveIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh1.data.get("POSITION"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.data.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.data.get("NORMAL"), 0);
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.vertexIndices);
+        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh1.uniqueVertexData.get("POSITION"), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.uniqueVertexData.get("TEXCOORD"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.uniqueVertexData.get("NORMAL"), 0);
 
         Mesh mesh2 = geo1.meshes.get(1);
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 2}, mesh2.primitiveIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}, mesh2.data.get("POSITION"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.data.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.data.get("NORMAL"), 0);
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 2}, mesh2.vertexIndices);
+        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}, mesh2.uniqueVertexData.get("POSITION"), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.uniqueVertexData.get("TEXCOORD"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.uniqueVertexData.get("NORMAL"), 0);
 
         Map<String, Object3D> objects = colladaFactory.getObjects();
         List<Object3D> anonymousMeshGroups = colladaFactory.getAnonymousObjects();
         assertEquals(0, anonymousMeshGroups.size());
 
         MeshGroup dual = objects.get("dual_name").getMeshGroup();
-        assertEquals(15, dual.getMesh(mat1).get(0).data.get("POSITION").length);
-        assertEquals(12, dual.getMesh(mat2).get(0).data.get("POSITION").length);
+        assertEquals(15, dual.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(12, dual.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
 
         MeshGroup parent = objects.get("parent_name").getMeshGroup();
-        assertEquals(15, parent.getMesh(mat1).get(0).data.get("POSITION").length);
-        assertEquals(12, parent.getMesh(mat2).get(0).data.get("POSITION").length);
+        assertEquals(15, parent.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(12, parent.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
 
     }
 
@@ -145,10 +145,10 @@ public class TestCollada
         assertEquals("completely made up id", geo1.materialIDs.get(0));
 
         Mesh mesh1 = geo1.meshes.get(0);
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.primitiveIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh1.data.get("POSITION"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.data.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.data.get("NORMAL"), 0);
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.vertexIndices);
+        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh1.uniqueVertexData.get("POSITION"), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.uniqueVertexData.get("TEXCOORD"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.uniqueVertexData.get("NORMAL"), 0);
 
         //Other mesh data is ignored as they are just repeats of the same data
         Mesh mesh2 = geometries.get("geo2_id").meshes.get(0);
@@ -166,15 +166,15 @@ public class TestCollada
         MeshGroup groupCompSubNode3 = libMeshGroups.get("groupCompSubNode3_id");
 
         //mesh1, has a 1 for the 2nd element in the position data, mesh2 has 2 and so on.
-        assertEquals(lib_node1.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(lib_node2.getMesh(mat2).get(0).data.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(lib_node3.getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
-        assertEquals(lib_node_comp.getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
-        assertEquals(lib_node_comp.getMesh(mat2).get(0).data.get("POSITION")[1], 3.0, 0.0);
+        assertEquals(lib_node1.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(lib_node2.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(lib_node3.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(lib_node_comp.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(lib_node_comp.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 3.0, 0.0);
 
-        assertEquals(lib_node_comp_group.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(lib_node_comp_group.getMesh(mat1).get(1).data.get("POSITION")[1], 2.0, 0.0);
-        assertEquals(lib_node_comp_group.getMesh(mat2).get(0).data.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(lib_node_comp_group.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(lib_node_comp_group.getMeshes(mat1).get(1).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(lib_node_comp_group.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
 
         //These should NOT be visible at top-level as they are intermediate nodes
         assert groupCompSubNode1 == null;
@@ -183,12 +183,12 @@ public class TestCollada
 
         Map<String, Object3D> objects = colladaFactory.getObjects();
         List<Object3D> anonymousObjects = colladaFactory.getAnonymousObjects();
-        assertEquals(anonymousObjects.get(0).getMeshGroup().getMesh(mat1).get(0).data.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(anonymousObjects.get(0).getMeshGroup().getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
         MeshGroup groupOfGroups = objects.get("groupOfGroups_name").getMeshGroup();
-        assertEquals(groupOfGroups.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(groupOfGroups.getMesh(mat2).get(0).data.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(groupOfGroups.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(groupOfGroups.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
         MeshGroup reference = objects.get("reference_name").getMeshGroup();
-        assertEquals(reference.getMesh(mat1).get(0).data.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(reference.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
     }
 
     @Test
@@ -222,9 +222,9 @@ public class TestCollada
 
         ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(inputs, interleavedIndices, vertexCount);
         Mesh mesh = colladaMeshNormalizer.generateMesh();
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.primitiveIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh.data.get("input1"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.data.get("input2"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.data.get("input3"), 0);
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.vertexIndices);
+        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh.uniqueVertexData.get("input1"), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.uniqueVertexData.get("input2"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.uniqueVertexData.get("input3"), 0);
     }
 }

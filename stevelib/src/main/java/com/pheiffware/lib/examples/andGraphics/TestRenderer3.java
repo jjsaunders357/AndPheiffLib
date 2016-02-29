@@ -4,22 +4,22 @@
  */
 package com.pheiffware.lib.examples.andGraphics;
 
-import java.util.Map;
-
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
-import com.pheiffware.lib.graphics.managed.ManGL;
-import com.pheiffware.lib.graphics.managed.Program;
-import com.pheiffware.lib.graphics.utils.MathUtils;
+import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
+import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.meshLegacy.MeshLegacy;
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
+
+import java.util.Map;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  *
@@ -49,27 +49,30 @@ public class TestRenderer3 implements Renderer
 
         try
         {
-            testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mnc.glsl", "shaders/frag_mnc.glsl");
+            testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
             meshes = MeshLegacy.loadMeshesLegacy(manGL.getAssetManager(), "meshes/spheres.mesh");
-        } catch (FatalGraphicsException exception)
+
+        }
+        catch (FatalGraphicsException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }
-        MeshLegacy sphereMeshLegacy = meshes.get("sphere4");
-        float[] colors = sphereMeshLegacy.generateMultiColorValues();
-        pb = new IndexBuffer(sphereMeshLegacy.getNumPrimitives());
-        pb.putIndices(sphereMeshLegacy.primitiveIndices);
+        //MeshLegacy meshLegacy = meshes.get("cube");
+        MeshLegacy meshLegacy = meshes.get("sphere4");
+        float[] colors = meshLegacy.generateSingleColorValues(0.0f, 0.6f, 0.9f, 1.0f);
+        pb = new IndexBuffer(meshLegacy.getNumPrimitives());
+        pb.putIndices(meshLegacy.primitiveIndices);
         pb.transfer();
 
         // @formatter:off
-        sb = new StaticVertexBuffer(testProgram, sphereMeshLegacy.getNumVertices(),
+        sb = new StaticVertexBuffer(testProgram, meshLegacy.getNumVertices(),
                 new String[]
                         {"vertexPosition", "vertexNormal", "vertexColor"});
         // @formatter:on
 
-        sb.putFloats("vertexPosition", sphereMeshLegacy.vertices);
-        sb.putFloats("vertexNormal", sphereMeshLegacy.normals);
-        sb.putFloats("vertexColor", colors);
+        sb.putAttributeFloats("vertexPosition", meshLegacy.vertices);
+        sb.putAttributeFloats("vertexNormal", meshLegacy.normals);
+        sb.putAttributeFloats("vertexColor", colors);
 
         sb.transfer();
 
@@ -85,13 +88,19 @@ public class TestRenderer3 implements Renderer
     @Override
     public void onDrawFrame(GL10 gl)
     {
+        //Default view volume is based on sitting at origin and looking in negative z direction
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        GLES20.glUseProgram(testProgram.getHandle());
-        float[] matrix = MathUtils.createTranslationMatrix(0, 0, -2);
-        matrix = MathUtils.multiplyMatrix(projectionMatrix, matrix);
-        GLES20.glUniformMatrix4fv(
-                GLES20.glGetUniformLocation(testProgram.getHandle(), "transformViewMatrix"),
-                1, false, matrix, 0);
+        testProgram.bind();
+        //Translate sphere in negative z direction so we can see it
+        float[] transformMatrix = MathUtils.createTranslationMatrix(0, 0, -2);
+
+        testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix, false);
+        testProgram.setUniformMatrix4("transformMatrix", transformMatrix, false);
+        testProgram.setUniformVec4("eyePosition", new float[]{0, 0, 0, 1});
+        testProgram.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+        testProgram.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+        testProgram.setUniformFloat("shininess", 30.0f);
+        testProgram.setUniformVec4("lightPosition", new float[]{-2, 2, 1, 1});
         sb.bind();
         pb.drawAll(GLES20.GL_TRIANGLES);
     }

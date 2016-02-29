@@ -5,7 +5,7 @@ package com.pheiffware.lib.graphics;
  */
 public class GColor
 {
-    private final float[] comps;
+    public final float[] comps;
 
     public GColor(float[] comps)
     {
@@ -17,6 +17,25 @@ public class GColor
         comps = new float[]{red, green, blue, alpha};
     }
 
+    public float getRed()
+    {
+        return comps[0];
+    }
+
+    public float getGreen()
+    {
+        return comps[1];
+    }
+
+    public float getBlue()
+    {
+        return comps[2];
+    }
+
+    public float getAlpha()
+    {
+        return comps[3];
+    }
     @Override
     public boolean equals(Object o)
     {
