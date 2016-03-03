@@ -5,4 +5,4 @@
 /**
  * Holds classes for wrapping the abysmally documented vertex buffer objects, making them far more useful.
  */
-package com.pheiffware.lib.graphics.buffer;
+package com.pheiffware.lib.graphics.managed.buffer;

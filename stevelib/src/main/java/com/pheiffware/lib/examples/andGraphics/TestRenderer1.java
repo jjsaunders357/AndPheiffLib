@@ -18,8 +18,8 @@ import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
-import com.pheiffware.lib.graphics.buffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
+import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 
 /**
  *

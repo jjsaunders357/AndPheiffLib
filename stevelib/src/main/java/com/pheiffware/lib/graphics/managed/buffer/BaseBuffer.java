@@ -1,14 +1,11 @@
-package com.pheiffware.lib.graphics.buffer;
+package com.pheiffware.lib.graphics.managed.buffer;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.utils.Utils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 /**
  * Created by Steve on 3/2/2016.

@@ -2,7 +2,7 @@
  * Created by Stephen Pheiffer.
  * Do not edit, distribute, modify or use without his permission.
 */
-package com.pheiffware.lib.graphics.buffer;
+package com.pheiffware.lib.graphics.managed.buffer;
 
 import java.util.HashMap;
 import java.util.Map;
