@@ -117,32 +117,32 @@ public class ColladaFactory
     }
 
 
-    public Map<String, String> getImageFileNames()
+    Map<String, String> getImageFileNames()
     {
         return imageFileNames;
     }
 
-    public Map<String, ColladaEffect> getColladaEffects()
+    Map<String, ColladaEffect> getColladaEffects()
     {
         return colladaEffects;
     }
 
-    public Map<String, ColladaGeometry> getGeometries()
+    Map<String, ColladaGeometry> getGeometries()
     {
         return geometries;
     }
 
-    public Map<String, MeshGroup> getLibraryMeshGroups()
+    Map<String, MeshGroup> getLibraryMeshGroups()
     {
         return libraryMeshGroups;
     }
 
-    public Map<String, Object3D> getObjects()
+    Map<String, Object3D> getObjects()
     {
         return objects;
     }
 
-    public List<Object3D> getAnonymousObjects()
+    List<Object3D> getAnonymousObjects()
     {
         return anonymousObjects;
     }

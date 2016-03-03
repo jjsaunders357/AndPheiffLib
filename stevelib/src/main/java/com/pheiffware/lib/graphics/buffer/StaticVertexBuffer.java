@@ -4,8 +4,6 @@
 */
 package com.pheiffware.lib.graphics.buffer;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +11,6 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.managed.Attribute;
 import com.pheiffware.lib.graphics.managed.Program;
-import com.pheiffware.lib.utils.Utils;
 
 /**
  * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over with a given program.
@@ -36,16 +33,10 @@ import com.pheiffware.lib.utils.Utils;
  * <p/>
  * YOU CANNOT put more data in once transfer is called!
  */
-public class StaticVertexBuffer
+public class StaticVertexBuffer extends BaseBuffer
 {
     //Program object this buffer was setup for
     private final Program program;
-
-    //GL handle to the buffer object
-    private final int bufferHandle;
-
-    //Java ByteBuffer used to fill static buffer.
-    private final ByteBuffer byteBuffer;
 
     //Total size of each vertex in this buffer
     private int vertexByteSize;
@@ -70,37 +61,11 @@ public class StaticVertexBuffer
         }
         vertexByteSize = attributeByteOffset;
 
-        byteBuffer = ByteBuffer.allocateDirect(maxVertices * vertexByteSize);
-        byteBuffer.order(ByteOrder.nativeOrder());
+        allocateBuffer(maxVertices * vertexByteSize);
 
-        int[] buffer = new int[1];
-        GLES20.glGenBuffers(1, buffer, 0);
-        bufferHandle = buffer[0];
     }
 
-    public final void putByte(byte b)
-    {
-        byteBuffer.put(b);
-    }
 
-    public final void putFloat(float value)
-    {
-        byteBuffer.putFloat(value);
-    }
-
-    public void putVec2(int x, int y)
-    {
-        byteBuffer.putFloat(x);
-        byteBuffer.putFloat(y);
-    }
-
-    public final void putVec4(float x, float y, float z, float w)
-    {
-        byteBuffer.putFloat(x);
-        byteBuffer.putFloat(y);
-        byteBuffer.putFloat(z);
-        byteBuffer.putFloat(w);
-    }
 
     /**
      * For a given attributeIndex (defined by order in constructor) put an array of floats in the appropriate buffer location.
@@ -166,23 +131,9 @@ public class StaticVertexBuffer
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         // Destroy bytebuffer (immediately)
-        Utils.deallocateDirectByteBuffer(byteBuffer);
+        deallocateByteBuffer();
     }
 
-    /**
-     * Destroys this buffer resource with openGL
-     */
-    public void release()
-    {
-        GLES20.glDeleteBuffers(1, new int[]{bufferHandle}, 0);
-    }
 
-    /**
-     * @return GL handle of buffer object.
-     */
-    public int getHandle()
-    {
-        return bufferHandle;
-    }
 
 }

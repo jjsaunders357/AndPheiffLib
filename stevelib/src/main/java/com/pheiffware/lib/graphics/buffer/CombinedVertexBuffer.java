@@ -58,8 +58,8 @@ public class CombinedVertexBuffer
 		staticVertexBuffer.putFloat(value);
 	}
 
-	public void putStaticVec2(int x, int y)
-	{
+    public void putStaticVec2(float x, float y)
+    {
 		staticVertexBuffer.putVec2(x, y);
 	}
 
@@ -87,5 +87,10 @@ public class CombinedVertexBuffer
 	{
 		dynamicVertexBuffers[bufferIndex].putVec4(x, y, z, w);
 	}
+
+    public final void putDynamicFloats(int bufferIndex, float[] floats)
+    {
+        dynamicVertexBuffers[bufferIndex].putFloats(floats);
+    }
 
 }

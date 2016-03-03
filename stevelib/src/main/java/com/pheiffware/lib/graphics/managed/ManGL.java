@@ -7,7 +7,6 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
-import com.pheiffware.lib.meshLegacy.MeshLegacy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,6 @@ public class ManGL
     private final Map<String, Integer> fragmentShaders = new HashMap<>();
     private final Map<String, Program> programs = new HashMap<>();
     private final Map<String, Texture> textures = new HashMap<>();
-    private final Map<String, MeshLegacy> meshMap = new HashMap<String, MeshLegacy>();
     private final FilterQuality defaultFilterQuality;
     public ManGL(AssetManager assetManager, FilterQuality defaultFilterQuality)
     {

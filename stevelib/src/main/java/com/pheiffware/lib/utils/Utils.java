@@ -67,24 +67,11 @@ public class Utils
 	 * Actively destroys a direct buffer. Calling this guarantees that memory is freed immediately.
 	 * NOTE: Does not work in android!
 	 */
-	// Possible solution:
-	// JNIEXPORT jobject JNICALL Java_com_foo_allocNativeBuffer(JNIEnv* env, jobject thiz, jlong size)
-	// {
-	// void* buffer = malloc(size);
-	// jobject directBuffer = env->NewDirectByteBuffer(buffer, size);
-	// return directBuffer;
-	// }
-	//
-	// JNIEXPORT void JNICALL Java_comfoo_freeNativeBuffer(JNIEnv* env, jobject thiz, jobject bufferRef)
-	// {
-	// void *buffer = env->GetDirectBufferAddress(bufferRef);
-	//
-	// free(buffer);
-	// }
+
 	public static void deallocateDirectByteBuffer(ByteBuffer directByteBuffer)
 	{
-
-	}
+        //TODO: Implement, Use the reflection to call java.nio.DirectByteBuffer.free()
+    }
 
     public static final double getTimeElapsed(long earlierTimeStamp) {
         return (System.nanoTime() - earlierTimeStamp) / 1000000000.0;

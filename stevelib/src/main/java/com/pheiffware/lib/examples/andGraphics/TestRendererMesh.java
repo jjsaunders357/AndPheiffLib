@@ -31,7 +31,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  *
  */
-public class TestRenderer4 implements Renderer
+public class TestRendererMesh implements Renderer
 {
     private final ManGL manGL;
     private Program testProgram;
@@ -41,7 +41,7 @@ public class TestRenderer4 implements Renderer
     private ColladaFactory colladaFactory;
     private Collada collada;
 
-    public TestRenderer4(ManGL manGL)
+    public TestRendererMesh(ManGL manGL)
     {
         this.manGL = manGL;
     }
@@ -63,15 +63,15 @@ public class TestRenderer4 implements Renderer
 
             //Lookup material from loaded file by "name" (what user named it in editing tool)
             Material material = collada.materialsByName.get("renderMaterial");
+
             //Lookup object from loaded file by "name" (what user named it in editing tool)
             Object3D sphere = collada.objects.get("Sphere");
             Object3D cube = collada.objects.get("Cube");
             Object3D monkey = collada.objects.get("Monkey");
 
             //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-            List<Mesh> meshList = monkey.getMeshGroup().getMeshes(material);
+            List<Mesh> meshList = sphere.getMeshGroup().getMeshes(material);
             Mesh sphereMesh = meshList.get(0);
-
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
             pb.putIndices(sphereMesh.vertexIndices);
@@ -84,7 +84,6 @@ public class TestRenderer4 implements Renderer
             // @formatter:on
 
             //TODO: Use collada transform for display
-            //TODO: Test directly loading named mesh
 
             sb.putAttributeFloats("vertexPosition", sphereMesh.uniqueVertexData.get("POSITION"));
             sb.putAttributeFloats("vertexNormal", sphereMesh.uniqueVertexData.get("NORMAL"));
