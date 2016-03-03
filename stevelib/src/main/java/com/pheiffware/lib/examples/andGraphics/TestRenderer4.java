@@ -9,7 +9,7 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
@@ -20,6 +20,7 @@ import com.pheiffware.lib.graphics.managed.collada.ColladaFactory;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 
@@ -49,72 +50,53 @@ public class TestRenderer4 implements Renderer
     public void onSurfaceCreated(GL10 gl,
                                  javax.microedition.khronos.egl.EGLConfig config)
     {
-        Log.i("OPENGL", "Surface created");
-        FatalErrorHandler.installUncaughtExceptionHandler();
-        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-        //Must enable depth testing!
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         try
         {
+            Log.i("OPENGL", "Surface created");
+            FatalErrorHandler.installUncaughtExceptionHandler();
+            GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+            //Must enable depth testing!
+            GLES20.glEnable(GLES20.GL_DEPTH_TEST);
             testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
-            colladaFactory = new ColladaFactory();
+            colladaFactory = new ColladaFactory(true);
             collada = colladaFactory.loadCollada(manGL.getAssetManager(), "meshes/test_render.dae");
+
+            //Lookup material from loaded file by "name" (what user named it in editing tool)
+            Material material = collada.materialsByName.get("renderMaterial");
+            //Lookup object from loaded file by "name" (what user named it in editing tool)
+            Object3D sphere = collada.objects.get("Sphere");
+            Object3D cube = collada.objects.get("Cube");
+            Object3D monkey = collada.objects.get("Monkey");
+
+            //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
+            List<Mesh> meshList = monkey.getMeshGroup().getMeshes(material);
+            Mesh sphereMesh = meshList.get(0);
+
+
+            pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
+            pb.putIndices(sphereMesh.vertexIndices);
+            pb.transfer();
+
+            // @formatter:off
+            sb = new StaticVertexBuffer(testProgram, sphereMesh.getNumUniqueVertices(),
+                    new String[]
+                            {"vertexPosition", "vertexNormal", "vertexColor"});
+            // @formatter:on
+
+            //TODO: Use collada transform for display
+            //TODO: Test directly loading named mesh
+
+            sb.putAttributeFloats("vertexPosition", sphereMesh.uniqueVertexData.get("POSITION"));
+            sb.putAttributeFloats("vertexNormal", sphereMesh.uniqueVertexData.get("NORMAL"));
+            sb.putAttributeFloats("vertexColor", sphereMesh.generateSingleColorData(new GColor(0.0f, 0.6f, 0.9f, 1.0f)));
+
+            sb.transfer();
+            PheiffGLUtils.assertNoError();
         }
-        catch (FatalGraphicsException | XMLParseException exception)
+        catch (GraphicsException | XMLParseException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }
-
-        //Lookup material from loaded file by "name" (what user named it in editing tool)
-        Material material = collada.materialsByName.get("renderMaterial");
-        //Lookup object from loaded file by "name" (what user named it in editing tool)
-        Object3D sphere = collada.objects.get("Sphere");
-        Object3D cube = collada.objects.get("Cube");
-        Object3D monkey = collada.objects.get("Monkey");
-
-        //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-        List<Mesh> meshList = sphere.getMeshGroup().getMeshes(material);
-        Mesh sphereMesh = meshList.get(0);
-
-
-        pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
-        pb.putIndices(sphereMesh.vertexIndices);
-        pb.transfer();
-
-        // @formatter:off
-        sb = new StaticVertexBuffer(testProgram, sphereMesh.getNumUniqueVertices(),
-                new String[]
-                        {"vertexPosition", "vertexNormal", "vertexColor"});
-        // @formatter:on
-
-        //TODO: Convert collada mesh positions and normals to homogeneous coords.
-        float[] p = new float[4 * sphereMesh.getNumUniqueVertices()];
-        int src = 0;
-        int dest = 0;
-        for (int i = 0; i < sphereMesh.getNumUniqueVertices(); i++)
-        {
-            p[dest++] = sphereMesh.uniqueVertexData.get("POSITION")[src++];
-            p[dest++] = sphereMesh.uniqueVertexData.get("POSITION")[src++];
-            p[dest++] = sphereMesh.uniqueVertexData.get("POSITION")[src++];
-            p[dest++] = 1;
-        }
-        float[] n = new float[4 * sphereMesh.getNumUniqueVertices()];
-        src = 0;
-        dest = 0;
-        for (int i = 0; i < sphereMesh.getNumUniqueVertices(); i++)
-        {
-            n[dest++] = sphereMesh.uniqueVertexData.get("NORMAL")[src++];
-            n[dest++] = sphereMesh.uniqueVertexData.get("NORMAL")[src++];
-            n[dest++] = sphereMesh.uniqueVertexData.get("NORMAL")[src++];
-            n[dest++] = 0;
-        }
-
-        sb.putAttributeFloats("vertexPosition", p);
-        sb.putAttributeFloats("vertexNormal", n);
-        sb.putAttributeFloats("vertexColor", sphereMesh.generateSingleColorData(new GColor(0.0f, 0.6f, 0.9f, 1.0f)));
-
-        sb.transfer();
-
     }
 
     /*
@@ -142,6 +124,14 @@ public class TestRenderer4 implements Renderer
         testProgram.setUniformVec4("lightPosition", new float[]{-2, 2, 1, 1});
         sb.bind();
         pb.drawAll(GLES20.GL_TRIANGLES);
+        try
+        {
+            PheiffGLUtils.assertNoError();
+        }
+        catch (GraphicsException e)
+        {
+            FatalErrorHandler.handleFatalError(e);
+        }
     }
 
     /*

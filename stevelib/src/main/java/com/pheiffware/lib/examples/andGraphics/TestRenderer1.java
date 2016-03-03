@@ -17,7 +17,7 @@ import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.MathUtils;
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 
@@ -55,7 +55,8 @@ public class TestRenderer1 implements Renderer
             testProgram = manGL.getProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
             System.out.println(testProgram);
             faceTexture = manGL.getImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-        } catch (FatalGraphicsException exception)
+        }
+        catch (GraphicsException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }

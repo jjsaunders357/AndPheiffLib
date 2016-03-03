@@ -8,11 +8,10 @@ import java.io.IOException;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.FilterQuality;
 
 /**
@@ -40,10 +39,10 @@ public class TextureUtils
      * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
-     * @throws FatalGraphicsException
+     * @throws GraphicsException
      */
     public static int genTextureFromImage(Bitmap bitmap, boolean generateMipMaps,
-                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws FatalGraphicsException
+                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
         int textureHandle = genTexture();
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
@@ -64,10 +63,10 @@ public class TextureUtils
      * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
-     * @throws FatalGraphicsException
+     * @throws GraphicsException
      */
     public static int genTextureFromImage(AssetManager assetManager, String imageAssetPath, boolean generateMipMaps,
-                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws FatalGraphicsException
+                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
         Bitmap bitmap;
         try
@@ -77,7 +76,7 @@ public class TextureUtils
         }
         catch (IOException exception)
         {
-            throw new FatalGraphicsException(exception);
+            throw new GraphicsException(exception);
         }
     }
 

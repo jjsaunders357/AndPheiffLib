@@ -2,7 +2,7 @@ package com.pheiffware.lib.graphics.managed;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
@@ -19,7 +19,7 @@ public class Program
     private final Map<String, Uniform> uniforms;
     private final Map<String, Attribute> attributes;
 
-    public Program(int vertexShaderHandle, int fragmentShaderHandle) throws FatalGraphicsException
+    public Program(int vertexShaderHandle, int fragmentShaderHandle) throws GraphicsException
     {
         this(ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle));
     }

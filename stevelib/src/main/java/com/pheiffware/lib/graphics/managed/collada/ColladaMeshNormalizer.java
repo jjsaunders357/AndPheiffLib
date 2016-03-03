@@ -1,21 +1,25 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.utils.MathUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-//TODO: Put this code into the ColladaMesh (we don't need a separate class).
 /**
  * Does the ugly job of untangling the ridiculous Collada input meshes vertex index data.  The test cases demonstrate this better though examples than I can explain here.
- * <p/>
- * The result is a list of indices, each of which, references data in the various arrays stored in the data map.
- * Created by Steve on 2/15/2016.
+ * This also homogenizes the data if the flag is present.  POSITION/NORMAL data are padded with an extra element.
+ * The result is a single unified list of indices, each of which, references data in the various arrays stored in the data map.
+ * * Created by Steve on 2/15/2016.
  */
 class ColladaMeshNormalizer
 {
     //Original mesh as loaded from Collada
     private final ColladaMesh colladaMesh;
+
+    //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
+    private final boolean homogenizeCoordinates;
+
     //The number of unique vertices.  Each array in vertex data is this length
     private short numUniqueVertices;
     //Data for each unique vertex.  A map from names like POSITION, NORMAL, TEXCOORD, etc to actual arrays holding vertex data.  The same vertex may be referenced multiple times in the vertexIndices array.
@@ -76,13 +80,14 @@ class ColladaMeshNormalizer
         }
     }
 
-    public ColladaMeshNormalizer(Map<String, ColladaInput> vertexDataInputs, short[] interleavedIndices, int vertexCount)
+    public ColladaMeshNormalizer(Map<String, ColladaInput> vertexDataInputs, short[] interleavedIndices, int vertexCount, boolean homogenizeCoordinates)
     {
-        this(new ColladaMesh(vertexDataInputs, interleavedIndices, vertexCount));
+        this(new ColladaMesh(vertexDataInputs, interleavedIndices, vertexCount), homogenizeCoordinates);
     }
 
-    public ColladaMeshNormalizer(ColladaMesh colladaMesh)
+    public ColladaMeshNormalizer(ColladaMesh colladaMesh, boolean homogenizeCoordinates)
     {
+        this.homogenizeCoordinates = homogenizeCoordinates;
         this.colladaMesh = colladaMesh;
     }
 
@@ -90,8 +95,21 @@ class ColladaMeshNormalizer
     {
         generateUniversalVertexIndices();
         generateUniqueVertexData();
+        homogenizeData();
         return new Mesh(numUniqueVertices, vertexData, vertexDataIndices);
     }
+
+    private void homogenizeData()
+    {
+        if (homogenizeCoordinates)
+        {
+            float[] nonHomogeneousVectors = vertexData.get("POSITION");
+            vertexData.put("POSITION", MathUtils.homogenizeVec3(nonHomogeneousVectors, 1.0f));
+            nonHomogeneousVectors = vertexData.get("NORMAL");
+            vertexData.put("NORMAL", MathUtils.homogenizeVec3(nonHomogeneousVectors, 0.0f));
+        }
+    }
+
 
     /**
      * Holds a group of indices representing different aspects of vertex.  It is setup for hashing these combinations.

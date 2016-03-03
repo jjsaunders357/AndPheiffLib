@@ -17,7 +17,7 @@ import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.MathUtils;
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 
@@ -68,7 +68,7 @@ public class TestRenderer2 implements Renderer
             depthRenderTexture = manGL.getDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
             frameBufferHandle = PheiffGLUtils.createFrameBuffer();
         }
-        catch (FatalGraphicsException exception)
+        catch (GraphicsException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }
@@ -112,7 +112,7 @@ public class TestRenderer2 implements Renderer
         {
             PheiffGLUtils.assertFrameBufferStatus();
         }
-        catch (FatalGraphicsException e)
+        catch (GraphicsException e)
         {
             FatalErrorHandler.handleFatalError(e);
         }

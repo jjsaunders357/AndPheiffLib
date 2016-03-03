@@ -18,6 +18,14 @@ import java.util.Map;
  */
 class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
 {
+    //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
+    private final boolean homogenizeCoordinates;
+
+    public ColladaGeometryFactory(boolean homogenizeCoordinates)
+    {
+        this.homogenizeCoordinates = homogenizeCoordinates;
+    }
+
     @Override
     public ColladaGeometry createFromElement(Element element) throws XMLParseException
     {
@@ -32,7 +40,7 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
         DomUtils.putSubElementsInMap(vertexInputs, vertices, "input", "semantic", new ColladaInputFactory(sources));
 
         ColladaMeshFactory colladaMeshFactory = new ColladaMeshFactory(sources, vertexInputs);
-        ColladaGeometry colladaMeshGroup = new ColladaGeometry();
+        ColladaGeometry colladaGeometry = new ColladaGeometry();
 
         List<Element> polylists = DomUtils.getSubElements(meshElement, "polylist");
         for (Element polyListElement : polylists)
@@ -41,9 +49,9 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromPolyListElement(polyListElement);
             if (colladaMesh != null)
             {
-                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh);
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizeCoordinates);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
-                colladaMeshGroup.add(materialID, mesh);
+                colladaGeometry.add(materialID, mesh);
             }
         }
         List<Element> triangles = DomUtils.getSubElements(meshElement, "triangles");
@@ -53,12 +61,12 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromTrianglesElement(trianglesElement);
             if (colladaMesh != null)
             {
-                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh);
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizeCoordinates);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
-                colladaMeshGroup.add(materialID, mesh);
+                colladaGeometry.add(materialID, mesh);
             }
         }
-        return colladaMeshGroup;
+        return colladaGeometry;
     }
 
 

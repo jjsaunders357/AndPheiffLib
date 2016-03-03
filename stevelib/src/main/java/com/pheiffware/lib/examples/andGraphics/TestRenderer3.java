@@ -9,7 +9,7 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.ManGL;
@@ -44,8 +44,9 @@ public class TestRenderer3 implements Renderer
     {
         Log.i("OPENGL", "Surface created");
         FatalErrorHandler.installUncaughtExceptionHandler();
-        // Wait for vertical retrace
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+        //Must enable depth testing!
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
         try
         {
@@ -53,7 +54,7 @@ public class TestRenderer3 implements Renderer
             meshes = MeshLegacy.loadMeshesLegacy(manGL.getAssetManager(), "meshes/spheres.mesh");
 
         }
-        catch (FatalGraphicsException exception)
+        catch (GraphicsException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }

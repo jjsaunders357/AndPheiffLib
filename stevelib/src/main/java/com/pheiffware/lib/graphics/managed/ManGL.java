@@ -3,7 +3,7 @@ package com.pheiffware.lib.graphics.managed;
 import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
@@ -37,9 +37,9 @@ public class ManGL
      *
      * @param vertexShaderAssetPath
      * @return
-     * @throws FatalGraphicsException
+     * @throws GraphicsException
      */
-    public int getVertexShader(String vertexShaderAssetPath) throws FatalGraphicsException
+    public int getVertexShader(String vertexShaderAssetPath) throws GraphicsException
     {
         Integer vertexShaderHandle = vertexShaders.get(vertexShaderAssetPath);
         if (vertexShaderHandle == null)
@@ -55,9 +55,9 @@ public class ManGL
      *
      * @param fragmentShaderAssetPath
      * @return
-     * @throws FatalGraphicsException
+     * @throws GraphicsException
      */
-    public int getFragmentShader(String fragmentShaderAssetPath) throws FatalGraphicsException
+    public int getFragmentShader(String fragmentShaderAssetPath) throws GraphicsException
     {
         Integer fragmentShaderHandle = fragmentShaders.get(fragmentShaderAssetPath);
         if (fragmentShaderHandle == null)
@@ -75,9 +75,9 @@ public class ManGL
      * @param vertexShaderAssetPath
      * @param fragmentShaderAssetPath
      * @return
-     * @throws FatalGraphicsException
+     * @throws GraphicsException
      */
-    public Program getProgram(String name, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws FatalGraphicsException
+    public Program getProgram(String name, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
     {
         Program program = programs.get(name);
         if (program == null)
@@ -100,9 +100,9 @@ public class ManGL
      * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
-     * @throws FatalGraphicsException
+     * @throws GraphicsException
      */
-    public Texture getImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws FatalGraphicsException
+    public Texture getImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
         Texture texture = textures.get(imageAssetPath);
         if (texture == null)
@@ -171,9 +171,9 @@ public class ManGL
      * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
-     * @throws FatalGraphicsException
+     * @throws GraphicsException
      */
-    public Texture getImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws FatalGraphicsException
+    public Texture getImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
     {
         return getImageTexture(imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
     }

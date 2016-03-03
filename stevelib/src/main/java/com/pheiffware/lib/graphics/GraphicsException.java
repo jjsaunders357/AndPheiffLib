@@ -10,16 +10,20 @@ package com.pheiffware.lib.graphics;
  * These generally should not occur in a well written program.  Examples: Cannot open image file, shader doesn't compile, etc.
  */
 @SuppressWarnings("serial")
-public class FatalGraphicsException extends Exception {
-    public FatalGraphicsException(String message) {
+public class GraphicsException extends Exception
+{
+    public GraphicsException(String message)
+    {
         super(message);
     }
 
-    public FatalGraphicsException(String message, Throwable t) {
+    public GraphicsException(String message, Throwable t)
+    {
         super(message, t);
     }
 
-    public FatalGraphicsException(Throwable t) {
+    public GraphicsException(Throwable t)
+    {
         super(t);
     }
 }

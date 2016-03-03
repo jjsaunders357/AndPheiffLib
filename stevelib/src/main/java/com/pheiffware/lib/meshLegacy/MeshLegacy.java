@@ -13,8 +13,7 @@ import java.util.Map;
 
 import android.content.res.AssetManager;
 
-import com.pheiffware.lib.graphics.FatalGraphicsException;
-import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.GraphicsException;
 
 /**
  * Holds a triangular mesh. Used to load raw mesh information from files.
@@ -23,7 +22,7 @@ import com.pheiffware.lib.graphics.GColor;
 public class MeshLegacy
 {
 
-	public static Map<String, MeshLegacy> loadMeshesLegacy(AssetManager assetManager, String assetFileName) throws FatalGraphicsException
+	public static Map<String, MeshLegacy> loadMeshesLegacy(AssetManager assetManager, String assetFileName) throws GraphicsException
 	{
 		try
 		{
@@ -40,7 +39,7 @@ public class MeshLegacy
 				}
 				else
 				{
-					throw new FatalGraphicsException("Cannot load mesh of semantic: \"" + meshType + "\"");
+					throw new GraphicsException("Cannot load mesh of semantic: \"" + meshType + "\"");
 				}
 				meshType = reader.readLine();
 			}
@@ -48,11 +47,11 @@ public class MeshLegacy
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			throw new FatalGraphicsException(e);
+			throw new GraphicsException(e);
 		}
 		catch (IOException e)
 		{
-			throw new FatalGraphicsException(e);
+			throw new GraphicsException(e);
 		}
 	}
 

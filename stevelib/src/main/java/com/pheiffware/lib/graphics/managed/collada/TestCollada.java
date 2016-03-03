@@ -24,16 +24,17 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Steve on 2/20/2016.
  */
+//TODO: Add test for geometry without material
 public class TestCollada
 {
     @Test
     public void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
         FileInputStream input = new FileInputStream("src/main/assets/meshes/weird_blender_example.dae");
-        ColladaFactory colladaFactory = new ColladaFactory();
+        ColladaFactory colladaFactory = new ColladaFactory(true);
         colladaFactory.loadCollada(input);
         input = new FileInputStream("src/main/assets/meshes/weird_sketchup_example.dae");
-        colladaFactory = new ColladaFactory();
+        colladaFactory = new ColladaFactory(true);
         colladaFactory.loadCollada(input);
     }
 
@@ -41,7 +42,7 @@ public class TestCollada
     public void testCompleteLoadBlender() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
         FileInputStream input = new FileInputStream("src/test/assets/meshes/test_blender.dae");
-        ColladaFactory colladaFactory = new ColladaFactory();
+        ColladaFactory colladaFactory = new ColladaFactory(true);
         Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
@@ -79,27 +80,26 @@ public class TestCollada
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh1.uniqueVertexData.get("POSITION"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.uniqueVertexData.get("POSITION"), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.uniqueVertexData.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.uniqueVertexData.get("NORMAL"), 0);
-
+        assertArrayEquals(new float[]{0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0, 3, 4, 5, 0}, mesh1.uniqueVertexData.get("NORMAL"), 0);
         Mesh mesh2 = geo1.meshes.get(1);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 2}, mesh2.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}, mesh2.uniqueVertexData.get("POSITION"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1}, mesh2.uniqueVertexData.get("POSITION"), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.uniqueVertexData.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.uniqueVertexData.get("NORMAL"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0}, mesh2.uniqueVertexData.get("NORMAL"), 0);
 
         Map<String, Object3D> objects = colladaFactory.getObjects();
         List<Object3D> anonymousMeshGroups = colladaFactory.getAnonymousObjects();
         assertEquals(0, anonymousMeshGroups.size());
 
         MeshGroup dual = objects.get("dual_name").getMeshGroup();
-        assertEquals(15, dual.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
-        assertEquals(12, dual.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(20, dual.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(16, dual.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
 
         MeshGroup parent = objects.get("parent_name").getMeshGroup();
-        assertEquals(15, parent.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
-        assertEquals(12, parent.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(20, parent.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(16, parent.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
 
     }
 
@@ -107,7 +107,7 @@ public class TestCollada
     public void testCompleteLoadSketchup() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
         FileInputStream input = new FileInputStream("src/test/assets/meshes/test_sketchup.dae");
-        ColladaFactory colladaFactory = new ColladaFactory();
+        ColladaFactory colladaFactory = new ColladaFactory(true);
         Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
@@ -146,9 +146,9 @@ public class TestCollada
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh1.uniqueVertexData.get("POSITION"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.uniqueVertexData.get("POSITION"), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.uniqueVertexData.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.uniqueVertexData.get("NORMAL"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0, 3, 4, 5, 0}, mesh1.uniqueVertexData.get("NORMAL"), 0);
 
         //Other mesh data is ignored as they are just repeats of the same data
         Mesh mesh2 = geometries.get("geo2_id").meshes.get(0);
@@ -204,7 +204,7 @@ public class TestCollada
      * Tests uncollation.
      */
     @Test
-    public void testColladaCollator()
+    public void testColladaMeshNormalizer()
     {
         //2 interleaved sets of index data.  1st set is for input1 {0,1,1,2,3,0,0,0,2}.  2nd set is shared by input2 and input3 {0,0,0,0,0,1,0,1,0}
         short[] interleavedIndices = new short[]{0, 0, 1, 0, 1, 0, 2, 0, 3, 0, 0, 1, 0, 0, 0, 1, 2, 0};
@@ -214,17 +214,18 @@ public class TestCollada
 
         Map<String, ColladaInput> inputs = new HashMap<>();
         //Input 1 has 4 items each size 3 {0,1,2}, {3,4,5}, {6,7,8}, {9,10,11} and offset is 0
-        inputs.put("input1", new ColladaInput("input1", new ColladaSource(4, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}), 0));
+        inputs.put("POSITION", new ColladaInput("POSITION", new ColladaSource(4, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}), 0));
         //Input 2 has 2 items each size 2 {0,1}, {2,3} and offset is 1
-        inputs.put("input2", new ColladaInput("input2", new ColladaSource(2, 2, new float[]{0, 1, 2, 3}), 1));
+        inputs.put("TEXCOORD", new ColladaInput("TEXCOORD", new ColladaSource(2, 2, new float[]{0, 1, 2, 3}), 1));
         //Input 3 has 3 items each size 3 {0,1,2}, {3,4,5}, {6,7,8} and offset is 1
-        inputs.put("input3", new ColladaInput("input3", new ColladaSource(3, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8}), 1));
+        inputs.put("NORMAL", new ColladaInput("NORMAL", new ColladaSource(3, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8}), 1));
 
-        ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(inputs, interleavedIndices, vertexCount);
+        //Homogenize output
+        ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(inputs, interleavedIndices, vertexCount, true);
         Mesh mesh = colladaMeshNormalizer.generateMesh();
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2}, mesh.uniqueVertexData.get("input1"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.uniqueVertexData.get("input2"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.uniqueVertexData.get("input3"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh.uniqueVertexData.get("POSITION"), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.uniqueVertexData.get("TEXCOORD"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 2, 0, 3, 4, 5, 0}, mesh.uniqueVertexData.get("NORMAL"), 0);
     }
 }

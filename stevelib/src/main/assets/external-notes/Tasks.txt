@@ -3,11 +3,11 @@ Buy matlab - Done
 Reorganize library and merge with existing eclipse code - 10/12
 Collada - 56/60
 Touch input - 0/8
-Standard 3d shaders - 2/8
+Standard 3d shaders - 3/8
 Camera - 0/6
-General android - 16
+General android - 0/16
 Migrate to OpenGL ES 3 (if it makes sense) - 0/4
-Collada and Rendering Engine - 0/20
+Collada and Rendering Engine - 2/20
 Basic sphere code - 4
 Basic sphere vertex shaders - 8
 Basic sphere fragment shaders - 12

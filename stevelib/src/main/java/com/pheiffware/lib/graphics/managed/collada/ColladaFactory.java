@@ -59,6 +59,14 @@ public class ColladaFactory
     //List of all unnamed objects, either: node didn't have a name attribute, multiple nodes with the same name attribute (all but 1st put in this bin) or top-level geometry instance in a SketchUp node.
     private final List<Object3D> anonymousObjects = new LinkedList<>();
 
+    //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
+    private final boolean homogenizeCoordinates;
+
+    public ColladaFactory(boolean homogenizeCoordinates)
+    {
+        this.homogenizeCoordinates = homogenizeCoordinates;
+    }
+
     public Collada loadCollada(AssetManager assetManager, String assetFileName) throws XMLParseException
     {
         try
@@ -84,7 +92,7 @@ public class ColladaFactory
         Element libraryMaterialsElement = DomUtils.assertGetSingleSubElement(rootElement, "library_materials");
         DomUtils.putSubElementsInMap(materialsByID, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, colladaEffects));
         Element libraryGeometriesElement = DomUtils.assertGetSingleSubElement(rootElement, "library_geometries");
-        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory());
+        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory(homogenizeCoordinates));
 
         Element libraryNodesElement = DomUtils.getSingleSubElement(rootElement, "library_nodes");
         if (libraryNodesElement != null)
@@ -118,6 +126,7 @@ public class ColladaFactory
     {
         return colladaEffects;
     }
+
     public Map<String, ColladaGeometry> getGeometries()
     {
         return geometries;

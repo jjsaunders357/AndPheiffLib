@@ -1,8 +1,6 @@
 package com.pheiffware.lib.utils.dom;
 
-import com.pheiffware.lib.graphics.FatalGraphicsException;
 import com.pheiffware.lib.graphics.GColor;
-import com.pheiffware.lib.utils.Utils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,18 +10,14 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 /**

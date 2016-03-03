@@ -2,8 +2,7 @@ package com.pheiffware.lib.graphics.utils;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
-import com.pheiffware.lib.graphics.FatalGraphicsException;
+import com.pheiffware.lib.graphics.GraphicsException;
 
 /**
  * Created by Steve on 2/9/2016.
@@ -203,12 +202,30 @@ public class PheiffGLUtils {
         }
     }
 
-    public static void assertFrameBufferStatus() throws FatalGraphicsException
+    public static void assertFrameBufferStatus() throws GraphicsException
     {
         int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
         if (status != GLES20.GL_FRAMEBUFFER_COMPLETE)
         {
-            throw new FatalGraphicsException("Framebuffer failure.  Status = " + status);
+            throw new GraphicsException("Framebuffer failure.  Status = " + status);
+        }
+    }
+
+    public static void assertNoError() throws GraphicsException
+    {
+        int error = GLES20.glGetError();
+        switch (error)
+        {
+            case GLES20.GL_NO_ERROR:
+                return;
+            case GLES20.GL_INVALID_ENUM:
+                throw new GraphicsException("Illegal enum value");
+            case GLES20.GL_INVALID_VALUE:
+                throw new GraphicsException("Numeric value out of range");
+            case GLES20.GL_INVALID_OPERATION:
+                throw new GraphicsException("Operation illegal in current state");
+            case GLES20.GL_INVALID_FRAMEBUFFER_OPERATION:
+                throw new GraphicsException("Framebuffer  object  is  not  complete");
         }
     }
 }
