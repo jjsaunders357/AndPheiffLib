@@ -3,6 +3,8 @@ package com.pheiffware.lib.graphics.utils;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import java.util.Arrays;
+
 /**
  * Created by Steve on 2/13/2016.
  */
@@ -14,32 +16,92 @@ public class MathUtils
     public static float[] createTranslationMatrix(float x, float y, float z)
     {
         float[] result = new float[16];
-        Matrix.setIdentityM(result, 0);
-        Matrix.translateM(result, 0, x, y, z);
+        result[0] = 1;
+        result[4] = 0;
+        result[8] = 0;
+        result[12] = x;
+        result[1] = 0;
+        result[5] = 1;
+        result[9] = 0;
+        result[13] = y;
+        result[2] = 0;
+        result[6] = 0;
+        result[10] = 1;
+        result[14] = z;
+        result[3] = 0;
+        result[7] = 0;
+        result[11] = 0;
+        result[15] = 1;
         return result;
     }
 
     public static float[] createScaleMatrix(float x, float y, float z)
     {
         float[] result = new float[16];
-        Matrix.setIdentityM(result, 0);
-        Matrix.scaleM(result, 0, x, y, z);
+        result[0] = x;
+        result[4] = 0;
+        result[8] = 0;
+        result[12] = 0;
+        result[1] = 0;
+        result[5] = y;
+        result[9] = 0;
+        result[13] = 0;
+        result[2] = 0;
+        result[6] = 0;
+        result[10] = z;
+        result[14] = 0;
+        result[3] = 0;
+        result[7] = 0;
+        result[11] = 0;
+        result[15] = 1;
+
         return result;
     }
-
     public static float[] createRotationMatrix(float angle, float x, float y, float z)
     {
         float[] result = new float[16];
-        Matrix.setIdentityM(result, 0);
-        Matrix.rotateM(result, 0, angle, x, y, z);
+        Matrix.setRotateM(result, 0, angle, x, y, z);
         return result;
     }
-
     public static float[] multiplyMatrix(float[] lhs, float[] rhs)
     {
         float[] result = new float[16];
         Matrix.multiplyMM(result, 0, lhs, 0, rhs, 0);
         return result;
+    }
+
+    public static float[] createInverseMatrix(float[] transformMatrix)
+    {
+        float[] inverse = new float[16];
+        Matrix.invertM(inverse, 0, transformMatrix, 0);
+        return inverse;
+    }
+
+    public static float[] createNormalTransformMatrix(float[] transformMatrix)
+    {
+        float[] matrix = Arrays.copyOf(transformMatrix, 16);
+        matrix[12] = 0;
+        matrix[13] = 0;
+        matrix[14] = 0;
+        float[] inverse = new float[16];
+        Matrix.invertM(inverse, 0, matrix, 0);
+        Matrix.transposeM(matrix, 0, inverse, 0);
+        return matrix;
+    }
+
+    public static String matrixAsString(float[] matrix)
+    {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 16; j += 4)
+            {
+                builder.append(matrix[i + j]);
+                builder.append(",");
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 
     /**
@@ -78,7 +140,7 @@ public class MathUtils
      * @param element4              the value for "w" coordinate to add
      * @return float data of the form [x1 y1 z1 w x2 y2 z2 w ...]
      */
-    public static float[] homogenizeVec3(float[] nonHomogeneousVectors, float element4)
+    public static float[] homogenizeVec3Array(float[] nonHomogeneousVectors, float element4)
     {
         float[] homogeneousVectors = new float[(nonHomogeneousVectors.length / 3) * 4];
         int homogeneousIndex = 0, nonHomogeneousIndex = 0;
