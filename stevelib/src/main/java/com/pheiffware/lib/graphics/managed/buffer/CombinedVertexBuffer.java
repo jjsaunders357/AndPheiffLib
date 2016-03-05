@@ -10,7 +10,6 @@ import com.pheiffware.lib.graphics.managed.Program;
  * A combination of a packed vertex buffer and one or more single attribute vertex buffers. All static attributes should be put in the packed buffer
  * while the dynamic ones are put in the dynamic buffers.
  */
-// TODO: Add bulk copy operations. Note that when putting into a wrapping float buffer, this must manually advance the backing byte buffer.
 public class CombinedVertexBuffer
 {
 	private StaticVertexBuffer staticVertexBuffer;
@@ -68,12 +67,16 @@ public class CombinedVertexBuffer
 		staticVertexBuffer.putVec4(x, y, z, w);
 	}
 
+	public final void putStaticFloats(float[] floats)
+	{
+		staticVertexBuffer.putFloats(floats);
+	}
 	public final void putDynamicByte(int bufferIndex, byte value)
 	{
 		dynamicVertexBuffers[bufferIndex].putByte(value);
 	}
 
-	public final void putFloatDynamic(int bufferIndex, float value)
+	public final void putDynamicFloat(int bufferIndex, float value)
 	{
 		dynamicVertexBuffers[bufferIndex].putFloat(value);
 	}
