@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO: Deal with meshes that have no material (ie blender) Will simply not have a material listed in either geometry or object definition
 //TODO: Load camera positions or main view position (sketchup)
 /**
  * Holds key data from a parsed Collada file.  Unlike the factory, which keep most intermediate data, this only keeps the essential stuff.

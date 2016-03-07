@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
 import com.pheiffware.lib.utils.dom.DomUtils;
-import com.pheiffware.lib.utils.dom.ElementObjectFactory;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
@@ -43,10 +42,10 @@ class ColladaMeshFactory
         {
             return null;
         }
-        Element indicesElement = DomUtils.assertGetSingleSubElement(polyListElement, "p");
+        Element indicesElement = DomUtils.assertGetSubElement(polyListElement, "p");
 
         //All polygons must be triangles or we can't handle this mesh
-        Element vcountElement = DomUtils.assertGetSingleSubElement(polyListElement, "vcount");
+        Element vcountElement = DomUtils.assertGetSubElement(polyListElement, "vcount");
         float[] polygonVertexCounts = DomUtils.getFloatsFromElement(vcountElement);
         int vertexCount = 0;
         for (int i = 0; i < polygonVertexCounts.length; i++)
@@ -79,7 +78,7 @@ class ColladaMeshFactory
             return null;
         }
         int vertexCount = Integer.valueOf(triangleElement.getAttribute("count")) * 3;
-        Element indicesElement = DomUtils.assertGetSingleSubElement(triangleElement, "p");
+        Element indicesElement = DomUtils.assertGetSubElement(triangleElement, "p");
         short[] interleavedIndices = DomUtils.getShortsFromElement(indicesElement);
         return generateRawMeshData(interleavedIndices, vertexCount, inputs);
     }

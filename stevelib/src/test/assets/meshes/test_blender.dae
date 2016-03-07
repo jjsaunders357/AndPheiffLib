@@ -166,6 +166,53 @@
             </polylist>
         </mesh>
     </geometry>
+    <geometry id="geo_no_mat_id" name="geo_no_mat_name">
+        <mesh>
+            <source id="input1">
+                <float_array id="blah" count="12">0 1 2 3 4 5 6 7 8 9 10 11</float_array>
+                <technique_common>
+                    <accessor source="#blah" count="4" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input2">
+                <float_array id="blah2" count="6">0 99 1 2 99 3</float_array>
+                <technique_common>
+                    <accessor source="#blah2" count="2" stride="3">
+                        <param name="X" type="float"/>
+                        <param type="float"/> <!--Example of missing parameter.  Hopefully no one actually does this.  It causes the 99's to be skipped-->
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <source id="input3">
+                <float_array id="blah3" count="9">0 1 2 3 4 5 6 7 8</float_array>
+                <technique_common>
+                    <accessor source="#blah3" count="3" stride="3">
+                        <param name="X" type="float"/>
+                        <param name="Y" type="float"/>
+                        <param name="Z" type="float"/>
+                    </accessor>
+                </technique_common>
+            </source>
+            <!--vertices, is a useless concept.  Inputs can be declared here instead of in polylist,
+            which complicates things unnecessarily.-->
+            <vertices id="who cares">
+                <input semantic="POSITION" source="#input1"/>
+            </vertices>
+            <!--Mesh with no material assignment-->
+            <polylist count="12">
+                <input semantic="VERTEX" source="#who cares" offset="0"/>
+                <input semantic="NORMAL" source="#input3" offset="1"/>
+                <input semantic="TEXCOORD" source="#input2" offset="1" set="0"/>
+                <vcount>3 3</vcount>
+                <p>0 0 1 0 1 0 2 0 3 0 2 0</p>
+            </polylist>
+        </mesh>
+    </geometry>
   </library_geometries>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
@@ -190,6 +237,10 @@
           <matrix sid="transform">1 0 0 0 0 3 0 0 0 0 1 0 0 0 0 1</matrix>
           <instance_geometry url="#geo1_id" name="Child"/>
         </node>
+      </node>
+      <node id="no_mat_id" name="no_mat_name" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#geo_no_mat_id" name="geo_no_mat_name"/>
       </node>
     </visual_scene>
   </library_visual_scenes>

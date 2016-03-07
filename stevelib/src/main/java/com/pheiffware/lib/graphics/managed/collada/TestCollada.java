@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Steve on 2/20/2016.
  */
-//TODO: Add test for geometry without material
 public class TestCollada
 {
     @Test
@@ -50,18 +49,20 @@ public class TestCollada
         Material mat1 = materials.get("mat_text1_name");
         Material mat2 = materials.get("mat_text2_name");
         Material matp = materials.get("mat_purple_name");
+        Material defaultMat = materials.get("");
         assert mat1 != null;
         assert mat2 != null;
         assert matp != null;
+        assert defaultMat != null;
 
         assertEquals(ColladaFactory.DEFAULT_AMBIENT, mat1.ambientColor);
-        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat1.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE, mat1.diffuseColor);
         assertEquals(ColladaFactory.DEFAULT_SPECULAR, mat1.specularColor);
         assertEquals(ColladaFactory.DEFAULT_SHININESS, mat1.shininess, 0f);
         assertEquals("image1.png", mat1.imageFileName);
 
         assertEquals(new GColor(0, 0, 0, 1), mat2.ambientColor);
-        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat2.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE, mat2.diffuseColor);
         assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
         assertEquals(0.2f, mat2.shininess, 0f);
         assertEquals("image2.png", mat2.imageFileName);
@@ -71,6 +72,12 @@ public class TestCollada
         assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), matp.specularColor);
         assertEquals(0.2f, matp.shininess, 0f);
         assert matp.imageFileName == null;
+
+        assertEquals(ColladaFactory.DEFAULT_AMBIENT, defaultMat.ambientColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE, defaultMat.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_SPECULAR, defaultMat.specularColor);
+        assertEquals(ColladaFactory.DEFAULT_SHININESS, defaultMat.shininess, 0f);
+        assert defaultMat.imageFileName == null;
 
         //Check geometry
         Map<String, ColladaGeometry> geometries = colladaFactory.getGeometries();
@@ -101,6 +108,8 @@ public class TestCollada
         assertEquals(20, parent.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
         assertEquals(16, parent.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
 
+        MeshGroup no_mat = objects.get("no_mat_name").getMeshGroup();
+        assertEquals(16, no_mat.getMeshes(defaultMat).get(0).uniqueVertexData.get("POSITION").length);
     }
 
     @Test
@@ -115,18 +124,20 @@ public class TestCollada
         Material mat1 = materials.get("mat_text1_name");
         Material mat2 = materials.get("mat_text2_name");
         Material matp = materials.get("mat_purple_name");
+        Material defaultMat = materials.get("");
         assert mat1 != null;
         assert mat2 != null;
         assert matp != null;
+        assert defaultMat != null;
 
         assertEquals(ColladaFactory.DEFAULT_AMBIENT, mat1.ambientColor);
-        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat1.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE, mat1.diffuseColor);
         assertEquals(ColladaFactory.DEFAULT_SPECULAR, mat1.specularColor);
         assertEquals(ColladaFactory.DEFAULT_SHININESS, mat1.shininess, 0f);
         assertEquals("image1.png", mat1.imageFileName);
 
         assertEquals(new GColor(0, 0, 0, 1), mat2.ambientColor);
-        assertEquals(ColladaFactory.DEFAULT_DIFFUSE_TEXTURE, mat2.diffuseColor);
+        assertEquals(ColladaFactory.DEFAULT_DIFFUSE, mat2.diffuseColor);
         assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
         assertEquals(0.2f, mat2.shininess, 0f);
         assertEquals("image2.png", mat2.imageFileName);
@@ -189,6 +200,9 @@ public class TestCollada
         assertEquals(groupOfGroups.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
         MeshGroup reference = objects.get("reference_name").getMeshGroup();
         assertEquals(reference.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
+
+        MeshGroup no_mat = objects.get("no_mat_name").getMeshGroup();
+        assertEquals(no_mat.getMeshes(defaultMat).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
     }
 
     @Test

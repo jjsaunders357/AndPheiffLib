@@ -165,7 +165,7 @@ public class DomUtils
     {
         for (String subTagName : subTagNames)
         {
-            element = assertGetSingleSubElement(element, subTagName);
+            element = assertGetSubElement(element, subTagName);
         }
         return element;
     }
@@ -178,9 +178,9 @@ public class DomUtils
      * @return found sub element
      * @throws XMLParseException Can't find sub-element
      */
-    public static Element assertGetSingleSubElement(Element element, String subTagName) throws XMLParseException
+    public static Element assertGetSubElement(Element element, String subTagName) throws XMLParseException
     {
-        Element childElement = getSingleSubElement(element, subTagName);
+        Element childElement = getSubElement(element, subTagName);
         if (childElement == null)
         {
             throw new XMLParseException(element.getTagName() + " did not contain " + subTagName);
@@ -198,7 +198,7 @@ public class DomUtils
      * @param subTagName name of sub-element to search for
      * @return found sub element
      */
-    public static Element getSingleSubElement(Element element, String subTagName)
+    public static Element getSubElement(Element element, String subTagName)
     {
         for (Node child = element.getFirstChild(); child != null; child = child.getNextSibling())
         {
@@ -223,7 +223,7 @@ public class DomUtils
      */
     public static GColor getColorSubElement(Element element) throws XMLParseException
     {
-        Element colorElement = getSingleSubElement(element, "color");
+        Element colorElement = getSubElement(element, "color");
         if (colorElement == null)
         {
             return null;
@@ -299,7 +299,7 @@ public class DomUtils
      */
     public static float getFloatSubElement(Element element) throws XMLParseException
     {
-        Element floatElement = getSingleSubElement(element, "float");
+        Element floatElement = getSubElement(element, "float");
         if (floatElement == null)
         {
             throw new XMLParseException("Float node did not have sub-element");

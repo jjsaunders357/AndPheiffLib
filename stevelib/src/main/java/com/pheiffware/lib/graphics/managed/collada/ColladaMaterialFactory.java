@@ -29,7 +29,7 @@ class ColladaMaterialFactory implements ElementObjectFactory<Material>
     public Material createFromElement(Element element) throws XMLParseException
     {
         String name = element.getAttribute("name");
-        Element instance_effect = DomUtils.assertGetSingleSubElement(element, "instance_effect");
+        Element instance_effect = DomUtils.assertGetSubElement(element, "instance_effect");
         String url = instance_effect.getAttribute("url");
         String effectKey = url.substring(1);
         ColladaEffect effect = effectsFromIDs.get(effectKey);

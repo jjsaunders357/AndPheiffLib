@@ -14,18 +14,18 @@ class ColladaSourceFactory implements ElementObjectFactory<ColladaSource>
     @Override
     public ColladaSource createFromElement(Element element) throws XMLParseException
     {
-        Element techniqueCommon = DomUtils.getSingleSubElement(element, "technique_common");
+        Element techniqueCommon = DomUtils.getSubElement(element, "technique_common");
         if (techniqueCommon == null)
         {
             return null;
         }
 
 
-        Element floatsElement = DomUtils.assertGetSingleSubElement(element, "float_array");
+        Element floatsElement = DomUtils.assertGetSubElement(element, "float_array");
         String floatsID = floatsElement.getAttribute("id");
         float[] rawFloats = DomUtils.getFloatsFromElement(floatsElement);
 
-        Element accessorElement = DomUtils.assertGetSingleSubElement(techniqueCommon, "accessor");
+        Element accessorElement = DomUtils.assertGetSubElement(techniqueCommon, "accessor");
         ColladaAccessor accessor = new ColladaAccessor(accessorElement);
 
 

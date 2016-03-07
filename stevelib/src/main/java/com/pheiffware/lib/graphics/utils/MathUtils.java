@@ -64,6 +64,7 @@ public class MathUtils
         return result;
     }
 
+    //TODO: Create camera class
     //TODO: Create matrix class
 
     public static float[] createInverseMatrix(float[] transformMatrix)
@@ -76,7 +77,14 @@ public class MathUtils
     public static float[] createTransposeMatrix(float[] transformMatrix)
     {
         float[] transpose = new float[16];
-        Matrix.transposeM(transpose, 0, transformMatrix, 0);
+        int destIndex = 0;
+        for (int srcRowIndex = 0; srcRowIndex < 4; srcRowIndex++)
+        {
+            transpose[destIndex++] = transformMatrix[srcRowIndex + 0];
+            transpose[destIndex++] = transformMatrix[srcRowIndex + 4];
+            transpose[destIndex++] = transformMatrix[srcRowIndex + 8];
+            transpose[destIndex++] = transformMatrix[srcRowIndex + 12];
+        }
         return transpose;
     }
     public static float[] createNormalTransformMatrix(float[] transformMatrix)

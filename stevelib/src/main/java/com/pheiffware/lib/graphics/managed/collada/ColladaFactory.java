@@ -27,13 +27,16 @@ import javax.xml.validation.Validator;
  */
 public class ColladaFactory
 {
-    //Any material which does not define shininess gets this value
-    static final float DEFAULT_SHININESS = 0.5f;
-
-    //Any material with a texture will have this as its default diffuse color
-    static final GColor DEFAULT_DIFFUSE_TEXTURE = new GColor(1f, 1f, 1f, 1f);
-    static final GColor DEFAULT_AMBIENT = new GColor(0f, 0f, 0f, 1f);
+    //Any material without a texture will have this as its default diffuse color
+    static final GColor DEFAULT_AMBIENT = new GColor(0.1f, 0.1f, 0.1f, 1f);
+    static final GColor DEFAULT_DIFFUSE = new GColor(0.6f, 0.6f, 0.6f, 1f);
     static final GColor DEFAULT_SPECULAR = new GColor(1f, 1f, 1f, 1f);
+
+    //Any material which does not define shininess gets this value
+    static final float DEFAULT_SHININESS = 2f;
+
+    //If no default material is defined, this this is assigned automatically
+    private static final Material defaultDefaultMaterial = new Material("", null, DEFAULT_AMBIENT, DEFAULT_DIFFUSE, DEFAULT_SPECULAR, DEFAULT_SHININESS);
 
     //Used to validate collada files against known schema
     private static final Validator validator = DomUtils.createValidator("meshes\\collada_schema_1_4_1.xsd");
@@ -62,9 +65,17 @@ public class ColladaFactory
     //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
     private final boolean homogenizeCoordinates;
 
+
     public ColladaFactory(boolean homogenizeCoordinates)
     {
+        this(homogenizeCoordinates, defaultDefaultMaterial);
+    }
+
+    public ColladaFactory(boolean homogenizeCoordinates, Material defaultMaterial)
+    {
         this.homogenizeCoordinates = homogenizeCoordinates;
+        //Store default material
+        materialsByID.put("", defaultMaterial);
     }
 
     public Collada loadCollada(AssetManager assetManager, String assetFileName) throws XMLParseException
@@ -85,16 +96,16 @@ public class ColladaFactory
         Document doc = DomUtils.loadDocumentFromStream(input, validator);
         Element rootElement = doc.getDocumentElement();
         ColladaAuthoringSoftware colladaAuthoringSoftware = ColladaAuthoringSoftware.parse(rootElement);
-        Element libraryImagesElement = DomUtils.assertGetSingleSubElement(rootElement, "library_images");
+        Element libraryImagesElement = DomUtils.assertGetSubElement(rootElement, "library_images");
         DomUtils.putSubElementsInMap(imageFileNames, libraryImagesElement, "image", "id", new ColladaLibraryImageFactory());
-        Element libraryEffectsElement = DomUtils.assertGetSingleSubElement(rootElement, "library_effects");
+        Element libraryEffectsElement = DomUtils.assertGetSubElement(rootElement, "library_effects");
         DomUtils.putSubElementsInMap(colladaEffects, libraryEffectsElement, "effect", "id", new ColladaEffectFactory());
-        Element libraryMaterialsElement = DomUtils.assertGetSingleSubElement(rootElement, "library_materials");
+        Element libraryMaterialsElement = DomUtils.assertGetSubElement(rootElement, "library_materials");
         DomUtils.putSubElementsInMap(materialsByID, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, colladaEffects));
-        Element libraryGeometriesElement = DomUtils.assertGetSingleSubElement(rootElement, "library_geometries");
+        Element libraryGeometriesElement = DomUtils.assertGetSubElement(rootElement, "library_geometries");
         DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory(homogenizeCoordinates));
 
-        Element libraryNodesElement = DomUtils.getSingleSubElement(rootElement, "library_nodes");
+        Element libraryNodesElement = DomUtils.getSubElement(rootElement, "library_nodes");
         if (libraryNodesElement != null)
         {
             LibraryColladaNodeProcessor colladaNodeProcessor = new LibraryColladaNodeProcessor(libraryNodesElement, materialsByID, geometries, colladaAuthoringSoftware == ColladaAuthoringSoftware.BLENDER);
@@ -104,7 +115,7 @@ public class ColladaFactory
         if (colladaAuthoringSoftware == ColladaAuthoringSoftware.SKETCHUP)
         {
             //SketchUp wraps everything in a "SketchUp" node.
-            sceneElement = DomUtils.assertGetSingleSubElement(sceneElement, "node");
+            sceneElement = DomUtils.assertGetSubElement(sceneElement, "node");
             if (!sceneElement.getAttribute("name").equals("SketchUp"))
             {
                 throw new XMLParseException("SketchUp Collada file missing root \"SketchUp\" node in scene");

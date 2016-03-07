@@ -15,7 +15,7 @@ class ColladaLibraryImageFactory implements ElementObjectFactory<String>
     @Override
     public String createFromElement(Element element) throws XMLParseException
     {
-        Element init_from = DomUtils.assertGetSingleSubElement(element, "init_from");
+        Element init_from = DomUtils.assertGetSubElement(element, "init_from");
         String imageFileName = init_from.getFirstChild().getTextContent();
         return imageFileName;
     }

@@ -28,13 +28,13 @@ abstract class BaseColladaNodeProcessor
 
     /**
      * @param materialsByID             library of materials, mapped by id which may be looked up.
-     * @param geometries                a map from ids to ColladaGeometries
+     * @param geometriesByID                a map from ids to ColladaGeometries
      * @param ignoreMaterialAssignments if parsing blender, materials will already have been assigned inside ColladaGeometries and what is encountered in this node structure is ambiguous and should be ignored.
      * @throws XMLParseException
      */
-    public BaseColladaNodeProcessor(Map<String, Material> materialsByID, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments) throws XMLParseException
+    public BaseColladaNodeProcessor(Map<String, Material> materialsByID, Map<String, ColladaGeometry> geometriesByID, boolean ignoreMaterialAssignments) throws XMLParseException
     {
-        instanceGeometryParser = new InstanceGeometryParser(materialsByID, geometries, ignoreMaterialAssignments);
+        instanceGeometryParser = new InstanceGeometryParser(materialsByID, geometriesByID, ignoreMaterialAssignments);
     }
 
     /**
@@ -86,7 +86,7 @@ abstract class BaseColladaNodeProcessor
      */
     private ColladaNode processNodeElementAndRegister(Element element) throws XMLParseException
     {
-        Element matrixElement = DomUtils.getSingleSubElement(element, "matrix");
+        Element matrixElement = DomUtils.getSubElement(element, "matrix");
         float[] transformMatrix;
         if (matrixElement != null)
         {

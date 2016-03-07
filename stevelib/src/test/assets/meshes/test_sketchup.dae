@@ -374,6 +374,10 @@
                         <matrix>1 0 0 0 0 5 0 0 0 0 1 0 0 0 0 1</matrix>
                     <instance_node url="#lib_node1_id" />
                 </node>
+                <node id="no_mat_id" name="no_mat_name">
+                    <instance_geometry url="#geo2_id">
+                    </instance_geometry>
+                </node>
             </node>
         </visual_scene>
     </library_visual_scenes>

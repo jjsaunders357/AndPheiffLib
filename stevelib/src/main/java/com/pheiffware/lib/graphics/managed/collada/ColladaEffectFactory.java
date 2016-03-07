@@ -20,12 +20,12 @@ class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
     public ColladaEffect createFromElement(Element element) throws XMLParseException
     {
 
-        Element profileCommon = DomUtils.assertGetSingleSubElement(element, "profile_COMMON");
+        Element profileCommon = DomUtils.assertGetSubElement(element, "profile_COMMON");
         String imageFileReference = getImageFileReference(profileCommon);
 
 
-        Element technique = DomUtils.assertGetSingleSubElement(profileCommon, "technique");
-        Element phong = DomUtils.getSingleSubElement(technique, "phong");
+        Element technique = DomUtils.assertGetSubElement(profileCommon, "technique");
+        Element phong = DomUtils.getSubElement(technique, "phong");
         GColor ambientColor = null;
         GColor diffuseColor = null;
         GColor specularColor = null;
@@ -33,16 +33,16 @@ class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
 
         if (phong != null)
         {
-            ambientColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "ambient"));
-            diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "diffuse"));
-            specularColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(phong, "specular"));
+            ambientColor = DomUtils.getColorSubElement(DomUtils.assertGetSubElement(phong, "ambient"));
+            diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSubElement(phong, "diffuse"));
+            specularColor = DomUtils.getColorSubElement(DomUtils.assertGetSubElement(phong, "specular"));
             //In percent
-            shininess = DomUtils.getFloatSubElement(DomUtils.assertGetSingleSubElement(phong, "shininess")) / 100.0f;
+            shininess = DomUtils.getFloatSubElement(DomUtils.assertGetSubElement(phong, "shininess")) / 100.0f;
         }
         else
         {
-            Element lambert = DomUtils.assertGetSingleSubElement(technique, "lambert");
-            diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSingleSubElement(lambert, "diffuse"));
+            Element lambert = DomUtils.assertGetSubElement(technique, "lambert");
+            diffuseColor = DomUtils.getColorSubElement(DomUtils.assertGetSubElement(lambert, "diffuse"));
             shininess = ColladaFactory.DEFAULT_SHININESS;
         }
         if (ambientColor == null)
@@ -51,7 +51,7 @@ class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
         }
         if (diffuseColor == null)
         {
-            diffuseColor = ColladaFactory.DEFAULT_DIFFUSE_TEXTURE;
+            diffuseColor = ColladaFactory.DEFAULT_DIFFUSE;
         }
         if (specularColor == null)
         {
@@ -66,13 +66,13 @@ class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
         List<Element> newparamElements = DomUtils.getSubElements(technique, "newparam");
         for (Element newparamElement : newparamElements)
         {
-            Element surface = DomUtils.getSingleSubElement(newparamElement, "surface");
+            Element surface = DomUtils.getSubElement(newparamElement, "surface");
             if (surface != null)
             {
                 String type = surface.getAttribute("type");
                 if (type.equals("2D"))
                 {
-                    Element init_from = DomUtils.assertGetSingleSubElement(surface, "init_from");
+                    Element init_from = DomUtils.assertGetSubElement(surface, "init_from");
                     return init_from.getFirstChild().getTextContent();
                 }
             }

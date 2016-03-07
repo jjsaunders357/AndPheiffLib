@@ -1,6 +1,5 @@
 package com.pheiffware.lib.graphics.managed.collada;
 
-import com.pheiffware.lib.graphics.managed.collada.ColladaGeometry;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.utils.dom.DomUtils;
@@ -18,14 +17,17 @@ import java.util.Map;
  */
 class InstanceGeometryParser
 {
-    private final Map<String, ColladaGeometry> geometries;
+    //
+    private final Map<String, ColladaGeometry> geometriesByID;
+    //Blender should ignore material assignments here as they will have already been defined and may be ambiguous here.
     private final boolean ignoreMaterialAssignments;
-    private final Map<String, Material> materials;
+    //All previously loaded materials and a default material under the id ""
+    private final Map<String, Material> materialsByID;
 
-    public InstanceGeometryParser(Map<String, Material> materials, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments)
+    public InstanceGeometryParser(Map<String, Material> materialsByID, Map<String, ColladaGeometry> geometriesByID, boolean ignoreMaterialAssignments)
     {
-        this.materials = materials;
-        this.geometries = geometries;
+        this.materialsByID = materialsByID;
+        this.geometriesByID = geometriesByID;
         this.ignoreMaterialAssignments = ignoreMaterialAssignments;
     }
 
@@ -39,20 +41,29 @@ class InstanceGeometryParser
     public MeshGroup parseInstanceGeometry(Element element) throws XMLParseException
     {
         String geometryID = element.getAttribute("url").substring(1);
-        ColladaGeometry colladaGeometry = geometries.get(geometryID);
+        ColladaGeometry colladaGeometry = geometriesByID.get(geometryID);
         if (colladaGeometry == null)
         {
             throw new XMLParseException("Undefined geometry id referenced: " + geometryID);
         }
         if (ignoreMaterialAssignments)
         {
-            return colladaGeometry.createMeshGroup(materials);
+            return colladaGeometry.createMeshGroup(materialsByID);
         }
         else
         {
-            Element instance_material = DomUtils.assertGetSubElementChain(element, "bind_material", "technique_common", "instance_material");
-            String materialID = instance_material.getAttribute("target").substring(1);
-            Material material = materials.get(materialID);
+            Element bind_material = DomUtils.getSubElement(element, "bind_material");
+            String materialID;
+            if (bind_material != null)
+            {
+                Element instance_material = DomUtils.assertGetSubElementChain(bind_material, "technique_common", "instance_material");
+                materialID = instance_material.getAttribute("target").substring(1);
+            }
+            else
+            {
+                materialID = "";
+            }
+            Material material = materialsByID.get(materialID);
             return colladaGeometry.createMeshGroup(material);
         }
     }

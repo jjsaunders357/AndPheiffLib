@@ -31,12 +31,12 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
     {
         //Parse source tags
         Map<String, ColladaSource> sources = new HashMap<>();
-        Element meshElement = DomUtils.assertGetSingleSubElement(element, "mesh");
+        Element meshElement = DomUtils.assertGetSubElement(element, "mesh");
         DomUtils.putSubElementsInMap(sources, meshElement, "source", "id", new ColladaSourceFactory());
 
         //Parse vertices inputs
         Map<String, ColladaInput> vertexInputs = new HashMap<>();
-        Element vertices = DomUtils.assertGetSingleSubElement(meshElement, "vertices");
+        Element vertices = DomUtils.assertGetSubElement(meshElement, "vertices");
         DomUtils.putSubElementsInMap(vertexInputs, vertices, "input", "semantic", new ColladaInputFactory(sources));
 
         ColladaMeshFactory colladaMeshFactory = new ColladaMeshFactory(sources, vertexInputs);
