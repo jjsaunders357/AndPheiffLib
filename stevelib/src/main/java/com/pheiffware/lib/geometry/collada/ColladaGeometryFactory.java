@@ -19,11 +19,11 @@ import java.util.Map;
 class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
 {
     //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
-    private final boolean homogenizeCoordinates;
+    private final boolean homogenizePositions;
 
-    public ColladaGeometryFactory(boolean homogenizeCoordinates)
+    public ColladaGeometryFactory(boolean homogenizePositions)
     {
-        this.homogenizeCoordinates = homogenizeCoordinates;
+        this.homogenizePositions = homogenizePositions;
     }
 
     @Override
@@ -49,7 +49,7 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromPolyListElement(polyListElement);
             if (colladaMesh != null)
             {
-                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizeCoordinates);
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
                 colladaGeometry.add(materialID, mesh);
             }
@@ -61,7 +61,7 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromTrianglesElement(trianglesElement);
             if (colladaMesh != null)
             {
-                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizeCoordinates);
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
                 colladaGeometry.add(materialID, mesh);
             }

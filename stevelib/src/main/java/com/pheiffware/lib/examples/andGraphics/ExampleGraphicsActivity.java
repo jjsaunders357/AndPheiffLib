@@ -7,9 +7,10 @@ import android.widget.LinearLayout;
 
 import com.pheiffware.lib.R;
 
-public class GraphicsTestActivity extends AppCompatActivity {
+public class ExampleGraphicsActivity extends AppCompatActivity
+{
 
-    private TestGraphicsView testGraphicsView;
+    private ExampleGraphicsView exampleGraphicsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -18,10 +19,10 @@ public class GraphicsTestActivity extends AppCompatActivity {
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity.
 
-        testGraphicsView = new TestGraphicsView(this);
+        exampleGraphicsView = new ExampleGraphicsView(this);
         setContentView(R.layout.activity_gl);
         LinearLayout rootView = (LinearLayout) findViewById(R.id.root);
-        rootView.addView(testGraphicsView, 0);
+        rootView.addView(exampleGraphicsView, 0);
         Log.e("Life-cycle", "CREATE");
     }
 
@@ -36,7 +37,7 @@ public class GraphicsTestActivity extends AppCompatActivity {
     protected void onPause()
     {
         super.onPause();
-        testGraphicsView.onPause();
+        exampleGraphicsView.onPause();
         Log.e("Life-cycle", "PAUSE");
     }
 
@@ -51,7 +52,7 @@ public class GraphicsTestActivity extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
-        testGraphicsView.onResume();
+        exampleGraphicsView.onResume();
         Log.e("Life-cycle", "RESUME");
     }
 

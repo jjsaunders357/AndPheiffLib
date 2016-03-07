@@ -4,7 +4,7 @@ precision mediump float;
 const vec4 specMaterialColor = vec4(1.0,1.0,1.0,1.0);
 
 //Position of light
-uniform vec4 lightPosition;
+uniform vec3 lightPosition;
 
 //Light color and intensity
 uniform vec4 lightColorIntensity;
@@ -18,7 +18,7 @@ uniform float shininess;
 //From vertex shader
 varying vec4 varyingPosition;
 varying vec4 varyingColor;
-varying vec4 varyingNormal;
+varying vec3 varyingNormal;
 
 
 void main()
@@ -27,7 +27,7 @@ void main()
     vec4 baseMaterialColor = varyingColor;
 
     //Normalize the surface's normal
-    vec4 surfaceNormal = normalize(varyingNormal);
+    vec3 surfaceNormal = normalize(varyingNormal);
 
     //Calc ambient color
     vec4 ambientColor = baseMaterialColor * ambientColorIntensity;
@@ -37,13 +37,13 @@ void main()
     vec4 specColor = specMaterialColor * lightColorIntensity;
 
     //Incoming light vector to current position
-    vec4 incomingLightDirection = normalize(varyingPosition-lightPosition);
+    vec3 incomingLightDirection = normalize(varyingPosition.xyz-lightPosition);
 
     //Reflected light vector from current position
-    vec4 outgoingLightDirection = reflect(incomingLightDirection,surfaceNormal);
+    vec3 outgoingLightDirection = reflect(incomingLightDirection,surfaceNormal);
 
     //Vector from position to eye.  Since all geometry is assumed to be in eye space, the eye is always at the origin.
-    vec4 positionToEyeDirection = normalize(-varyingPosition);
+    vec3 positionToEyeDirection = normalize(-varyingPosition.xyz);
 
     //Calculate how bright various types of light are
 	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),0.0);

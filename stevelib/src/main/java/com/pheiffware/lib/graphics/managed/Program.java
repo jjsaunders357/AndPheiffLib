@@ -99,6 +99,10 @@ public class Program
         GLES20.glUniformMatrix4fv(getUniform(uniformName).location, 1, transpose, matrix, 0);
     }
 
+    public void setUniformMatrix3(String uniformName, float[] matrix, boolean transpose)
+    {
+        GLES20.glUniformMatrix3fv(getUniform(uniformName).location, 1, transpose, matrix, 0);
+    }
     public void setUniformTexture2D(String uniformName, Texture texture, int textureUnitIndex)
     {
         TextureUtils.uniformTexture2D(handle, uniformName, texture.getHandle(), textureUnitIndex);
@@ -118,4 +122,6 @@ public class Program
     {
         GLES20.glUniform1f(getUniform(uniformName).location, value);
     }
+
+
 }

@@ -1,7 +1,5 @@
 package com.pheiffware.lib.geometry.collada;
 
-import android.content.res.AssetManager;
-
 import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
@@ -12,7 +10,6 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -62,34 +59,21 @@ public class ColladaFactory
     //List of all unnamed objects, either: node didn't have a name attribute, multiple nodes with the same name attribute (all but 1st put in this bin) or top-level geometry instance in a SketchUp node.
     private final List<Object3D> anonymousObjects = new LinkedList<>();
 
-    //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
-    private final boolean homogenizeCoordinates;
+    //When position are loaded, a 1 is appended to the end of the loaded data to create a homogeneous coordinates
+    private final boolean homogenizePositions;
 
 
-    public ColladaFactory(boolean homogenizeCoordinates)
+    public ColladaFactory(boolean homogenizePositions)
     {
-        this(homogenizeCoordinates, defaultDefaultMaterial);
+        this(homogenizePositions, defaultDefaultMaterial);
     }
 
-    public ColladaFactory(boolean homogenizeCoordinates, Material defaultMaterial)
+    public ColladaFactory(boolean homogenizePositions, Material defaultMaterial)
     {
-        this.homogenizeCoordinates = homogenizeCoordinates;
+        this.homogenizePositions = homogenizePositions;
         //Store default material
         materialsByID.put("", defaultMaterial);
     }
-
-    public Collada loadCollada(AssetManager assetManager, String assetFileName) throws XMLParseException
-    {
-        try
-        {
-            return loadCollada(assetManager.open(assetFileName));
-        }
-        catch (IOException e)
-        {
-            throw new XMLParseException(e);
-        }
-    }
-
 
     public Collada loadCollada(InputStream input) throws XMLParseException
     {
@@ -103,7 +87,7 @@ public class ColladaFactory
         Element libraryMaterialsElement = DomUtils.assertGetSubElement(rootElement, "library_materials");
         DomUtils.putSubElementsInMap(materialsByID, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, colladaEffects));
         Element libraryGeometriesElement = DomUtils.assertGetSubElement(rootElement, "library_geometries");
-        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory(homogenizeCoordinates));
+        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory(homogenizePositions));
 
         Element libraryNodesElement = DomUtils.getSubElement(rootElement, "library_nodes");
         if (libraryNodesElement != null)

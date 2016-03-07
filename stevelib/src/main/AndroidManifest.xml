@@ -15,7 +15,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.pheiffware.lib.examples.andGraphics.GraphicsTestActivity">
+        <activity android:name=".examples.andGraphics.ExampleGraphicsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

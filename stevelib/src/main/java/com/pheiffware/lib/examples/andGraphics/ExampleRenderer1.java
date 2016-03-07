@@ -11,35 +11,30 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
+import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
-import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
+import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 
 /**
  *
  */
-public class TestRenderer2 implements Renderer
+public class ExampleRenderer1 implements Renderer
 {
     private final ManGL manGL;
-    private final float[] cameraProjectionMatrix = MathUtils.createProjectionMatrix(70.0f, 1, 1, 10, true);
-    private float[] projectionMatrix;
     private Program testProgram;
-    private Texture faceTexture;
-    private Texture colorRenderTexture;
-    private Texture depthRenderTexture;
+    private IndexBuffer pb;
     private CombinedVertexBuffer cb;
     private float globalTestColor = 0.0f;
-    private int frameBufferHandle;
-    private int viewWidth;
-    private int viewHeight;
+    private float[] projectionMatrix;
+    private Texture faceTexture;
 
-    public TestRenderer2(ManGL manGL)
+    public ExampleRenderer1(ManGL manGL)
     {
         this.manGL = manGL;
     }
@@ -53,30 +48,25 @@ public class TestRenderer2 implements Renderer
         Log.i("OPENGL", "Surface created");
         FatalErrorHandler.installUncaughtExceptionHandler();
         // Wait for vertical retrace
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
         try
         {
             testProgram = manGL.getProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
-            System.out.println(manGL.getProgram("testProgram"));
-            faceTexture = manGL.getImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-
-            //Creates color texture render target, without alpha channel
-            colorRenderTexture = manGL.getColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-
-            //Creates a depth texture render target, without alpha channel
-            depthRenderTexture = manGL.getDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-            frameBufferHandle = PheiffGLUtils.createFrameBuffer();
+            System.out.println(testProgram);
+            faceTexture = manGL.getImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
         }
         catch (GraphicsException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }
 
+        pb = new IndexBuffer(2000);
+
         float x = 1f, y = 1f, z = 1.1f;
         //@formatter:off
-        cb = new CombinedVertexBuffer(manGL.getProgram("testProgram"), 200,
-                new String[]{"vertexPosition", "vertexTexCoord"},
+        cb = new CombinedVertexBuffer(testProgram, 2000,
+                new String[] { "vertexPosition", "vertexTexCoord" },
                 new String[]{"vertexColor"});
         //@formatter:on
 
@@ -98,6 +88,15 @@ public class TestRenderer2 implements Renderer
         cb.putStaticVec4(x, -y, -z, 1);
         cb.putStaticVec2(1, 1);
         cb.transferStatic();
+
+        pb.putIndex(0);
+        pb.putIndex(1);
+        pb.putIndex(2);
+        pb.putIndex(3);
+        pb.putIndex(4);
+        pb.putIndex(5);
+        pb.transfer();
+
     }
 
     /* (non-Javadoc)
@@ -106,51 +105,20 @@ public class TestRenderer2 implements Renderer
     @Override
     public void onDrawFrame(GL10 gl)
     {
-        //Set to render to texture.
-        PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTexture.getHandle(), 0);
-        try
-        {
-            PheiffGLUtils.assertFrameBufferStatus();
-        }
-        catch (GraphicsException e)
-        {
-            FatalErrorHandler.handleFatalError(e);
-        }
-
-        GLES20.glViewport(0, 0, 512, 512);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        testProgram.bind();
-        testProgram.setUniformMatrix4("transformViewMatrix", cameraProjectionMatrix);
-        testProgram.setUniformTexture2D("texture", faceTexture, 0);
-
-        //Vertex positions and texture coordinates static.  This encodes a color to mix in.  In this case we want a pure texture render.
-        cb.putDynamicVec4(0, 0, 0, 0, 0);
-        cb.putDynamicVec4(0, 0, 0, 0, 0);
-        cb.putDynamicVec4(0, 0, 0, 0, 0);
-        cb.putDynamicVec4(0, 0, 0, 0, 0);
-        cb.putDynamicVec4(0, 0, 0, 0, 0);
-        cb.putDynamicVec4(0, 0, 0, 0, 0);
-        cb.transferDynamic();
-        cb.bind();
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
-        PheiffGLUtils.bindFrameBuffer(0, -1, -1);
-
-        GLES20.glViewport(0, 0, viewWidth, viewHeight);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        testProgram.bind();
+        GLES20.glUseProgram(testProgram.getHandle());
         testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix);
-        testProgram.setUniformTexture2D("texture", colorRenderTexture, 0);
+        testProgram.setUniformTexture2D("texture", faceTexture, 0);
         cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
         cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
         cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
         cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
         cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);
         cb.putDynamicVec4(0, 0, 0, 0, 0);
-
         cb.transferDynamic();
         cb.bind();
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
+        pb.draw(6, GLES20.GL_TRIANGLES);
         globalTestColor += 0.01;
     }
 
@@ -161,8 +129,7 @@ public class TestRenderer2 implements Renderer
     public void onSurfaceChanged(GL10 gl, int width, int height)
     {
         Log.i("OPENGL", "Surface changed");
-        viewWidth = width;
-        viewHeight = height;
-        projectionMatrix = MathUtils.createProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
+        GLES20.glViewport(0, 0, width, height);
+        projectionMatrix = MathUtils.createProjectionMatrix(60.0f, width / (float) height, 1, 10, false);
     }
 }

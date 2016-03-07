@@ -24,14 +24,14 @@ import com.pheiffware.lib.graphics.managed.ManGL;
  * http://developer.android.com/reference/android/opengl/GLSurfaceView.Renderer.html
  *
  */
-public class TestGraphicsView extends GLSurfaceView
+public class ExampleGraphicsView extends GLSurfaceView
 {
 
-    public TestGraphicsView(Context context)
+    public ExampleGraphicsView(Context context)
     {
         super(context);
         setEGLContextClientVersion(2);
-        setRenderer(new TestRendererMesh(new ManGL(context.getAssets(), FilterQuality.MEDIUM)));
+        setRenderer(new ExampleMeshRenderer(new ManGL(context.getAssets(), FilterQuality.MEDIUM)));
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 }

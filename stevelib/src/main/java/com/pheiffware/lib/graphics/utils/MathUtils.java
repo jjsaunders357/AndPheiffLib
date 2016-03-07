@@ -67,6 +67,21 @@ public class MathUtils
     //TODO: Create camera class
     //TODO: Create matrix class
 
+    public static float[] createMatrix3from4(float[] matrix4)
+    {
+        float[] matrix3 = new float[9];
+        int srcIndex = 0;
+        int destIndex = 0;
+
+        while (destIndex < 9)
+        {
+            matrix3[destIndex++] = matrix4[srcIndex++];
+            matrix3[destIndex++] = matrix4[srcIndex++];
+            matrix3[destIndex++] = matrix4[srcIndex++];
+            srcIndex++;
+        }
+        return matrix3;
+    }
     public static float[] createInverseMatrix(float[] transformMatrix)
     {
         float[] inverse = new float[16];
@@ -96,7 +111,7 @@ public class MathUtils
         float[] inverse = new float[16];
         Matrix.invertM(inverse, 0, matrix, 0);
         Matrix.transposeM(matrix, 0, inverse, 0);
-        return matrix;
+        return MathUtils.createMatrix3from4(matrix);
     }
 
     public static String matrixAsString(float[] matrix)

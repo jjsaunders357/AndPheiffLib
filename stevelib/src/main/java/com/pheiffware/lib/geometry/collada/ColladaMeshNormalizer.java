@@ -18,7 +18,7 @@ class ColladaMeshNormalizer
     private final ColladaMesh colladaMesh;
 
     //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
-    private final boolean homogenizeCoordinates;
+    private final boolean homogenizePositions;
 
     //The number of unique vertices.  Each array in vertex data is this length
     private short numUniqueVertices;
@@ -79,14 +79,14 @@ class ColladaMeshNormalizer
         }
     }
 
-    public ColladaMeshNormalizer(Map<String, ColladaInput> vertexDataInputs, short[] interleavedIndices, int vertexCount, boolean homogenizeCoordinates)
+    public ColladaMeshNormalizer(Map<String, ColladaInput> vertexDataInputs, short[] interleavedIndices, int vertexCount, boolean homogenizePositions)
     {
-        this(new ColladaMesh(vertexDataInputs, interleavedIndices, vertexCount), homogenizeCoordinates);
+        this(new ColladaMesh(vertexDataInputs, interleavedIndices, vertexCount), homogenizePositions);
     }
 
-    public ColladaMeshNormalizer(ColladaMesh colladaMesh, boolean homogenizeCoordinates)
+    public ColladaMeshNormalizer(ColladaMesh colladaMesh, boolean homogenizePositions)
     {
-        this.homogenizeCoordinates = homogenizeCoordinates;
+        this.homogenizePositions = homogenizePositions;
         this.colladaMesh = colladaMesh;
     }
 
@@ -100,12 +100,10 @@ class ColladaMeshNormalizer
 
     private void homogenizeData()
     {
-        if (homogenizeCoordinates)
+        if (homogenizePositions)
         {
             float[] nonHomogeneousVectors = vertexData.get("POSITION");
             vertexData.put("POSITION", MathUtils.homogenizeVec3Array(nonHomogeneousVectors, 1.0f));
-            nonHomogeneousVectors = vertexData.get("NORMAL");
-            vertexData.put("NORMAL", MathUtils.homogenizeVec3Array(nonHomogeneousVectors, 0.0f));
         }
     }
 

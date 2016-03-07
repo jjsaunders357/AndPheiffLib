@@ -34,7 +34,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  *
  */
-public class TestRendererMesh implements Renderer
+public class ExampleMeshRenderer implements Renderer
 {
     private final ManGL manGL;
     private Program testProgram;
@@ -49,7 +49,7 @@ public class TestRendererMesh implements Renderer
     private float rotation = 0;
     private float[] translationMatrix;
 
-    public TestRendererMesh(ManGL manGL)
+    public ExampleMeshRenderer(ManGL manGL)
     {
         this.manGL = manGL;
     }
@@ -83,9 +83,9 @@ public class TestRendererMesh implements Renderer
             List<Mesh> meshList = monkey.getMeshGroup().getMeshes(material);
             Mesh sphereMesh = meshList.get(0);
 
+            //Extract the translation aspect of the transform
             Transform transform = new Transform(monkey.getMatrix());
             translationMatrix = transform.getTranslation();
-
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
             pb.putIndices(sphereMesh.vertexIndices);
@@ -129,11 +129,12 @@ public class TestRendererMesh implements Renderer
 
         testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix, false);
         testProgram.setUniformMatrix4("transformMatrix", transformMatrix, false);
-        testProgram.setUniformMatrix4("normalMatrix", MathUtils.createNormalTransformMatrix(transformMatrix), false);
+        testProgram.setUniformMatrix3("normalMatrix", MathUtils.createNormalTransformMatrix(transformMatrix), false);
         testProgram.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
         testProgram.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         testProgram.setUniformFloat("shininess", 30.0f);
-        testProgram.setUniformVec4("lightPosition", new float[]{-3, 3, 0, 1});
+        testProgram.setUniformVec3("lightPosition", new float[]{-3, 3, 0});
+
         sb.bind();
         pb.drawAll(GLES20.GL_TRIANGLES);
         try

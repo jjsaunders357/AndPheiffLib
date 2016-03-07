@@ -3,18 +3,17 @@ uniform mat4 projectionMatrix;
 //Transforms vertices
 uniform mat4 transformMatrix;
 //Transforms normals
-uniform mat4 normalMatrix;
+uniform mat3 normalMatrix;
 
-//TODO: Make normals, light positions, etc 3 vectors instead of 4 vectors
 uniform vec4 lightPosition;
 uniform vec4 ambientColorIntensity;
 uniform vec4 lightColorIntensity;
 uniform float shininess;
 attribute vec4 vertexPosition;
-attribute vec4 vertexNormal;
+attribute vec3 vertexNormal;
 attribute vec4 vertexColor;
 varying vec4 varyingPosition;
-varying vec4 varyingNormal;
+varying vec3 varyingNormal;
 varying vec4 varyingColor;
 
 void main()
