@@ -38,6 +38,7 @@ public class StaticVertexBuffer extends BaseBuffer
     //Program object this buffer was setup for
     private final Program program;
 
+    //TODO: Must be an even multiple of machine word size.  Check OpenGL ES spec.
     //Total size of each vertex in this buffer
     private int vertexByteSize;
 

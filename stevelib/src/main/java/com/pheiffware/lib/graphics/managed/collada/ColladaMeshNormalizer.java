@@ -40,10 +40,10 @@ class ColladaMeshNormalizer
         int vertexIndex = 0;
         numUniqueVertices = 0;
         short[] interleavedIndices = colladaMesh.interleavedIndices;
-        int collatedIndexStride = colladaMesh.vertexStride;
-        for (int collatedIndex = 0; collatedIndex < interleavedIndices.length; collatedIndex += collatedIndexStride)
+        int interleavedIndexStride = colladaMesh.vertexStride;
+        for (int interleavedIndex = 0; interleavedIndex < interleavedIndices.length; interleavedIndex += interleavedIndexStride)
         {
-            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(interleavedIndices, collatedIndex, collatedIndexStride);
+            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(interleavedIndices, interleavedIndex, interleavedIndexStride);
             Short uniqueIndex = uniqueIndexMap.get(vertexIndexGroup);
             if (uniqueIndex == null)
             {
@@ -62,19 +62,18 @@ class ColladaMeshNormalizer
     private void generateUniqueVertexData()
     {
         short[] interleavedIndices = colladaMesh.interleavedIndices;
-        int collatedIndexStride = colladaMesh.vertexStride;
+        int interleavedIndexStride = colladaMesh.vertexStride;
         for (Map.Entry<String, ColladaInput> entry : colladaMesh.inputs.entrySet())
         {
             String key = entry.getKey();
             ColladaInput input = entry.getValue();
             float[] destFloats = new float[numUniqueVertices * input.source.stride];
-            int collatedIndex = input.offset;
-            for (int i = 0; i < vertexDataIndices.length; i++)
+            int interleavedIndex = input.offset;
+            for (short vertexDataIndex : vertexDataIndices)
             {
-                short sourceIndex = interleavedIndices[collatedIndex];
-                collatedIndex += collatedIndexStride;
-                short destIndex = vertexDataIndices[i];
-                input.transfer(sourceIndex, destFloats, destIndex);
+                short sourceIndex = interleavedIndices[interleavedIndex];
+                interleavedIndex += interleavedIndexStride;
+                input.transfer(sourceIndex, destFloats, vertexDataIndex);
             }
             vertexData.put(key, destFloats);
         }
@@ -104,9 +103,9 @@ class ColladaMeshNormalizer
         if (homogenizeCoordinates)
         {
             float[] nonHomogeneousVectors = vertexData.get("POSITION");
-            vertexData.put("POSITION", MathUtils.homogenizeVec3(nonHomogeneousVectors, 1.0f));
+            vertexData.put("POSITION", MathUtils.homogenizeVec3Array(nonHomogeneousVectors, 1.0f));
             nonHomogeneousVectors = vertexData.get("NORMAL");
-            vertexData.put("NORMAL", MathUtils.homogenizeVec3(nonHomogeneousVectors, 0.0f));
+            vertexData.put("NORMAL", MathUtils.homogenizeVec3Array(nonHomogeneousVectors, 0.0f));
         }
     }
 
@@ -121,10 +120,7 @@ class ColladaMeshNormalizer
         public VertexIndexGroup(short[] interleavedIndices, int start, int length)
         {
             indices = new short[length];
-            for (int i = 0; i < indices.length; i++)
-            {
-                indices[i] = interleavedIndices[start + i];
-            }
+            System.arraycopy(interleavedIndices, start, indices, 0, indices.length);
         }
 
         @Override
@@ -132,9 +128,9 @@ class ColladaMeshNormalizer
         {
             int code = 0;
             int mult = 1;
-            for (int i = 0; i < indices.length; i++)
+            for (short indice : indices)
             {
-                code += indices[i] * mult;
+                code += indice * mult;
                 mult *= 97;
             }
             return code;
@@ -143,6 +139,10 @@ class ColladaMeshNormalizer
         @Override
         public boolean equals(Object o)
         {
+            if (!(o instanceof VertexIndexGroup))
+            {
+                return false;
+            }
             VertexIndexGroup other = (VertexIndexGroup) o;
             for (int i = 0; i < indices.length; i++)
             {

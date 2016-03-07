@@ -130,6 +130,6 @@ public class TestRenderer1 implements Renderer
     {
         Log.i("OPENGL", "Surface changed");
         GLES20.glViewport(0, 0, width, height);
-        projectionMatrix = MathUtils.generateProjectionMatrix(60.0f, width / (float) height, 1, 10, false);
+        projectionMatrix = MathUtils.createProjectionMatrix(60.0f, width / (float) height, 1, 10, false);
     }
 }

@@ -90,7 +90,7 @@ abstract class BaseColladaNodeProcessor
         float[] transformMatrix;
         if (matrixElement != null)
         {
-            transformMatrix = DomUtils.getFloatsFromElement(matrixElement);
+            transformMatrix = MathUtils.createTransposeMatrix(DomUtils.getFloatsFromElement(matrixElement));
         }
         else
         {

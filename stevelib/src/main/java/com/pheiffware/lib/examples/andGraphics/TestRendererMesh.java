@@ -21,6 +21,7 @@ import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
+import com.pheiffware.lib.graphics.utils.Transform;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 
@@ -40,7 +41,11 @@ public class TestRendererMesh implements Renderer
     private float[] projectionMatrix;
     private ColladaFactory colladaFactory;
     private Collada collada;
-
+    private Object3D sphere;
+    private Object3D cube;
+    private Object3D monkey;
+    private float rotation = 0;
+    private float[] translationMatrix;
     public TestRendererMesh(ManGL manGL)
     {
         this.manGL = manGL;
@@ -65,13 +70,17 @@ public class TestRendererMesh implements Renderer
             Material material = collada.materialsByName.get("renderMaterial");
 
             //Lookup object from loaded file by "name" (what user named it in editing tool)
-            Object3D sphere = collada.objects.get("Sphere");
-            Object3D cube = collada.objects.get("Cube");
-            Object3D monkey = collada.objects.get("Monkey");
+            sphere = collada.objects.get("Sphere");
+            cube = collada.objects.get("Cube");
+            monkey = collada.objects.get("Monkey");
 
             //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-            List<Mesh> meshList = sphere.getMeshGroup().getMeshes(material);
+            List<Mesh> meshList = monkey.getMeshGroup().getMeshes(material);
             Mesh sphereMesh = meshList.get(0);
+
+            Transform transform = new Transform(monkey.getMatrix());
+            translationMatrix = transform.getTranslation();
+
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
             pb.putIndices(sphereMesh.vertexIndices);
@@ -82,8 +91,6 @@ public class TestRendererMesh implements Renderer
                     new String[]
                             {"vertexPosition", "vertexNormal", "vertexColor"});
             // @formatter:on
-
-            //TODO: Use collada transform for display
 
             sb.putAttributeFloats("vertexPosition", sphereMesh.uniqueVertexData.get("POSITION"));
             sb.putAttributeFloats("vertexNormal", sphereMesh.uniqueVertexData.get("NORMAL"));
@@ -111,16 +118,17 @@ public class TestRendererMesh implements Renderer
         //Default view volume is based on sitting at origin and looking in negative z direction
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         testProgram.bind();
-        //Translate sphere in negative z direction so we can see it
-        float[] transformMatrix = MathUtils.createTranslationMatrix(1, 1, -3);
+
+        float[] transformMatrix = MathUtils.multiplyMatrices(translationMatrix, MathUtils.createRotationMatrix(rotation, 1, 1, 0), MathUtils.createScaleMatrix(1f, 2f, 1f));
+        rotation++;
 
         testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix, false);
         testProgram.setUniformMatrix4("transformMatrix", transformMatrix, false);
-        testProgram.setUniformVec4("eyePosition", new float[]{0, 0, 0, 1});
+        testProgram.setUniformMatrix4("normalMatrix", MathUtils.createNormalTransformMatrix(transformMatrix), false);
         testProgram.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
         testProgram.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         testProgram.setUniformFloat("shininess", 30.0f);
-        testProgram.setUniformVec4("lightPosition", new float[]{-2, 2, 1, 1});
+        testProgram.setUniformVec4("lightPosition", new float[]{-3, 3, 0, 1});
         sb.bind();
         pb.drawAll(GLES20.GL_TRIANGLES);
         try
@@ -145,7 +153,6 @@ public class TestRendererMesh implements Renderer
     {
         Log.i("OPENGL", "Surface changed");
         GLES20.glViewport(0, 0, width, height);
-        projectionMatrix = MathUtils.generateProjectionMatrix(60.0f, width
-                / (float) height, 1, 10, false);
+        projectionMatrix = MathUtils.createProjectionMatrix(90f, width / (float) height, 1, 10, false);
     }
 }

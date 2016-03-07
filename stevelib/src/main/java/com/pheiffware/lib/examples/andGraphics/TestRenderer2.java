@@ -27,7 +27,7 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
 public class TestRenderer2 implements Renderer
 {
     private final ManGL manGL;
-    private final float[] cameraProjectionMatrix = MathUtils.generateProjectionMatrix(70.0f, 1, 1, 10, true);
+    private final float[] cameraProjectionMatrix = MathUtils.createProjectionMatrix(70.0f, 1, 1, 10, true);
     private float[] projectionMatrix;
     private Program testProgram;
     private Texture faceTexture;
@@ -163,6 +163,6 @@ public class TestRenderer2 implements Renderer
         Log.i("OPENGL", "Surface changed");
         viewWidth = width;
         viewHeight = height;
-        projectionMatrix = MathUtils.generateProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
+        projectionMatrix = MathUtils.createProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
     }
 }

@@ -1,8 +1,12 @@
-//Transform and apply view to vertices
+//Projects transformed vertices
 uniform mat4 projectionMatrix;
+//Transforms vertices
 uniform mat4 transformMatrix;
+//Transforms normals
+uniform mat4 normalMatrix;
+
+//TODO: Make normals, light positions, etc 3 vectors instead of 4 vectors
 uniform vec4 lightPosition;
-uniform vec4 eyePosition;
 uniform vec4 ambientColorIntensity;
 uniform vec4 lightColorIntensity;
 uniform float shininess;
@@ -16,7 +20,7 @@ varying vec4 varyingColor;
 void main()
 {
 	varyingColor = vertexColor;
-	varyingNormal = normalize(vertexNormal);
+	varyingNormal = normalize(normalMatrix * vertexNormal);
 	varyingPosition = transformMatrix * vertexPosition;
 	gl_Position = projectionMatrix * varyingPosition;
 }

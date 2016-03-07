@@ -63,12 +63,8 @@ public class MathUtils
         Matrix.setRotateM(result, 0, angle, x, y, z);
         return result;
     }
-    public static float[] multiplyMatrix(float[] lhs, float[] rhs)
-    {
-        float[] result = new float[16];
-        Matrix.multiplyMM(result, 0, lhs, 0, rhs, 0);
-        return result;
-    }
+
+    //TODO: Create matrix class
 
     public static float[] createInverseMatrix(float[] transformMatrix)
     {
@@ -77,6 +73,12 @@ public class MathUtils
         return inverse;
     }
 
+    public static float[] createTransposeMatrix(float[] transformMatrix)
+    {
+        float[] transpose = new float[16];
+        Matrix.transposeM(transpose, 0, transformMatrix, 0);
+        return transpose;
+    }
     public static float[] createNormalTransformMatrix(float[] transformMatrix)
     {
         float[] matrix = Arrays.copyOf(transformMatrix, 16);
@@ -117,11 +119,11 @@ public class MathUtils
      * @param flipVertical
      * @return
      */
-    public static float[] generateProjectionMatrix(float fieldOfViewY, float aspect, float zNear, float zFar, boolean flipVertical)
+    public static float[] createProjectionMatrix(float fieldOfViewY, float aspect, float zNear, float zFar, boolean flipVertical)
     {
         float[] matrix = new float[16];
 
-        float top = (float) (zNear * Math.tan(Math.PI / 180.0 * fieldOfViewY));
+        float top = (float) (zNear * Math.tan(Math.PI / 180.0 * fieldOfViewY / 2));
         float right = top * aspect;
         if (flipVertical)
         {
@@ -154,4 +156,26 @@ public class MathUtils
         return homogeneousVectors;
     }
 
+    public static float[] multiplyMatrix(float[] lhs, float[] rhs)
+    {
+        float[] result = new float[16];
+        Matrix.multiplyMM(result, 0, lhs, 0, rhs, 0);
+        return result;
+    }
+
+    public static float[] multiplyMatrices(float[] transform1, float[]... transforms)
+    {
+        float[] result = transform1;
+        for (float[] transform : transforms)
+        {
+            result = multiplyMatrix(result, transform);
+        }
+        return result;
+    }
+
+    public static float[] copyMatrix(float[] matrix)
+    {
+        float[] copy = Arrays.copyOf(matrix, 16);
+        return copy;
+    }
 }
