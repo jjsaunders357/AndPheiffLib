@@ -15,8 +15,8 @@ import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
-import com.pheiffware.lib.graphics.managed.collada.Collada;
-import com.pheiffware.lib.graphics.managed.collada.ColladaFactory;
+import com.pheiffware.lib.geometry.collada.Collada;
+import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
@@ -25,6 +25,8 @@ import com.pheiffware.lib.graphics.utils.Transform;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -46,6 +48,7 @@ public class TestRendererMesh implements Renderer
     private Object3D monkey;
     private float rotation = 0;
     private float[] translationMatrix;
+
     public TestRendererMesh(ManGL manGL)
     {
         this.manGL = manGL;
@@ -64,7 +67,9 @@ public class TestRendererMesh implements Renderer
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
             testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
             colladaFactory = new ColladaFactory(true);
-            collada = colladaFactory.loadCollada(manGL.getAssetManager(), "meshes/test_render.dae");
+            InputStream inputStream = null;
+            inputStream = manGL.getAssetManager().open("meshes/test_render.dae");
+            collada = colladaFactory.loadCollada(inputStream);
 
             //Lookup material from loaded file by "name" (what user named it in editing tool)
             Material material = collada.materialsByName.get("renderMaterial");
@@ -99,7 +104,7 @@ public class TestRendererMesh implements Renderer
             sb.transfer();
             PheiffGLUtils.assertNoError();
         }
-        catch (GraphicsException | XMLParseException exception)
+        catch (GraphicsException | XMLParseException | IOException exception)
         {
             FatalErrorHandler.handleFatalError(exception);
         }

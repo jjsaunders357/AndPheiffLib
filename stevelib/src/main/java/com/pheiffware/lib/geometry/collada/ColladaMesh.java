@@ -1,11 +1,5 @@
-package com.pheiffware.lib.graphics.managed.collada;
+package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.utils.dom.DomUtils;
-import com.pheiffware.lib.utils.dom.XMLParseException;
-
-import org.w3c.dom.Element;
-
-import java.util.HashMap;
 import java.util.Map;
 
 /**

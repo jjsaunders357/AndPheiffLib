@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.collada;
+package com.pheiffware.lib.geometry.collada;
 
 /**
  * Created by Steve on 2/15/2016.

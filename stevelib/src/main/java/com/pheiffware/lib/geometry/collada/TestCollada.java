@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.collada;
+package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
