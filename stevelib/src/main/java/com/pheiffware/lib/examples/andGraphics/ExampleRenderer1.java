@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
@@ -31,7 +32,7 @@ public class ExampleRenderer1 implements Renderer
     private IndexBuffer pb;
     private CombinedVertexBuffer cb;
     private float globalTestColor = 0.0f;
-    private float[] projectionMatrix;
+    private Matrix4 projectionMatrix;
     private Texture faceTexture;
 
     public ExampleRenderer1(ManGL manGL)
@@ -107,7 +108,7 @@ public class ExampleRenderer1 implements Renderer
     {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUseProgram(testProgram.getHandle());
-        testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix);
+        testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix.m);
         testProgram.setUniformTexture2D("texture", faceTexture, 0);
         cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
         cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
@@ -130,6 +131,6 @@ public class ExampleRenderer1 implements Renderer
     {
         Log.i("OPENGL", "Surface changed");
         GLES20.glViewport(0, 0, width, height);
-        projectionMatrix = MathUtils.createProjectionMatrix(60.0f, width / (float) height, 1, 10, false);
+        projectionMatrix = Matrix4.newProjection(120.0f, width / (float) height, 1, 10, false);
     }
 }

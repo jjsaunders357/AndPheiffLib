@@ -12,6 +12,7 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
@@ -27,8 +28,8 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
 public class ExampleRenderer2 implements Renderer
 {
     private final ManGL manGL;
-    private final float[] cameraProjectionMatrix = MathUtils.createProjectionMatrix(70.0f, 1, 1, 10, true);
-    private float[] projectionMatrix;
+    private final Matrix4 cameraProjectionMatrix = Matrix4.newProjection(140.0f, 1, 1, 10, true);
+    private Matrix4 projectionMatrix;
     private Program testProgram;
     private Texture faceTexture;
     private Texture colorRenderTexture;
@@ -120,7 +121,7 @@ public class ExampleRenderer2 implements Renderer
         GLES20.glViewport(0, 0, 512, 512);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         testProgram.bind();
-        testProgram.setUniformMatrix4("transformViewMatrix", cameraProjectionMatrix);
+        testProgram.setUniformMatrix4("transformViewMatrix", cameraProjectionMatrix.m);
         testProgram.setUniformTexture2D("texture", faceTexture, 0);
 
         //Vertex positions and texture coordinates static.  This encodes a color to mix in.  In this case we want a pure texture render.
@@ -138,7 +139,7 @@ public class ExampleRenderer2 implements Renderer
         GLES20.glViewport(0, 0, viewWidth, viewHeight);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         testProgram.bind();
-        testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix);
+        testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix.m);
         testProgram.setUniformTexture2D("texture", colorRenderTexture, 0);
         cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
         cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
@@ -163,6 +164,6 @@ public class ExampleRenderer2 implements Renderer
         Log.i("OPENGL", "Surface changed");
         viewWidth = width;
         viewHeight = height;
-        projectionMatrix = MathUtils.createProjectionMatrix(60.0f, viewWidth / (float) viewHeight, 1, 10, false);
+        projectionMatrix = Matrix4.newProjection(120.0f, viewWidth / (float) viewHeight, 1, 10, false);
     }
 }

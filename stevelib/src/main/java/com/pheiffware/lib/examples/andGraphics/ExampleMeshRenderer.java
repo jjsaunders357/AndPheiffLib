@@ -6,11 +6,14 @@ package com.pheiffware.lib.examples.andGraphics;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
+import android.renderscript.Matrix4f;
 import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.Matrix3;
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.ManGL;
@@ -40,14 +43,14 @@ public class ExampleMeshRenderer implements Renderer
     private Program testProgram;
     private IndexBuffer pb;
     private StaticVertexBuffer sb;
-    private float[] projectionMatrix;
     private ColladaFactory colladaFactory;
     private Collada collada;
     private Object3D sphere;
     private Object3D cube;
     private Object3D monkey;
     private float rotation = 0;
-    private float[] translationMatrix;
+    private Matrix4 projectionMatrix;
+    private Matrix4 translationMatrix;
 
     public ExampleMeshRenderer(ManGL manGL)
     {
@@ -85,7 +88,7 @@ public class ExampleMeshRenderer implements Renderer
 
             //Extract the translation aspect of the transform
             Transform3D transform3D = new Transform3D(monkey.getMatrix());
-            translationMatrix = transform3D.getTranslation();
+            translationMatrix = Matrix4.fromFloats(transform3D.getTranslation());
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
             pb.putIndices(sphereMesh.vertexIndices);
@@ -124,12 +127,13 @@ public class ExampleMeshRenderer implements Renderer
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         testProgram.bind();
 
-        float[] transformMatrix = MathUtils.multiplyMatrices(translationMatrix, MathUtils.createRotationMatrix(rotation, 1, 1, 0), MathUtils.createScaleMatrix(1f, 2f, 1f));
+        Matrix4 transformMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
+        Matrix3 normalTransform = Matrix4.newNormalTransform(transformMatrix);
         rotation++;
 
-        testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix, false);
-        testProgram.setUniformMatrix4("transformMatrix", transformMatrix, false);
-        testProgram.setUniformMatrix3("normalMatrix", MathUtils.createNormalTransformMatrix(transformMatrix), false);
+        testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
+        testProgram.setUniformMatrix4("transformMatrix", transformMatrix.m, false);
+        testProgram.setUniformMatrix3("normalMatrix", normalTransform.m, false);
         testProgram.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
         testProgram.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         testProgram.setUniformFloat("shininess", 30.0f);
@@ -159,6 +163,6 @@ public class ExampleMeshRenderer implements Renderer
     {
         Log.i("OPENGL", "Surface changed");
         GLES20.glViewport(0, 0, width, height);
-        projectionMatrix = MathUtils.createProjectionMatrix(90f, width / (float) height, 1, 10, false);
+        projectionMatrix = Matrix4.newProjection(90f, width / (float) height, 1, 10, false);
     }
 }
