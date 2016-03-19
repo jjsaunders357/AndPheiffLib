@@ -35,7 +35,7 @@ public class ExampleGraphicsView extends GLSurfaceView implements TouchTransform
     public ExampleGraphicsView(Context context)
     {
         super(context);
-        touchAnalyzer = new TouchAnalyzer(2.0, 0.03, 0.01, this);
+        touchAnalyzer = new TouchAnalyzer(2.0, 0.1, 0.01, this);
         setEGLContextClientVersion(2);
         setRenderer(new ExampleMeshRenderer(new ManGL(context.getAssets(), FilterQuality.MEDIUM)));
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);

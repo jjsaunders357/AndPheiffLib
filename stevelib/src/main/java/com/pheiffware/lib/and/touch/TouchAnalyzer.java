@@ -29,8 +29,14 @@ public class TouchAnalyzer
 
     //Averaged radius of circle formed by all pointers on screen squared
     private double averageRadiusSquared;
+
+    //The square of the minimum required translation to generate a non-zero translation event
     private final double minimumTranslationSquared;
+
+    //The minimum rotation required to generate a non-zero rotation event
     private final double minimumRotation;
+
+    //abs(log(1 + minimumScaleFraction)).  Used to calculate the minimum scale required to generate a non-zero scale event.
     private final double minimumLogScale;
 
 
@@ -67,14 +73,7 @@ public class TouchAnalyzer
                 removePointer(id);
                 break;
             case MotionEvent.ACTION_MOVE:
-                for (int pointerID : pointerPositions.keySet())
-                {
-                    index = event.findPointerIndex(pointerID);
-                    Vec2D position = pointerPositions.get(pointerID);
-                    position.x = event.getX(index);
-                    position.y = event.getY(index);
-                }
-                Transform2D transform2D = updateStateAndGetTransform();
+                Transform2D transform2D = updateStateAndGetTransform(event);
                 fireEvent(transform2D);
                 break;
         }
@@ -136,10 +135,11 @@ public class TouchAnalyzer
             {
                 Vec2D position = pointerPositions.get(id);
                 //Vector from center to pointer position
-                Vec2D centerDiff = Vec2D.sub(position, center);
-                double magnitudeSquared = centerDiff.magnitudeSquared();
+                double centerDiffX = position.x - center.x;
+                double centerDiffY = position.y - center.y;
+                double magnitudeSquared = centerDiffX * centerDiffX + centerDiffY * centerDiffY;
                 averageRadiusSquared += magnitudeSquared;
-                double angle = centerDiff.getAngle();
+                double angle = Math.atan2(centerDiffY, centerDiffX);
                 pointerAngles.put(id, angle);
             }
             averageRadiusSquared /= pointerPositions.size();
@@ -149,9 +149,18 @@ public class TouchAnalyzer
 
     /**
      * Updates the pointer's center, angles and average radius squared.  Returns composite transform.
+     * @param event
      */
-    private Transform2D updateStateAndGetTransform()
+    private Transform2D updateStateAndGetTransform(MotionEvent event)
     {
+        for (int pointerID : pointerPositions.keySet())
+        {
+            int index = event.findPointerIndex(pointerID);
+            Vec2D position = pointerPositions.get(pointerID);
+            position.x = event.getX(index);
+            position.y = event.getY(index);
+        }
+
         double oldX = center.x;
         double oldY = center.y;
         updateCenter();
@@ -165,10 +174,11 @@ public class TouchAnalyzer
             {
                 Vec2D position = pointerPositions.get(id);
                 //Vector from center to pointer position
-                Vec2D centerDiff = Vec2D.sub(position, center);
-                double magnitudeSquared = centerDiff.magnitudeSquared();
+                double centerDiffX = position.x - center.x;
+                double centerDiffY = position.y - center.y;
+                double magnitudeSquared = centerDiffX * centerDiffX + centerDiffY * centerDiffY;
                 averageRadiusSquared += magnitudeSquared;
-                double angle = centerDiff.getAngle();
+                double angle = Math.atan2(centerDiffY, centerDiffX);
                 double oldAngle = pointerAngles.put(id, angle);
                 //Weight of rotation determined by distance of point from center
                 weightedRotation += MathUtils.angleDiff(angle, oldAngle) * magnitudeSquared;
@@ -208,7 +218,7 @@ public class TouchAnalyzer
      */
     private boolean adjustTransformForMinimumSensitivity(Transform2D transform2D)
     {
-        boolean isSensitiveEnough = false;
+        boolean generateEvent = false;
         if (transform2D.translation.magnitudeSquared() < minimumTranslationSquared)
         {
             transform2D.translation.x = 0;
@@ -216,7 +226,7 @@ public class TouchAnalyzer
         }
         else
         {
-            isSensitiveEnough = true;
+            generateEvent = true;
         }
         if (Math.abs(transform2D.rotation) < minimumRotation)
         {
@@ -224,7 +234,7 @@ public class TouchAnalyzer
         }
         else
         {
-            isSensitiveEnough = true;
+            generateEvent = true;
         }
         if (Math.abs(Math.log(transform2D.scale.x)) < minimumLogScale)
         {
@@ -233,8 +243,8 @@ public class TouchAnalyzer
         }
         else
         {
-            isSensitiveEnough = true;
+            generateEvent = true;
         }
-        return isSensitiveEnough;
+        return generateEvent;
     }
 }
