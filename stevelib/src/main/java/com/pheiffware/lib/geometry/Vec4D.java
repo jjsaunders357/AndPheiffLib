@@ -1,4 +1,4 @@
-package com.pheiffware.lib.geometry.d4;
+package com.pheiffware.lib.geometry;
 
 public class Vec4D {
     public double x, y, z, w;

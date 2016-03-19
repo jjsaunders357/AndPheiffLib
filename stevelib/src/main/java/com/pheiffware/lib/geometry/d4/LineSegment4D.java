@@ -1,5 +1,7 @@
 package com.pheiffware.lib.geometry.d4;
 
+import com.pheiffware.lib.geometry.Vec4D;
+
 public class LineSegment4D
 {
 	public final Vec4D p1, p2;

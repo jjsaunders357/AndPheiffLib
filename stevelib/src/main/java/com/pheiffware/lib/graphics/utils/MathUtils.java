@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class MathUtils
 {
-
+    //TODO: Remove after replacing with Matrix class
     public static final float[] IDENTITY_MATRIX4 = new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 
     public static float[] createTranslationMatrix(float x, float y, float z)

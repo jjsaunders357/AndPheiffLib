@@ -212,8 +212,6 @@ public class Vec3D implements Serializable
 
 	/**
 	 * Cross product: vec X this
-	 * 
-	 * @param collisionNormal
 	 */
 	public void crossByLeft(Vec3D vec)
 	{
@@ -238,6 +236,18 @@ public class Vec3D implements Serializable
 		y = tempy;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "(" + x + "," + y + "," + z + ")";
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		Vec3D vec3F = (Vec3D) obj;
+		return vec3F.x == x && vec3F.y == y && vec3F.z == z;
+	}
 	// **************************2D special functions**************************
 	// These all operate on the vector's x,y components, treating them as though
 	// they are in a plane.
@@ -284,16 +294,5 @@ public class Vec3D implements Serializable
 		y += centerOfRotation.y;
 	}
 
-	@Override
-	public String toString()
-	{
-		return "(" + x + "," + y + "," + z + ")";
-	}
 
-	@Override
-	public boolean equals(Object obj)
-	{
-		Vec3D vec3F = (Vec3D) obj;
-		return vec3F.x == x && vec3F.y == y && vec3F.z == z;
-	}
 }

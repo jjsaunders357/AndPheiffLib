@@ -21,7 +21,7 @@ import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
-import com.pheiffware.lib.graphics.utils.Transform;
+import com.pheiffware.lib.geometry.Transform3D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.lib.graphics.utils.MathUtils;
 
@@ -84,8 +84,8 @@ public class ExampleMeshRenderer implements Renderer
             Mesh sphereMesh = meshList.get(0);
 
             //Extract the translation aspect of the transform
-            Transform transform = new Transform(monkey.getMatrix());
-            translationMatrix = transform.getTranslation();
+            Transform3D transform3D = new Transform3D(monkey.getMatrix());
+            translationMatrix = transform3D.getTranslation();
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
             pb.putIndices(sphereMesh.vertexIndices);

@@ -1,17 +1,18 @@
-package com.pheiffware.lib.graphics.utils;
+package com.pheiffware.lib.geometry;
 
 import com.pheiffware.lib.geometry.Vec3D;
+import com.pheiffware.lib.graphics.utils.MathUtils;
 
 /**
  * Decomposes any given 4x4 transform matrix into a translation * rotation * scale matrix.
  * Created by Steve on 3/3/2016.
  */
-public class Transform
+public class Transform3D
 {
     //Three core matrices used to describe a transform.  These, when multiplied in order (translation*rotation*scale) they will produce the original transform.
     private float[] translation, rotation, scale;
 
-    public Transform(float[] transform)
+    public Transform3D(float[] transform)
     {
         //Just copy 3 transform values from matrix
         translation = MathUtils.createTranslationMatrix(transform[12], transform[13], transform[14]);
