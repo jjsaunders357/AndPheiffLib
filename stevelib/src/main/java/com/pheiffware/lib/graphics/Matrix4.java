@@ -2,7 +2,7 @@ package com.pheiffware.lib.graphics;
 
 import android.opengl.Matrix;
 
-import com.pheiffware.lib.graphics.utils.MathUtils;
+import com.pheiffware.lib.geometry.DecomposedTransform3D;
 
 import java.util.Arrays;
 
@@ -62,22 +62,6 @@ public class Matrix4
         return new Matrix4(inverse);
     }
 
-    public static Matrix4 newTranspose(Matrix4 transformMatrix)
-    {
-        //TODO: replace with Matrix.transpose
-        float[] transpose = new float[16];
-        float[] mData = transformMatrix.m;
-
-        int destIndex = 0;
-        for (int srcRowIndex = 0; srcRowIndex < 4; srcRowIndex++)
-        {
-            transpose[destIndex++] = mData[srcRowIndex + 0];
-            transpose[destIndex++] = mData[srcRowIndex + 4];
-            transpose[destIndex++] = mData[srcRowIndex + 8];
-            transpose[destIndex++] = mData[srcRowIndex + 12];
-        }
-        return new Matrix4(transpose);
-    }
     public static Matrix3 newNormalTransform(Matrix4 transformMatrix)
     {
         float[] floats = Arrays.copyOf(transformMatrix.m, 16);
@@ -91,31 +75,23 @@ public class Matrix4
         matrix3.setFloatMatrix4UpperLeft(floats);
         return matrix3;
     }
+
     /**
      * Creates a projection matrix. You generally want to set flipVertical to true when using this to render to a texture as texture coordinates are
      * backward.
      *
      * @param fieldOfViewY The field of view in the y direction (in degrees)
-     * @param aspect
-     * @param zNear
-     * @param zFar
-     * @param flipVertical
+     * @param aspect       ratio of width to height
+     * @param near         distance to near view plane
+     * @param far          distance to far view plane
+     * @param flipVertical flip vertical when rendering
      * @return
      */
-    public static Matrix4 newProjection(float fieldOfViewY, float aspect, float zNear, float zFar, boolean flipVertical)
+    public static Matrix4 newProjection(float fieldOfViewY, float aspect, float near, float far, boolean flipVertical)
     {
-        float[] matrix = new float[16];
-
-        float top = (float) (zNear * Math.tan(Math.PI / 180.0 * fieldOfViewY / 2));
-        float right = top * aspect;
-        if (flipVertical)
-        {
-            top *= -1;
-        }
-        float bottom = -top;
-        float left = -right;
-        Matrix.frustumM(matrix, 0, left, right, bottom, top, zNear, zFar);
-        return new Matrix4(matrix);
+        Matrix4 matrix = new Matrix4();
+        matrix.setProjection(fieldOfViewY, aspect, near, far, flipVertical);
+        return matrix;
     }
 
 
@@ -160,7 +136,7 @@ public class Matrix4
      */
     private Matrix4()
     {
-        m = new float[9];
+        m = new float[16];
     }
 
     /**
@@ -180,7 +156,7 @@ public class Matrix4
      */
     public Matrix4(Matrix4 matrix)
     {
-        m = Arrays.copyOf(matrix.m,16);
+        m = Arrays.copyOf(matrix.m, 16);
     }
 
     public final void setIdentity()
@@ -202,6 +178,15 @@ public class Matrix4
         m[3] = 0;m[7] = 0;m[11] = 0;m[15] = 1;
         //@formatter:on
     }
+
+    /**
+     * Set matrix state to a rotation around specified axis by given angle (in degrees).
+     *
+     * @param angle in degrees
+     * @param x     rotation axis x
+     * @param y     rotation axis y
+     * @param z     rotation axis z
+     */
 
     public final void setRotate(float angle, float x, float y, float z)
     {
@@ -241,6 +226,85 @@ public class Matrix4
                                  float near, float far)
     {
         Matrix.frustumM(m, 0, left, right, bottom, top, near, far);
+    }
+
+    public void translateRhs(float x, float y, float z)
+    {
+        Matrix.translateM(m, 0, x, y, z);
+    }
+
+    public void rotateRhs(float angle, float x, float y, float z)
+    {
+        Matrix.rotateM(m, 0, angle, x, y, z);
+    }
+
+    public void scaleRhs(float x, float y, float z)
+    {
+        Matrix.scaleM(m, 0, x, y, z);
+    }
+
+    /**
+     * Transpose the matrix in place.
+     */
+    public void transpose()
+    {
+        float temp;
+        temp = m[1];
+        m[1] = m[4];
+        m[4] = temp;
+
+        temp = m[2];
+        m[2] = m[8];
+        m[8] = temp;
+
+        temp = m[6];
+        m[6] = m[9];
+        m[9] = temp;
+
+        temp = m[3];
+        m[3] = m[12];
+        m[12] = temp;
+
+        temp = m[7];
+        m[7] = m[13];
+        m[13] = temp;
+
+        temp = m[11];
+        m[11] = m[14];
+        m[14] = temp;
+    }
+
+    /**
+     * Invert the matrix in place
+     */
+    public void invert()
+    {
+        float[] original = Arrays.copyOf(m, 16);
+        Matrix.invertM(m, 0, original, 0);
+    }
+
+    /**
+     * Decompose transformation matrix into a translation, rotation and scale.
+     *
+     * @return a decomposed matrix object
+     */
+    public DecomposedTransform3D decompose()
+    {
+        //Just copy 3 transform values from matrix
+        Matrix4 translation = newTranslation(m[12], m[13], m[14]);
+
+        float xScale = (float) Math.sqrt(m[0] * m[0] + m[1] * m[1] + m[2] * m[2]);
+        float yScale = (float) Math.sqrt(m[4] * m[4] + m[5] * m[5] + m[6] * m[6]);
+        float zScale = (float) Math.sqrt(m[8] * m[8] + m[9] * m[9] + m[10] * m[10]);
+        Matrix4 scale = newScale(xScale, yScale, zScale);
+
+        Matrix4 rotation = new Matrix4(new float[]{
+                m[0] / xScale, m[1] / xScale, m[2] / xScale, 0,
+                m[4] / yScale, m[5] / yScale, m[6] / yScale, 0,
+                m[8] / zScale, m[9] / zScale, m[10] / zScale, 0,
+                0, 0, 0, 1
+        });
+        return new DecomposedTransform3D(translation, rotation, scale);
     }
 
     public String toString()

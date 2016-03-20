@@ -45,6 +45,13 @@ public class Matrix3
         return new Matrix3(Arrays.copyOf(floats, 9));
     }
 
+    public static Matrix3 newFromUpperLeft(Matrix4 matrix4)
+    {
+        Matrix3 matrix3 = new Matrix3();
+        matrix3.setMatrix4UpperLeft(matrix4);
+        return matrix3;
+    }
+
     //Stored matrix data in column major order
     public final float[] m;
 

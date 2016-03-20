@@ -9,6 +9,7 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
+import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.Matrix3;
@@ -23,7 +24,6 @@ import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
-import com.pheiffware.lib.geometry.Transform3D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class ExampleMeshRenderer implements Renderer
     private Object3D cube;
     private Object3D monkey;
     private float rotation = 0;
-    private Matrix4 projectionMatrix;
+    private Matrix4 projectionMatrix = Matrix4.newZeroMatrix();
     private Matrix4 translationMatrix;
     private Matrix3 normalTransform = Matrix3.newZeroMatrix();
 
@@ -86,8 +86,8 @@ public class ExampleMeshRenderer implements Renderer
             Mesh sphereMesh = meshList.get(0);
 
             //Extract the translation aspect of the transform
-            Transform3D transform3D = new Transform3D(monkey.getMatrix());
-            translationMatrix = Matrix4.newMatrixFromFloats(transform3D.getTranslation());
+            DecomposedTransform3D decomposedTransform = Matrix4.newMatrixFromFloats(monkey.getMatrix()).decompose();
+            translationMatrix = decomposedTransform.getTranslation();
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
             pb.putIndices(sphereMesh.vertexIndices);
@@ -127,6 +127,10 @@ public class ExampleMeshRenderer implements Renderer
         testProgram.bind();
 
         Matrix4 transformMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
+
+        //Test decomposing/recomposing matrix
+        DecomposedTransform3D decomposedTransform = transformMatrix.decompose();
+        transformMatrix = decomposedTransform.compose();
         normalTransform.setNormalTransformFromMatrix4(transformMatrix);
 
         rotation++;
@@ -163,6 +167,6 @@ public class ExampleMeshRenderer implements Renderer
     {
         Log.i("OPENGL", "Surface changed");
         GLES20.glViewport(0, 0, width, height);
-        projectionMatrix = Matrix4.newProjection(90f, width / (float) height, 1, 10, false);
+        projectionMatrix.setProjection(90f, width / (float) height, 1, 10, false);
     }
 }
