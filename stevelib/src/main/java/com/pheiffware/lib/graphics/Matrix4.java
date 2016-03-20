@@ -57,23 +57,9 @@ public class Matrix4
 
     public static Matrix4 newInverse(Matrix4 matrix)
     {
-        float[] inverse = new float[16];
-        Matrix.invertM(inverse, 0, matrix.m, 0);
-        return new Matrix4(inverse);
-    }
-
-    public static Matrix3 newNormalTransform(Matrix4 transformMatrix)
-    {
-        float[] floats = Arrays.copyOf(transformMatrix.m, 16);
-        floats[12] = 0;
-        floats[13] = 0;
-        floats[14] = 0;
-        float[] inverse = new float[16];
-        Matrix.invertM(inverse, 0, floats, 0);
-        Matrix.transposeM(floats, 0, inverse, 0);
-        Matrix3 matrix3 = Matrix3.newZeroMatrix();
-        matrix3.setFloatMatrix4UpperLeft(floats);
-        return matrix3;
+        Matrix4 inverse = new Matrix4(matrix);
+        inverse.invert();
+        return inverse;
     }
 
     /**
