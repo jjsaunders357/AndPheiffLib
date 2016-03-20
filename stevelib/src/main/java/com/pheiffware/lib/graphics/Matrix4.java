@@ -7,12 +7,16 @@ import com.pheiffware.lib.graphics.utils.MathUtils;
 import java.util.Arrays;
 
 /**
+ * Stores and manipulates a 4x4 matrix.  Stored as a 16 element float array in column major order.
+ * This is an enhanced version of the built in Matrix4f.
+ * 1. Provides more convenience methods
+ * 2. Doesn't have a bugged rotation method (Matrix4f's method does not normalize axis properly).
+ * 3. Backed by the native Matrix library, so it is slightly faster
+ * <p/>
  * Created by Steve on 3/9/2016.
  */
 public class Matrix4
 {
-    public static final Matrix4 IDENTITY_MATRIX4 = new Matrix4(new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
-
     public static Matrix4 multiply(Matrix4 lhs, Matrix4 rhs)
     {
         float[] product = new float[16];
@@ -30,31 +34,25 @@ public class Matrix4
         return product;
     }
 
-    public static Matrix4 newTrans(float x, float y, float z)
+    public static Matrix4 newTranslation(float x, float y, float z)
     {
-        Matrix4 matrix = new Matrix4();
+        Matrix4 matrix = new Matrix4(new float[16]);
         matrix.setTranslate(x, y, z);
         return matrix;
     }
 
     public static Matrix4 newScale(float x, float y, float z)
     {
-        Matrix4 matrix = new Matrix4();
+        Matrix4 matrix = new Matrix4(new float[16]);
         matrix.setScale(x, y, z);
         return matrix;
     }
 
     public static Matrix4 newRotate(float angle, float x, float y, float z)
     {
-        Matrix4 matrix = new Matrix4();
+        Matrix4 matrix = new Matrix4(new float[16]);
         matrix.setRotate(angle, x, y, z);
         return matrix;
-    }
-
-
-    public static Matrix3 newMatrix3from4(Matrix4 matrix4)
-    {
-        return Matrix3.newMatrix3From4Floats(matrix4.m);
     }
 
     public static Matrix4 newInverse(Matrix4 matrix)
@@ -66,6 +64,7 @@ public class Matrix4
 
     public static Matrix4 newTranspose(Matrix4 transformMatrix)
     {
+        //TODO: replace with Matrix.transpose
         float[] transpose = new float[16];
         float[] mData = transformMatrix.m;
 
@@ -79,20 +78,19 @@ public class Matrix4
         }
         return new Matrix4(transpose);
     }
-
     public static Matrix3 newNormalTransform(Matrix4 transformMatrix)
     {
-        float[] matrix = Arrays.copyOf(transformMatrix.m, 16);
-        matrix[12] = 0;
-        matrix[13] = 0;
-        matrix[14] = 0;
+        float[] floats = Arrays.copyOf(transformMatrix.m, 16);
+        floats[12] = 0;
+        floats[13] = 0;
+        floats[14] = 0;
         float[] inverse = new float[16];
-        Matrix.invertM(inverse, 0, matrix, 0);
-        Matrix.transposeM(matrix, 0, inverse, 0);
-        return Matrix3.newMatrix3From4Floats(matrix);
+        Matrix.invertM(inverse, 0, floats, 0);
+        Matrix.transposeM(floats, 0, inverse, 0);
+        Matrix3 matrix3 = Matrix3.newZeroMatrix();
+        matrix3.setFloatMatrix4UpperLeft(floats);
+        return matrix3;
     }
-
-
     /**
      * Creates a projection matrix. You generally want to set flipVertical to true when using this to render to a texture as texture coordinates are
      * backward.
@@ -120,26 +118,79 @@ public class Matrix4
         return new Matrix4(matrix);
     }
 
+
+    /**
+     * Creates an empty matrix
+     *
+     * @return new zero matrix
+     */
+    public static Matrix4 newZeroMatrix()
+    {
+        return new Matrix4();
+    }
+
+    /**
+     * Creates new identity matrix
+     *
+     * @return new identity matrix
+     */
+    public static Matrix4 newIdentity()
+    {
+        Matrix4 matrix = new Matrix4();
+        matrix.setIdentity();
+        return matrix;
+    }
+
+    /**
+     * Creates new 4x4 matrix from given floats.
+     *
+     * @param floats 16 floats in column major order
+     * @return new 4x4 matrix from given floats
+     */
+    public static Matrix4 newMatrixFromFloats(float[] floats)
+    {
+        return new Matrix4(Arrays.copyOf(floats, 16));
+    }
+
+    //Stored matrix data in column major order
     public final float[] m;
 
-    public static Matrix4 fromFloats(float[] m)
+    /**
+     * Constructs a new blank matrix
+     */
+    private Matrix4()
     {
-        return new Matrix4(Arrays.copyOf(m, 16));
+        m = new float[9];
     }
-    //Doesn't make copy of data
+
+    /**
+     * Internal constructor which does NOT copy data
+     *
+     * @param m reference to array which should back this matrix.
+     */
     private Matrix4(float[] m)
     {
         this.m = m;
     }
 
-    public Matrix4()
-    {
-        this.m = new float[16];
-    }
-
+    /**
+     * Creates a new copy of the given matrix.
+     *
+     * @param matrix matrix to copy
+     */
     public Matrix4(Matrix4 matrix)
     {
-        m = Arrays.copyOf(matrix.m, 16);
+        m = Arrays.copyOf(matrix.m,16);
+    }
+
+    public final void setIdentity()
+    {
+        //@formatter:off
+        m[0] = 1;m[4] = 0;m[8] =  0;m[12] = 0;
+        m[1] = 0;m[5] = 1;m[9] =  0;m[13] = 0;
+        m[2] = 0;m[6] = 0;m[10] = 1;m[14] = 0;
+        m[3] = 0;m[7] = 0;m[11] = 0;m[15] = 1;
+        //@formatter:on
     }
 
     public final void setTranslate(float x, float y, float z)
@@ -165,8 +216,33 @@ public class Matrix4
         m[2] = 0;m[6] = 0;m[10] = z;m[14] = 0;
         m[3] = 0;m[7] = 0;m[11] = 0;m[15] = 1;
         //@formatter:on
-
     }
+
+    public final void setOrthographic(float left, float right, float bottom, float top,
+                                      float near, float far)
+    {
+        Matrix.orthoM(m, 0, left, right, bottom, top, near, far);
+    }
+
+    public final void setProjection(float fieldOfViewY, float aspect, float near, float far, boolean flipVertical)
+    {
+        float top = (float) (near * Math.tan(Math.PI / 180.0 * fieldOfViewY / 2));
+        float right = top * aspect;
+        if (flipVertical)
+        {
+            top *= -1;
+        }
+        float bottom = -top;
+        float left = -right;
+        setFrustum(left, right, bottom, top, near, far);
+    }
+
+    public final void setFrustum(float left, float right, float bottom, float top,
+                                 float near, float far)
+    {
+        Matrix.frustumM(m, 0, left, right, bottom, top, near, far);
+    }
+
     public String toString()
     {
         StringBuilder builder = new StringBuilder();

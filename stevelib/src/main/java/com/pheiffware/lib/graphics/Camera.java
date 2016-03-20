@@ -28,6 +28,7 @@ public class Camera
 
     public void lookAt(float x, float y, float z, float upX, float upY, float upZ)
     {
+        //Inverse of a rotation matrix is its transpose
 
     }
 

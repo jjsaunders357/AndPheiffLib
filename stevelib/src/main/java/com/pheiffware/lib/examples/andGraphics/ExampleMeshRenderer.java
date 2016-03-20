@@ -6,7 +6,6 @@ package com.pheiffware.lib.examples.andGraphics;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
-import android.renderscript.Matrix4f;
 import android.util.Log;
 
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
@@ -26,7 +25,6 @@ import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.geometry.Transform3D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
-import com.pheiffware.lib.graphics.utils.MathUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +49,7 @@ public class ExampleMeshRenderer implements Renderer
     private float rotation = 0;
     private Matrix4 projectionMatrix;
     private Matrix4 translationMatrix;
+    private Matrix3 normalTransform = Matrix3.newZeroMatrix();
 
     public ExampleMeshRenderer(ManGL manGL)
     {
@@ -88,7 +87,7 @@ public class ExampleMeshRenderer implements Renderer
 
             //Extract the translation aspect of the transform
             Transform3D transform3D = new Transform3D(monkey.getMatrix());
-            translationMatrix = Matrix4.fromFloats(transform3D.getTranslation());
+            translationMatrix = Matrix4.newMatrixFromFloats(transform3D.getTranslation());
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
             pb.putIndices(sphereMesh.vertexIndices);
@@ -128,7 +127,8 @@ public class ExampleMeshRenderer implements Renderer
         testProgram.bind();
 
         Matrix4 transformMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
-        Matrix3 normalTransform = Matrix4.newNormalTransform(transformMatrix);
+        normalTransform.setNormalTransformFromMatrix4(transformMatrix);
+
         rotation++;
 
         testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
