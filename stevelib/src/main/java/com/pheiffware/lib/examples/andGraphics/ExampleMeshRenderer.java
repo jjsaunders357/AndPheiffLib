@@ -77,25 +77,25 @@ public class ExampleMeshRenderer implements Renderer
 
             //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
             List<Mesh> meshList = monkey.getMeshGroup().getMeshes(material);
-            Mesh sphereMesh = meshList.get(0);
+            Mesh mesh = meshList.get(0);
 
             //Extract the translation aspect of the transform
             DecomposedTransform3D decomposedTransform = monkey.getMatrix().decompose();
             translationMatrix = decomposedTransform.getTranslation();
 
-            pb = new IndexBuffer(sphereMesh.getNumVertexIndices());
-            pb.putIndices(sphereMesh.vertexIndices);
+            pb = new IndexBuffer(mesh.getNumVertexIndices());
+            pb.putIndices(mesh.vertexIndices);
             pb.transfer();
 
             // @formatter:off
-            sb = new StaticVertexBuffer(testProgram, sphereMesh.getNumUniqueVertices(),
+            sb = new StaticVertexBuffer(testProgram, mesh.getNumUniqueVertices(),
                     new String[]
                             {"vertexPosition", "vertexNormal", "vertexColor"});
             // @formatter:on
 
-            sb.putAttributeFloats("vertexPosition", sphereMesh.uniqueVertexData.get("POSITION"));
-            sb.putAttributeFloats("vertexNormal", sphereMesh.uniqueVertexData.get("NORMAL"));
-            sb.putAttributeFloats("vertexColor", sphereMesh.generateSingleColorData(new GColor(0.0f, 0.6f, 0.9f, 1.0f)));
+            sb.putAttributeFloats("vertexPosition", mesh.getPositionData());
+            sb.putAttributeFloats("vertexNormal", mesh.getNormalData());
+            sb.putAttributeFloats("vertexColor", mesh.generateSingleColorData(new GColor(0.0f, 0.6f, 0.9f, 1.0f)));
 
             sb.transfer();
             PheiffGLUtils.assertNoError();

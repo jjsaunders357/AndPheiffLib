@@ -1,6 +1,7 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
@@ -20,6 +21,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
+//TODO: Move files to raw resources
 
 /**
  * Created by Steve on 2/20/2016.
@@ -87,29 +90,43 @@ public class TestCollada
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.uniqueVertexData.get("POSITION"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.uniqueVertexData.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.uniqueVertexData.get("NORMAL"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.getPositionData(), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.getTexCoordData(), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.getNormalData(), 0);
         Mesh mesh2 = geo1.meshes.get(1);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 2}, mesh2.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1}, mesh2.uniqueVertexData.get("POSITION"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.uniqueVertexData.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.uniqueVertexData.get("NORMAL"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1}, mesh2.getPositionData(), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.getTexCoordData(), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.getNormalData(), 0);
 
         Map<String, Object3D> objects = colladaFactory.getObjects();
         List<Object3D> anonymousMeshGroups = colladaFactory.getAnonymousObjects();
         assertEquals(0, anonymousMeshGroups.size());
 
         MeshGroup dual = objects.get("dual_name").getMeshGroup();
-        assertEquals(20, dual.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
-        assertEquals(16, dual.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(20, dual.getMeshes(mat1).get(0).uniqueVertexData.get(Collada.COLLADA_VERTEX_POSITION).length);
+        assertEquals(16, dual.getMeshes(mat2).get(0).uniqueVertexData.get(Collada.COLLADA_VERTEX_POSITION).length);
 
         MeshGroup parent = objects.get("parent_name").getMeshGroup();
-        assertEquals(20, parent.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION").length);
-        assertEquals(16, parent.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION").length);
+        Matrix4 parentMatrix = parent.getInitialTransformMatrix();
+        assertArrayEquals(parentMatrix.m, new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1}, 0);
+
+        //1st mesh of each material is from parent.
+        //It is untransformed
+        assertArrayEquals(parent.getMeshes(mat1).get(0).getPositionData(), new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, 0);
+        assertArrayEquals(parent.getMeshes(mat2).get(0).getPositionData(), new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1}, 0);
+
+        //2nd mesh of each material is from child which refers to same geometry.
+        //It has z translated by 3
+        assertArrayEquals(parent.getMeshes(mat1).get(1).getPositionData(), new float[]{0, 1, 5, 1, 3, 4, 8, 1, 6, 7, 11, 1, 9, 10, 14, 1, 0, 1, 5, 1}, 0);
+        assertArrayEquals(parent.getMeshes(mat2).get(1).getPositionData(), new float[]{0, 1, 5, 1, 3, 4, 8, 1, 6, 7, 11, 1, 9, 10, 14, 1}, 0);
+
+        //It has z translated by 3, but normals are not affected by translation
+        assertArrayEquals(parent.getMeshes(mat1).get(1).getNormalData(), new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, 0);
+        assertArrayEquals(parent.getMeshes(mat2).get(1).getNormalData(), new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, 0);
 
         MeshGroup no_mat = objects.get("no_mat_name").getMeshGroup();
-        assertEquals(16, no_mat.getMeshes(defaultMat).get(0).uniqueVertexData.get("POSITION").length);
+        assertEquals(16, no_mat.getMeshes(defaultMat).get(0).getPositionData().length);
     }
 
     @Test
@@ -157,9 +174,9 @@ public class TestCollada
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.uniqueVertexData.get("POSITION"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.uniqueVertexData.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.uniqueVertexData.get("NORMAL"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.getPositionData(), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.getTexCoordData(), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.getNormalData(), 0);
 
         //Other mesh data is ignored as they are just repeats of the same data
         Mesh mesh2 = geometries.get("geo2_id").meshes.get(0);
@@ -177,15 +194,20 @@ public class TestCollada
         MeshGroup groupCompSubNode3 = libMeshGroups.get("groupCompSubNode3_id");
 
         //mesh1, has a 1 for the 2nd element in the position data, mesh2 has 2 and so on.
-        assertEquals(lib_node1.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(lib_node2.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(lib_node3.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
-        assertEquals(lib_node_comp.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
-        assertEquals(lib_node_comp.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 3.0, 0.0);
+        assertEquals(1, lib_node1.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
+        assertEquals(1, lib_node2.getMeshes(mat2).get(0).getPositionData()[1], 0.0);
+        assertEquals(2, lib_node3.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
+        assertEquals(2, lib_node_comp.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
+        assertEquals(3, lib_node_comp.getMeshes(mat2).get(0).getPositionData()[1], 0.0);
 
-        assertEquals(lib_node_comp_group.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(lib_node_comp_group.getMeshes(mat1).get(1).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
-        assertEquals(lib_node_comp_group.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
+        //geo1 - untransformed
+        assertEquals(1, lib_node_comp_group.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
+        //geo2 - y stretched by 3 (originally 2)
+        assertEquals(6, lib_node_comp_group.getMeshes(mat1).get(1).getPositionData()[1], 0.0);
+        //geo1 - y stretched by 2 (originally 1)
+        assertEquals(2, lib_node_comp_group.getMeshes(mat2).get(0).getPositionData()[1], 0.0);
+        //geo1 - normal transformation (y stretched by 1/2)
+        assertEquals(0.5, lib_node_comp_group.getMeshes(mat2).get(0).getNormalData()[1], 0.0);
 
         //These should NOT be visible at top-level as they are intermediate nodes
         assert groupCompSubNode1 == null;
@@ -194,15 +216,17 @@ public class TestCollada
 
         Map<String, Object3D> objects = colladaFactory.getObjects();
         List<Object3D> anonymousObjects = colladaFactory.getAnonymousObjects();
-        assertEquals(anonymousObjects.get(0).getMeshGroup().getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(2.0, anonymousObjects.get(0).getMeshGroup().getMeshes(mat1).get(0).getPositionData()[1], 0.0);
         MeshGroup groupOfGroups = objects.get("groupOfGroups_name").getMeshGroup();
-        assertEquals(groupOfGroups.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
-        assertEquals(groupOfGroups.getMeshes(mat2).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
+        //geo1 - y stretched by 3 (originally 1)
+        assertEquals(3, groupOfGroups.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
+        //geo2 - y stretched by 4 (originally 2)
+        assertEquals(8, groupOfGroups.getMeshes(mat2).get(0).getPositionData()[1], 0.0);
         MeshGroup reference = objects.get("reference_name").getMeshGroup();
-        assertEquals(reference.getMeshes(mat1).get(0).uniqueVertexData.get("POSITION")[1], 1.0, 0.0);
+        assertEquals(1.0, reference.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
 
         MeshGroup no_mat = objects.get("no_mat_name").getMeshGroup();
-        assertEquals(no_mat.getMeshes(defaultMat).get(0).uniqueVertexData.get("POSITION")[1], 2.0, 0.0);
+        assertEquals(2.0, no_mat.getMeshes(defaultMat).get(0).getPositionData()[1], 0.0);
     }
 
     @Test
@@ -228,18 +252,18 @@ public class TestCollada
 
         Map<String, ColladaInput> inputs = new HashMap<>();
         //Input 1 has 4 items each size 3 {0,1,2}, {3,4,5}, {6,7,8}, {9,10,11} and offset is 0
-        inputs.put("POSITION", new ColladaInput("POSITION", new ColladaSource(4, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}), 0));
+        inputs.put(Collada.COLLADA_VERTEX_POSITION, new ColladaInput(Collada.COLLADA_VERTEX_POSITION, new ColladaSource(4, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}), 0));
         //Input 2 has 2 items each size 2 {0,1}, {2,3} and offset is 1
-        inputs.put("TEXCOORD", new ColladaInput("TEXCOORD", new ColladaSource(2, 2, new float[]{0, 1, 2, 3}), 1));
+        inputs.put(Collada.COLLADA_VERTEX_TEXCOORD, new ColladaInput(Collada.COLLADA_VERTEX_TEXCOORD, new ColladaSource(2, 2, new float[]{0, 1, 2, 3}), 1));
         //Input 3 has 3 items each size 3 {0,1,2}, {3,4,5}, {6,7,8} and offset is 1
-        inputs.put("NORMAL", new ColladaInput("NORMAL", new ColladaSource(3, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8}), 1));
+        inputs.put(Collada.COLLADA_VERTEX_NORMAL, new ColladaInput(Collada.COLLADA_VERTEX_NORMAL, new ColladaSource(3, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8}), 1));
 
         //Homogenize output
         ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(inputs, interleavedIndices, vertexCount, true);
         Mesh mesh = colladaMeshNormalizer.generateMesh();
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.vertexIndices);
-        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh.uniqueVertexData.get("POSITION"), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.uniqueVertexData.get("TEXCOORD"), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.uniqueVertexData.get("NORMAL"), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh.uniqueVertexData.get(Collada.COLLADA_VERTEX_POSITION), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.uniqueVertexData.get(Collada.COLLADA_VERTEX_TEXCOORD), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.uniqueVertexData.get(Collada.COLLADA_VERTEX_NORMAL), 0);
     }
 }

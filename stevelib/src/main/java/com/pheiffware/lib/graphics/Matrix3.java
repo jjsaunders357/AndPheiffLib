@@ -40,7 +40,7 @@ public class Matrix3
      * @param floats 9 floats in column major order
      * @return new 3x3 matrix from given floats
      */
-    public static Matrix3 newMatrixFromFloats(float[] floats)
+    public static Matrix3 newFromFloats(float[] floats)
     {
         return new Matrix3(Arrays.copyOf(floats, 9));
     }
@@ -251,6 +251,54 @@ public class Matrix3
     public void set(float[] floats)
     {
         System.arraycopy(floats, 0, m, 0, 9);
+    }
+
+
+    /**
+     * Given a 3d coordinate at the specified offset apply this transform in place.
+     *
+     * @param inVectorData array vectors are read from
+     * @param inVectorData array transformed vectors are written to
+     * @param inOffset     offset in the in array to read at
+     * @param outOffset    offset in the out array to write to
+     */
+    public final void transformFloatVector(float[] outVectorData, int outOffset, float[] inVectorData, int inOffset)
+    {
+        float x = inVectorData[inOffset] * m[0] + inVectorData[inOffset + 1] * m[3] + inVectorData[inOffset + 2] * m[6];
+        float y = inVectorData[inOffset] * m[1] + inVectorData[inOffset + 1] * m[4] + inVectorData[inOffset + 2] * m[7];
+        float z = inVectorData[inOffset] * m[2] + inVectorData[inOffset + 1] * m[5] + inVectorData[inOffset + 2] * m[8];
+        outVectorData[outOffset + 0] = x;
+        outVectorData[outOffset + 1] = y;
+        outVectorData[outOffset + 2] = z;
+    }
+
+    /**
+     * Apply this transform a series of 3d coordinates in place.
+     *
+     * @param vectorData array where vectors are stored
+     */
+    public void applyToFloatVectors(float[] vectorData)
+    {
+        for (int i = 0; i < vectorData.length; i += 3)
+        {
+            transformFloatVector(vectorData, i, vectorData, i);
+        }
+    }
+
+    /**
+     * Create new array containing 3d vectors with this matrix transform applied to each
+     *
+     * @param vectorData array where vectors are read
+     * @return the new transformed vector array
+     */
+    public float[] newTransformedVectors(float[] vectorData)
+    {
+        float[] transformedVectorData = new float[vectorData.length];
+        for (int i = 0; i < vectorData.length; i += 3)
+        {
+            transformFloatVector(transformedVectorData, i, vectorData, i);
+        }
+        return transformedVectorData;
     }
 
 }

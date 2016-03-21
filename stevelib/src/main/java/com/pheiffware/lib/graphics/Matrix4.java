@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics;
 
 import android.opengl.Matrix;
-import android.renderscript.Matrix4f;
 
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 
@@ -198,12 +197,13 @@ public class Matrix4
 
     /**
      * Create a new orthographic projection matrix.
-     * @param left left
-     * @param right right
+     *
+     * @param left   left
+     * @param right  right
      * @param bottom bottom
-     * @param top top
-     * @param near near
-     * @param far far
+     * @param top    top
+     * @param near   near
+     * @param far    far
      */
     public final void setOrthographic(float left, float right, float bottom, float top,
                                       float near, float far)
@@ -339,6 +339,18 @@ public class Matrix4
         return new DecomposedTransform3D(translation, rotation, scale);
     }
 
+    /**
+     * Create a 3x3 normal transformation matrix from this matrix.
+     *
+     * @return normal transform matrix
+     */
+    public Matrix3 newNormalTransformMatrix3()
+    {
+        Matrix3 normalTransform = Matrix3.newZeroMatrix();
+        normalTransform.setNormalTransformFromMatrix4Fast(this);
+        return normalTransform;
+    }
+
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
@@ -355,5 +367,53 @@ public class Matrix4
 
     }
 
+    /**
+     * Given a 4d coordinate at the specified offset in the inVectorData array, apply this transform in the outVectorData at the offset.
+     * inVectorData and outVectorData CAN be the same array and read/write position can overlap.
+     *
+     * @param inVectorData array vectors are read from
+     * @param inVectorData array transformed vectors are written to
+     * @param inOffset     offset in the in array to read at
+     * @param outOffset    offset in the out array to write to
+     */
+    public final void transformFloatVector(float[] outVectorData, int outOffset, float[] inVectorData, int inOffset)
+    {
+        float x = inVectorData[inOffset] * m[0] + inVectorData[inOffset + 1] * m[4] + inVectorData[inOffset + 2] * m[8] + inVectorData[inOffset + 3] * m[12];
+        float y = inVectorData[inOffset] * m[1] + inVectorData[inOffset + 1] * m[5] + inVectorData[inOffset + 2] * m[9] + inVectorData[inOffset + 3] * m[13];
+        float z = inVectorData[inOffset] * m[2] + inVectorData[inOffset + 1] * m[6] + inVectorData[inOffset + 2] * m[10] + inVectorData[inOffset + 3] * m[14];
+        float w = inVectorData[inOffset] * m[3] + inVectorData[inOffset + 1] * m[7] + inVectorData[inOffset + 2] * m[11] + inVectorData[inOffset + 3] * m[15];
+        outVectorData[outOffset + 0] = x;
+        outVectorData[outOffset + 1] = y;
+        outVectorData[outOffset + 2] = z;
+        outVectorData[outOffset + 3] = w;
+    }
 
+    /**
+     * Apply this transform a series of 4d coordinates in place.
+     *
+     * @param vectorData array where vectors are stored
+     */
+    public void applyToFloatVectors(float[] vectorData)
+    {
+        for (int i = 0; i < vectorData.length; i += 4)
+        {
+            transformFloatVector(vectorData, i, vectorData, i);
+        }
+    }
+
+    /**
+     * Create new array containing 4d coordinates with this tranform applied to each
+     *
+     * @param vectorData array where vectors are read
+     * @return the new transformed vector array
+     */
+    public float[] newTransformedVectors(float[] vectorData)
+    {
+        float[] transformedVectorData = new float[vectorData.length];
+        for (int i = 0; i < vectorData.length; i += 4)
+        {
+            transformFloatVector(transformedVectorData, i, vectorData, i);
+        }
+        return transformedVectorData;
+    }
 }

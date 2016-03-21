@@ -102,8 +102,8 @@ class ColladaMeshNormalizer
     {
         if (homogenizePositions)
         {
-            float[] nonHomogeneousVectors = vertexData.get("POSITION");
-            vertexData.put("POSITION", GraphicsUtils.homogenizeVec3Array(nonHomogeneousVectors, 1.0f));
+            float[] nonHomogeneousVectors = vertexData.get(Collada.COLLADA_VERTEX_POSITION);
+            vertexData.put(Collada.COLLADA_VERTEX_POSITION, GraphicsUtils.homogenizeVec3Array(nonHomogeneousVectors, 1.0f));
         }
     }
 

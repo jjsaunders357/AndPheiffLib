@@ -2,9 +2,8 @@ package com.pheiffware.lib.graphics.managed.mesh;
 
 import com.pheiffware.lib.graphics.Matrix4;
 
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class MeshGroup
         List<Mesh> meshList = meshes.get(material);
         if (meshList == null)
         {
-            meshList = new ArrayList<>();
+            meshList = new LinkedList<>();
             meshes.put(material, meshList);
         }
         return meshList;
@@ -53,9 +52,20 @@ public class MeshGroup
     }
 
 
-    public void applyMatrixTransform(Matrix4 transformMatrix)
+    public MeshGroup newTransformedMeshGroup(Matrix4 transformMatrix)
     {
-        //TODO: Apply matrix transformation to child meshgroup
+        MeshGroup transformedMeshGroup = new MeshGroup(Matrix4.newIdentity());
+        for (Map.Entry<Material, List<Mesh>> entry : meshes.entrySet())
+        {
+            Material material = entry.getKey();
+            List<Mesh> meshLists = entry.getValue();
+            for (Mesh mesh : meshLists)
+            {
+                Mesh transformedMesh = mesh.newTransformedMesh(transformMatrix);
+                transformedMeshGroup.add(material, transformedMesh);
+            }
+        }
+        return transformedMeshGroup;
     }
 
     public List<Mesh> getMeshes(Material material)

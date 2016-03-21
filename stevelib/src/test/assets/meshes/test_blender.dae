@@ -143,10 +143,12 @@
                     </accessor>
                 </technique_common>
             </source>
+
             <!--vertices, is a useless concept.  Inputs can be declared here instead of in polylist,
             which complicates things unnecessarily.-->
             <vertices id="who cares">
                 <input semantic="POSITION" source="#input1"/>
+
             </vertices>
             <!--VERTEX input should be replaced by all inputs in vertices element.
             However, the offset for VERTEX should be used for all input declared in vertices.-->
@@ -157,6 +159,7 @@
                 <vcount>3 3 3</vcount>
                 <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
             </polylist>
+
             <polylist material="mat_text2_id" count="12">
                 <input semantic="VERTEX" source="#who cares" offset="0"/>
                 <input semantic="NORMAL" source="#input3" offset="1"/>
@@ -231,10 +234,12 @@
         </instance_geometry>
       </node>
       <node id="parent_id" name="parent_name" type="NODE">
-        <matrix sid="transform">1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 1</matrix>
+          <!--Translate z of whole node (parent and child) by 2.  This will not be applied, but appear as initial transform-->
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 2 0 0 0 1</matrix>
         <instance_geometry url="#geo1_id" name="Parent"/>
         <node id="child_id" name="child_name" type="NODE">
-          <matrix sid="transform">1 0 0 0 0 3 0 0 0 0 1 0 0 0 0 1</matrix>
+          <!--Translate child z by 3-->
+          <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 3 0 0 0 1</matrix>
           <instance_geometry url="#geo1_id" name="Child"/>
         </node>
       </node>
