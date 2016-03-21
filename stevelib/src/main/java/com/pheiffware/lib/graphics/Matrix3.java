@@ -122,13 +122,48 @@ public class Matrix3
 
     /**
      * Given a Matrix4, compute the inverse/transpose of the upper left 3x3 matrix.
-     * @param matrix4 4x4 transform to compute normal transform from
+     *
+     * @param transform 4x4 transform to compute normal transform from
      */
-    public void setNormalTransformFromMatrix4(Matrix4 matrix4)
+    public void setNormalTransformFromMatrix4Standard(Matrix4 transform)
     {
-        setMatrix4UpperLeft(matrix4);
+        setMatrix4UpperLeft(transform);
         invert();
         transpose();
+    }
+
+    /**
+     * Given a Matrix4, compute the inverse/transpose of the upper left 3x3 matrix.
+     * This is over 10 times as fast as the standard inverse/transpose calc!
+     * Probably less numerically stable (not sure if it will handle skew).
+     * Totally gratuitous, but fun!
+     *
+     * @param transform 4x4 transform to compute normal transform from
+     */
+    public void setNormalTransformFromMatrix4Fast(Matrix4 transform)
+    {
+        //Extract scale^2 factors from upper left 3x3
+        float[] t4m = transform.m;
+        float xScaleSquared = t4m[0] * t4m[0] + t4m[1] * t4m[1] + t4m[2] * t4m[2];
+        float yScaleSquared = t4m[4] * t4m[4] + t4m[5] * t4m[5] + t4m[6] * t4m[6];
+        float zScaleSquared = t4m[8] * t4m[8] + t4m[9] * t4m[9] + t4m[10] * t4m[10];
+
+        //Find inverse^2 scale factors
+        float invXScaleSq = 1 / xScaleSquared;
+        float invYScaleSq = 1 / yScaleSquared;
+        float invZScaleSq = 1 / zScaleSquared;
+
+        //Take upper left 3x3 matrix and inverse scale it once to get rotation matrix
+        //and inverse scale again to apply inverse of scale operation to the rotation matrix.
+        m[0] = t4m[0] * invXScaleSq;
+        m[1] = t4m[1] * invXScaleSq;
+        m[2] = t4m[2] * invXScaleSq;
+        m[3] = t4m[4] * invYScaleSq;
+        m[4] = t4m[5] * invYScaleSq;
+        m[5] = t4m[6] * invYScaleSq;
+        m[6] = t4m[8] * invZScaleSq;
+        m[7] = t4m[9] * invZScaleSq;
+        m[8] = t4m[10] * invZScaleSq;
     }
 
     /**
@@ -150,6 +185,7 @@ public class Matrix3
 
     /**
      * Inverts the matrix in place, returning true if there is an inverse.
+     *
      * @return Is this matrix invertible?
      */
     public boolean invert()
@@ -184,7 +220,8 @@ public class Matrix3
 
     /**
      * Used during determinant calculation to lookup values
-     * @param row row
+     *
+     * @param row    row
      * @param column column
      * @param floats array to lookup in
      * @return value in array at row/column
@@ -209,6 +246,11 @@ public class Matrix3
         }
         return builder.toString();
 
+    }
+
+    public void set(float[] floats)
+    {
+        System.arraycopy(floats, 0, m, 0, 9);
     }
 
 }

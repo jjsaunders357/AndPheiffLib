@@ -41,11 +41,6 @@ public class ExampleMeshRenderer implements Renderer
     private Program testProgram;
     private IndexBuffer pb;
     private StaticVertexBuffer sb;
-    private ColladaFactory colladaFactory;
-    private Collada collada;
-    private Object3D sphere;
-    private Object3D cube;
-    private Object3D monkey;
     private float rotation = 0;
     private Matrix4 projectionMatrix = Matrix4.newZeroMatrix();
     private Matrix4 translationMatrix;
@@ -68,18 +63,17 @@ public class ExampleMeshRenderer implements Renderer
             //Must enable depth testing!
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
             testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
-            colladaFactory = new ColladaFactory(true);
-            InputStream inputStream = null;
-            inputStream = manGL.getAssetManager().open("meshes/test_render.dae");
-            collada = colladaFactory.loadCollada(inputStream);
+            ColladaFactory colladaFactory = new ColladaFactory(true);
+            InputStream inputStream = manGL.getAssetManager().open("meshes/test_render.dae");
+            Collada collada = colladaFactory.loadCollada(inputStream);
 
             //Lookup material from loaded file by "name" (what user named it in editing tool)
             Material material = collada.materialsByName.get("renderMaterial");
 
             //Lookup object from loaded file by "name" (what user named it in editing tool)
-            sphere = collada.objects.get("Sphere");
-            cube = collada.objects.get("Cube");
-            monkey = collada.objects.get("Monkey");
+//            Object3D sphere = collada.objects.get("Sphere");
+//            Object3D cube = collada.objects.get("Cube");
+            Object3D monkey = collada.objects.get("Monkey");
 
             //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
             List<Mesh> meshList = monkey.getMeshGroup().getMeshes(material);
@@ -131,7 +125,8 @@ public class ExampleMeshRenderer implements Renderer
         //Test decomposing/recomposing matrix
         DecomposedTransform3D decomposedTransform = transformMatrix.decompose();
         transformMatrix = decomposedTransform.compose();
-        normalTransform.setNormalTransformFromMatrix4(transformMatrix);
+
+        normalTransform.setNormalTransformFromMatrix4Fast(transformMatrix);
 
         rotation++;
 

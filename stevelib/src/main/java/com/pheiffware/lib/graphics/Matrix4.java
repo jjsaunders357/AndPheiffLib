@@ -1,6 +1,7 @@
 package com.pheiffware.lib.graphics;
 
 import android.opengl.Matrix;
+import android.renderscript.Matrix4f;
 
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 
@@ -55,6 +56,12 @@ public class Matrix4
         return matrix;
     }
 
+    /**
+     * Create new matrix which is the inverse of the given matrix.
+     *
+     * @param matrix the matrix to invert
+     * @return a new inverted matrix
+     */
     public static Matrix4 newInverse(Matrix4 matrix)
     {
         Matrix4 inverse = new Matrix4(matrix);
@@ -71,7 +78,7 @@ public class Matrix4
      * @param near         distance to near view plane
      * @param far          distance to far view plane
      * @param flipVertical flip vertical when rendering
-     * @return
+     * @return the projection matrix
      */
     public static Matrix4 newProjection(float fieldOfViewY, float aspect, float near, float far, boolean flipVertical)
     {
@@ -189,6 +196,15 @@ public class Matrix4
         //@formatter:on
     }
 
+    /**
+     * Create a new orthographic projection matrix.
+     * @param left left
+     * @param right right
+     * @param bottom bottom
+     * @param top top
+     * @param near near
+     * @param far far
+     */
     public final void setOrthographic(float left, float right, float bottom, float top,
                                       float near, float far)
     {
