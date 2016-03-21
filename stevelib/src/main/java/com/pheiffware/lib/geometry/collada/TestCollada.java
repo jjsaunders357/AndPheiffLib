@@ -1,5 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
+import com.pheiffware.lib.R;
 import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
@@ -22,7 +23,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-//TODO: Move files to raw resources
 
 /**
  * Created by Steve on 2/20/2016.
@@ -32,10 +32,10 @@ public class TestCollada
     @Test
     public void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
-        FileInputStream input = new FileInputStream("src/main/assets/meshes/weird_blender_example.dae");
+        FileInputStream input = new FileInputStream("src/test/assets/meshes/weird_blender_example.dae");
         ColladaFactory colladaFactory = new ColladaFactory(true);
         colladaFactory.loadCollada(input);
-        input = new FileInputStream("src/main/assets/meshes/weird_sketchup_example.dae");
+        input = new FileInputStream("src/test/assets/meshes/weird_sketchup_example.dae");
         colladaFactory = new ColladaFactory(true);
         colladaFactory.loadCollada(input);
     }

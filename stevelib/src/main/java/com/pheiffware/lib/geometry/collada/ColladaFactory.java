@@ -36,7 +36,7 @@ public class ColladaFactory
     private static final Material defaultDefaultMaterial = new Material("", null, DEFAULT_AMBIENT, DEFAULT_DIFFUSE, DEFAULT_SPECULAR, DEFAULT_SHININESS);
 
     //Used to validate collada files against known schema
-    private static final Validator validator = DomUtils.createValidator("meshes\\collada_schema_1_4_1.xsd");
+    private static final Validator validator = DomUtils.createValidator("collada_schema_1_4_1.xsd");
 
     //Map from image ids to file names
     private final Map<String, String> imageFileNames = new HashMap<>();

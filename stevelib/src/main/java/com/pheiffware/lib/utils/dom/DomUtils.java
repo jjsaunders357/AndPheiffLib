@@ -1,5 +1,6 @@
 package com.pheiffware.lib.utils.dom;
 
+import com.pheiffware.lib.R;
 import com.pheiffware.lib.graphics.GColor;
 
 import org.w3c.dom.Document;
@@ -74,6 +75,7 @@ public class DomUtils
 
     public static Validator createValidator(String assetName)
     {
+        //TODO: Fix validator
 //         Due to broken, F**KED up, reasons, cannot get Schema factory!
         return null;
 //        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
