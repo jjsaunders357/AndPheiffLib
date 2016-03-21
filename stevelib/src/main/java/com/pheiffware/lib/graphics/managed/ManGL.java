@@ -23,12 +23,12 @@ public class ManGL
     private final Map<String, Program> programs = new HashMap<>();
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
+
     public ManGL(AssetManager assetManager, FilterQuality defaultFilterQuality)
     {
         this.assetManager = assetManager;
         this.defaultFilterQuality = defaultFilterQuality;
     }
-
 
     /**
      * Creates a vertex shader from the given asset path if not already loaded.
@@ -67,7 +67,7 @@ public class ManGL
     }
 
     /**
-     * Creates a program from given shaders if not already loaded.
+     * Creates a program from given shaders.
      *
      * @param name
      * @param vertexShaderAssetPath
@@ -75,16 +75,12 @@ public class ManGL
      * @return
      * @throws GraphicsException
      */
-    public Program getProgram(String name, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
+    public Program createProgram(String name, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
     {
-        Program program = programs.get(name);
-        if (program == null)
-        {
-            int vertexShaderHandle = getVertexShader(vertexShaderAssetPath);
-            int fragmentShaderHandle = getFragmentShader(fragmentShaderAssetPath);
-            program = new Program(vertexShaderHandle, fragmentShaderHandle);
-            programs.put(name, program);
-        }
+        int vertexShaderHandle = getVertexShader(vertexShaderAssetPath);
+        int fragmentShaderHandle = getFragmentShader(fragmentShaderAssetPath);
+        Program program = new Program(vertexShaderHandle, fragmentShaderHandle);
+        programs.put(name, program);
         return program;
     }
 
@@ -100,14 +96,10 @@ public class ManGL
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture getImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        Texture texture = textures.get(imageAssetPath);
-        if (texture == null)
-        {
-            texture = new Texture(TextureUtils.genTextureFromImage(assetManager, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
-            textures.put(imageAssetPath, texture);
-        }
+        Texture texture = new Texture(TextureUtils.genTextureFromImage(assetManager, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
+        textures.put(imageAssetPath, texture);
         return texture;
     }
 
@@ -122,14 +114,10 @@ public class ManGL
      * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture getColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
+    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = textures.get(name);
-        if (texture == null)
-        {
-            texture = new Texture(TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode));
-            textures.put(name, texture);
-        }
+        Texture texture = new Texture(TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode));
+        textures.put(name, texture);
         return texture;
     }
 
@@ -143,22 +131,13 @@ public class ManGL
      * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture getDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
+    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = textures.get(name);
-        if (texture == null)
-        {
-            texture = new Texture(TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode));
-            textures.put(name, texture);
-        }
+        Texture texture = new Texture(TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode));
+        textures.put(name, texture);
         return texture;
-
     }
 
-    public Program getProgram(String name)
-    {
-        return programs.get(name);
-    }
 
     /**
      * Loads an image into a newly created texture or gets previously loaded texture.
@@ -171,9 +150,9 @@ public class ManGL
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture getImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        return getImageTexture(imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createImageTexture(imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
     }
 
     /**
@@ -187,9 +166,9 @@ public class ManGL
      * @param tWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture getColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, int sWrapMode, int tWrapMode)
+    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, int sWrapMode, int tWrapMode)
     {
-        return getColorRenderTexture(name, pixelWidth, pixelHeight, alpha, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createColorRenderTexture(name, pixelWidth, pixelHeight, alpha, defaultFilterQuality, sWrapMode, tWrapMode);
     }
 
     /**
@@ -202,16 +181,19 @@ public class ManGL
      * @param tWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture getDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrapMode, int tWrapMode)
+    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrapMode, int tWrapMode)
     {
-        return getDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
     }
 
+    public Program getProgram(String name)
+    {
+        return programs.get(name);
+    }
 
     @Deprecated
     public AssetManager getAssetManager()
     {
         return assetManager;
     }
-
 }

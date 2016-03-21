@@ -57,15 +57,15 @@ public class ExampleRenderer2 implements Renderer
 
         try
         {
-            testProgram = manGL.getProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+            testProgram = manGL.createProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
             System.out.println(manGL.getProgram("testProgram"));
-            faceTexture = manGL.getImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            faceTexture = manGL.createImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             //Creates color texture render target, without alpha channel
-            colorRenderTexture = manGL.getColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            colorRenderTexture = manGL.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             //Creates a depth texture render target, without alpha channel
-            depthRenderTexture = manGL.getDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            depthRenderTexture = manGL.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
             frameBufferHandle = PheiffGLUtils.createFrameBuffer();
         }
         catch (GraphicsException exception)

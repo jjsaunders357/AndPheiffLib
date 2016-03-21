@@ -83,7 +83,6 @@ public class Mesh
 
     public float[] getNormalData()
     {
-        //TODO: Normal should figure out size of normal coordinates (always translate to size 3)
         return uniqueVertexData.get(Collada.COLLADA_VERTEX_NORMAL);
     }
 

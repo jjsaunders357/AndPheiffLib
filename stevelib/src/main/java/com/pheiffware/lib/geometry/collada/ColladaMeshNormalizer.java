@@ -94,11 +94,11 @@ class ColladaMeshNormalizer
     {
         generateUniversalVertexIndices();
         generateUniqueVertexData();
-        homogenizeData();
+        homogenizePositions();
         return new Mesh(numUniqueVertices, vertexData, vertexDataIndices);
     }
 
-    private void homogenizeData()
+    private void homogenizePositions()
     {
         if (homogenizePositions)
         {

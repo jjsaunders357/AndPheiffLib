@@ -52,9 +52,9 @@ public class ExampleRenderer1 implements Renderer
 
         try
         {
-            testProgram = manGL.getProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+            testProgram = manGL.createProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
             System.out.println(testProgram);
-            faceTexture = manGL.getImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            faceTexture = manGL.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
         }
         catch (GraphicsException exception)
         {

@@ -38,7 +38,6 @@ import javax.microedition.khronos.opengles.GL10;
 public class ExampleMeshRenderer implements Renderer
 {
     private final ManGL manGL;
-    private Program testProgram;
     private IndexBuffer pb;
     private StaticVertexBuffer sb;
     private float rotation = 0;
@@ -62,7 +61,7 @@ public class ExampleMeshRenderer implements Renderer
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
             //Must enable depth testing!
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-            testProgram = manGL.getProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+            Program testProgram = manGL.createProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = manGL.getAssetManager().open("meshes/test_render.dae");
             Collada collada = colladaFactory.loadCollada(inputStream);
@@ -116,6 +115,7 @@ public class ExampleMeshRenderer implements Renderer
     @Override
     public void onDrawFrame(GL10 gl)
     {
+        Program testProgram = manGL.getProgram("testProgram3D");
         //Default view volume is based on sitting at origin and looking in negative z direction
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         testProgram.bind();
