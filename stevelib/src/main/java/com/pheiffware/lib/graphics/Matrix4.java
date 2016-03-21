@@ -211,9 +211,9 @@ public class Matrix4
         Matrix.orthoM(m, 0, left, right, bottom, top, near, far);
     }
 
-    public final void setProjection(float fieldOfViewY, float aspect, float near, float far, boolean flipVertical)
+    public final void setProjection(float fieldOfViewY, float aspect, float nearZ, float farZ, boolean flipVertical)
     {
-        float top = (float) (near * Math.tan(Math.PI / 180.0 * fieldOfViewY / 2));
+        float top = (float) (nearZ * Math.tan(Math.PI / 180.0 * fieldOfViewY / 2));
         float right = top * aspect;
         if (flipVertical)
         {
@@ -221,26 +221,56 @@ public class Matrix4
         }
         float bottom = -top;
         float left = -right;
-        setFrustum(left, right, bottom, top, near, far);
+        setFrustum(left, right, bottom, top, nearZ, farZ);
     }
 
-    public final void setFrustum(float left, float right, float bottom, float top,
-                                 float near, float far)
+    /**
+     * @param leftNear   left at the nearZ plane position
+     * @param rightNear  right at the nearZ plane position
+     * @param bottomNear bottom at the nearZ plane position
+     * @param topNear    top at the nearZ plane position
+     * @param nearZ      nearZ plane position
+     * @param farZ       farZ plane position
+     */
+    public final void setFrustum(float leftNear, float rightNear, float bottomNear, float topNear,
+                                 float nearZ, float farZ)
     {
-        Matrix.frustumM(m, 0, left, right, bottom, top, near, far);
+        Matrix.frustumM(m, 0, leftNear, rightNear, bottomNear, topNear, nearZ, farZ);
     }
 
-    public void translateRhs(float x, float y, float z)
+    /**
+     * Multiply by a translation matrix on the right hand side.
+     *
+     * @param x x translation
+     * @param y y translation
+     * @param z z translation
+     */
+    public void translateBy(float x, float y, float z)
     {
         Matrix.translateM(m, 0, x, y, z);
     }
 
-    public void rotateRhs(float angle, float x, float y, float z)
+    /**
+     * Multiply by a rotation matrix on the right hand side.
+     *
+     * @param angle degrees to rotate
+     * @param x     x axis component
+     * @param y     y axis component
+     * @param z     z axis component
+     */
+    public void rotateBy(float angle, float x, float y, float z)
     {
         Matrix.rotateM(m, 0, angle, x, y, z);
     }
 
-    public void scaleRhs(float x, float y, float z)
+    /**
+     * Multiply by a scale matrix on the right hand side.
+     *
+     * @param x x scale
+     * @param y y scale
+     * @param z z scale
+     */
+    public void scaleBy(float x, float y, float z)
     {
         Matrix.scaleM(m, 0, x, y, z);
     }

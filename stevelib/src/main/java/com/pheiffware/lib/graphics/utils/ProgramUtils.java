@@ -13,6 +13,7 @@ import android.opengl.GLES20;
 import com.pheiffware.lib.utils.Utils;
 import com.pheiffware.lib.graphics.GraphicsException;
 
+//TODO: Separate Android specific code
 /**
  * Utility methods for loading/compiling shaders and programs.  Root location for loading files is the assets folder.
  */

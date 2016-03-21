@@ -1,11 +1,7 @@
 package com.pheiffware.lib.geometry;
 
-import android.opengl.Matrix;
-
-import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.utils.MathUtils;
 
 /**
  * Holds a decomposed transformation formed by translation * rotation * scale matrix.
@@ -55,7 +51,7 @@ public class DecomposedTransform3D
     public Matrix3 getNormalTransform()
     {
         Matrix4 normal = new Matrix4(rotation);
-        normal.scaleRhs(1 / scale.m[0], 1 / scale.m[5], 1 / scale.m[10]);
+        normal.scaleBy(1 / scale.m[0], 1 / scale.m[5], 1 / scale.m[10]);
         return Matrix3.newFromUpperLeft(normal);
     }
 }

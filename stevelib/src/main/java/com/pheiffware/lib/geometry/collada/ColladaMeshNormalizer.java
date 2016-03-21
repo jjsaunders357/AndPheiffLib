@@ -1,7 +1,7 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.utils.MathUtils;
+import com.pheiffware.lib.graphics.utils.GraphicsUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,7 +103,7 @@ class ColladaMeshNormalizer
         if (homogenizePositions)
         {
             float[] nonHomogeneousVectors = vertexData.get("POSITION");
-            vertexData.put("POSITION", MathUtils.homogenizeVec3Array(nonHomogeneousVectors, 1.0f));
+            vertexData.put("POSITION", GraphicsUtils.homogenizeVec3Array(nonHomogeneousVectors, 1.0f));
         }
     }
 
