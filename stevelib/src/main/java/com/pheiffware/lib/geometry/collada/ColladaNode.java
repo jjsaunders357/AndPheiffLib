@@ -1,5 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 
 import java.util.LinkedList;
@@ -13,11 +14,11 @@ class ColladaNode implements MeshGroupProxy
 {
     private final String id;
     private final String name;
-    private final float[] transformMatrix;
+    private final Matrix4 transformMatrix;
     private final List<MeshGroupProxy> children = new LinkedList<>();
     private MeshGroup meshGroup = null;
 
-    ColladaNode(String id, String name, float[] transformMatrix)
+    ColladaNode(String id, String name, Matrix4 transformMatrix)
     {
         this.id = id;
         this.name = name;
@@ -42,7 +43,7 @@ class ColladaNode implements MeshGroupProxy
     }
 
     @Override
-    public float[] getTransform()
+    public Matrix4 getTransform()
     {
         return transformMatrix;
     }

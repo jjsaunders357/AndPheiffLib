@@ -1,5 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 
 /**
@@ -11,7 +12,7 @@ interface MeshGroupProxy
 
     String getName();
 
-    float[] getTransform();
+    Matrix4 getTransform();
 
     MeshGroup retrieveMeshGroup(boolean flatten);
 }

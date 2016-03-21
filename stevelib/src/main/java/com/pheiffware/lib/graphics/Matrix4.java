@@ -116,7 +116,7 @@ public class Matrix4
      * @param floats 16 floats in column major order
      * @return new 4x4 matrix from given floats
      */
-    public static Matrix4 newMatrixFromFloats(float[] floats)
+    public static Matrix4 newFromFloats(float[] floats)
     {
         return new Matrix4(Arrays.copyOf(floats, 16));
     }
@@ -245,7 +245,7 @@ public class Matrix4
      * @param y y translation
      * @param z z translation
      */
-    public void translateBy(float x, float y, float z)
+    public final void translateBy(float x, float y, float z)
     {
         Matrix.translateM(m, 0, x, y, z);
     }
@@ -258,7 +258,7 @@ public class Matrix4
      * @param y     y axis component
      * @param z     z axis component
      */
-    public void rotateBy(float angle, float x, float y, float z)
+    public final void rotateBy(float angle, float x, float y, float z)
     {
         Matrix.rotateM(m, 0, angle, x, y, z);
     }
@@ -270,7 +270,7 @@ public class Matrix4
      * @param y y scale
      * @param z z scale
      */
-    public void scaleBy(float x, float y, float z)
+    public final void scaleBy(float x, float y, float z)
     {
         Matrix.scaleM(m, 0, x, y, z);
     }
@@ -278,7 +278,7 @@ public class Matrix4
     /**
      * Transpose the matrix in place.
      */
-    public void transpose()
+    public final void transpose()
     {
         float temp;
         temp = m[1];
@@ -309,7 +309,7 @@ public class Matrix4
     /**
      * Invert the matrix in place
      */
-    public void invert()
+    public final void invert()
     {
         float[] original = Arrays.copyOf(m, 16);
         Matrix.invertM(m, 0, original, 0);

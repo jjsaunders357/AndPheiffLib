@@ -1,7 +1,7 @@
 package com.pheiffware.lib.geometry.collada;
 
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-import com.pheiffware.lib.graphics.utils.MathUtils;
 
 /**
  * Created by Steve on 2/20/2016.
@@ -28,9 +28,9 @@ class DirectMeshGroupProxy implements MeshGroupProxy
     }
 
     @Override
-    public float[] getTransform()
+    public Matrix4 getTransform()
     {
-        return MathUtils.IDENTITY_MATRIX4;
+        return Matrix4.newIdentity();
     }
 
     @Override

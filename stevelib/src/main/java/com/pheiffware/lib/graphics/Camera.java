@@ -1,9 +1,5 @@
 package com.pheiffware.lib.graphics;
 
-import android.opengl.Matrix;
-
-import com.pheiffware.lib.graphics.utils.MathUtils;
-
 /**
  * Used for tracking display and orientation.
  * Created by Steve on 3/7/2016.

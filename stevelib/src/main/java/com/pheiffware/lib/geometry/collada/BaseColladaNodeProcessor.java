@@ -1,8 +1,8 @@
 package com.pheiffware.lib.geometry.collada;
 
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-import com.pheiffware.lib.graphics.utils.MathUtils;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -87,14 +87,15 @@ abstract class BaseColladaNodeProcessor
     private ColladaNode processNodeElementAndRegister(Element element) throws XMLParseException
     {
         Element matrixElement = DomUtils.getSubElement(element, "matrix");
-        float[] transformMatrix;
+        Matrix4 transformMatrix;
         if (matrixElement != null)
         {
-            transformMatrix = MathUtils.createTransposeMatrix(DomUtils.getFloatsFromElement(matrixElement));
+            transformMatrix = Matrix4.newFromFloats(DomUtils.getFloatsFromElement(matrixElement));
+            transformMatrix.transpose();
         }
         else
         {
-            transformMatrix = MathUtils.IDENTITY_MATRIX4;
+            transformMatrix = Matrix4.newIdentity();
         }
         String id = element.getAttribute("id");
         String name = element.getAttribute("name");
@@ -136,9 +137,9 @@ abstract class BaseColladaNodeProcessor
         }
 
         @Override
-        public float[] getTransform()
+        public Matrix4 getTransform()
         {
-            return MathUtils.IDENTITY_MATRIX4;
+            return Matrix4.newIdentity();
         }
 
         @Override

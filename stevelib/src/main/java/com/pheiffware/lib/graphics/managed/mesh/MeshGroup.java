@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed.mesh;
 
+import com.pheiffware.lib.graphics.Matrix4;
+
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +14,13 @@ import java.util.Map;
  */
 public class MeshGroup
 {
-    //The initial transform this object had when loaded.  This has NOT been applied to the loaded mesh.
-    private final float[] initialTransformMatrix;
+    //The initial transform this object had when loaded.  If not identity, this will NOT have been applied to the loaded mesh.
+    private final Matrix4 initialTransformMatrix;
+
+    //A map from each material to a list of meshes with that material
     private final Map<Material, List<Mesh>> meshes = new HashMap<>();
 
-    public MeshGroup(float[] initialTransformMatrix)
+    public MeshGroup(Matrix4 initialTransformMatrix)
     {
         this.initialTransformMatrix = initialTransformMatrix;
     }
@@ -49,7 +53,7 @@ public class MeshGroup
     }
 
 
-    public void applyMatrixTransform(float[] transformMatrix)
+    public void applyMatrixTransform(Matrix4 transformMatrix)
     {
         //TODO: Apply matrix transformation to child meshgroup
     }
@@ -59,7 +63,7 @@ public class MeshGroup
         return meshes.get(material);
     }
 
-    public float[] getInitialTransformMatrix()
+    public Matrix4 getInitialTransformMatrix()
     {
         return initialTransformMatrix;
     }

@@ -80,7 +80,7 @@ public class ExampleMeshRenderer implements Renderer
             Mesh sphereMesh = meshList.get(0);
 
             //Extract the translation aspect of the transform
-            DecomposedTransform3D decomposedTransform = Matrix4.newMatrixFromFloats(monkey.getMatrix()).decompose();
+            DecomposedTransform3D decomposedTransform = monkey.getMatrix().decompose();
             translationMatrix = decomposedTransform.getTranslation();
 
             pb = new IndexBuffer(sphereMesh.getNumVertexIndices());

@@ -1,5 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
@@ -42,7 +43,7 @@ class SceneColladaNodeProcessor extends BaseColladaNodeProcessor
         for (MeshGroupProxy topLevelMeshGroupProxy : topLevelMeshGroupProxies)
         {
             String name = topLevelMeshGroupProxy.getName();
-            float[] transform = topLevelMeshGroupProxy.getTransform();
+            Matrix4 transform = topLevelMeshGroupProxy.getTransform();
             MeshGroup meshGroup = topLevelMeshGroupProxy.retrieveMeshGroup(false);
             Object3D object3D = new Object3D(transform, meshGroup);
             if (name == null)
