@@ -3,6 +3,7 @@ package com.pheiffware.lib.graphics;
 import android.opengl.Matrix;
 
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
+import com.pheiffware.lib.geometry.Vec3D;
 
 import java.util.Arrays;
 
@@ -66,6 +67,19 @@ public class Matrix4
         Matrix4 inverse = new Matrix4(matrix);
         inverse.invert();
         return inverse;
+    }
+
+    /**
+     * Create new matrix which is the transpose of the given matrix.
+     *
+     * @param matrix the matrix to transpose
+     * @return a new transposed matrix
+     */
+    public static Matrix4 newTranspose(Matrix4 matrix)
+    {
+        Matrix4 transpose = new Matrix4(matrix);
+        transpose.transpose();
+        return transpose;
     }
 
     /**
@@ -251,6 +265,44 @@ public class Matrix4
     }
 
     /**
+     * Multiply by translation matrix on the left side
+     *
+     * @param x
+     * @param y
+     * @param z
+     */
+    public void translateByLHS(float x, float y, float z)
+    {
+        m[12] += x;
+        m[13] += y;
+        m[14] += z;
+    }
+
+    /**
+     * Changes the matrix translation terms, leaving everything else intact.
+     *
+     * @param x
+     * @param y
+     * @param z
+     */
+    public void modifyTranslation(float x, float y, float z)
+    {
+        m[12] = x;
+        m[13] = y;
+        m[14] = z;
+    }
+
+    /**
+     * Extracts the matrix translation terms as 3d vector.
+     *
+     * @return
+     */
+    public Vec3D getTranslation()
+    {
+        return new Vec3D(m[12], m[13], m[14]);
+    }
+
+    /**
      * Multiply by a rotation matrix on the right hand side.
      *
      * @param angle degrees to rotate
@@ -273,6 +325,18 @@ public class Matrix4
     public final void scaleBy(float x, float y, float z)
     {
         Matrix.scaleM(m, 0, x, y, z);
+    }
+
+    public final void multiplyBy(Matrix4 rhs)
+    {
+        float[] lhs = Arrays.copyOf(m, 16);
+        Matrix.multiplyMM(this.m, 0, lhs, 0, rhs.m, 0);
+    }
+
+    public final void multiplyByLHS(Matrix4 lhs)
+    {
+        float[] rhs = Arrays.copyOf(m, 16);
+        Matrix.multiplyMM(this.m, 0, lhs.m, 0, rhs, 0);
     }
 
     /**
@@ -351,20 +415,32 @@ public class Matrix4
         return normalTransform;
     }
 
-    public String toString()
+    /**
+     * Transforms the given 3D point by the matrix.  The point is assumed to be homogeneous with a value of 1 for "w".
+     *
+     * @param point
+     * @return transformed point
+     */
+    public final Vec3D transformHomogeneousPoint(Vec3D point)
     {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 16; j += 4)
-            {
-                builder.append(m[i + j]);
-                builder.append(",");
-            }
-            builder.append("\n");
-        }
-        return builder.toString();
+        double x = point.x * m[0] + point.y * m[4] + point.z * m[8] + 1 * m[12];
+        double y = point.x * m[1] + point.y * m[5] + point.z * m[9] + 1 * m[13];
+        double z = point.x * m[2] + point.y * m[6] + point.z * m[10] + 1 * m[14];
+        return new Vec3D(x, y, z);
+    }
 
+    /**
+     * Transforms the given 3D vector by the matrix.  The vector has an assumed assumed "w" value of 0.
+     *
+     * @param vector
+     * @return transformed point
+     */
+    public Vec3D transformVector(Vec3D vector)
+    {
+        double x = vector.x * m[0] + vector.y * m[4] + vector.z * m[8];
+        double y = vector.x * m[1] + vector.y * m[5] + vector.z * m[9];
+        double z = vector.x * m[2] + vector.y * m[6] + vector.z * m[10];
+        return new Vec3D(x, y, z);
     }
 
     /**
@@ -416,4 +492,22 @@ public class Matrix4
         }
         return transformedVectorData;
     }
+
+
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 16; j += 4)
+            {
+                builder.append(m[i + j]);
+                builder.append(",");
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
+
+    }
+
 }

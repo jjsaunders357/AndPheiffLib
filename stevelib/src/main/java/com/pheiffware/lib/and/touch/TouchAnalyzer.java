@@ -74,7 +74,7 @@ public class TouchAnalyzer
                 break;
             case MotionEvent.ACTION_MOVE:
                 Transform2D transform2D = updateStateAndGetTransform(event);
-                fireEvent(transform2D);
+                fireEvent(pointerPositions.size(), transform2D);
                 break;
         }
     }
@@ -202,11 +202,11 @@ public class TouchAnalyzer
         return new Transform2D(translation, weightedRotation, new Vec2D(uniformScale, uniformScale));
     }
 
-    private void fireEvent(Transform2D transform2D)
+    private void fireEvent(int numPointers, Transform2D transform2D)
     {
         if (listener != null)
         {
-            listener.touchTransformEvent(transform2D);
+            listener.touchTransformEvent(numPointers, transform2D);
         }
     }
 

@@ -30,15 +30,16 @@ import com.pheiffware.lib.graphics.managed.ManGL;
  */
 public class ExampleGraphicsView extends GLSurfaceView implements TouchTransformListener
 {
+    private final ExampleMeshRenderer renderer;
     private final TouchAnalyzer touchAnalyzer;
-    private final Transform2D accumulatedTransform = new Transform2D();
     public ExampleGraphicsView(Context context)
     {
         super(context);
-        touchAnalyzer = new TouchAnalyzer(2.0, 0.1, 0.01, this);
         setEGLContextClientVersion(2);
-        setRenderer(new ExampleMeshRenderer(new ManGL(context.getAssets(), FilterQuality.MEDIUM)));
+        renderer = new ExampleMeshRenderer(new ManGL(context.getAssets(), FilterQuality.MEDIUM));
+        setRenderer(renderer);
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        touchAnalyzer = new TouchAnalyzer(2.0, 0.1, 0.01, this);
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
     }
@@ -50,9 +51,15 @@ public class ExampleGraphicsView extends GLSurfaceView implements TouchTransform
     }
 
     @Override
-    public void touchTransformEvent(Transform2D transform)
+    public void touchTransformEvent(final int numPointers, final Transform2D transform)
     {
-        accumulatedTransform.apply(transform);
-        System.out.println(accumulatedTransform);
+        queueEvent(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                renderer.touchTransformEvent(numPointers, transform);
+            }
+        });
     }
 }
