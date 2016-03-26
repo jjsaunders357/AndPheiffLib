@@ -1,12 +1,14 @@
 package com.pheiffware.lib.examples;
 
+import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.pheiffware.lib.R;
+import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffListFragment;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements PheiffListFragment.Listener<String>
 {
 
     @Override
@@ -15,6 +17,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.e("LifeC - " + getClass().getSimpleName(), "onCreate");
         setContentView(R.layout.activity_main);
+//        Fragment fragment = getFragmentManager().findFragmentById(R.id.example_list_fragment);
+//        fragment.a
     }
 
     @Override
@@ -64,5 +68,11 @@ public class MainActivity extends AppCompatActivity
     {
         super.onDestroy();
         Log.e("LifeC - " + getClass().getSimpleName(), "onDestroy");
+    }
+
+    @Override
+    public void onItemSelected(String item)
+    {
+        System.out.println("Selected: " + item);
     }
 }
