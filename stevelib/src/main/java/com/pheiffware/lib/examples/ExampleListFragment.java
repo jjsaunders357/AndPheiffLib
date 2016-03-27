@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffListFragment;
+import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffRecyclerViewAdapter;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffViewHolder;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class ExampleListFragment extends PheiffListFragment<String>
 {
     public ExampleListFragment()
     {
+        super(PheiffRecyclerViewAdapter.SelectionMode.SINGLE_SELECTION);
     }
 
     @Override

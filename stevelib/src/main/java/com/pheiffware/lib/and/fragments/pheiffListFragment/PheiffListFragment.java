@@ -13,7 +13,11 @@ import android.view.ViewGroup;
 
 import com.pheiffware.lib.R;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A fragment representing a list of items of type T with a single selection. This handles much of the boiler plate functionality expected of a list:
@@ -37,12 +41,22 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     //Adapter used by the list recycler view.
     private PheiffRecyclerViewAdapter adapter;
 
-    //Holds the currently selected item index.  This is saved/restored in SELECTED_ITEM_INDEX_BUNDLE_KEY
-    private int selectedItemIndex = -1;
-    private static final String SELECTED_ITEM_INDEX_BUNDLE_KEY = "SELECTED_INDEX";
+    //Temporarily holds the initial selected item indices restored from SELECTED_ITEM_INDEX_BUNDLE_KEY
+    private ArrayList<Integer> initialSelectedIndices;
+    private static final String SELECTED_ITEM_INDEX_BUNDLE_KEY = "SELECTED_INDICES";
+    private PheiffRecyclerViewAdapter.SelectionMode selectionMode;
+
+    /**
+     * No 0-arg constructor for Fragment OK, because it is abstract.
+     */
+    public PheiffListFragment(PheiffRecyclerViewAdapter.SelectionMode selectionMode)
+    {
+        this.selectionMode = selectionMode;
+    }
 
     /**
      * Extending classes should implement this to create PheiffViewHolder objects for the underlying PheiffRecyclerViewAdapter.
+     *
      * @param parent
      * @param viewType
      * @return
@@ -72,10 +86,17 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         if (savedInstanceState != null)
         {
-            selectedItemIndex = savedInstanceState.getInt(SELECTED_ITEM_INDEX_BUNDLE_KEY, -1);
+            initialSelectedIndices = savedInstanceState.getIntegerArrayList(SELECTED_ITEM_INDEX_BUNDLE_KEY);
         }
+        if (initialSelectedIndices == null)
+        {
+            initialSelectedIndices = new ArrayList<>();
+        }
+
+
         if (getArguments() != null)
         {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -101,7 +122,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
         {
             recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        adapter = new PheiffRecyclerViewAdapter(loadListContents(), selectedItemIndex, this)
+        adapter = new PheiffRecyclerViewAdapter(selectionMode, loadListContents(), initialSelectedIndices, this)
         {
             @Override
             protected PheiffViewHolder onCreatePheiffViewHolder(ViewGroup parent, int viewType)
@@ -116,8 +137,6 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     }
 
 
-
-
     @Override
     public void onStart()
     {
@@ -130,7 +149,9 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     {
         super.onSaveInstanceState(outState);
         Log.e("Frag Life-cycle", "onSaveInstanceState");
-        outState.putInt(SELECTED_ITEM_INDEX_BUNDLE_KEY, selectedItemIndex);
+
+        ArrayList<Integer> storeSelection = new ArrayList<>(adapter.getSelectedItemIndices());
+        outState.putIntegerArrayList(SELECTED_ITEM_INDEX_BUNDLE_KEY, storeSelection);
     }
 
     @Override
@@ -179,16 +200,19 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     }
 
 
-    /**
-     * Called by the embedded PheiffRecyclerViewAdapter
-     *
-     * @param data the newly selected item.
-     */
-    @Override
-    public void onItemSelected(int selectedItemIndex, T data)
+    public void onItemSelectionChanged(int selectedItemIndex, T selectedData, int unselectedItemIndex, T unselectedData)
     {
-        this.selectedItemIndex = selectedItemIndex;
-        listener.onItemSelected(data);
+        listener.onItemSelectionChanged(selectedItemIndex, selectedData, unselectedItemIndex, unselectedData);
+    }
+
+    public void onItemSelected(int selectedItemIndex, T selectedData)
+    {
+        listener.onItemSelected(selectedItemIndex, selectedData);
+    }
+
+    public void onItemDeselected(int deselectedItemIndex, T deselectedData)
+    {
+        listener.onItemDeselected(deselectedItemIndex, deselectedData);
     }
 
     /**
@@ -198,6 +222,30 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
      */
     public interface Listener<T>
     {
-        void onItemSelected(T item);
+        /**
+         * Only called if selection mode set to SINGLE_SELECTION. Signals selection was changed.
+         *
+         * @param selectedItemIndex
+         * @param selectedData
+         * @param unselectedItemIndex
+         * @param unselectedData
+         */
+        void onItemSelectionChanged(int selectedItemIndex, T selectedData, int unselectedItemIndex, T unselectedData);
+
+        /**
+         * Only called if selection mode set to MULTI_TOGGLE_SELECTION. Signals item was selected.
+         *
+         * @param selectedItemIndex index of the newly selected item
+         * @param selectedData      the selected item's data
+         */
+        void onItemSelected(int selectedItemIndex, T selectedData);
+
+        /**
+         * Only called if selection mode set to MULTI_TOGGLE_SELECTION. Signals item was deselected.
+         *
+         * @param deselectedItemIndex index of the newly deselected item
+         * @param deselectedData      the deselected item's data
+         */
+        void onItemDeselected(int deselectedItemIndex, T deselectedData);
     }
 }

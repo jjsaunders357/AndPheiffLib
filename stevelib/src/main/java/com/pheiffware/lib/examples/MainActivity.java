@@ -71,8 +71,23 @@ public class MainActivity extends AppCompatActivity implements PheiffListFragmen
     }
 
     @Override
-    public void onItemSelected(String item)
+    public void onItemSelectionChanged(int selectedItemIndex, String selectedData, int unselectedItemIndex, String unselectedData)
     {
-        System.out.println("Selected: " + item);
+        System.out.println("Selected: " + selectedData);
+        System.out.println("Deselected: " + unselectedData);
+
     }
+
+    @Override
+    public void onItemSelected(int selectedItemIndex, String selectedData)
+    {
+        System.out.println("Selected: " + selectedData);
+    }
+
+    @Override
+    public void onItemDeselected(int deselectedItemIndex, String deselectedData)
+    {
+        System.out.println("Deselected: " + deselectedData);
+    }
+
 }

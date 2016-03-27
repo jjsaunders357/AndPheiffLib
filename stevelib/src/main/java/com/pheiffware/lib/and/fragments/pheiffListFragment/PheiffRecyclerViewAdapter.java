@@ -4,16 +4,31 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * An enhanced recycle view adapter with built-in capabilities to track selection and give messages to it's listener.
+ *
  * @param <T> the data type of the list
  */
 public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<PheiffViewHolder<T>>
 {
-    //The index of the selected item
-    private int selectedItemIndex;
+    public enum SelectionMode
+    {
+        //Only allow one selection.  Whenever an item is selected, the previous selection (if any) is unselected.  Only triggers onItemSelectionChanged.
+        SINGLE_SELECTION,
+        //Allows multiple selection by toggling each item's selection state.  Triggers: onItemSelected,onItemDeselected
+        MULTI_TOGGLE_SELECTION
+    }
+
+    private SelectionMode selectionMode;
+
+    //The indices of the selected items
+    private final Set<Integer> selectedItemIndices;
 
     //The list backing this adapter
     private final List<T> listData;
@@ -22,8 +37,33 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
     private final Listener<T> listener;
 
     /**
+     * Creates a list with given selection mode.
+     *
+     * @param selectionMode    The mode of selection
      * @param initialItems     initial state of the adapter, if null the list will start empty.
-     * @param initialSelection
+     * @param initialSelection specifies an initial selection, if null, the selection set will be empty.
+     * @param listener
+     */
+    PheiffRecyclerViewAdapter(SelectionMode selectionMode, List<T> initialItems, Collection<Integer> initialSelection, Listener<T> listener)
+    {
+        if (initialItems == null)
+        {
+            listData = new ArrayList<>();
+        }
+        else
+        {
+            listData = new ArrayList<>(initialItems);
+        }
+        selectedItemIndices = new HashSet<>(initialSelection);
+        this.selectionMode = selectionMode;
+        this.listener = listener;
+    }
+
+    /**
+     * Creates a single selection list
+     *
+     * @param initialItems     initial state of the adapter, if null the list will start empty.
+     * @param initialSelection specifies an initial selection, if null, the selection set will be empty.
      * @param listener
      */
     PheiffRecyclerViewAdapter(List<T> initialItems, int initialSelection, Listener<T> listener)
@@ -36,10 +76,11 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
         {
             listData = new ArrayList<>(initialItems);
         }
-        selectedItemIndex = initialSelection;
+        selectedItemIndices = new HashSet<>();
+        selectedItemIndices.add(initialSelection);
+        this.selectionMode = SelectionMode.SINGLE_SELECTION;
         this.listener = listener;
     }
-
 
     /**
      * The implementation calls onCreatePheiffViewHolder (what extending classes should override) and also registers that class' click listener to report back to this adapter.
@@ -67,13 +108,14 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
 
     /**
      * Not used by extending classes.  Instead override PheiffViewHolder's class to update state, which includes enabled state.
+     *
      * @param holder
      * @param position
      */
     @Override
     public final void onBindViewHolder(PheiffViewHolder<T> holder, int position)
     {
-        holder.updateView(listData.get(position), position == selectedItemIndex);
+        holder.updateView(listData.get(position), selectedItemIndices.contains(position));
     }
 
     @Override
@@ -104,16 +146,53 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
     }
 
     /**
-     * Called internally by PheiffViewHolder to update the selectedItemIndex every time a click occurs.
+     * Gets the selected item index set.  This is a direct reference, for efficiency, and should NOT be modified.
      *
-     * @param newSelectedItemIndex the index of the newly selected item
+     * @return
      */
-    void updatedSelectedItemIndex(int newSelectedItemIndex)
+    public Set<Integer> getSelectedItemIndices()
     {
-        notifyItemChanged(selectedItemIndex);
-        selectedItemIndex = newSelectedItemIndex;
-        notifyItemChanged(selectedItemIndex);
-        listener.onItemSelected(newSelectedItemIndex, listData.get(selectedItemIndex));
+        return selectedItemIndices;
+    }
+
+    /**
+     * Called internally by PheiffViewHolder to update the selectedItemIndices every time a click occurs.
+     *
+     * @param selectedIndex the index of the newly selected item
+     */
+    void updatedSelectedItemIndex(int selectedIndex)
+    {
+        if (selectionMode == SelectionMode.SINGLE_SELECTION)
+        {
+            Integer unselectedIndex = -1;
+            T unselectedData = null;
+            Iterator<Integer> i = selectedItemIndices.iterator();
+            if (i.hasNext())
+            {
+                unselectedIndex = i.next();
+                i.remove();
+                notifyItemChanged(unselectedIndex);
+                unselectedData = listData.get(unselectedIndex);
+            }
+            selectedItemIndices.add(selectedIndex);
+            notifyItemChanged(selectedIndex);
+            listener.onItemSelectionChanged(selectedIndex, listData.get(selectedIndex), unselectedIndex, unselectedData);
+        }
+        else if (selectionMode == SelectionMode.MULTI_TOGGLE_SELECTION)
+        {
+            if (selectedItemIndices.contains(selectedIndex))
+            {
+                selectedItemIndices.remove(selectedIndex);
+                notifyItemChanged(selectedIndex);
+                listener.onItemDeselected(selectedIndex, listData.get(selectedIndex));
+            }
+            else
+            {
+                selectedItemIndices.add(selectedIndex);
+                notifyItemChanged(selectedIndex);
+                listener.onItemSelected(selectedIndex, listData.get(selectedIndex));
+            }
+        }
     }
 
     /**
@@ -124,11 +203,29 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
     public interface Listener<T>
     {
         /**
-         * Called every time the currently selected item changes
+         * Only called if selection mode set to SINGLE_SELECTION. Signals selection was changed.
          *
-         * @param newSelectedItemIndex index of the new selection item
-         * @param data                 the selected item's data
+         * @param selectedItemIndex
+         * @param selectedData
+         * @param unselectedItemIndex
+         * @param unselectedData
          */
-        void onItemSelected(int newSelectedItemIndex, T data);
+        void onItemSelectionChanged(int selectedItemIndex, T selectedData, int unselectedItemIndex, T unselectedData);
+
+        /**
+         * Only called if selection mode set to MULTI_TOGGLE_SELECTION. Signals item was selected.
+         *
+         * @param selectedItemIndex index of the newly selected item
+         * @param selectedData      the selected item's data
+         */
+        void onItemSelected(int selectedItemIndex, T selectedData);
+
+        /**
+         * Only called if selection mode set to MULTI_TOGGLE_SELECTION. Signals item was deselected.
+         *
+         * @param deselectedItemIndex index of the newly deselected item
+         * @param deselectedData      the deselected item's data
+         */
+        void onItemDeselected(int deselectedItemIndex, T deselectedData);
     }
 }
