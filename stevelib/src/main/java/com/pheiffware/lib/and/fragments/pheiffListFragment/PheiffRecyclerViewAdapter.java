@@ -178,12 +178,17 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
             {
                 unselectedIndex = i.next();
                 i.remove();
-                notifyItemChanged(unselectedIndex);
                 unselectedData = listData.get(unselectedIndex);
             }
             selectedItemIndices.add(selectedIndex);
-            notifyItemChanged(selectedIndex);
-            listener.onItemSelectionChanged(selectedIndex, listData.get(selectedIndex), unselectedIndex, unselectedData);
+
+            //If selection has actually changed, then do something
+            if (unselectedIndex != selectedIndex)
+            {
+                notifyItemChanged(unselectedIndex);
+                notifyItemChanged(selectedIndex);
+                listener.onItemSelectionChanged(selectedIndex, listData.get(selectedIndex), unselectedIndex, unselectedData);
+            }
         }
         else if (selectionMode == SelectionMode.MULTI_TOGGLE_SELECTION)
         {
