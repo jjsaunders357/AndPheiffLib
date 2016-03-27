@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: Comment me! Created by Steve on 3/26/2016.
+ * A fragment to display a list of example fragments to run.
  */
 public class ExampleListFragment extends PheiffListFragment<String>
 {

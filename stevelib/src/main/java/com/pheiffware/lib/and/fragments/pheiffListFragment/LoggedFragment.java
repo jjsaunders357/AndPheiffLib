@@ -3,17 +3,10 @@ package com.pheiffware.lib.and.fragments.pheiffListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.pheiffware.lib.R;
-
-import java.util.ArrayList;
 
 /**
  * A base fragment class which logs all life cycle methods.  Useful for debugging.
