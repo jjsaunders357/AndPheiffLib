@@ -54,7 +54,14 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
         {
             listData = new ArrayList<>(initialItems);
         }
-        selectedItemIndices = new HashSet<>(initialSelection);
+        if (initialItems == null)
+        {
+            selectedItemIndices = new HashSet<>();
+        }
+        else
+        {
+            selectedItemIndices = new HashSet<>(initialSelection);
+        }
         this.selectionMode = selectionMode;
         this.listener = listener;
     }
