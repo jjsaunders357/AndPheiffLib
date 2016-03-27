@@ -23,14 +23,6 @@ public class ExampleGraphicsActivity extends AppCompatActivity
         setContentView(R.layout.activity_gl);
         LinearLayout rootView = (LinearLayout) findViewById(R.id.root);
         rootView.addView(exampleGraphicsView, 0);
-        Log.e("Life-cycle", "CREATE");
-    }
-
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        Log.e("Life-cycle", "DESTROY");
     }
 
     @Override
@@ -38,43 +30,13 @@ public class ExampleGraphicsActivity extends AppCompatActivity
     {
         super.onPause();
         exampleGraphicsView.onPause();
-        Log.e("Life-cycle", "PAUSE");
     }
 
-    @Override
-    protected void onRestart()
-    {
-        super.onRestart();
-        Log.e("Life-cycle", "RESTART");
-    }
 
     @Override
     protected void onResume()
     {
         super.onResume();
         exampleGraphicsView.onResume();
-        Log.e("Life-cycle", "RESUME");
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-        Log.e("Life-cycle", "SAVE-INSTANCE");
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        Log.e("Life-cycle", "START");
-    }
-
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-        Log.e("Life-cycle", "STOP");
-    }
-
 }

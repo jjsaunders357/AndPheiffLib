@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +28,8 @@ import java.util.Set;
  */
 public abstract class PheiffListFragment<T> extends Fragment implements PheiffRecyclerViewAdapter.Listener<T>
 {
-
-    // TODO: Customize parameter argument names
+    // TODO: Understand fragment arguments across projects
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
     //Listener of list related events.  This is automatically set to the context when the fragment attaches.
@@ -63,6 +60,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
      */
     protected abstract PheiffViewHolder onCreatePheiffViewHolder(ViewGroup parent, int viewType);
 
+    //TODO: Figure out appropriate way to load/save list
     protected abstract List<T> loadListContents();
 
     protected abstract void saveListContents(List<T> list);
@@ -130,72 +128,33 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
                 return PheiffListFragment.this.onCreatePheiffViewHolder(parent, viewType);
             }
         };
-
+        initialSelectedIndices = null;
         recyclerView.setAdapter(adapter);
 
         return view;
-    }
-
-
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        Log.e("Frag Life-cycle", "onStart");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        Log.e("Frag Life-cycle", "onSaveInstanceState");
+        saveListContents(adapter.getListCopy());
 
         ArrayList<Integer> storeSelection = new ArrayList<>(adapter.getSelectedItemIndices());
         outState.putIntegerArrayList(SELECTED_ITEM_INDEX_BUNDLE_KEY, storeSelection);
     }
 
     @Override
-    public void onResume()
-    {
-        super.onResume();
-        Log.e("Frag Life-cycle", "onResume");
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        Log.e("Frag Life-cycle", "onPause");
-        saveListContents(adapter.getListCopy());
-    }
-
-    @Override
-    public void onStop()
-    {
-        super.onStop();
-        Log.e("Frag Life-cycle", "onStop");
-    }
-
-    @Override
     public void onDestroyView()
     {
         super.onDestroyView();
-        Log.e("Frag Life-cycle", "onDestroyView");
         adapter = null;
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        Log.e("Frag Life-cycle", "onDestroy");
     }
 
     @Override
     public void onDetach()
     {
         super.onDetach();
-        Log.e("Frag Life-cycle", "onDetach");
         listener = null;
     }
 
