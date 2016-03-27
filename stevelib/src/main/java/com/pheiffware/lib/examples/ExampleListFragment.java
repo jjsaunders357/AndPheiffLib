@@ -1,5 +1,6 @@
 package com.pheiffware.lib.examples;
 
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,19 @@ import java.util.List;
 /**
  * A fragment to display a list of example fragments to run.
  */
-public class ExampleListFragment extends PheiffListFragment<String>
+public class ExampleListFragment extends PheiffListFragment<ExampleListFragment.LibExampleData>
 {
+    public static class LibExampleData
+    {
+        public final String name;
+        public final Class<? extends Fragment> cls;
+
+        public LibExampleData(String name, Class<? extends Fragment> cls)
+        {
+            this.name = name;
+            this.cls = cls;
+        }
+    }
     public ExampleListFragment()
     {
         super(PheiffRecyclerViewAdapter.SelectionMode.SINGLE_SELECTION);
@@ -32,24 +44,21 @@ public class ExampleListFragment extends PheiffListFragment<String>
     }
 
     @Override
-    protected List<String> loadListContents()
+    protected List<LibExampleData> loadListContents()
     {
-        List<String> examples = new ArrayList<>(20);
-        examples.add("Blah 1");
-        examples.add("Blah 2");
-        examples.add("Blah 3");
-        examples.add("Blah 4");
-        examples.add("Blah 5");
+        List<LibExampleData> examples = new ArrayList<>(20);
+        examples.add(new LibExampleData("Example 1 name", ExampleFragment1.class));
+        examples.add(new LibExampleData("Example 2 name", ExampleFragment2.class));
         return examples;
     }
 
     @Override
-    protected void saveListContents(List<String> list)
+    protected void saveListContents(List<LibExampleData> list)
     {
 
     }
 
-    private static class ExampleViewHolder extends PheiffViewHolder<String>
+    private static class ExampleViewHolder extends PheiffViewHolder<LibExampleData>
     {
         private final TextView exampleNameView;
 
@@ -60,10 +69,10 @@ public class ExampleListFragment extends PheiffListFragment<String>
         }
 
         @Override
-        protected void updateView(String data, boolean isSelected)
+        protected void updateView(LibExampleData data, boolean isSelected)
         {
             super.updateView(data, isSelected);
-            exampleNameView.setText(data);
+            exampleNameView.setText(data.name);
         }
     }
 }

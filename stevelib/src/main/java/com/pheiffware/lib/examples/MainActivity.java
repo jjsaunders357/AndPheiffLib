@@ -1,15 +1,17 @@
 package com.pheiffware.lib.examples;
 
-import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.LoggedActivity;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffListFragment;
 
-public class MainActivity extends LoggedActivity implements PheiffListFragment.Listener<String>
+import static com.pheiffware.lib.examples.ExampleListFragment.LibExampleData;
+
+public class MainActivity extends LoggedActivity implements PheiffListFragment.Listener<LibExampleData>
 {
 
     @Override
@@ -20,21 +22,41 @@ public class MainActivity extends LoggedActivity implements PheiffListFragment.L
     }
 
     @Override
-    public void onItemSelectionChanged(int selectedItemIndex, String selectedData, int unselectedItemIndex, String unselectedData)
+    public void onItemSelectionChanged(int selectedItemIndex, LibExampleData selectedData, int unselectedItemIndex, LibExampleData unselectedData)
     {
-        System.out.println("Selected: " + selectedData);
-        System.out.println("Deselected: " + unselectedData);
+        System.out.println("Selected: " + selectedData.name);
+        if (unselectedData != null)
+        {
+            System.out.println("Deselected: " + unselectedData.name);
+        }
 
+        try
+        {
+            Fragment exampleFragment = selectedData.cls.newInstance();
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.exampleFragmentContainer, exampleFragment);
+            ft.commit();
+        }
+        catch (InstantiationException e)
+        {
+            //TODO: Handle exceptions
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void onItemSelected(int selectedItemIndex, String selectedData)
+    public void onItemSelected(int selectedItemIndex, LibExampleData selectedData)
     {
         System.out.println("Selected: " + selectedData);
     }
 
     @Override
-    public void onItemDeselected(int deselectedItemIndex, String deselectedData)
+    public void onItemDeselected(int deselectedItemIndex, LibExampleData deselectedData)
     {
         System.out.println("Deselected: " + deselectedData);
     }
