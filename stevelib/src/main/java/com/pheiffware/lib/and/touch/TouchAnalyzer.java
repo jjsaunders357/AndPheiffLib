@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Takes in Android multi-touch events and processes them into Transform2 events.
- * Created by Steve on 3/9/2016.
+ * Takes in Android multi-touch events and processes them into Transform2 events. Created by Steve on 3/9/2016.
  */
 public class TouchAnalyzer
 {
@@ -27,31 +26,35 @@ public class TouchAnalyzer
     //Averaged center of all pointers on screen
     private final Vec2D center = new Vec2D(0, 0);
 
+    //Screen DPI used for conversion from pixels
+    private final double xDPI;
+    private final double yDPI;
+
     //Averaged radius of circle formed by all pointers on screen squared
     private double averageRadiusSquared;
 
-    //The square of the minimum required translation to generate a non-zero translation event
-    private final double minimumTranslationSquared;
-
-    //The minimum rotation required to generate a non-zero rotation event
-    private final double minimumRotation;
-
-    //abs(log(1 + minimumScaleFraction)).  Used to calculate the minimum scale required to generate a non-zero scale event.
-    private final double minimumLogScale;
-
+    /**
+     * Reports touch transform events in terms of pixels (dp for screen with DPI of 160).
+     *
+     * @param listener               listener to receive touchTransform events
+     */
+    public TouchAnalyzer(TouchTransformListener listener)
+    {
+        this(listener, 160.0, 160.0);
+    }
 
     /**
-     * @param minimumTranslation     Any translation with a magnitude smaller than this, will be ignored
-     * @param minimumRotationDegrees Any rotation less than this (in degrees) will be ignored
-     * @param minimumScale           The smallest fraction increase/decrease to not ignore.  For example 0.02 mean ignore any change in scale smaller than 2%.
-     * @param listener
+     * Reports touch transform events in terms of dp
+     *
+     * @param listener listener to receive touchTransform events
+     * @param xDPI     touchTransform translation events specified in units of dp
+     * @param yDPI     touchTransform translation events specified in units of dp
      */
-    public TouchAnalyzer(double minimumTranslation, double minimumRotationDegrees, double minimumScale, TouchTransformListener listener)
+    public TouchAnalyzer(TouchTransformListener listener, double xDPI, double yDPI)
     {
-        this.minimumTranslationSquared = minimumTranslation * minimumTranslation;
-        this.minimumRotation = Math.PI * minimumRotationDegrees / 180.0;
-        this.minimumLogScale = Math.abs(Math.log(1 + minimumScale));
         this.listener = listener;
+        this.xDPI = xDPI;
+        this.yDPI = yDPI;
     }
 
     public void interpretRawEvent(MotionEvent event)
@@ -74,9 +77,16 @@ public class TouchAnalyzer
                 break;
             case MotionEvent.ACTION_MOVE:
                 Transform2D transform2D = updateStateAndGetTransform(event);
+                scaleTransformToDP(transform2D);
                 fireEvent(pointerPositions.size(), transform2D);
                 break;
         }
+    }
+
+    private void scaleTransformToDP(Transform2D transform2D)
+    {
+        transform2D.translation.x = 160 * transform2D.translation.x / xDPI;
+        transform2D.translation.y = 160 * transform2D.translation.y / yDPI;
     }
 
     /**
@@ -149,6 +159,7 @@ public class TouchAnalyzer
 
     /**
      * Updates the pointer's center, angles and average radius squared.  Returns composite transform.
+     *
      * @param event
      */
     private Transform2D updateStateAndGetTransform(MotionEvent event)
@@ -208,43 +219,5 @@ public class TouchAnalyzer
         {
             listener.touchTransformEvent(numPointers, transform2D);
         }
-    }
-
-    /**
-     * If any aspect of the given transform (translation, rotation, scale) is less than the minimum allowed, it is adjusted to 0 (1 for scale).
-     *
-     * @param transform2D The transform to adjust based on minimum sensitivity
-     * @return Does the transform have any change worth reporting?  If false, then it won't be reported as an event.
-     */
-    private boolean adjustTransformForMinimumSensitivity(Transform2D transform2D)
-    {
-        boolean generateEvent = false;
-        if (transform2D.translation.magnitudeSquared() < minimumTranslationSquared)
-        {
-            transform2D.translation.x = 0;
-            transform2D.translation.y = 0;
-        }
-        else
-        {
-            generateEvent = true;
-        }
-        if (Math.abs(transform2D.rotation) < minimumRotation)
-        {
-            transform2D.rotation = 0;
-        }
-        else
-        {
-            generateEvent = true;
-        }
-        if (Math.abs(Math.log(transform2D.scale.x)) < minimumLogScale)
-        {
-            transform2D.scale.x = 1;
-            transform2D.scale.y = 1;
-        }
-        else
-        {
-            generateEvent = true;
-        }
-        return generateEvent;
     }
 }

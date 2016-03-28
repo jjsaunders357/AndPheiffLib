@@ -12,17 +12,17 @@ import com.pheiffware.lib.and.touch.TouchTransformListener;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.Transform2D;
-import com.pheiffware.lib.graphics.Camera;
-import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.GColor;
-import com.pheiffware.lib.graphics.Matrix3;
-import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.ManGL;
-import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
+import com.pheiffware.lib.graphics.Camera;
+import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.Matrix3;
+import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
@@ -40,9 +40,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class ExampleMeshRenderer implements TouchTransformListener, Renderer
 {
-    //TODO: Redefine in terms of device independent coords
-    private static final double SCREEN_DRAG_TO_CAMERA_TRANSLATION = 0.006f;
-    private static final float SCREEN_DRAG_TO_CAMERA_ROTATION = 0.1f;
+    private static final double SCREEN_DRAG_TO_CAMERA_TRANSLATION = 0.01f;
     private final ManGL manGL;
     private IndexBuffer pb;
     private StaticVertexBuffer sb;
@@ -127,6 +125,7 @@ public class ExampleMeshRenderer implements TouchTransformListener, Renderer
         try
         {
             Program testProgram = manGL.getProgram("testProgram3D");
+
             //Default view volume is based on sitting at origin and looking in negative z direction
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             testProgram.bind();
@@ -193,7 +192,7 @@ public class ExampleMeshRenderer implements TouchTransformListener, Renderer
         else if (numPointers > 1)
         {
             camera.roll((float) (180 * transform.rotation / Math.PI));
-            camera.rotateScreenInputVector((float) transform.translation.x, (float) -transform.translation.y, SCREEN_DRAG_TO_CAMERA_ROTATION);
+            camera.rotateScreenInputVector((float) transform.translation.x, (float) -transform.translation.y);
         }
         else
         {

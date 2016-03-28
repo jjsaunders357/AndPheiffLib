@@ -34,8 +34,6 @@ public class MainActivity extends LoggedActivity implements ExampleListFragment.
     @Override
     public void onSelectedExampleChanged(LibExampleData exampleData)
     {
-        System.out.println("Selected: " + exampleData.name);
-
         try
         {
             FragmentManager fm = getSupportFragmentManager();
@@ -45,12 +43,11 @@ public class MainActivity extends LoggedActivity implements ExampleListFragment.
         }
         catch (InstantiationException e)
         {
-            //TODO: Handle exceptions
-            e.printStackTrace();
+            throw new RuntimeException("Cannot create example: " + exampleData.name, e);
         }
         catch (IllegalAccessException e)
         {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot create example: " + exampleData.name, e);
         }
     }
 }

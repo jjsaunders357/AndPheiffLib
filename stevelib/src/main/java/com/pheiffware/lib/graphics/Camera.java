@@ -1,8 +1,5 @@
 package com.pheiffware.lib.graphics;
 
-import android.opengl.Matrix;
-
-import com.pheiffware.lib.geometry.Vec2D;
 import com.pheiffware.lib.geometry.Vec3D;
 
 /**
@@ -11,6 +8,9 @@ import com.pheiffware.lib.geometry.Vec3D;
  */
 public class Camera
 {
+    //Conversion factor from a distance on the screen in terms of dp to degrees.  degrees = SCREEN_DP_TO_DEGREES * dp
+    private static final float SCREEN_DP_TO_DEGREES = 0.1f;
+
     private float FOV;
     private float aspect;
     private float nearZ;
@@ -193,6 +193,19 @@ public class Camera
             rotateScreen(angleDegrees, rotationAxis);
         }
     }
+
+    /**
+     * Used to turn screen input (such as a mouse or touch/drag) into a camera rotation. Given the direction the camera is looking and an x,y vector, in screen space, rotate om the
+     * plane described by the vectors (x,y,0) and (0,0,z). Rotate by an amount proportional to length (using standard constant).
+     *
+     * @param x x screen movement (assumed to be in units of dp)
+     * @param y y screen movement (assumed to be in units of dp)
+     */
+    public void rotateScreenInputVector(float x, float y)
+    {
+        rotateScreenInputVector(x, y, SCREEN_DP_TO_DEGREES);
+    }
+
 
     public void roll(float angleDegrees)
     {

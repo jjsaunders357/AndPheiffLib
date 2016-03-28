@@ -13,13 +13,6 @@ import com.pheiffware.lib.geometry.DecomposedTransform3D;
  * Created by Steve on 3/22/2016.
  */
 
-//TODO: Remove example activity test
-//public class TestAct extends ActivityInstrumentationTestCase2
-//{
-//    public TestAct()
-//    {
-//        super(TestAct.class);
-
 public class TestMatrix extends InstrumentationTestCase
 {
     @Override
