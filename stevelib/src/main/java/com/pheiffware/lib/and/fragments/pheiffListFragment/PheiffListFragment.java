@@ -21,16 +21,13 @@ import java.util.List;
  * 1. Handles notifying/rendering list item selection. 2. Notifying a listener when an item is selected. 3. Inflating a given layout for each item in the list 4. Providing hooks to
  * populate item view
  * <p/>
- * Activities containing this fragment MUST implement the {@link Listener} interface, so they can receive notifications.
+ * Activities containing this fragment MUST implement the {@link com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffRecyclerViewAdapter.Listener} interface, so they can receive notifications.
  */
-public abstract class PheiffListFragment<T> extends Fragment implements PheiffRecyclerViewAdapter.Listener<T>
+public abstract class PheiffListFragment<T> extends Fragment
 {
     // TODO: Understand fragment arguments across projects
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
-
-    //Listener of list related events.  This is automatically set to the context when the fragment attaches.
-    private Listener listener;
 
     //Adapter used by the list recycler view.
     private PheiffRecyclerViewAdapter adapter;
@@ -39,6 +36,9 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     private ArrayList<Integer> initialSelectedIndices;
     private static final String SELECTED_INDICES_BUNDLE_KEY = "SELECTED_INDICES";
     private PheiffRecyclerViewAdapter.SelectionMode selectionMode;
+
+    //Reference to attaching activity as a PheiffRecyclerViewAdapter.Listener
+    private PheiffRecyclerViewAdapter.Listener<T> listener;
 
     /**
      * No 0-arg constructor for Fragment OK, because it is abstract.
@@ -57,24 +57,6 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
      */
     protected abstract PheiffViewHolder onCreatePheiffViewHolder(ViewGroup parent, int viewType);
 
-    /**
-     * Should implement logic to inflate/create the view for the fragment.  This view MUST include a RecyclerView somewhere.
-     *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
-    protected abstract View createMainView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
-
-    /**
-     * Return a reference to the RecyclerView which will be used to display lists.
-     *
-     * @param view the view returned by createMainView()
-     * @return the RecyclerView
-     */
-    protected abstract RecyclerView findRecyclerView(View view);
-
     //TODO: Figure out appropriate way to load/save list
     protected abstract List<T> loadListContents();
 
@@ -84,9 +66,9 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     public void onAttach(Context context)
     {
         super.onAttach(context);
-        if (context instanceof Listener)
+        if (context instanceof PheiffRecyclerViewAdapter.Listener)
         {
-            listener = (Listener) context;
+            listener = (PheiffRecyclerViewAdapter.Listener) context;
         }
         else
         {
@@ -133,7 +115,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
         {
             recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        adapter = new PheiffRecyclerViewAdapter(selectionMode, loadListContents(), initialSelectedIndices, this)
+        adapter = new PheiffRecyclerViewAdapter(selectionMode, loadListContents(), initialSelectedIndices, listener)
         {
             @Override
             protected PheiffViewHolder onCreatePheiffViewHolder(ViewGroup parent, int viewType)
@@ -170,55 +152,5 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     {
         super.onDetach();
         listener = null;
-    }
-
-
-    public void onItemSelectionChanged(int selectedItemIndex, T selectedData, int unselectedItemIndex, T unselectedData)
-    {
-        listener.onItemSelectionChanged(selectedItemIndex, selectedData, unselectedItemIndex, unselectedData);
-    }
-
-    public void onItemSelected(int selectedItemIndex, T selectedData)
-    {
-        listener.onItemSelected(selectedItemIndex, selectedData);
-    }
-
-    public void onItemDeselected(int deselectedItemIndex, T deselectedData)
-    {
-        listener.onItemDeselected(deselectedItemIndex, deselectedData);
-    }
-
-    /**
-     * Listens to the state of the list being hosted by the fragment.
-     *
-     * @param <T> the data type of the list
-     */
-    public interface Listener<T>
-    {
-        /**
-         * Only called if selection mode set to SINGLE_SELECTION. Signals selection was changed.
-         *
-         * @param selectedItemIndex
-         * @param selectedData
-         * @param unselectedItemIndex
-         * @param unselectedData
-         */
-        void onItemSelectionChanged(int selectedItemIndex, T selectedData, int unselectedItemIndex, T unselectedData);
-
-        /**
-         * Only called if selection mode set to MULTI_TOGGLE_SELECTION. Signals item was selected.
-         *
-         * @param selectedItemIndex index of the newly selected item
-         * @param selectedData      the selected item's data
-         */
-        void onItemSelected(int selectedItemIndex, T selectedData);
-
-        /**
-         * Only called if selection mode set to MULTI_TOGGLE_SELECTION. Signals item was deselected.
-         *
-         * @param deselectedItemIndex index of the newly deselected item
-         * @param deselectedData      the deselected item's data
-         */
-        void onItemDeselected(int deselectedItemIndex, T deselectedData);
     }
 }
