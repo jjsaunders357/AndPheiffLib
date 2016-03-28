@@ -6,7 +6,7 @@
               style="@style/ListTheme">
 
     <TextView
-        android:id="@+id/exampleListItemViewName"
+        android:id="@+id/textView_example_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"

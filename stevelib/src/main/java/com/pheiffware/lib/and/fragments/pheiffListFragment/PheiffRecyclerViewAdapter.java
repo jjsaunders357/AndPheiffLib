@@ -44,7 +44,7 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
      * @param initialSelection specifies an initial selection, if null, the selection set will be empty.
      * @param listener
      */
-    PheiffRecyclerViewAdapter(SelectionMode selectionMode, List<T> initialItems, Collection<Integer> initialSelection, Listener<T> listener)
+    public PheiffRecyclerViewAdapter(SelectionMode selectionMode, List<T> initialItems, Collection<Integer> initialSelection, Listener<T> listener)
     {
         if (initialItems == null)
         {
@@ -73,7 +73,7 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
      * @param initialSelection specifies an initial selection, if null, the selection set will be empty.
      * @param listener
      */
-    PheiffRecyclerViewAdapter(List<T> initialItems, int initialSelection, Listener<T> listener)
+    public PheiffRecyclerViewAdapter(List<T> initialItems, int initialSelection, Listener<T> listener)
     {
         if (initialItems == null)
         {
@@ -84,7 +84,10 @@ public abstract class PheiffRecyclerViewAdapter<T> extends RecyclerView.Adapter<
             listData = new ArrayList<>(initialItems);
         }
         selectedItemIndices = new HashSet<>();
-        selectedItemIndices.add(initialSelection);
+        if (initialSelection != -1)
+        {
+            selectedItemIndices.add(initialSelection);
+        }
         this.selectionMode = SelectionMode.SINGLE_SELECTION;
         this.listener = listener;
     }

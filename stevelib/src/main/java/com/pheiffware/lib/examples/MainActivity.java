@@ -4,12 +4,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.widget.Button;
 
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.LoggedActivity;
-import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffListFragment;
 
 import static com.pheiffware.lib.examples.ExampleListFragment.LibExampleData;
 
@@ -34,26 +31,17 @@ public class MainActivity extends LoggedActivity implements ExampleListFragment.
         ft.commit();
     }
 
-    private void setSelectedFragment(Fragment selectedExampleFragment)
-    {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.exampleFragmentContainer, selectedExampleFragment);
-        ft.commit();
-    }
-
     @Override
-    public void onItemSelectionChanged(int selectedItemIndex, LibExampleData selectedData, int unselectedItemIndex, LibExampleData unselectedData)
+    public void onSelectedExampleChanged(LibExampleData exampleData)
     {
-        System.out.println("Selected: " + selectedData.name);
-        if (unselectedData != null)
-        {
-            System.out.println("Deselected: " + unselectedData.name);
-        }
+        System.out.println("Selected: " + exampleData.name);
 
         try
         {
-            setSelectedFragment(selectedData.cls.newInstance());
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.exampleFragmentContainer, exampleData.cls.newInstance());
+            ft.commit();
         }
         catch (InstantiationException e)
         {
@@ -65,17 +53,4 @@ public class MainActivity extends LoggedActivity implements ExampleListFragment.
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void onItemSelected(int selectedItemIndex, LibExampleData selectedData)
-    {
-        System.out.println("Selected: " + selectedData);
-    }
-
-    @Override
-    public void onItemDeselected(int deselectedItemIndex, LibExampleData deselectedData)
-    {
-        System.out.println("Deselected: " + deselectedData);
-    }
-
 }

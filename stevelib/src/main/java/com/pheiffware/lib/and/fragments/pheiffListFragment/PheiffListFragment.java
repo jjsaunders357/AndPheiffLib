@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pheiffware.lib.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +35,9 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     //Adapter used by the list recycler view.
     private PheiffRecyclerViewAdapter adapter;
 
-    //Temporarily holds the initial selected item indices restored from SELECTED_ITEM_INDEX_BUNDLE_KEY
+    //Temporarily holds the initial selected item indices restored from SELECTED_INDICES_BUNDLE_KEY
     private ArrayList<Integer> initialSelectedIndices;
-    private static final String SELECTED_ITEM_INDEX_BUNDLE_KEY = "SELECTED_INDICES";
+    private static final String SELECTED_INDICES_BUNDLE_KEY = "SELECTED_INDICES";
     private PheiffRecyclerViewAdapter.SelectionMode selectionMode;
 
     /**
@@ -100,7 +102,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
 
         if (savedInstanceState != null)
         {
-            initialSelectedIndices = savedInstanceState.getIntegerArrayList(SELECTED_ITEM_INDEX_BUNDLE_KEY);
+            initialSelectedIndices = savedInstanceState.getIntegerArrayList(SELECTED_INDICES_BUNDLE_KEY);
         }
         if (initialSelectedIndices == null)
         {
@@ -110,7 +112,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
 
         if (getArguments() != null)
         {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT, 1);
         }
     }
 
@@ -119,11 +121,10 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = createMainView(inflater, container, savedInstanceState);
-        RecyclerView recyclerView = findRecyclerView(view);
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_pheiff_list, container, false);
 
 
-        Context context = view.getContext();
+        Context context = recyclerView.getContext();
         if (mColumnCount <= 1)
         {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -143,7 +144,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
         initialSelectedIndices = null;
         recyclerView.setAdapter(adapter);
 
-        return view;
+        return recyclerView;
     }
 
 
@@ -154,7 +155,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
         saveListContents(adapter.getListCopy());
 
         ArrayList<Integer> storeSelection = new ArrayList<>(adapter.getSelectedItemIndices());
-        outState.putIntegerArrayList(SELECTED_ITEM_INDEX_BUNDLE_KEY, storeSelection);
+        outState.putIntegerArrayList(SELECTED_INDICES_BUNDLE_KEY, storeSelection);
     }
 
     @Override
