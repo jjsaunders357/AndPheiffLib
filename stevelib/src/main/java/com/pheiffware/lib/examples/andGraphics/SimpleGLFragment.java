@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.managed.ManGL;
 
+//TODO: Cleanup does not happen properly
 /**
  * A fragment containing a single SimpleGLView initialized with the renderer returned by the factory method newRenderer. Created by Steve on 3/27/2016.
  */

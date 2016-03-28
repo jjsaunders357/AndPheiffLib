@@ -4,6 +4,8 @@
 */
 package com.pheiffware.lib.utils;
 
+import android.content.res.AssetManager;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -19,11 +21,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import android.content.res.AssetManager;
 
 /**
  * General utilities.
@@ -127,13 +127,9 @@ public class Utils
             ByteArrayInputStream bais = new ByteArrayInputStream(buffer.toByteArray());
             return (T) new ObjectInputStream(bais).readObject();
         }
-        catch (ClassNotFoundException e)
+        catch (ClassNotFoundException | IOException e)
         {
-            throw new AssertionError("Copy Error", e);
-        }
-        catch (IOException e)
-        {
-            throw new AssertionError("Copy Error", e);
+            throw new RuntimeException("Copy Error", e);
         }
 
     }
