@@ -38,10 +38,11 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  *
  */
-public class ExampleMeshRenderer implements Renderer, TouchTransformListener
+public class ExampleMeshRenderer implements TouchTransformListener, Renderer
 {
-    private static final double SCREEN_TO_CAMERA_TRANSLATION = 0.006f;
-    private static final float SCREEN_TO_CAMERA_ROTATION = 0.1f;
+    //TODO: Redefine in terms of device independent coords
+    private static final double SCREEN_DRAG_TO_CAMERA_TRANSLATION = 0.006f;
+    private static final float SCREEN_DRAG_TO_CAMERA_ROTATION = 0.1f;
     private final ManGL manGL;
     private IndexBuffer pb;
     private StaticVertexBuffer sb;
@@ -123,33 +124,33 @@ public class ExampleMeshRenderer implements Renderer, TouchTransformListener
     @Override
     public void onDrawFrame(GL10 gl)
     {
-        Program testProgram = manGL.getProgram("testProgram3D");
-        //Default view volume is based on sitting at origin and looking in negative z direction
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        testProgram.bind();
-
-        Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
-
-        Matrix4 viewModelMatrix;
-        viewModelMatrix = new Matrix4(camera.getCameraMatrix());
-        viewModelMatrix.multiplyBy(modelMatrix);
-        normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-
-        Matrix4 projectionMatrix = camera.getProjectionMatrix();
-
-
-        testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
-        testProgram.setUniformMatrix4("transformMatrix", viewModelMatrix.m, false);
-        testProgram.setUniformMatrix3("normalMatrix", normalTransform.m, false);
-        testProgram.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-        testProgram.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-        testProgram.setUniformFloat("shininess", 30.0f);
-        testProgram.setUniformVec3("lightPosition", new float[]{-3, 3, 0});
-
-        sb.bind();
-        pb.drawAll(GLES20.GL_TRIANGLES);
         try
         {
+            Program testProgram = manGL.getProgram("testProgram3D");
+            //Default view volume is based on sitting at origin and looking in negative z direction
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+            testProgram.bind();
+
+            Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
+
+            Matrix4 viewModelMatrix;
+            viewModelMatrix = new Matrix4(camera.getCameraMatrix());
+            viewModelMatrix.multiplyBy(modelMatrix);
+            normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
+
+            Matrix4 projectionMatrix = camera.getProjectionMatrix();
+
+
+            testProgram.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
+            testProgram.setUniformMatrix4("transformMatrix", viewModelMatrix.m, false);
+            testProgram.setUniformMatrix3("normalMatrix", normalTransform.m, false);
+            testProgram.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            testProgram.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            testProgram.setUniformFloat("shininess", 30.0f);
+            testProgram.setUniformVec3("lightPosition", new float[]{-3, 3, 0});
+
+            sb.bind();
+            pb.drawAll(GLES20.GL_TRIANGLES);
             PheiffGLUtils.assertNoError();
         }
         catch (GraphicsException e)
@@ -192,12 +193,12 @@ public class ExampleMeshRenderer implements Renderer, TouchTransformListener
         else if (numPointers > 1)
         {
             camera.roll((float) (180 * transform.rotation / Math.PI));
-            camera.rotateScreenInputVector((float) transform.translation.x, (float) -transform.translation.y, SCREEN_TO_CAMERA_ROTATION);
+            camera.rotateScreenInputVector((float) transform.translation.x, (float) -transform.translation.y, SCREEN_DRAG_TO_CAMERA_ROTATION);
         }
         else
         {
-            float cameraX = (float) (transform.translation.x * SCREEN_TO_CAMERA_TRANSLATION);
-            float cameraZ = (float) (transform.translation.y * SCREEN_TO_CAMERA_TRANSLATION);
+            float cameraX = (float) (transform.translation.x * SCREEN_DRAG_TO_CAMERA_TRANSLATION);
+            float cameraZ = (float) (transform.translation.y * SCREEN_DRAG_TO_CAMERA_TRANSLATION);
             camera.translateScreen(cameraX, 0, cameraZ);
         }
     }
