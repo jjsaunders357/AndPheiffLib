@@ -10,13 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pheiffware.lib.R;
-
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A fragment representing a list of items of type T with a single selection. This handles much of the boiler plate functionality expected of a list:
@@ -60,6 +55,24 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
      */
     protected abstract PheiffViewHolder onCreatePheiffViewHolder(ViewGroup parent, int viewType);
 
+    /**
+     * Should implement logic to inflate/create the view for the fragment.  This view MUST include a RecyclerView somewhere.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
+    protected abstract View createMainView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+
+    /**
+     * Return a reference to the RecyclerView which will be used to display lists.
+     *
+     * @param view the view returned by createMainView()
+     * @return the RecyclerView
+     */
+    protected abstract RecyclerView findRecyclerView(View view);
+
     //TODO: Figure out appropriate way to load/save list
     protected abstract List<T> loadListContents();
 
@@ -101,17 +114,16 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_pheiff_list, container, false);
-        if (!(view instanceof RecyclerView))
-        {
-            throw new RuntimeException("fragment_pheiff_list was not a RecyclerView somehow.");
-        }
+        View view = createMainView(inflater, container, savedInstanceState);
+        RecyclerView recyclerView = findRecyclerView(view);
+
+
         Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) view;
         if (mColumnCount <= 1)
         {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -133,6 +145,7 @@ public abstract class PheiffListFragment<T> extends Fragment implements PheiffRe
 
         return view;
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState)

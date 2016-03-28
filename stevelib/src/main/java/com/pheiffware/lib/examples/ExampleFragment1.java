@@ -18,6 +18,7 @@ public class ExampleFragment1 extends Fragment
     {
         TextView textView = new TextView(getContext());
         textView.setText("Example 1 Display");
+
         LinearLayout rootView = new LinearLayout(getContext());
         rootView.addView(textView);
         return rootView;
