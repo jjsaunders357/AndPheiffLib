@@ -12,31 +12,26 @@ import android.view.MotionEvent;
 import com.pheiffware.lib.and.touch.TouchAnalyzer;
 import com.pheiffware.lib.and.touch.TouchTransformListener;
 import com.pheiffware.lib.geometry.Transform2D;
-import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.managed.ManGL;
 
 /**
- * Extension of the canned surface view for OpenGL provided by Android. Key points: 1. When pausing, call onPause(). 2. When resuming, call onResume().
- * <p/>
- * When first started OR onResume(), the render's onSurfaceCreated method gets triggered. This should load all textures/programs, etc.
- * <p/>
- * Note: When onSurfaceCreated happens it implies that all existing textures, programs, etc have been automatically deleted. No need to do this work!
- * http://developer.android.com/reference/android/opengl/GLSurfaceView.Renderer.html
+ * Extension of the canned surface view for OpenGL provided by Android to perform basic setup:
+ * 1. Automatically handles pause/resume.
+ * 2. Sends touch transform events to the SimpleGLRenderer
  */
-public class ExampleGraphicsView extends GLSurfaceView implements TouchTransformListener
+//TODO: Handle cleanup? When onSurfaceCreated happens it implies that all existing textures, programs, etc have been automatically deleted. No need to do this work! http://developer.android.com/reference/android/opengl/GLSurfaceView.Renderer.html
+public class SimpleGLView extends GLSurfaceView implements TouchTransformListener
 {
-    private final ExampleMeshRenderer renderer;
+    private final SimpleGLRenderer renderer;
     private final TouchAnalyzer touchAnalyzer;
 
-    public ExampleGraphicsView(Context context)
+    public SimpleGLView(Context context, SimpleGLRenderer renderer)
     {
         super(context);
+        this.renderer = renderer;
         setEGLContextClientVersion(2);
-        renderer = new ExampleMeshRenderer(new ManGL(context.getAssets(), FilterQuality.MEDIUM));
         setRenderer(renderer);
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-
         touchAnalyzer = new TouchAnalyzer(this, metrics.xdpi, metrics.ydpi);
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 

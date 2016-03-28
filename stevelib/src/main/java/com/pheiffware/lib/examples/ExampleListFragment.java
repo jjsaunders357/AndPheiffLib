@@ -13,15 +13,22 @@ import android.widget.TextView;
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffRecyclerViewAdapter;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffViewHolder;
+import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragment;
+import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
+import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Handle screen orientation changes
 /**
  * A fragment to display a list of example fragments to run.
  */
 public class ExampleListFragment extends Fragment implements View.OnClickListener, PheiffRecyclerViewAdapter.Listener<ExampleListFragment.LibExampleData>
 {
+    /**
+     * Contains data for each example
+     */
     public static class LibExampleData
     {
         public final String name;
@@ -34,31 +41,24 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
         }
     }
 
+    //A list of all example fragment classes
     private static List<LibExampleData> examples;
-
     {
         examples = new ArrayList<>(20);
-        examples.add(new LibExampleData("Example 1 name", ExampleFragment1.class));
-        examples.add(new LibExampleData("Example 2 name", ExampleFragment2.class));
-        examples.add(new LibExampleData("Example 3 name", ExampleFragment2.class));
-        examples.add(new LibExampleData("Example 4 name", ExampleFragment2.class));
-        examples.add(new LibExampleData("Example 5 name", ExampleFragment2.class));
-        examples.add(new LibExampleData("Example 6 name", ExampleFragment2.class));
-        examples.add(new LibExampleData("Example 7 name", ExampleFragment2.class));
-        examples.add(new LibExampleData("Example 8 name", ExampleFragment2.class));
+        examples.add(new LibExampleData("GL Combined Buffer", CombinedVertexBufferExampleFragment.class));
+        examples.add(new LibExampleData("GL Render to Texture", RenderToTextureExampleFragment.class));
+        examples.add(new LibExampleData("Collada Mesh", MeshExampleFragment.class));
     }
 
+    //Button expands example to full screen
     private Button expandButton;
+
+    //Auto-registered listener of fragment events
     private Listener listener;
 
     //Tracks the selected example's index.  This is loaded/saved in SELECTED_ITEM_INDEX_BUNDLE_KEY
     private int selectedItemIndex;
     private static final java.lang.String SELECTED_ITEM_INDEX_BUNDLE_KEY = "SELECTED_ITEM_INDEX";
-
-
-    public ExampleListFragment()
-    {
-    }
 
     @Override
     public void onAttach(Context context)
@@ -130,6 +130,14 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
         }
     }
 
+    /**
+     * Forward list selection events to listener as example selection events.
+     *
+     * @param selectedItemIndex
+     * @param selectedData
+     * @param unselectedItemIndex
+     * @param unselectedData
+     */
     public void onItemSelectionChanged(int selectedItemIndex, LibExampleData selectedData, int unselectedItemIndex, LibExampleData unselectedData)
     {
         this.selectedItemIndex = selectedItemIndex;
@@ -137,21 +145,27 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
         listener.onSelectedExampleChanged(selectedData);
     }
 
+    /**
+     * A view holder for each example.
+     */
     private static class ExampleViewHolder extends PheiffViewHolder<LibExampleData>
     {
-        private final TextView exampleNameView;
+        private final TextView exampleNameText;
+        private final TextView exampleClassText;
 
         protected ExampleViewHolder(View rootView)
         {
             super(rootView);
-            exampleNameView = (TextView) rootView.findViewById(R.id.textView_example_name);
+            exampleNameText = (TextView) rootView.findViewById(R.id.textView_example_name);
+            exampleClassText = (TextView) rootView.findViewById(R.id.textView_example_class);
         }
 
         @Override
         protected void updateView(LibExampleData data, boolean isSelected)
         {
             super.updateView(data, isSelected);
-            exampleNameView.setText(data.name);
+            exampleNameText.setText(data.name);
+            exampleClassText.setText(data.cls.getSimpleName());
         }
     }
 
@@ -165,7 +179,6 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
     //@formatter:off
     @Override
     public void onItemSelected(int selectedItemIndex, LibExampleData selectedData) {}
-
     @Override
     public void onItemDeselected(int deselectedItemIndex, LibExampleData deselectedData) {}
     //@formatter:on

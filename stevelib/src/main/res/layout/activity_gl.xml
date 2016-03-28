@@ -9,11 +9,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".examples.andGraphics.ExampleGraphicsActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/root"></LinearLayout>
+        android:name="com.pheiffware.lib.examples.andGraphics.MeshExampleFragment"
+        android:id="@+id/fragment"/>
 </RelativeLayout>

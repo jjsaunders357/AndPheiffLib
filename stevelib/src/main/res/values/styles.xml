@@ -12,4 +12,12 @@
     <style name="ListTheme">
         <item name="android:background">@drawable/pheiff_list_item_state</item>
     </style>
+
+    <style name="ListItem">
+        <item name="android:textSize">@dimen/list_text_regular</item>
+        <item name="android:layout_margin">@dimen/text_margin</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>
