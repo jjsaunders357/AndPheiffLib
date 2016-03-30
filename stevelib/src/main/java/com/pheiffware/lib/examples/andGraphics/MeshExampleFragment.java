@@ -3,6 +3,8 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.pheiffware.lib.and.fragments.graphics.SimpleGLFragment;
+import com.pheiffware.lib.and.fragments.graphics.SimpleGLRenderer;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.Transform2D;

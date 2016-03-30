@@ -21,7 +21,8 @@ import java.util.List;
  * 1. Handles notifying/rendering list item selection. 2. Notifying a listener when an item is selected. 3. Inflating a given layout for each item in the list 4. Providing hooks to
  * populate item view
  * <p/>
- * Activities containing this fragment MUST implement the {@link com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffRecyclerViewAdapter.Listener} interface, so they can receive notifications.
+ * Activities containing this fragment MUST implement the {@link com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffRecyclerViewAdapter.Listener} interface, so they can
+ * receive notifications.
  */
 public abstract class PheiffListFragment<T> extends Fragment
 {
@@ -103,6 +104,8 @@ public abstract class PheiffListFragment<T> extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+        super.onCreateView(inflater, container, savedInstanceState);
+
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_pheiff_list, container, false);
 
 

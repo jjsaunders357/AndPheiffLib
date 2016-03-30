@@ -18,11 +18,6 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".examples.andGraphics.ExampleGraphicsActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
-        </activity>
         <activity android:name=".examples.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
