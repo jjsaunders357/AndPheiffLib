@@ -8,16 +8,7 @@ import android.view.ViewGroup;
 import com.pheiffware.lib.and.fragments.pheiffListFragment.LoggedFragment;
 import com.pheiffware.lib.graphics.FilterQuality;
 
-//TODO: Don't destroy fragment's gl load on reorientation
 
-//Add to activity in manifest:
-//android:configChanges="orientation|screenSize"
-//In activity:
-//@Override
-//public void onConfigurationChanged(Configuration newConfig)
-//    {
-//        super.onConfigurationChanged(newConfig);
-//    }
 
 //TODO: set correct compatibility libraries, one of: v4,7,8,13,17
 
@@ -45,13 +36,6 @@ public abstract class SimpleGLFragment extends LoggedFragment
     }
 
     @Override
-    public void onStart()
-    {
-        super.onStart();
-        simpleGLView.onStart();
-    }
-
-    @Override
     public void onResume()
     {
         super.onResume();
@@ -66,10 +50,9 @@ public abstract class SimpleGLFragment extends LoggedFragment
     }
 
     @Override
-    public void onStop()
+    public void onDestroyView()
     {
-        super.onStop();
-        simpleGLView.onStop();
+        super.onDestroyView();
+        simpleGLView = null;
     }
-
 }

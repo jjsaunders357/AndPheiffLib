@@ -18,7 +18,6 @@ public class LoggedFragment extends Fragment
     public void onAttach(Context context)
     {
         Utils.logLC(this, "onAttach");
-        
         super.onAttach(context);
     }
 

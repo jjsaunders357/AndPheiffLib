@@ -1,5 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
+import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.and.fragments.graphics.SimpleGLFragment;
@@ -27,7 +28,6 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
     private static class RenderToTextureExampleRenderer implements SimpleGLRenderer
     {
-        private ManGL manGL;
         private final Matrix4 cameraProjectionMatrix = Matrix4.newProjection(140.0f, 1, 1, 10, true);
         private Matrix4 projectionMatrix;
         private Program testProgram;
@@ -44,17 +44,16 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(ManGL manGL)
+        public void onSurfaceCreated(AssetManager am, ManGL manGL)
         {
-            this.manGL = manGL;
             FatalErrorHandler.installUncaughtExceptionHandler();
             // Wait for vertical retrace
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
             try
             {
-                testProgram = manGL.createProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
-                faceTexture = manGL.createImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                testProgram = manGL.createProgram(am, "testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+                faceTexture = manGL.createImageTexture(am, "images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
                 //Creates color texture render target, without alpha channel
                 colorRenderTexture = manGL.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);

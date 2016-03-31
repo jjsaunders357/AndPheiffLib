@@ -1,5 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
+import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.and.fragments.graphics.SimpleGLFragment;
@@ -53,7 +54,7 @@ public class MeshExampleFragment extends SimpleGLFragment
 
 
         @Override
-        public void onSurfaceCreated(ManGL manGL)
+        public void onSurfaceCreated(AssetManager am, ManGL manGL)
         {
             try
             {
@@ -62,9 +63,9 @@ public class MeshExampleFragment extends SimpleGLFragment
                 GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
                 //Must enable depth testing!
                 GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-                Program testProgram = manGL.createProgram("testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+                Program testProgram = manGL.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
                 ColladaFactory colladaFactory = new ColladaFactory(true);
-                InputStream inputStream = manGL.getAssetManager().open("meshes/test_render.dae");
+                InputStream inputStream = am.open("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup material from loaded file by "name" (what user named it in editing tool)

@@ -19,16 +19,14 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class ManGL
 {
-    private final AssetManager assetManager;
     private final Map<String, Integer> vertexShaders = new HashMap<>();
     private final Map<String, Integer> fragmentShaders = new HashMap<>();
     private final Map<String, Program> programs = new HashMap<>();
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
 
-    public ManGL(AssetManager assetManager, FilterQuality defaultFilterQuality, GL10 gl, EGLConfig config)
+    public ManGL(FilterQuality defaultFilterQuality, GL10 gl, EGLConfig config)
     {
-        this.assetManager = assetManager;
         this.defaultFilterQuality = defaultFilterQuality;
     }
 
@@ -39,12 +37,12 @@ public class ManGL
      * @return
      * @throws GraphicsException
      */
-    public int getVertexShader(String vertexShaderAssetPath) throws GraphicsException
+    public int getVertexShader(AssetManager am, String vertexShaderAssetPath) throws GraphicsException
     {
         Integer vertexShaderHandle = vertexShaders.get(vertexShaderAssetPath);
         if (vertexShaderHandle == null)
         {
-            vertexShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_VERTEX_SHADER, vertexShaderAssetPath);
+            vertexShaderHandle = ProgramUtils.createShader(am, GLES20.GL_VERTEX_SHADER, vertexShaderAssetPath);
             vertexShaders.put(vertexShaderAssetPath, vertexShaderHandle);
         }
         return vertexShaderHandle;
@@ -57,12 +55,12 @@ public class ManGL
      * @return
      * @throws GraphicsException
      */
-    public int getFragmentShader(String fragmentShaderAssetPath) throws GraphicsException
+    public int getFragmentShader(AssetManager am, String fragmentShaderAssetPath) throws GraphicsException
     {
         Integer fragmentShaderHandle = fragmentShaders.get(fragmentShaderAssetPath);
         if (fragmentShaderHandle == null)
         {
-            fragmentShaderHandle = ProgramUtils.createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, fragmentShaderAssetPath);
+            fragmentShaderHandle = ProgramUtils.createShader(am, GLES20.GL_FRAGMENT_SHADER, fragmentShaderAssetPath);
             fragmentShaders.put(fragmentShaderAssetPath, fragmentShaderHandle);
         }
         return fragmentShaderHandle;
@@ -77,10 +75,10 @@ public class ManGL
      * @return
      * @throws GraphicsException
      */
-    public Program createProgram(String name, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
+    public Program createProgram(AssetManager am, String name, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
     {
-        int vertexShaderHandle = getVertexShader(vertexShaderAssetPath);
-        int fragmentShaderHandle = getFragmentShader(fragmentShaderAssetPath);
+        int vertexShaderHandle = getVertexShader(am, vertexShaderAssetPath);
+        int fragmentShaderHandle = getFragmentShader(am, fragmentShaderAssetPath);
         Program program = new Program(vertexShaderHandle, fragmentShaderHandle);
         programs.put(name, program);
         return program;
@@ -98,9 +96,9 @@ public class ManGL
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(AssetManager am, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        Texture texture = new Texture(TextureUtils.genTextureFromImage(assetManager, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
+        Texture texture = new Texture(TextureUtils.genTextureFromImage(am, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
         textures.put(imageAssetPath, texture);
         return texture;
     }
@@ -151,9 +149,9 @@ public class ManGL
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(AssetManager am, String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        return createImageTexture(imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createImageTexture(am, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
     }
 
     /**
@@ -190,19 +188,8 @@ public class ManGL
         return programs.get(name);
     }
 
-    @Deprecated
-    public AssetManager getAssetManager()
-    {
-        return assetManager;
-    }
-
-    public void reallocate()
-    {
-        //TODO: Dynamic buffers, among other resources require explicit memory deallocation.
-        //Whenever an activity/fragment stops these resources are deallocated in the deallocate method.  This method will reallocate them if necessary after a deallocate
-    }
-
     public void deallocate()
     {
+        //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }
 }

@@ -1,5 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
+import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.and.fragments.graphics.SimpleGLFragment;
@@ -28,7 +29,6 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
 
     private static class CombinedVertexBufferExampleRenderer implements SimpleGLRenderer
     {
-        private ManGL manGL;
         private Program testProgram;
         private IndexBuffer pb;
         private CombinedVertexBuffer cb;
@@ -36,22 +36,20 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
         private Matrix4 projectionMatrix;
         private Texture faceTexture;
 
-
         /* (non-Javadoc)
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(ManGL manGL)
+        public void onSurfaceCreated(AssetManager am, ManGL manGL)
         {
-            this.manGL = manGL;
             FatalErrorHandler.installUncaughtExceptionHandler();
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
             try
             {
-                testProgram = manGL.createProgram("testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
-                faceTexture = manGL.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                testProgram = manGL.createProgram(am, "testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+                faceTexture = manGL.createImageTexture(am, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
             }
             catch (GraphicsException exception)
             {

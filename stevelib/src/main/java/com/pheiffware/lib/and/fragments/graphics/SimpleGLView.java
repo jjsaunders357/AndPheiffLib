@@ -9,6 +9,7 @@ import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 
 import com.pheiffware.lib.and.touch.TouchAnalyzer;
 import com.pheiffware.lib.and.touch.TouchTransformListener;
@@ -71,39 +72,30 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
         });
     }
 
-    public void onStart()
-    {
-        //Reallocate native memory buffers, if necessary
-        if (manGL != null)
-        {
-            Utils.logLC(this, "ReallocateManGL");
-            manGL.reallocate();
-        }
-    }
-
-    public void onStop()
-    {
-        //Destroy native memory buffers.
-        Utils.logLC(this, "DeallocateManGL");
-        manGL.deallocate();
-    }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
         Utils.logLC(this, "SurfaceCreated");
+        //All resources held by manGL will have been thrown away
+        manGL = new ManGL(filterQuality, gl, config);
+        renderer.onSurfaceCreated(assetManager, manGL);
+    }
 
-        //Whenever this is called, either:
-        //1. The entire activity was killed and is starting from scratch
-        //2. onStop() was called at some point and native memory was deallocated
-        //Either way, for simplicity, just create a new instance
-        manGL = new ManGL(assetManager, filterQuality, gl, config);
-        renderer.onSurfaceCreated(manGL);
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder)
+    {
+        Utils.logLC(this, "SurfaceDestroyed");
+        super.surfaceDestroyed(holder);
+        manGL.deallocate();
+        //Destroy any reference to GL/EGL object (not sure if this matters).
+        manGL = null;
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height)
     {
+        Utils.logLC(this, "SurfaceResized");
         renderer.onSurfaceResize(width, height);
     }
 
