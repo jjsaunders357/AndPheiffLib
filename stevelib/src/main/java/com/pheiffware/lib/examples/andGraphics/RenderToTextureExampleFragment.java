@@ -1,7 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
 import android.opengl.GLES20;
-import android.util.Log;
 
 import com.pheiffware.lib.and.fragments.graphics.SimpleGLFragment;
 import com.pheiffware.lib.and.fragments.graphics.SimpleGLRenderer;
@@ -16,17 +15,19 @@ import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 /**
  * Example of rendering to a texture. Created by Steve on 3/27/2016.
  */
 public class RenderToTextureExampleFragment extends SimpleGLFragment
 {
-    private static class ExampleRenderer implements SimpleGLRenderer
+    public RenderToTextureExampleFragment()
     {
-        private final ManGL manGL;
+        super(new RenderToTextureExampleRenderer(), FilterQuality.MEDIUM);
+    }
+
+    private static class RenderToTextureExampleRenderer implements SimpleGLRenderer
+    {
+        private ManGL manGL;
         private final Matrix4 cameraProjectionMatrix = Matrix4.newProjection(140.0f, 1, 1, 10, true);
         private Matrix4 projectionMatrix;
         private Program testProgram;
@@ -39,18 +40,13 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
         private int viewWidth;
         private int viewHeight;
 
-        public ExampleRenderer(ManGL manGL)
-        {
-            this.manGL = manGL;
-        }
-
         /* (non-Javadoc)
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(GL10 gl, EGLConfig config)
+        public void onSurfaceCreated(ManGL manGL)
         {
-            Log.i("OPENGL", "Surface created");
+            this.manGL = manGL;
             FatalErrorHandler.installUncaughtExceptionHandler();
             // Wait for vertical retrace
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -103,7 +99,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.microedition.khronos.opengles.GL10)
          */
         @Override
-        public void onDrawFrame(GL10 gl)
+        public void onDrawFrame()
         {
             //Set to render to texture.
             PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTexture.getHandle(), 0);
@@ -157,9 +153,8 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)
          */
         @Override
-        public void onSurfaceChanged(GL10 gl, int width, int height)
+        public void onSurfaceResize(int width, int height)
         {
-            Log.i("OPENGL", "Surface changed");
             viewWidth = width;
             viewHeight = height;
             projectionMatrix = Matrix4.newProjection(120.0f, viewWidth / (float) viewHeight, 1, 10, false);
@@ -176,11 +171,5 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
         {
 
         }
-    }
-
-    @Override
-    protected SimpleGLRenderer newRenderer(ManGL manGL)
-    {
-        return new ExampleRenderer(manGL);
     }
 }

@@ -1,7 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
 import android.opengl.GLES20;
-import android.util.Log;
 
 import com.pheiffware.lib.and.fragments.graphics.SimpleGLFragment;
 import com.pheiffware.lib.and.fragments.graphics.SimpleGLRenderer;
@@ -16,18 +15,20 @@ import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 /**
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.
  * Created by Steve on 3/27/2016.
  */
 public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
 {
-    private static class ExampleRenderer implements SimpleGLRenderer
+    public CombinedVertexBufferExampleFragment()
     {
-        private final ManGL manGL;
+        super(new CombinedVertexBufferExampleRenderer(), FilterQuality.MEDIUM);
+    }
+
+    private static class CombinedVertexBufferExampleRenderer implements SimpleGLRenderer
+    {
+        private ManGL manGL;
         private Program testProgram;
         private IndexBuffer pb;
         private CombinedVertexBuffer cb;
@@ -35,18 +36,14 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
         private Matrix4 projectionMatrix;
         private Texture faceTexture;
 
-        public ExampleRenderer(ManGL manGL)
-        {
-            this.manGL = manGL;
-        }
 
         /* (non-Javadoc)
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(GL10 gl, EGLConfig config)
+        public void onSurfaceCreated(ManGL manGL)
         {
-            Log.i("OPENGL", "Surface created");
+            this.manGL = manGL;
             FatalErrorHandler.installUncaughtExceptionHandler();
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -103,7 +100,7 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.microedition.khronos.opengles.GL10)
          */
         @Override
-        public void onDrawFrame(GL10 gl)
+        public void onDrawFrame()
         {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             GLES20.glUseProgram(testProgram.getHandle());
@@ -126,9 +123,8 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)
          */
         @Override
-        public void onSurfaceChanged(GL10 gl, int width, int height)
+        public void onSurfaceResize(int width, int height)
         {
-            Log.i("OPENGL", "Surface changed");
             GLES20.glViewport(0, 0, width, height);
             projectionMatrix = Matrix4.newProjection(120.0f, width / (float) height, 1, 10, false);
         }
@@ -143,11 +139,5 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
         public void touchTransformEvent(int numPointers, Transform2D transform)
         {
         }
-    }
-
-    @Override
-    protected SimpleGLRenderer newRenderer(ManGL manGL)
-    {
-        return new ExampleRenderer(manGL);
     }
 }

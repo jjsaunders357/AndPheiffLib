@@ -3,17 +3,19 @@ package com.pheiffware.lib.graphics.managed;
 import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 /**
- * A core object which manages references to and between graphics objects.
- * Created by Steve on 2/13/2016.
+ * A core object which manages references to and between graphics objects. Created by Steve on 2/13/2016.
  */
 public class ManGL
 {
@@ -24,7 +26,7 @@ public class ManGL
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
 
-    public ManGL(AssetManager assetManager, FilterQuality defaultFilterQuality)
+    public ManGL(AssetManager assetManager, FilterQuality defaultFilterQuality, GL10 gl, EGLConfig config)
     {
         this.assetManager = assetManager;
         this.defaultFilterQuality = defaultFilterQuality;
@@ -140,8 +142,7 @@ public class ManGL
 
 
     /**
-     * Loads an image into a newly created texture or gets previously loaded texture.
-     * Filter quality defaulted.
+     * Loads an image into a newly created texture or gets previously loaded texture. Filter quality defaulted.
      *
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
@@ -156,8 +157,7 @@ public class ManGL
     }
 
     /**
-     * Generates a texture which can have colors rendered onto it.
-     * Filter quality defaulted.
+     * Generates a texture which can have colors rendered onto it. Filter quality defaulted.
      *
      * @param pixelWidth  width
      * @param pixelHeight height
@@ -172,8 +172,7 @@ public class ManGL
     }
 
     /**
-     * Generates a texture which can have depth rendered onto it.
-     * Filter quality defaulted.
+     * Generates a texture which can have depth rendered onto it. Filter quality defaulted.
      *
      * @param pixelWidth  width
      * @param pixelHeight height
@@ -195,5 +194,15 @@ public class ManGL
     public AssetManager getAssetManager()
     {
         return assetManager;
+    }
+
+    public void reallocate()
+    {
+        //TODO: Dynamic buffers, among other resources require explicit memory deallocation.
+        //Whenever an activity/fragment stops these resources are deallocated in the deallocate method.  This method will reallocate them if necessary after a deallocate
+    }
+
+    public void deallocate()
+    {
     }
 }

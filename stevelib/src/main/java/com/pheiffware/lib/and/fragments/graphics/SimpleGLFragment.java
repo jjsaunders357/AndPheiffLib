@@ -7,35 +7,56 @@ import android.view.ViewGroup;
 
 import com.pheiffware.lib.and.fragments.pheiffListFragment.LoggedFragment;
 import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.managed.ManGL;
 
-//TODO: Cleanup does not happen properly - Goto show all running activities, then return to break.
-//TODO: Caused by ManGL using cached shaders when loading programs.  need a way to create new ManGL or clear it when surface destroyed.
 //TODO: Don't destroy fragment's gl load on reorientation
+
+//Add to activity in manifest:
+//android:configChanges="orientation|screenSize"
+//In activity:
+//@Override
+//public void onConfigurationChanged(Configuration newConfig)
+//    {
+//        super.onConfigurationChanged(newConfig);
+//    }
+
+//TODO: set correct compatibility libraries, one of: v4,7,8,13,17
+
 /**
  * A fragment containing a single SimpleGLView initialized with the renderer returned by the factory method newRenderer. Created by Steve on 3/27/2016.
  */
 public abstract class SimpleGLFragment extends LoggedFragment
 {
     private SimpleGLView simpleGLView;
+    private final SimpleGLRenderer renderer;
+    private final FilterQuality filterQuality;
 
-    /**
-     * Override to instantiate the appropriate renderer object.
-     *
-     * @param manGL
-     * @return
-     */
-    protected abstract SimpleGLRenderer newRenderer(ManGL manGL);
+    public SimpleGLFragment(SimpleGLRenderer renderer, FilterQuality filterQuality)
+    {
+        this.renderer = renderer;
+        this.filterQuality = filterQuality;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         super.onCreateView(inflater, container, savedInstanceState);
-        ManGL manGL = new ManGL(getContext().getAssets(), FilterQuality.MEDIUM);
-        simpleGLView = new SimpleGLView(getContext(), newRenderer(manGL));
+        simpleGLView = new SimpleGLView(getContext(), renderer, filterQuality);
         return simpleGLView;
     }
 
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        simpleGLView.onStart();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        simpleGLView.onResume();
+    }
 
     @Override
     public void onPause()
@@ -44,12 +65,11 @@ public abstract class SimpleGLFragment extends LoggedFragment
         simpleGLView.onPause();
     }
 
-
     @Override
-    public void onResume()
+    public void onStop()
     {
-        super.onResume();
-        simpleGLView.onResume();
+        super.onStop();
+        simpleGLView.onStop();
     }
 
 }
