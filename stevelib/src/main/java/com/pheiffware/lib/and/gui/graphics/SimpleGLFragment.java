@@ -8,10 +8,6 @@ import android.view.ViewGroup;
 import com.pheiffware.lib.and.gui.LoggedFragment;
 import com.pheiffware.lib.graphics.FilterQuality;
 
-
-
-//TODO: set correct compatibility libraries, one of: v4,7,8,13,17
-
 /**
  * A fragment containing a single SimpleGLView initialized with the renderer returned by the factory method newRenderer. Created by Steve on 3/27/2016.
  */

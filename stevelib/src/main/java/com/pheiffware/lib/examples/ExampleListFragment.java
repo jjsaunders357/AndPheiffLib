@@ -20,7 +20,6 @@ import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Handle screen orientation changes
 /**
  * A fragment to display a list of example fragments to run.
  */
