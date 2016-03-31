@@ -5,6 +5,7 @@
 package com.pheiffware.lib.utils;
 
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -59,8 +60,7 @@ public class Utils
     }
 
     /**
-     * Actively destroys a direct buffer. Calling this guarantees that memory is freed immediately.
-     * NOTE: Does not work in android!
+     * Actively destroys a direct buffer. Calling this guarantees that memory is freed immediately. NOTE: Does not work in android!
      */
 
     public static void deallocateDirectByteBuffer(ByteBuffer directByteBuffer)
@@ -137,5 +137,16 @@ public class Utils
     public static URL getAssetURL(String assetPath) throws MalformedURLException
     {
         return new URL("file:///android_asset/" + assetPath);
+    }
+
+    /**
+     * Logs a life cycle method for a given object.  Log message is debug and will include class name.
+     *
+     * @param object
+     * @param lifeCycleMethodName
+     */
+    public static void logLC(Object object, String lifeCycleMethodName)
+    {
+        Log.d("LifeC - " + object.getClass().getSimpleName(), lifeCycleMethodName);
     }
 }

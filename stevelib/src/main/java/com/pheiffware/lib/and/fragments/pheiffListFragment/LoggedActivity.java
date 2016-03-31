@@ -2,7 +2,8 @@ package com.pheiffware.lib.and.fragments.pheiffListFragment;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+
+import com.pheiffware.lib.utils.Utils;
 
 /**
  * A base activity class which logs all life cycle methods.  Useful for debugging.
@@ -13,55 +14,55 @@ public class LoggedActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        Log.d("LifeC - " + getClass().getSimpleName(), "onCreate");
+        Utils.logLC(this, "onCreate");
     }
 
     @Override
     protected void onStart()
     {
         super.onStart();
-        Log.d("LifeC - " + getClass().getSimpleName(), "onStart");
+        Utils.logLC(this, "onStart");
     }
 
     @Override
     protected void onRestart()
     {
         super.onRestart();
-        Log.d("LifeC - " + getClass().getSimpleName(), "onRestart");
+        Utils.logLC(this, "onRestart");
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        Log.d("LifeC - " + getClass().getSimpleName(), "onResume");
+        Utils.logLC(this, "onResume");
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
-        Log.d("LifeC - " + getClass().getSimpleName(), "onPause");
+        Utils.logLC(this, "onPause");
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        Log.d("LifeC - " + getClass().getSimpleName(), "onSaveInstanceState");
+        Utils.logLC(this, "onSaveInstanceState");
     }
 
     @Override
     protected void onStop()
     {
         super.onStop();
-        Log.d("LifeC - " + getClass().getSimpleName(), "onStop");
+        Utils.logLC(this, "onStop");
     }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
-        Log.d("LifeC - " + getClass().getSimpleName(), "onDestroy");
+        Utils.logLC(this, "onDestroy");
     }
 }

@@ -3,10 +3,11 @@ package com.pheiffware.lib.and.fragments.pheiffListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.pheiffware.lib.utils.Utils;
 
 /**
  * A base fragment class which logs all life cycle methods.  Useful for debugging.
@@ -16,14 +17,15 @@ public class LoggedFragment extends Fragment
     @Override
     public void onAttach(Context context)
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onAttach");
+        Utils.logLC(this, "onAttach");
+        
         super.onAttach(context);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onCreate");
+        Utils.logLC(this, "onCreate");
         super.onCreate(savedInstanceState);
     }
 
@@ -31,7 +33,7 @@ public class LoggedFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onCreateView");
+        Utils.logLC(this, "onCreateView");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -39,56 +41,56 @@ public class LoggedFragment extends Fragment
     @Override
     public void onStart()
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onStart");
+        Utils.logLC(this, "onStart");
         super.onStart();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onSaveInstanceState");
+        Utils.logLC(this, "onSaveInstanceState");
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onResume()
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onResume");
+        Utils.logLC(this, "onResume");
         super.onResume();
     }
 
     @Override
     public void onPause()
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onPause");
+        Utils.logLC(this, "onPause");
         super.onPause();
     }
 
     @Override
     public void onStop()
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onStop");
+        Utils.logLC(this, "onStop");
         super.onStop();
     }
 
     @Override
     public void onDestroyView()
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onDestroyView");
+        Utils.logLC(this, "onDestroyView");
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy()
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onDestroy");
+        Utils.logLC(this, "onDestroy");
         super.onDestroy();
     }
 
     @Override
     public void onDetach()
     {
-        Log.d("LifeC - " + getClass().getSimpleName(), "onDetach");
+        Utils.logLC(this, "onDetach");
         super.onDetach();
     }
 }
