@@ -2,7 +2,7 @@
  * Created by Stephen Pheiffer.
  * Do not edit, distribute, modify or use without his permission.
 */
-package com.pheiffware.lib.and.fragments.graphics;
+package com.pheiffware.lib.and.gui.graphics;
 
 import android.content.Context;
 import android.content.res.AssetManager;

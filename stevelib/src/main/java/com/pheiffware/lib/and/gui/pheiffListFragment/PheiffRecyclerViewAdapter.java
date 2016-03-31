@@ -1,4 +1,4 @@
-package com.pheiffware.lib.and.fragments.pheiffListFragment;
+package com.pheiffware.lib.and.gui.pheiffListFragment;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;

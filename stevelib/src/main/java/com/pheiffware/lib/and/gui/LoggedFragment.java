@@ -1,4 +1,4 @@
-package com.pheiffware.lib.and.fragments.pheiffListFragment;
+package com.pheiffware.lib.and.gui;
 
 import android.content.Context;
 import android.os.Bundle;

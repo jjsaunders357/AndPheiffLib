@@ -1,11 +1,11 @@
-package com.pheiffware.lib.and.fragments.graphics;
+package com.pheiffware.lib.and.gui.graphics;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pheiffware.lib.and.fragments.pheiffListFragment.LoggedFragment;
+import com.pheiffware.lib.and.gui.LoggedFragment;
 import com.pheiffware.lib.graphics.FilterQuality;
 
 

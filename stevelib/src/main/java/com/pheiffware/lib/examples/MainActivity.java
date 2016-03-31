@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.pheiffware.lib.R;
-import com.pheiffware.lib.and.fragments.pheiffListFragment.LoggedActivity;
+import com.pheiffware.lib.and.gui.LoggedActivity;
 
 import static com.pheiffware.lib.examples.ExampleListFragment.LibExampleData;
 

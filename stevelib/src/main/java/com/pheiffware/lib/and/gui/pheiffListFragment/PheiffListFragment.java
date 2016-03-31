@@ -1,4 +1,4 @@
-package com.pheiffware.lib.and.fragments.pheiffListFragment;
+package com.pheiffware.lib.and.gui.pheiffListFragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,7 +21,7 @@ import java.util.List;
  * 1. Handles notifying/rendering list item selection. 2. Notifying a listener when an item is selected. 3. Inflating a given layout for each item in the list 4. Providing hooks to
  * populate item view
  * <p/>
- * Activities containing this fragment MUST implement the {@link com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffRecyclerViewAdapter.Listener} interface, so they can
+ * Activities containing this fragment MUST implement the {@link com.pheiffware.lib.and.gui.pheiffListFragment.PheiffRecyclerViewAdapter.Listener} interface, so they can
  * receive notifications.
  */
 public abstract class PheiffListFragment<T> extends Fragment

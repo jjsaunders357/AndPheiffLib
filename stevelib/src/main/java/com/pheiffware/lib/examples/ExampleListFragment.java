@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pheiffware.lib.R;
-import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffRecyclerViewAdapter;
-import com.pheiffware.lib.and.fragments.pheiffListFragment.PheiffViewHolder;
+import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffRecyclerViewAdapter;
+import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffViewHolder;
 import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;

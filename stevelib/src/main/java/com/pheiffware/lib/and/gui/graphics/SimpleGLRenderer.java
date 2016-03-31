@@ -1,4 +1,4 @@
-package com.pheiffware.lib.and.fragments.graphics;
+package com.pheiffware.lib.and.gui.graphics;
 
 import android.content.res.AssetManager;
 

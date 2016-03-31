@@ -1,4 +1,4 @@
-package com.pheiffware.lib.and.fragments.pheiffListFragment;
+package com.pheiffware.lib.and.gui;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.pheiffware.lib.utils.Utils;
 
-//TODO: Create gui package in and package.  Move this to that level
 /**
  * A base activity class which logs all life cycle methods.  Useful for debugging.
  */
