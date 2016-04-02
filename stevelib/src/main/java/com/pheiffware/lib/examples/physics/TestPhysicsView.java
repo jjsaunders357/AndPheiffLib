@@ -4,10 +4,6 @@
 */
 package com.pheiffware.lib.examples.physics;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,123 +19,131 @@ import com.pheiffware.lib.physics.entity.Entity;
 import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.LineSegmentEntity;
 import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.PolygonEntity;
 import com.pheiffware.lib.physics.entity.physicalEntity.physicalEntities.SphereEntity;
+import com.pheiffware.lib.simulation.SimulationRunner;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+//TODO: Make abstract base view for rendering any simulation.  This should extend that.
 
 /**
- *
+ * TODO: Comment
  */
 public class TestPhysicsView extends View
 {
 
-	private TestingPhysicsSystemManager physicsSystemManager;
-	private Paint fillPaint;
-	private Paint outlinePaint;
+    private SimulationRunner<List<Entity>> simulationRunner;
+    private Paint fillPaint;
+    private Paint outlinePaint;
 
-	/**
-	 * @param context
-	 */
-	public TestPhysicsView(Context context, TestingPhysicsSystemManager physicsSystemManager)
-	{
-		super(context);
-		fillPaint = new Paint();
-		fillPaint.setStyle(Style.FILL);
-		fillPaint.setColor(Color.rgb(255, 0, 0));
-		outlinePaint = new Paint();
-		outlinePaint.setStyle(Style.STROKE);
-		outlinePaint.setColor(Color.rgb(255, 0, 0));
-		setMinimumWidth(800);
-		setMinimumHeight(800);
-		this.physicsSystemManager = physicsSystemManager;
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask()
-		{
-			@Override
-			public void run()
-			{
-				postInvalidate();
-			}
-		}, 0, 16);
-	}
+    /**
+     * @param context
+     * @param simulationRunner
+     */
+    public TestPhysicsView(Context context, SimulationRunner<List<Entity>> simulationRunner)
+    {
+        super(context);
+        fillPaint = new Paint();
+        fillPaint.setStyle(Style.FILL);
+        fillPaint.setColor(Color.rgb(255, 0, 0));
+        outlinePaint = new Paint();
+        outlinePaint.setStyle(Style.STROKE);
+        outlinePaint.setColor(Color.rgb(255, 0, 0));
+        setMinimumWidth(800);
+        setMinimumHeight(800);
+        this.simulationRunner = simulationRunner;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                postInvalidate();
+            }
+        }, 0, 16);
+    }
 
-	@Override
-	protected void onDraw(Canvas canvas)
-	{
-		canvas.drawColor(Color.BLACK);
-		List<Entity> entities = physicsSystemManager.getState();
-		for (Entity entity : entities)
-		{
-			draw(canvas, entity);
-		}
-	}
+    @Override
+    protected void onDraw(Canvas canvas)
+    {
+        canvas.drawColor(Color.BLACK);
+        List<Entity> entities = simulationRunner.getState();
+        for (Entity entity : entities)
+        {
+            draw(canvas, entity);
+        }
+    }
 
-	/**
-	 * Draw an entity, based on its semantic
-	 * 
-	 * @param canvas
-	 * @param entity
-	 */
-	private final void draw(Canvas canvas, Entity entity)
-	{
-		if (entity instanceof SphereEntity)
-		{
-			draw(canvas, (SphereEntity) entity);
-		}
-		else if (entity instanceof LineSegmentEntity)
-		{
+    /**
+     * Draw an entity, based on its semantic
+     *
+     * @param canvas
+     * @param entity
+     */
+    private final void draw(Canvas canvas, Entity entity)
+    {
+        if (entity instanceof SphereEntity)
+        {
+            draw(canvas, (SphereEntity) entity);
+        }
+        else if (entity instanceof LineSegmentEntity)
+        {
 
-			draw(canvas, ((LineSegmentEntity) entity).getLineSegment());
-		}
-		else if (entity instanceof PolygonEntity)
-		{
-			draw(canvas, (PolygonEntity) entity);
-		}
-	}
+            draw(canvas, ((LineSegmentEntity) entity).getLineSegment());
+        }
+        else if (entity instanceof PolygonEntity)
+        {
+            draw(canvas, (PolygonEntity) entity);
+        }
+    }
 
-	/**
-	 * Draws a circle
-	 * 
-	 * @param canvas
-	 * @param circle
-	 */
-	private void draw(Canvas canvas, SphereEntity circle)
-	{
-		Vec3D circleCenter = circle.getCenter();
+    /**
+     * Draws a circle
+     *
+     * @param canvas
+     * @param circle
+     */
+    private void draw(Canvas canvas, SphereEntity circle)
+    {
+        Vec3D circleCenter = circle.getCenter();
 
-		RectF rectF = new RectF(
-								(float)(circleCenter.x - circle.getRadius()),(float)(circleCenter.y - circle.getRadius()),
-				                (float)(circleCenter.x + circle.getRadius()),(float)(circleCenter.y + circle.getRadius())
-		);
+        RectF rectF = new RectF(
+                (float) (circleCenter.x - circle.getRadius()), (float) (circleCenter.y - circle.getRadius()),
+                (float) (circleCenter.x + circle.getRadius()), (float) (circleCenter.y + circle.getRadius())
+        );
 
-		canvas.drawOval(rectF, fillPaint);
-	}
+        canvas.drawOval(rectF, fillPaint);
+    }
 
-	private void draw(Canvas canvas, LineSegment lineSegment)
-	{
-		Vec3D unitNormal = lineSegment.getUnitNormal();
-		canvas.drawLine((float)lineSegment.p1.x, (float)lineSegment.p1.y, (float)lineSegment.p2.x, (float)lineSegment.p2.y, fillPaint);
-		Vec3D center = Vec3D.scale(Vec3D.add(lineSegment.p1, lineSegment.p2), 0.5f);
-		Vec3D normalEndPoint = Vec3D.add(center, Vec3D.scale(unitNormal, 10.0f));
-		canvas.drawLine((float)center.x, (float)center.y, (float)normalEndPoint.x,(float)normalEndPoint.y, fillPaint);
-	}
+    private void draw(Canvas canvas, LineSegment lineSegment)
+    {
+        Vec3D unitNormal = lineSegment.getUnitNormal();
+        canvas.drawLine((float) lineSegment.p1.x, (float) lineSegment.p1.y, (float) lineSegment.p2.x, (float) lineSegment.p2.y, fillPaint);
+        Vec3D center = Vec3D.scale(Vec3D.add(lineSegment.p1, lineSegment.p2), 0.5f);
+        Vec3D normalEndPoint = Vec3D.add(center, Vec3D.scale(unitNormal, 10.0f));
+        canvas.drawLine((float) center.x, (float) center.y, (float) normalEndPoint.x, (float) normalEndPoint.y, fillPaint);
+    }
 
-	private void draw(Canvas canvas, PolygonEntity polygon)
-	{
-		for (LineSegment lineSegment : polygon.getLineSegments())
-		{
-			draw(canvas, lineSegment);
-		}
-	}
+    private void draw(Canvas canvas, PolygonEntity polygon)
+    {
+        for (LineSegment lineSegment : polygon.getLineSegments())
+        {
+            draw(canvas, lineSegment);
+        }
+    }
 
-	@Override
-	@ExportedProperty(category = "drawing")
-	public boolean isOpaque()
-	{
-		return true;
-	}
+    @Override
+    @ExportedProperty(category = "drawing")
+    public boolean isOpaque()
+    {
+        return true;
+    }
 
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-	{
-		setMeasuredDimension(getSuggestedMinimumWidth(), getSuggestedMinimumHeight());
-	}
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+    {
+        setMeasuredDimension(getSuggestedMinimumWidth(), getSuggestedMinimumHeight());
+    }
 
 }

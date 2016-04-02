@@ -1,7 +1,7 @@
 package com.pheiffware.lib.examples.physics;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 
 import com.pheiffware.lib.R;
@@ -18,11 +18,16 @@ import com.pheiffware.lib.examples.physics.testScenarios.PoolScenario;
 import com.pheiffware.lib.examples.physics.testScenarios.SingleBallOnRamp;
 import com.pheiffware.lib.examples.physics.testScenarios.SingleBallSitGround;
 import com.pheiffware.lib.examples.physics.testScenarios.StackedObjects;
+import com.pheiffware.lib.physics.entity.Entity;
+import com.pheiffware.lib.simulation.SimulationRunner;
+
+import java.util.List;
 
 //TODO: Make fragment and manage display/size
-public class PhysicsTestActivity extends AppCompatActivity {
+public class PhysicsTestActivity extends AppCompatActivity
+{
     private TestPhysicsView testView;
-    private TestingPhysicsSystemManager physicsSystemManager;
+    private SimulationRunner<List<Entity>> simulationRunner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -40,25 +45,33 @@ public class PhysicsTestActivity extends AppCompatActivity {
                         new Elevator(1.0f, numSteps), new SingleBallSitGround(), new GeneralScenario1(3.0f, numSteps), new GeneralScenario2(8.0f, numSteps),
                         new SingleBallOnRamp(3.0f, numSteps)};
         // @formatter:on
-        physicsSystemManager = new TestingPhysicsSystemManager(1.6, true, physicsScenarios);
-        physicsSystemManager.start();
 
-        testView = new TestPhysicsView(this, physicsSystemManager);
+        simulationRunner = new TestPhysicsMultiSimulationRunner(1.6, true, physicsScenarios);
+
+        testView = new TestPhysicsView(this, simulationRunner);
         setContentView(R.layout.activity_physics);
         LinearLayout rootView = (LinearLayout) findViewById(R.id.root);
         rootView.addView(testView, 0);
-
-        physicsSystemManager.start();
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        simulationRunner.start();
+    }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        simulationRunner.stop();
+        //TODO: Create stopping/restarting mechanism
+    }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
-        // Debug.stopMethodTracing();
-        //TODO: Create stopping mechanism
-        //physicsSystemManager.stop();
     }
 }

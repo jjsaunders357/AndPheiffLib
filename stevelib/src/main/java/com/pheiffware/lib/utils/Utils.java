@@ -69,14 +69,25 @@ public class Utils
     }
 
     /**
-     * Get the time elapsed from an early call to System.nanoTime() in seconds.
+     * Get the time elapsed between an earlier time stamp and now.
      *
      * @param earlierTimeStamp earlier call to System.nanoTime()
      * @return time elapsed in seconds
      */
     public static final double getTimeElapsed(long earlierTimeStamp)
     {
-        return (System.nanoTime() - earlierTimeStamp) / 1000000000.0;
+        return getTimeElapsed(earlierTimeStamp, System.nanoTime());
+    }
+
+    /**
+     * Get time elapsed between 2 nanosecond time stamps.
+     * @param earlierTimeStamp
+     * @param laterTimeStamp
+     * @return
+     */
+    public static final double getTimeElapsed(long earlierTimeStamp, long laterTimeStamp)
+    {
+        return (laterTimeStamp - earlierTimeStamp) / 1000000000.0;
     }
 
     /**
@@ -149,4 +160,5 @@ public class Utils
     {
         Log.d("LifeC - " + object.getClass().getSimpleName(), lifeCycleMethodName);
     }
+
 }

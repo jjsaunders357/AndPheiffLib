@@ -11,30 +11,37 @@ import com.pheiffware.lib.physics.PhysicsSystem;
  */
 public abstract class TestPhysicsScenario
 {
-	private final double runTime;
-	private final int numSteps;
+    private final double runTime;
+    private final int numSteps;
+    private final double timeStepDuration;
 
-	public TestPhysicsScenario(double scenarioRuntime, int numSteps)
-	{
-		this.runTime = scenarioRuntime;
-		this.numSteps = numSteps;
-	}
+    public TestPhysicsScenario(double scenarioRuntime, int numSteps)
+    {
+        this.runTime = scenarioRuntime;
+        this.numSteps = numSteps;
+        timeStepDuration = runTime / numSteps;
+    }
 
-	void resetPhysicsSystem(PhysicsSystem physicsSystem)
-	{
-		physicsSystem.reset();
-		setup(physicsSystem);
-	}
+    void resetPhysicsSystem(PhysicsSystem physicsSystem)
+    {
+        physicsSystem.reset();
+        setup(physicsSystem);
+    }
 
-	public abstract void setup(PhysicsSystem physicsSystem);
+    public abstract void setup(PhysicsSystem physicsSystem);
 
-	public final double getRuntime()
-	{
-		return runTime;
-	}
+    public final double getRuntime()
+    {
+        return runTime;
+    }
 
-	public final int getNumSteps() {
-		return numSteps;
-	}
+    public final int getNumSteps()
+    {
+        return numSteps;
+    }
 
+    public final double getTimeStepDuration()
+    {
+        return timeStepDuration;
+    }
 }
