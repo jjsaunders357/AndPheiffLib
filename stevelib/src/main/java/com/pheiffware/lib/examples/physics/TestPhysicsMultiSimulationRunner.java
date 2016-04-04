@@ -64,7 +64,10 @@ public class TestPhysicsMultiSimulationRunner extends SimulationRunner<List<Enti
         {
             runScenario(physicsScenarios[physicsScenarioIndex]);
             physicsScenarioIndex++;
-            changeScenario(physicsScenarios[physicsScenarioIndex]);
+            if (physicsScenarioIndex < physicsScenarios.length)
+            {
+                changeScenario(physicsScenarios[physicsScenarioIndex]);
+            }
 //            PLog.info("Ups : " + physicsScenarios[physicsScenarioIndex].getNumSteps() / Utils.getTimeElapsed(simulationRunner.getRealStartTime()));
         }
     }

@@ -7,12 +7,15 @@ package com.pheiffware.lib.examples.physics;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
+import android.graphics.Region;
 import android.view.View;
 import android.view.ViewDebug.ExportedProperty;
 
+import com.pheiffware.lib.and.AndGuiUtils;
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.geometry.shapes.LineSegment;
 import com.pheiffware.lib.physics.entity.Entity;
@@ -25,49 +28,82 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//TODO: Make abstract base view for rendering any simulation.  This should extend that.
+//TODO: parent base class with transform/clipping code
 
 /**
  * TODO: Comment
  */
 public class TestPhysicsView extends View
 {
+    private static final Paint fillPaint = new Paint();
+    private static final Paint outlinePaint = new Paint();
+
+    {
+        fillPaint.setStyle(Style.FILL);
+        fillPaint.setColor(Color.rgb(255, 0, 0));
+        outlinePaint.setStyle(Style.STROKE);
+        outlinePaint.setColor(Color.rgb(255, 0, 0));
+    }
+
+    private Timer timer = null;
+
+    //The area of the sim world to view (lower left and dimensions)
+    private float simX;
+    private float simY;
+    private float simWidth;
+    private float simHeight;
+
+    private RectF clipRectangle = new RectF(0, 0, 0, 0);
+    private Matrix simToViewTransform = new Matrix();
 
     private SimulationRunner<List<Entity>> simulationRunner;
-    private Paint fillPaint;
-    private Paint outlinePaint;
 
     /**
      * @param context
      * @param simulationRunner
      */
-    public TestPhysicsView(Context context, SimulationRunner<List<Entity>> simulationRunner)
+    public TestPhysicsView(Context context, SimulationRunner<List<Entity>> simulationRunner, float simX, float simY, float simWidth, float simHeight)
     {
         super(context);
-        fillPaint = new Paint();
-        fillPaint.setStyle(Style.FILL);
-        fillPaint.setColor(Color.rgb(255, 0, 0));
-        outlinePaint = new Paint();
-        outlinePaint.setStyle(Style.STROKE);
-        outlinePaint.setColor(Color.rgb(255, 0, 0));
-        setMinimumWidth(800);
-        setMinimumHeight(800);
+        setSimView(simX, simY, simWidth, simHeight);
         this.simulationRunner = simulationRunner;
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask()
+    }
+
+    protected void onWindowVisibilityChanged(int visibility)
+    {
+        if (visibility == VISIBLE)
         {
-            @Override
-            public void run()
+            if (timer == null)
             {
-                postInvalidate();
+                timer = new Timer();
             }
-        }, 0, 16);
+            timer.schedule(new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    postInvalidate();
+                }
+            }, 0, 16);
+        }
+        else
+        {
+            if (timer != null)
+            {
+                timer.cancel();
+                timer.purge();
+            }
+            timer = null;
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas)
     {
+        super.onDraw(canvas);
+        canvas.clipRect(clipRectangle, Region.Op.REPLACE);
         canvas.drawColor(Color.BLACK);
+        canvas.concat(simToViewTransform);
         List<Entity> entities = simulationRunner.getState();
         for (Entity entity : entities)
         {
@@ -140,10 +176,43 @@ public class TestPhysicsView extends View
         return true;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+
+    private void setClipRegionAndViewTransform()
     {
-        setMeasuredDimension(getSuggestedMinimumWidth(), getSuggestedMinimumHeight());
+        int viewWidth = getWidth();
+        int viewHeight = getHeight();
+        simToViewTransform = new Matrix();
+        if (viewWidth == 0 || viewHeight == 0 || simWidth == 0 || simHeight == 0)
+        {
+            clipRectangle = new RectF(0, 0, 0, 0);
+
+        }
+        clipRectangle = AndGuiUtils.getRenderViewRectangle(viewWidth, viewHeight, simWidth / simHeight);
+
+        //1st: Translate sim so that (simX,simY) is at (0,0)
+        simToViewTransform.preTranslate(-simX, -simY);
+
+        //2nd: Scale sim to match viewing area (clipRectangle)
+        float xScale = clipRectangle.width() / simWidth;
+        float yScale = clipRectangle.height() / simHeight;
+        simToViewTransform.postScale(xScale, yScale);
+
+        //3rd: Translate viewing area to the clipped region
+        simToViewTransform.postTranslate(clipRectangle.left, clipRectangle.top);
     }
 
+    public void setSimView(float simX, float simY, float simWidth, float simHeight)
+    {
+        this.simX = simX;
+        this.simY = simY;
+        this.simWidth = simWidth;
+        this.simHeight = simHeight;
+        setClipRegionAndViewTransform();
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh)
+    {
+        setClipRegionAndViewTransform();
+    }
 }
