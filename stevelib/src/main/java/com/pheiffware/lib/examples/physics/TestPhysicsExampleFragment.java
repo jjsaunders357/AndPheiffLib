@@ -1,5 +1,6 @@
 package com.pheiffware.lib.examples.physics;
 
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -25,7 +26,7 @@ import com.pheiffware.lib.simulation.SimulationRunner;
 import java.util.List;
 
 /**
- * TODO: Comment me!
+ * Example of the physics code and simulation engine running in Android
  * <p/>
  * Created by Steve on 4/2/2016.
  */
@@ -60,7 +61,7 @@ public class TestPhysicsExampleFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         super.onCreateView(inflater, container, savedInstanceState);
-        testPhysicsView = new TestPhysicsView(getContext(), simulationRunner, 0, 0, 800, 800);
+        testPhysicsView = new TestPhysicsView(getContext(), 16, new RectF(0, 0, 800, 800), simulationRunner);
         return testPhysicsView;
     }
 
