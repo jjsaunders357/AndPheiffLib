@@ -1,4 +1,4 @@
-package com.pheiffware.lib.and.gui.graphics;
+package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

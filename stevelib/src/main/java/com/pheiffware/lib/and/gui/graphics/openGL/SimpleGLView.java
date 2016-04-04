@@ -2,7 +2,7 @@
  * Created by Stephen Pheiffer.
  * Do not edit, distribute, modify or use without his permission.
 */
-package com.pheiffware.lib.and.gui.graphics;
+package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -23,8 +23,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 /**
- * Extension of the canned surface view for OpenGL provided by Android to perform basic setup: 1. Automatically handles pause/resume. 2. Sends touch transform events to the
- * SimpleGLRenderer
+ * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup and will send TouchTransform events to SimpleGLRenderer.
  */
 public class SimpleGLView extends GLSurfaceView implements TouchTransformListener, GLSurfaceView.Renderer
 {
