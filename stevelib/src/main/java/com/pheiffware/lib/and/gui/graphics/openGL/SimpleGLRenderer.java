@@ -16,7 +16,7 @@ public interface SimpleGLRenderer extends TouchTransformListener
      * <p/>
      * All gl resources should be created/recreated.
      *
-     * @param am asset manager, DO NOT RETAIN REFERENCE
+     * @param am    asset manager, DO NOT RETAIN REFERENCE
      * @param manGL managed opengl object
      */
     void onSurfaceCreated(AssetManager am, ManGL manGL);
@@ -33,4 +33,15 @@ public interface SimpleGLRenderer extends TouchTransformListener
      * Called when its time to render a new frame.
      */
     void onDrawFrame();
+
+
+    /**
+     * The maximum, major version of openGL which your renderer has been coded to support.  This prevents having your code break on later versions of devices if newer incompatible
+     * versions of openGL become available.  The version made available to the renderer will always be <=maxGLVersion depending on hardware capabilities.  This should be a number
+     * like: 1, 2 or 3.
+     * <p/>
+     * The actual version available to you is specified as part of the ManGL object provided when the surface is created.  This can be checked against constants such as
+     * GL_VERSION_31.
+     */
+    int maxMajorGLVersion();
 }

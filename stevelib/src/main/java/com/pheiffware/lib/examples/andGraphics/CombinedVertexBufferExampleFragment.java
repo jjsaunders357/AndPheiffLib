@@ -36,6 +36,12 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
         private Matrix4 projectionMatrix;
         private Texture faceTexture;
 
+        @Override
+        public int maxMajorGLVersion()
+        {
+            return 3;
+        }
+
         /* (non-Javadoc)
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
@@ -116,6 +122,7 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
             pb.draw(6, GLES20.GL_TRIANGLES);
             globalTestColor += 0.01;
         }
+
 
         /* (non-Javadoc)
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)

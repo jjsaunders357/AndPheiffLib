@@ -40,6 +40,12 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
         private int viewWidth;
         private int viewHeight;
 
+        @Override
+        public int maxMajorGLVersion()
+        {
+            return 3;
+        }
+
         /* (non-Javadoc)
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */

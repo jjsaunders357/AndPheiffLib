@@ -16,6 +16,7 @@ import com.pheiffware.lib.and.touch.TouchTransformListener;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.Utils;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -43,8 +44,8 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         touchAnalyzer = new TouchAnalyzer(this, metrics.xdpi, metrics.ydpi);
 
-        //TODO: How to configure this?
-        setEGLContextClientVersion(2);
+        int requestedGLVersion = Math.min(renderer.maxMajorGLVersion(), PheiffGLUtils.getDeviceGLMajorVersion(context));
+        setEGLContextClientVersion(requestedGLVersion);
         setRenderer(this);
 
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -71,13 +72,12 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
         });
     }
 
-
     @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config)
+    public void onSurfaceCreated(GL10 useless, EGLConfig config)
     {
         Utils.logLC(this, "SurfaceCreated");
         //All resources held by manGL will have been thrown away
-        manGL = new ManGL(filterQuality, gl, config);
+        manGL = new ManGL(PheiffGLUtils.getDeviceGLVersion(getContext()), filterQuality);
         renderer.onSurfaceCreated(assetManager, manGL);
     }
 

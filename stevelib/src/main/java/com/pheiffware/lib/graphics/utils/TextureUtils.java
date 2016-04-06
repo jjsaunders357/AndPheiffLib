@@ -4,15 +4,15 @@
 */
 package com.pheiffware.lib.graphics.utils;
 
-import java.io.IOException;
-
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.GraphicsException;
+
+import java.io.IOException;
 
 /**
  * A number of basic utilities for setting up/using textures and loading images into them.
@@ -121,6 +121,7 @@ public class TextureUtils
      */
     public static int genTextureForDepthRendering(int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
+        //TODO: Could be replaced by a renderbuffer.  This supports multi-sampling.  After multi-sample, blit to a texture is required.  (opengl 3.0 only).
         int textureHandle = genTexture();
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,

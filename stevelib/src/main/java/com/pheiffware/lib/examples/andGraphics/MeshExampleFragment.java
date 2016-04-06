@@ -52,6 +52,11 @@ public class MeshExampleFragment extends SimpleGLFragment
         private Matrix3 normalTransform = Matrix3.newZeroMatrix();
         private Camera camera = new Camera(90f, 1, 1, 100, false);
 
+        @Override
+        public int maxMajorGLVersion()
+        {
+            return 3;
+        }
 
         @Override
         public void onSurfaceCreated(AssetManager am, ManGL manGL)

@@ -13,14 +13,18 @@ import com.pheiffware.lib.graphics.FilterQuality;
  */
 public abstract class SimpleGLFragment extends LoggedFragment
 {
-    private SimpleGLView simpleGLView;
+    private SimpleGLView simpleGLView = null;
     private final SimpleGLRenderer renderer;
     private final FilterQuality filterQuality;
 
-    public SimpleGLFragment(SimpleGLRenderer renderer, FilterQuality filterQuality)
+    /**
+     * @param renderer             The renderer which will handle display
+     * @param defaultFilterQuality This is defined for all created textures by default
+     */
+    public SimpleGLFragment(SimpleGLRenderer renderer, FilterQuality defaultFilterQuality)
     {
         this.renderer = renderer;
-        this.filterQuality = filterQuality;
+        this.filterQuality = defaultFilterQuality;
     }
 
     @Override

@@ -11,11 +11,17 @@ import com.pheiffware.lib.graphics.utils.TextureUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
+
+//TODO: glDepthRange(n,f) (might make sense for the sphere)
+//TODO: glCullFace(GL_BACK);glEnable(GL_CULL_FACE);
+//TODO: sRGB textures and immutable textures (opengl 3.0 only)
+//TODO: glBlendFunc and glDepthMask(false) - turn off after rendering opaque objects.  Turn back on again after translucent objects.
+//TODO: multisample enable (opengl 3.0 only)
 
 /**
- * A core object which manages references to and between graphics objects. Created by Steve on 2/13/2016.
+ * A core object which manages references to and between graphics objects.
+ * <p/>
+ * Created by Steve on 2/13/2016.
  */
 public class ManGL
 {
@@ -24,10 +30,12 @@ public class ManGL
     private final Map<String, Program> programs = new HashMap<>();
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
+    private final int glVersion;
 
-    public ManGL(FilterQuality defaultFilterQuality, GL10 gl, EGLConfig config)
+    public ManGL(int glVersion, FilterQuality defaultFilterQuality)
     {
         this.defaultFilterQuality = defaultFilterQuality;
+        this.glVersion = glVersion;
     }
 
     /**
