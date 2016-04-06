@@ -1,7 +1,7 @@
 package com.pheiffware.lib.graphics.managed.mesh;
 
 import com.pheiffware.lib.geometry.collada.Collada;
-import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 
@@ -35,19 +35,19 @@ public class Mesh
     /**
      * Generates data for shaders requiring per vertex color data.
      *
-     * @param gColor Color to use
+     * @param color4F Color to use
      * @return Array for putting into a openGL buffer
      */
-    public float[] generateSingleColorData(GColor gColor)
+    public float[] generateSingleColorData(Color4F color4F)
     {
         float[] colors = new float[numUniqueVertices * 4];
         int index = 0;
         for (int i = 0; i < getNumUniqueVertices(); i++)
         {
-            colors[index++] = gColor.getRed();
-            colors[index++] = gColor.getGreen();
-            colors[index++] = gColor.getBlue();
-            colors[index++] = gColor.getAlpha();
+            colors[index++] = color4F.getRed();
+            colors[index++] = color4F.getGreen();
+            colors[index++] = color4F.getBlue();
+            colors[index++] = color4F.getAlpha();
         }
         return colors;
     }

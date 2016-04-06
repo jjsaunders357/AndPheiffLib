@@ -1,6 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
@@ -25,9 +25,9 @@ import javax.xml.validation.Validator;
 public class ColladaFactory
 {
     //Any material without a texture will have this as its default diffuse color
-    static final GColor DEFAULT_AMBIENT = new GColor(0.1f, 0.1f, 0.1f, 1f);
-    static final GColor DEFAULT_DIFFUSE = new GColor(0.6f, 0.6f, 0.6f, 1f);
-    static final GColor DEFAULT_SPECULAR = new GColor(1f, 1f, 1f, 1f);
+    static final Color4F DEFAULT_AMBIENT = new Color4F(0.1f, 0.1f, 0.1f, 1f);
+    static final Color4F DEFAULT_DIFFUSE = new Color4F(0.6f, 0.6f, 0.6f, 1f);
+    static final Color4F DEFAULT_SPECULAR = new Color4F(1f, 1f, 1f, 1f);
 
     //Any material which does not define shininess gets this value
     static final float DEFAULT_SHININESS = 2f;

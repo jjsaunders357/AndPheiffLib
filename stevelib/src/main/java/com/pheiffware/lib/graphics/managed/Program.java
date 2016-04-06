@@ -1,6 +1,7 @@
 package com.pheiffware.lib.graphics.managed;
 
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
@@ -30,7 +31,7 @@ public class Program
 
         int[] numUniformsArray = new int[1];
         GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
-
+        GLES30 x;
         int numActiveUniforms = numUniformsArray[0];
         uniforms = new TreeMap<>();
 

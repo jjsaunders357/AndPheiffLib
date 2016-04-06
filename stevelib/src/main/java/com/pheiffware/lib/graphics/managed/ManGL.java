@@ -7,7 +7,9 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
+import com.pheiffware.lib.utils.Utils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,12 +32,16 @@ public class ManGL
     private final Map<String, Program> programs = new HashMap<>();
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
-    private final int glVersion;
+    private final int deviceGLVersion;
 
-    public ManGL(int glVersion, FilterQuality defaultFilterQuality)
+    public ManGL(int deviceGLVersion, FilterQuality defaultFilterQuality)
     {
         this.defaultFilterQuality = defaultFilterQuality;
-        this.glVersion = glVersion;
+        this.deviceGLVersion = deviceGLVersion;
+        if (deviceGLVersion < 2)
+        {
+            throw new RuntimeException("Cannot work with openGL version below 2.0");
+        }
     }
 
     /**
@@ -50,8 +56,16 @@ public class ManGL
         Integer vertexShaderHandle = vertexShaders.get(vertexShaderAssetPath);
         if (vertexShaderHandle == null)
         {
-            vertexShaderHandle = ProgramUtils.createShader(am, GLES20.GL_VERTEX_SHADER, vertexShaderAssetPath);
-            vertexShaders.put(vertexShaderAssetPath, vertexShaderHandle);
+            try
+            {
+                String code = Utils.loadAssetAsString(am, vertexShaderAssetPath);
+                vertexShaderHandle = ProgramUtils.createShader(GLES20.GL_VERTEX_SHADER, code);
+                vertexShaders.put(vertexShaderAssetPath, vertexShaderHandle);
+            }
+            catch (IOException e)
+            {
+                throw new GraphicsException(e);
+            }
         }
         return vertexShaderHandle;
     }
@@ -68,8 +82,16 @@ public class ManGL
         Integer fragmentShaderHandle = fragmentShaders.get(fragmentShaderAssetPath);
         if (fragmentShaderHandle == null)
         {
-            fragmentShaderHandle = ProgramUtils.createShader(am, GLES20.GL_FRAGMENT_SHADER, fragmentShaderAssetPath);
-            fragmentShaders.put(fragmentShaderAssetPath, fragmentShaderHandle);
+            try
+            {
+                String code = Utils.loadAssetAsString(am, fragmentShaderAssetPath);
+                fragmentShaderHandle = ProgramUtils.createShader(GLES20.GL_FRAGMENT_SHADER, code);
+                fragmentShaders.put(fragmentShaderAssetPath, fragmentShaderHandle);
+            }
+            catch (IOException e)
+            {
+                throw new GraphicsException(e);
+            }
         }
         return fragmentShaderHandle;
     }

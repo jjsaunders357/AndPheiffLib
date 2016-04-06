@@ -1,7 +1,6 @@
 package com.pheiffware.lib.utils.dom;
 
-import com.pheiffware.lib.R;
-import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.Color4F;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -223,7 +222,7 @@ public class DomUtils
      * @return float[4]
      * @throws XMLParseException
      */
-    public static GColor getColorSubElement(Element element) throws XMLParseException
+    public static Color4F getColorSubElement(Element element) throws XMLParseException
     {
         Element colorElement = getSubElement(element, "color");
         if (colorElement == null)
@@ -231,7 +230,7 @@ public class DomUtils
             return null;
         }
         float[] components = getFloatsFromElement(colorElement);
-        return new GColor(components);
+        return new Color4F(components);
     }
 
     public static int[] getIntsFromElement(Element element) throws XMLParseException

@@ -11,8 +11,8 @@ import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.graphics.Camera;
+import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.GColor;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -101,7 +101,7 @@ public class MeshExampleFragment extends SimpleGLFragment
 
                 sb.putAttributeFloats("vertexPosition", mesh.getPositionData());
                 sb.putAttributeFloats("vertexNormal", mesh.getNormalData());
-                sb.putAttributeFloats("vertexColor", mesh.generateSingleColorData(new GColor(0.0f, 0.6f, 0.9f, 1.0f)));
+                sb.putAttributeFloats("vertexColor", mesh.generateSingleColorData(new Color4F(0.0f, 0.6f, 0.9f, 1.0f)));
 
                 sb.transfer();
                 PheiffGLUtils.assertNoError();

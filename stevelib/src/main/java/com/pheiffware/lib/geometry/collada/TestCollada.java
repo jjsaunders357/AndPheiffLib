@@ -1,7 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.R;
-import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
@@ -64,15 +63,15 @@ public class TestCollada
         assertEquals(ColladaFactory.DEFAULT_SHININESS, mat1.shininess, 0f);
         assertEquals("image1.png", mat1.imageFileName);
 
-        assertEquals(new GColor(0, 0, 0, 1), mat2.ambientColor);
+        assertEquals(new Color4F(0, 0, 0, 1), mat2.ambientColor);
         assertEquals(ColladaFactory.DEFAULT_DIFFUSE, mat2.diffuseColor);
-        assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
+        assertEquals(new Color4F(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
         assertEquals(0.2f, mat2.shininess, 0f);
         assertEquals("image2.png", mat2.imageFileName);
 
-        assertEquals(new GColor(0, 0, 0, 1), matp.ambientColor);
-        assertEquals(new GColor(0.5f, 0f, 0.5f, 1f), matp.diffuseColor);
-        assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), matp.specularColor);
+        assertEquals(new Color4F(0, 0, 0, 1), matp.ambientColor);
+        assertEquals(new Color4F(0.5f, 0f, 0.5f, 1f), matp.diffuseColor);
+        assertEquals(new Color4F(0.5f, 0.5f, 0.5f, 1f), matp.specularColor);
         assertEquals(0.2f, matp.shininess, 0f);
         assert matp.imageFileName == null;
 
@@ -153,15 +152,15 @@ public class TestCollada
         assertEquals(ColladaFactory.DEFAULT_SHININESS, mat1.shininess, 0f);
         assertEquals("image1.png", mat1.imageFileName);
 
-        assertEquals(new GColor(0, 0, 0, 1), mat2.ambientColor);
+        assertEquals(new Color4F(0, 0, 0, 1), mat2.ambientColor);
         assertEquals(ColladaFactory.DEFAULT_DIFFUSE, mat2.diffuseColor);
-        assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
+        assertEquals(new Color4F(0.5f, 0.5f, 0.5f, 1f), mat2.specularColor);
         assertEquals(0.2f, mat2.shininess, 0f);
         assertEquals("image2.png", mat2.imageFileName);
 
-        assertEquals(new GColor(0, 0, 0, 1), matp.ambientColor);
-        assertEquals(new GColor(0.5f, 0f, 0.5f, 1f), matp.diffuseColor);
-        assertEquals(new GColor(0.5f, 0.5f, 0.5f, 1f), matp.specularColor);
+        assertEquals(new Color4F(0, 0, 0, 1), matp.ambientColor);
+        assertEquals(new Color4F(0.5f, 0f, 0.5f, 1f), matp.diffuseColor);
+        assertEquals(new Color4F(0.5f, 0.5f, 0.5f, 1f), matp.specularColor);
         assertEquals(0.2f, matp.shininess, 0f);
         assert matp.imageFileName == null;
 

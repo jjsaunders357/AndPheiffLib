@@ -1,7 +1,7 @@
 package com.pheiffware.lib.geometry.collada;
 
 
-import com.pheiffware.lib.graphics.GColor;
+import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.ElementObjectFactory;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -26,9 +26,9 @@ class ColladaEffectFactory implements ElementObjectFactory<ColladaEffect>
 
         Element technique = DomUtils.assertGetSubElement(profileCommon, "technique");
         Element phong = DomUtils.getSubElement(technique, "phong");
-        GColor ambientColor = null;
-        GColor diffuseColor = null;
-        GColor specularColor = null;
+        Color4F ambientColor = null;
+        Color4F diffuseColor = null;
+        Color4F specularColor = null;
         float shininess;
 
         if (phong != null)

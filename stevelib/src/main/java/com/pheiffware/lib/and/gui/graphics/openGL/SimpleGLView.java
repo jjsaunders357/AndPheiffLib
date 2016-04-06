@@ -44,8 +44,8 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         touchAnalyzer = new TouchAnalyzer(this, metrics.xdpi, metrics.ydpi);
 
-        int requestedGLVersion = Math.min(renderer.maxMajorGLVersion(), PheiffGLUtils.getDeviceGLMajorVersion(context));
-        setEGLContextClientVersion(requestedGLVersion);
+        int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), PheiffGLUtils.getDeviceGLMajorVersion(context));
+        setEGLContextClientVersion(requestedGLMajorVersion);
         setRenderer(this);
 
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);

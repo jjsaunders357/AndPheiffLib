@@ -4,37 +4,17 @@
 */
 package com.pheiffware.lib.graphics.utils;
 
-import java.io.IOException;
-import java.nio.IntBuffer;
-
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.utils.Utils;
 import com.pheiffware.lib.graphics.GraphicsException;
 
-//TODO: Separate Android specific code
+import java.nio.IntBuffer;
+
 /**
- * Utility methods for loading/compiling shaders and programs.  Root location for loading files is the assets folder.
+ * Utility methods for loading/compiling shaders and programs.
  */
 public class ProgramUtils
 {
-    /**
-     * Loads the specified vertex and fragment shaders and links them into a single program.
-     *
-     * @param assetManager
-     * @param vertexAssetPath   Path to the shader file
-     * @param fragmentAssetPath Path to the shader file
-     * @return GL handle to program
-     * @throws GraphicsException
-     */
-    public static int createProgram(AssetManager assetManager, String vertexAssetPath, String fragmentAssetPath) throws GraphicsException
-    {
-        int vertexShaderHandle = createShader(assetManager, GLES20.GL_VERTEX_SHADER, vertexAssetPath);
-        int fragmentShaderHandle = createShader(assetManager, GLES20.GL_FRAGMENT_SHADER, fragmentAssetPath);
-        return createProgram(vertexShaderHandle, fragmentShaderHandle);
-    }
-
     /**
      * Link program from loaded fragment/vertex shaders.
      *
@@ -70,28 +50,6 @@ public class ProgramUtils
             String infoLog = GLES20.glGetProgramInfoLog(programHandle);
             GLES20.glDeleteShader(programHandle);
             throw new GraphicsException("The program failed to link: " + infoLog);
-        }
-    }
-
-
-    /**
-     * Loads and compiles a shader from a file.
-     *
-     * @param assetManager
-     * @param shaderType      GLES20.GL_VERTEX_SHADER | GLES20.GL_FRAGMENT_SHADER
-     * @param shaderAssetPath Path to the shader file
-     * @return GL handle to shader
-     * @throws GraphicsException
-     */
-    public static int createShader(AssetManager assetManager, int shaderType, String shaderAssetPath) throws GraphicsException
-    {
-        try
-        {
-            return createShader(shaderType, Utils.loadAssetAsString(assetManager, shaderAssetPath));
-        }
-        catch (IOException | GraphicsException exception)
-        {
-            throw new GraphicsException("Cannot load shader: " + shaderAssetPath, exception);
         }
     }
 
