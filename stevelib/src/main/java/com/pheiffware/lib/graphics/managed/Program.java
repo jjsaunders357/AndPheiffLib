@@ -7,6 +7,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -60,6 +61,11 @@ public class Program
     public Attribute getAttribute(String attributeName)
     {
         return attributes.get(attributeName);
+    }
+
+    public Collection<String> getAttributeNames()
+    {
+        return attributes.keySet();
     }
 
     @Override

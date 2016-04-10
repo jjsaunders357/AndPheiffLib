@@ -4,13 +4,14 @@
 */
 package com.pheiffware.lib.graphics.managed.buffer;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.managed.Attribute;
 import com.pheiffware.lib.graphics.managed.Program;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over with a given program.
@@ -48,6 +49,11 @@ public class StaticVertexBuffer extends BaseBuffer
     //The names of the attributes being managed by this buffer
     private String[] attributeNames;
 
+    public StaticVertexBuffer(Program program, int maxVertices, Collection<String> attributeNames)
+    {
+        this(program, maxVertices, attributeNames.toArray(new String[]{}));
+    }
+
     public StaticVertexBuffer(Program program, int maxVertices, String[] attributeNames)
     {
         this.attributeNames = attributeNames;
@@ -63,29 +69,26 @@ public class StaticVertexBuffer extends BaseBuffer
         vertexByteSize = attributeByteOffset;
 
         allocateBuffer(maxVertices * vertexByteSize);
-
     }
 
 
-
     /**
-     * For a given attributeIndex (defined by order in constructor) put an array of floats in the appropriate buffer location.
-     * Note, this is very inefficient, but is fine for one time setup.
+     * For a given attributeIndex (defined by order in constructor) put an array of floats in the appropriate buffer location. Note, this is very inefficient, but is fine for one
+     * time setup.
      *
      * @param attributeName
      * @param values
      */
-    public final void putAttributeFloats(String attributeName, float[] values)
+    public final void putAttributeFloats(String attributeName, float[] values, int vertexOffset)
     {
-        putAttributeFloats(attributeByteOffsets.get(attributeName), program.getAttribute(attributeName).dims, values, 0, values.length);
+        putAttributeFloats(attributeByteOffsets.get(attributeName), program.getAttribute(attributeName).dims, values, vertexOffset);
     }
 
-    public final void putAttributeFloats(int attributeByteOffset, int attributeDims, float[] values, int floatOffset, int numFloats)
+    public final void putAttributeFloats(int attributeByteOffset, int attributeDims, float[] values, int vertexOffset)
     {
-        int putPosition = attributeByteOffset;
+        int putPosition = attributeByteOffset + vertexByteSize * vertexOffset;
         int dims = attributeDims;
-        int end = floatOffset + numFloats;
-        for (int i = floatOffset; i < end; i += dims)
+        for (int i = 0; i < values.length; i += dims)
         {
             byteBuffer.position(putPosition);
             for (int j = 0; j < dims; j++)
@@ -111,8 +114,7 @@ public class StaticVertexBuffer extends BaseBuffer
     }
 
     /**
-     * Transfer contents loaded by putAttribute* calls into graphics library.
-     * CAN ONLY BE CALLED ONCE!  After this method is called, no more put/transfer operations should occur.
+     * Transfer contents loaded by putAttribute* calls into graphics library. CAN ONLY BE CALLED ONCE!  After this method is called, no more put/transfer operations should occur.
      */
     public void transfer()
     {
@@ -134,7 +136,6 @@ public class StaticVertexBuffer extends BaseBuffer
         // Destroy bytebuffer (immediately)
         deallocateByteBuffer();
     }
-
 
 
 }

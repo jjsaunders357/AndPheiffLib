@@ -62,7 +62,7 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
                 FatalErrorHandler.handleFatalError(exception);
             }
 
-            pb = new IndexBuffer(2000);
+            pb = new IndexBuffer(2000, false);
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off

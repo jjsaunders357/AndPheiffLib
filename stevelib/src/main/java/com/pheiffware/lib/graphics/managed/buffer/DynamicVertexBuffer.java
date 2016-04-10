@@ -58,14 +58,11 @@ public class DynamicVertexBuffer extends BaseBuffer
         // Transfer data from client memory to the buffer.
         int transferSize = byteBuffer.position();
 
-        // MUST RESET POSITION TO 0!
+        // Reset position to 0 for this transfer and future puts
         byteBuffer.position(0);
 
         // Transfer data
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, transferSize, byteBuffer, GLES20.GL_DYNAMIC_DRAW);
-
-        // TODO: Remove in final version (just let state linger)
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
     }
 
     public void release()

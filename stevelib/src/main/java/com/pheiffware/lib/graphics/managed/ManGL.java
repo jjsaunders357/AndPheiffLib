@@ -15,7 +15,7 @@ import java.util.Map;
 
 
 //TODO: glDepthRange(n,f) (might make sense for the sphere)
-//TODO: glCullFace(GL_BACK);glEnable(GL_CULL_FACE);
+
 //TODO: sRGB textures and immutable textures (opengl 3.0 only)
 //TODO: glBlendFunc and glDepthMask(false) - turn off after rendering opaque objects.  Turn back on again after translucent objects.
 //TODO: multisample enable (opengl 3.0 only)

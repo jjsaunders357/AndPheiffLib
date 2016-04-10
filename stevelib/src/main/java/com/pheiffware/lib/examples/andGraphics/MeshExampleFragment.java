@@ -66,8 +66,9 @@ public class MeshExampleFragment extends SimpleGLFragment
                 this.manGL = manGL;
                 FatalErrorHandler.installUncaughtExceptionHandler();
                 GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-                //Must enable depth testing!
                 GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+                GLES20.glCullFace(GLES20.GL_BACK);
+                GLES20.glEnable(GLES20.GL_CULL_FACE);
                 Program testProgram = manGL.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
                 ColladaFactory colladaFactory = new ColladaFactory(true);
                 InputStream inputStream = am.open("meshes/test_render.dae");
@@ -89,7 +90,7 @@ public class MeshExampleFragment extends SimpleGLFragment
                 DecomposedTransform3D decomposedTransform = monkey.getMatrix().decompose();
                 translationMatrix = decomposedTransform.getTranslation();
 
-                pb = new IndexBuffer(mesh.getNumVertexIndices());
+                pb = new IndexBuffer(mesh.getNumVertexIndices(), false);
                 pb.putIndices(mesh.vertexIndices);
                 pb.transfer();
 
@@ -99,9 +100,9 @@ public class MeshExampleFragment extends SimpleGLFragment
                             {"vertexPosition", "vertexNormal", "vertexColor"});
             // @formatter:on
 
-                sb.putAttributeFloats("vertexPosition", mesh.getPositionData());
-                sb.putAttributeFloats("vertexNormal", mesh.getNormalData());
-                sb.putAttributeFloats("vertexColor", mesh.generateSingleColorData(new Color4F(0.0f, 0.6f, 0.9f, 1.0f)));
+                sb.putAttributeFloats("vertexPosition", mesh.getPositionData(), 0);
+                sb.putAttributeFloats("vertexNormal", mesh.getNormalData(), 0);
+                sb.putAttributeFloats("vertexColor", mesh.generateSingleColorData(new Color4F(0.0f, 0.6f, 0.9f, 1.0f)), 0);
 
                 sb.transfer();
                 PheiffGLUtils.assertNoError();

@@ -17,10 +17,12 @@ public class PheiffGLUtils
     public static final int MINMAX_TEXTURE_SIZE = 2048;
     public static final int MINMAX_3D_TEXTURE_SIZE = 256;
     public static final int MINMAX_COLOR_ATTACHMENTS = 4;
-    public static final int MINMAX_VERTEX_ATTRIBUTES = 16;
+    public static final int MINMAX_VERTEX_ATTRIBUTES = 16; //4 elements each (4 floats for example)
     public static final int MINMAX_VERTEX_UNIFORM_VECTORS = 256; //Includes constants and immediates.  This is number of vectors (4 elements).  See special rules about how this works.
     public static final int MINMAX_FRAGMENT_UNIFORM_VECTORS = 224;
 
+    //2.0
+    //public static final int MINMAX_VERTEX_ATTRIBUTES = 8; //4 elements each (4 floats for example)
 
     public static final int GL_VERSION_31 = 0x30001;
     public static final int GL_VERSION_30 = 0x30000;
