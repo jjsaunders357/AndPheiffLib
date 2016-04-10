@@ -119,7 +119,7 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
             cb.transferDynamic();
             cb.bind();
 
-            pb.draw(6, GLES20.GL_TRIANGLES);
+            pb.draw(GLES20.GL_TRIANGLES, 0, 6);
             globalTestColor += 0.01;
         }
 

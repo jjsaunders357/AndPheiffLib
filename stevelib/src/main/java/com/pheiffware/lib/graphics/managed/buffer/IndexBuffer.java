@@ -54,23 +54,50 @@ public class IndexBuffer
         putIndices(primitiveIndices, 0);
     }
 
-    public void putIndices(short[] primitiveIndices, int offset)
+    public void putIndices(short[] primitiveIndices, int writeOffset)
     {
-        shortBuffer.position(offset);
+        shortBuffer.position(writeOffset);
         shortBuffer.put(primitiveIndices);
         // Must manually move the byteBuffer to the correct location
         byteBuffer.position(shortBuffer.position() * 2);
     }
 
-    public final void drawAll(int GLPrimitiveType)
+    /**
+     * Write primitive indices to the index buffer, but apply an offset to each index.  This allows you to reference geometry inserted into a vertex buffer at a starting position
+     * other than 0.
+     *
+     * @param primitiveIndices base, 0 indexed, indices
+     * @param writeOffset      the location in this buffer to write data
+     * @param perIndexOffset   an offset to apply to each index written
+     */
+    public void putIndicesWithOffset(short[] primitiveIndices, int writeOffset, short perIndexOffset)
     {
-        draw(numVerticesTransfered, GLPrimitiveType);
+        shortBuffer.position(writeOffset);
+        for (short primitiveIndex : primitiveIndices)
+        {
+            shortBuffer.put((short) (primitiveIndex + perIndexOffset));
+        }
+
+        // Must manually move the byteBuffer to the correct location
+        byteBuffer.position(shortBuffer.position() * 2);
     }
 
-    public final void draw(int numVertices, int GLPrimitiveType)
+
+    public final void drawAll(int GLPrimitiveType)
+    {
+        draw(GLPrimitiveType, 0, numVerticesTransfered);
+    }
+
+    public final void draw(int GLPrimitiveType, int offset, int numVertices)
     {
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, bufferHandle);
-        GLES20.glDrawElements(GLPrimitiveType, numVertices, GLES20.GL_UNSIGNED_SHORT, 0);
+        GLES20.glDrawElements(GLPrimitiveType, numVertices, GLES20.GL_UNSIGNED_SHORT, offset * 2);
+    }
+
+    public final void drawTriangles(int offset, int numVertices)
+    {
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, bufferHandle);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, numVertices, GLES20.GL_UNSIGNED_SHORT, offset * 2);
     }
 
     /**

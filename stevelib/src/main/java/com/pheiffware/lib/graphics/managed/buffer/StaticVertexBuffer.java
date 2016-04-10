@@ -71,7 +71,6 @@ public class StaticVertexBuffer extends BaseBuffer
         allocateBuffer(maxVertices * vertexByteSize);
     }
 
-
     /**
      * For a given attributeIndex (defined by order in constructor) put an array of floats in the appropriate buffer location. Note, this is very inefficient, but is fine for one
      * time setup.

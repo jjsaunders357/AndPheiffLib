@@ -73,6 +73,11 @@ public class MeshGroup
         return meshes.get(material);
     }
 
+    public Map<Material, List<Mesh>> getMeshMap()
+    {
+        return meshes;
+    }
+
     public Matrix4 getInitialTransformMatrix()
     {
         return initialTransformMatrix;
