@@ -62,14 +62,16 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
                 FatalErrorHandler.handleFatalError(exception);
             }
 
-            pb = new IndexBuffer(2000, false);
+            pb = new IndexBuffer(false);
+            pb.allocate(2000);
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
-        cb = new CombinedVertexBuffer(testProgram, 2000,
-                new String[] { "vertexPosition", "vertexTexCoord" },
-                new String[]{"vertexColor"});
-        //@formatter:on
+            cb = new CombinedVertexBuffer(testProgram,
+                    new String[] { "vertexPosition", "vertexTexCoord" },
+                    new String[] { "vertexColor" });
+            //@formatter:on
+            cb.allocate(2000);
 
             cb.putStaticVec4(-x, -y, -z, 1);
             cb.putStaticVec2(0, 1);

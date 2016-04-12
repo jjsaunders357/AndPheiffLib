@@ -20,9 +20,9 @@ import java.util.Map;
 public class StaticObjectManager
 {
     private final Program program;
-    private final String[] staticAttributes;
-    private StaticVertexBuffer staticVertexBuffer;
-    private IndexBuffer indexBuffer;
+    private final StaticVertexBuffer staticVertexBuffer;
+    private final IndexBuffer indexBuffer = new IndexBuffer(false);
+
     private int indexBufferLength = 0;
     private int vertexBufferLength = 0;
     private List<Mesh> transferMeshes = new ArrayList<>();
@@ -31,7 +31,7 @@ public class StaticObjectManager
     public StaticObjectManager(Program program, String[] staticAttributes)
     {
         this.program = program;
-        this.staticAttributes = staticAttributes;
+        staticVertexBuffer = new StaticVertexBuffer(program, staticAttributes);
     }
 
     public StaticObjectHandle addMeshGroup(MeshGroup meshGroup)
@@ -61,8 +61,8 @@ public class StaticObjectManager
 
     public void transfer()
     {
-        indexBuffer = new IndexBuffer(indexBufferLength, false);
-        staticVertexBuffer = new StaticVertexBuffer(program, vertexBufferLength, staticAttributes);
+        indexBuffer.allocate(indexBufferLength);
+        staticVertexBuffer.allocate(vertexBufferLength);
         int indexWriteOffset = 0;
         int vertexOffset = 0;
         for (Mesh transferMesh : transferMeshes)

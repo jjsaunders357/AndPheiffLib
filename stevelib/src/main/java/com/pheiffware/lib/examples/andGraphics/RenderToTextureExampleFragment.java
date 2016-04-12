@@ -75,11 +75,11 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
-        cb = new CombinedVertexBuffer(manGL.getProgram("testProgram"), 200,
-                new String[]{"vertexPosition", "vertexTexCoord"},
-                new String[]{"vertexColor"});
-        //@formatter:on
-
+            cb = new CombinedVertexBuffer(manGL.getProgram("testProgram"),
+                    new String[]{"vertexPosition", "vertexTexCoord"},
+                    new String[]{"vertexColor"});
+            //@formatter:on
+            cb.allocate(200);
             cb.putStaticVec4(-x, -y, -z, 1);
             cb.putStaticVec2(0, 1);
 

@@ -49,12 +49,12 @@ public class StaticVertexBuffer extends BaseBuffer
     //The names of the attributes being managed by this buffer
     private String[] attributeNames;
 
-    public StaticVertexBuffer(Program program, int maxVertices, Collection<String> attributeNames)
+    public StaticVertexBuffer(Program program, Collection<String> attributeNames)
     {
-        this(program, maxVertices, attributeNames.toArray(new String[]{}));
+        this(program, attributeNames.toArray(new String[]{}));
     }
 
-    public StaticVertexBuffer(Program program, int maxVertices, String[] attributeNames)
+    public StaticVertexBuffer(Program program, String[] attributeNames)
     {
         this.attributeNames = attributeNames;
         this.program = program;
@@ -68,7 +68,11 @@ public class StaticVertexBuffer extends BaseBuffer
         }
         vertexByteSize = attributeByteOffset;
 
-        allocateBuffer(maxVertices * vertexByteSize);
+    }
+
+    public void allocate(int numVertices)
+    {
+        allocateBuffer(numVertices * vertexByteSize);
     }
 
     /**

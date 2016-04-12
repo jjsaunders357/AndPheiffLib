@@ -124,7 +124,7 @@ public class TechniqueExampleFragment extends SimpleGLFragment
                 program.setUniformMatrix4("transformMatrix", viewModelMatrix.m, false);
                 program.setUniformMatrix3("normalMatrix", normalTransform.m, false);
 
-                program.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+                program.setUniformVec4("ambientLightColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
                 program.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
                 program.setUniformFloat("shininess", 30.0f);
                 program.setUniformVec3("lightPosition", new float[]{-3, 3, 0});
@@ -135,7 +135,7 @@ public class TechniqueExampleFragment extends SimpleGLFragment
                 program.setUniformMatrix4("transformMatrix", viewModelMatrix.m, false);
                 program.setUniformMatrix3("normalMatrix", normalTransform.m, false);
 
-                program.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+                program.setUniformVec4("ambientLightColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
                 program.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
                 program.setUniformFloat("shininess", 30.0f);
                 program.setUniformVec3("lightPosition", new float[]{-3, 3, 0});
@@ -146,7 +146,7 @@ public class TechniqueExampleFragment extends SimpleGLFragment
                 program.setUniformMatrix4("transformMatrix", viewModelMatrix.m, false);
                 program.setUniformMatrix3("normalMatrix", normalTransform.m, false);
 
-                program.setUniformVec4("ambientColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+                program.setUniformVec4("ambientLightColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
                 program.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
                 program.setUniformFloat("shininess", 30.0f);
                 program.setUniformVec3("lightPosition", new float[]{-3, 3, 0});

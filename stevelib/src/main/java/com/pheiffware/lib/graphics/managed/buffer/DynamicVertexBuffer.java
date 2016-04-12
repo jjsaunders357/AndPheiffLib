@@ -30,13 +30,16 @@ public class DynamicVertexBuffer extends BaseBuffer
 {
     private final Attribute attribute;
 
-    public DynamicVertexBuffer(Program program, int maxVertices, String attributeName)
+    public DynamicVertexBuffer(Program program, String attributeName)
     {
         super();
         attribute = program.getAttribute(attributeName);
-        allocateBuffer(maxVertices * attribute.byteSize);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, 96, null, GLES20.GL_DYNAMIC_DRAW);
+    }
+
+    public void allocate(int numVertices)
+    {
+        allocateBuffer(numVertices * attribute.byteSize);
     }
 
     public final void bind()

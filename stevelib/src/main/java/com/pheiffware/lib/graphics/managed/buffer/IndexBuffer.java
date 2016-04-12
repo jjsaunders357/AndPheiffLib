@@ -18,22 +18,36 @@ import java.nio.ShortBuffer;
 public class IndexBuffer
 {
     private final int bufferHandle;
-    private final ByteBuffer byteBuffer;
-    private final ShortBuffer shortBuffer;
     private final boolean dynamic;
-    private int numVerticesTransfered;
 
-    public IndexBuffer(int maxVertices, boolean dynamic)
+    private ByteBuffer byteBuffer;
+    private ShortBuffer shortBuffer;
+    private int numVerticesTransferred;
+
+    public IndexBuffer(boolean dynamic)
     {
         this.dynamic = dynamic;
-        byteBuffer = ByteBuffer.allocateDirect(maxVertices * 2);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        shortBuffer = byteBuffer.asShortBuffer();
         int[] buffer = new int[1];
         GLES20.glGenBuffers(1, buffer, 0);
         bufferHandle = buffer[0];
     }
 
+    public void allocate(int numVertices)
+    {
+        byteBuffer = ByteBuffer.allocateDirect(numVertices * 2);
+        byteBuffer.order(ByteOrder.nativeOrder());
+        shortBuffer = byteBuffer.asShortBuffer();
+    }
+
+    public void deallocate()
+    {
+        GLES20.glDeleteBuffers(1, new int[]{bufferHandle}, 0);
+        if (dynamic)
+        {
+            // Destroy bytebuffer (immediately)
+            Utils.deallocateDirectByteBuffer(byteBuffer);
+        }
+    }
     public final void putIndex(short index)
     {
         byteBuffer.putShort(index);
@@ -85,7 +99,7 @@ public class IndexBuffer
 
     public final void drawAll(int GLPrimitiveType)
     {
-        draw(GLPrimitiveType, 0, numVerticesTransfered);
+        draw(GLPrimitiveType, 0, numVerticesTransferred);
     }
 
     public final void draw(int GLPrimitiveType, int offset, int numVertices)
@@ -132,17 +146,8 @@ public class IndexBuffer
             Utils.deallocateDirectByteBuffer(byteBuffer);
         }
         // Record the number of vertices in the buffer
-        numVerticesTransfered = transferSize / 2;
+        numVerticesTransferred = transferSize / 2;
     }
 
-    public void deallocate()
-    {
-        GLES20.glDeleteBuffers(1, new int[]{bufferHandle}, 0);
-        if (dynamic)
-        {
-            // Destroy bytebuffer (immediately)
-            Utils.deallocateDirectByteBuffer(byteBuffer);
-        }
-    }
 
 }
