@@ -443,6 +443,13 @@ public class Matrix4
         return new Vec3D(x, y, z);
     }
 
+    public final float[] transformFloatVector(float[] inVectorData)
+    {
+        float[] outVectorData = new float[4];
+        transformFloatVector(outVectorData, 0, inVectorData, 0);
+        return outVectorData;
+    }
+
     /**
      * Given a 4d coordinate at the specified offset in the inVectorData array, apply this transform in the outVectorData at the offset.
      * inVectorData and outVectorData CAN be the same array and read/write position can overlap.
@@ -469,7 +476,7 @@ public class Matrix4
      *
      * @param vectorData array where vectors are stored
      */
-    public void applyToFloatVectors(float[] vectorData)
+    public void transformFloatVectors(float[] vectorData)
     {
         for (int i = 0; i < vectorData.length; i += 4)
         {

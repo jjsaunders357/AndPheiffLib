@@ -106,14 +106,14 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         @Override
         protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
         {
-            program.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
-            program.setUniformMatrix4("transformMatrix", viewModelMatrix.m, false);
-            program.setUniformMatrix3("normalMatrix", normalMatrix.m, false);
-            program.setUniformVec4("ambientLightColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
+            program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+            program.setUniformMatrix3("eyeNormalMatrix", normalMatrix.m, false);
+            program.setUniformVec4("ambientLightColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            program.setUniformVec4("diffuseLightColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             program.setUniformFloat("shininess", 30.0f);
-            program.setUniformVec3("lightPosition", new float[]{-3, 3, 0});
-            program.setUniformTexture2D("materialColorTexture", texture, 0);
+            program.setUniformVec3("lightPositionEyeSpace", new float[]{-3, 3, 0});
+            program.setUniformTexture2D("diffuseMaterialTexture", texture, 0);
         }
     }
 }

@@ -32,6 +32,7 @@ public abstract class ExampleRotatingRenderer implements SimpleGLRenderer
     private Program program;
     private IndexBuffer indexBuffer;
     private StaticVertexBuffer vertexBuffer;
+    private float[] lightPosition = new float[]{-3, 3, 0, 1};
 
     @Override
     public int maxMajorGLVersion()
@@ -91,6 +92,7 @@ public abstract class ExampleRotatingRenderer implements SimpleGLRenderer
             viewModelMatrix.multiplyBy(modelMatrix);
             normalMatrix.setNormalTransformFromMatrix4Fast(viewModelMatrix);
             Matrix4 projectionMatrix = camera.getProjectionMatrix();
+
 
             setUniforms(program, projectionMatrix, viewModelMatrix, normalMatrix);
             vertexBuffer.bind();

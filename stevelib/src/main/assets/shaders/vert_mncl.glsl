@@ -1,25 +1,18 @@
-//Projects transformed vertices
-uniform mat4 projectionMatrix;
-//Transforms vertices
-uniform mat4 transformMatrix;
-//Transforms normals
-uniform mat3 normalMatrix;
+//Transforms vertices to eye space
+uniform mat4 eyeTransformMatrix;
+//Projects vertices in eye space
+uniform mat4 eyeProjectionMatrix;
+//Transforms normals to eye space
+uniform mat3 eyeNormalMatrix;
 
-uniform vec4 lightPosition;
-uniform vec4 ambientLightColorIntensity;
-uniform vec4 lightColorIntensity;
-uniform float shininess;
 attribute vec4 vertexPosition;
 attribute vec3 vertexNormal;
-attribute vec4 vertexColor;
-varying vec4 varyingPosition;
-varying vec3 varyingNormal;
-varying vec4 varyingColor;
+varying vec4 positionEyeSpace;
+varying vec3 normalEyeSpace;
 
 void main()
 {
-	varyingColor = vertexColor;
-	varyingNormal = normalize(normalMatrix * vertexNormal);
-	varyingPosition = transformMatrix * vertexPosition;
-	gl_Position = projectionMatrix * varyingPosition;
+	normalEyeSpace = normalize(eyeNormalMatrix * vertexNormal);
+	positionEyeSpace = eyeTransformMatrix * vertexPosition;
+	gl_Position = eyeProjectionMatrix * positionEyeSpace;
 }

@@ -26,7 +26,7 @@ public class TestMatrix extends InstrumentationTestCase
     {
         Matrix4 matrix = Matrix4.newTranslation(1, 2, 3);
         float[] vectors = new float[]{0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 1};
-        matrix.applyToFloatVectors(vectors);
+        matrix.transformFloatVectors(vectors);
         assertArrayEquals(new float[]{1, 2, 3, 1, 2, 3, 4, 1, 3, 4, 5, 1}, vectors, 0);
         float[] tVectors = matrix.newTransformedVectors(vectors);
         assertArrayEquals(new float[]{2, 4, 6, 1, 3, 5, 7, 1, 4, 6, 8, 1}, tVectors, 0);

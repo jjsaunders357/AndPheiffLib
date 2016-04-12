@@ -1,50 +1,39 @@
 precision mediump float;
 
-//Specular color of material - Assume specular always reflects all light
-const vec4 specMaterialColor = vec4(1.0,1.0,1.0,1.0);
 
 //Position of light
-uniform vec3 lightPosition;
+uniform vec3 lightPositionEyeSpace;
 
-//Light color and intensity
-uniform vec4 lightColorIntensity;
+//TODO: Make customizable
+//Specular color of material - Assume specular always reflects all light
+const vec4 specLightMaterialColor = vec4(1.0,1.0,1.0,1.0);
 
-//Ambient light color and intensity
-uniform vec4 ambientLightColorIntensity;
+//The light color * material color
+uniform vec4 diffuseLightMaterialColor;
+
+//The ambient light color * material color
+uniform vec4 ambientLightMaterialColor;
 
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
 
 //From vertex shader
-varying vec4 varyingPosition;
-varying vec4 varyingColor;
-varying vec3 varyingNormal;
-
+varying vec4 positionEyeSpace;
+varying vec3 normalEyeSpace;
 
 void main()
 {
-    //TODO: Remove per vertex color.  Instead just use uniform representing matColor * lighting
-    //Base color of material
-    vec4 baseMaterialColor = varyingColor;
-
     //Normalize the surface's normal
-    vec3 surfaceNormal = normalize(varyingNormal);
-
-    //Calc ambient color
-    vec4 ambientColor = baseMaterialColor * ambientLightColorIntensity;
-    //Calc diffuse color
-    vec4 diffuseColor = baseMaterialColor * lightColorIntensity;
-    //Calc specular color
-    vec4 specColor = specMaterialColor * lightColorIntensity;
+    vec3 surfaceNormal = normalize(normalEyeSpace);
 
     //Incoming light vector to current position
-    vec3 incomingLightDirection = normalize(varyingPosition.xyz-lightPosition);
+    vec3 incomingLightDirection = normalize(positionEyeSpace.xyz-lightPositionEyeSpace);
 
     //Reflected light vector from current position
     vec3 outgoingLightDirection = reflect(incomingLightDirection,surfaceNormal);
 
     //Vector from position to eye.  Since all geometry is assumed to be in eye space, the eye is always at the origin.
-    vec3 positionToEyeDirection = normalize(-varyingPosition.xyz);
+    vec3 positionToEyeDirection = normalize(-positionEyeSpace.xyz);
 
     //Calculate how bright various types of light are
 	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),0.0);
@@ -52,5 +41,5 @@ void main()
     specBrightness = pow(specBrightness,shininess);
 
     //Color of fragment is the combination of all colors
-	gl_FragColor = ambientColor + diffuseBrightness * diffuseColor + specBrightness * specColor;
+	gl_FragColor = ambientLightMaterialColor + diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
 }

@@ -1,6 +1,5 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
@@ -70,7 +69,7 @@ public class StaticObjectManager
             indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexOffset);
             staticVertexBuffer.putAttributeFloats("vertexPosition", transferMesh.getPositionData(), vertexOffset);
             staticVertexBuffer.putAttributeFloats("vertexNormal", transferMesh.getNormalData(), vertexOffset);
-            staticVertexBuffer.putAttributeFloats("vertexColor", transferMesh.generateSingleColorData(new Color4F(0.0f, 0.6f, 0.9f, 1.0f)), vertexOffset);
+            //TODO: Put texture coordinates if applicable
             indexWriteOffset += transferMesh.getNumVertexIndices();
             vertexOffset += transferMesh.getNumUniqueVertices();
         }

@@ -6,7 +6,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
-import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
@@ -75,11 +74,10 @@ public class MeshExampleFragment extends SimpleGLFragment
 
                 StaticVertexBuffer vertexBuffer = new StaticVertexBuffer(program,
                         new String[]
-                                {"vertexPosition", "vertexNormal", "vertexColor"});
+                                {"vertexPosition", "vertexNormal"});
                 vertexBuffer.allocate(mesh.getNumUniqueVertices());
                 vertexBuffer.putAttributeFloats("vertexPosition", mesh.getPositionData(), 0);
                 vertexBuffer.putAttributeFloats("vertexNormal", mesh.getNormalData(), 0);
-                vertexBuffer.putAttributeFloats("vertexColor", mesh.generateSingleColorData(new Color4F(0.0f, 0.6f, 0.9f, 1.0f)), 0);
 
                 vertexBuffer.transfer();
                 return vertexBuffer;
@@ -103,13 +101,13 @@ public class MeshExampleFragment extends SimpleGLFragment
         @Override
         protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
         {
-            program.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
-            program.setUniformMatrix4("transformMatrix", viewModelMatrix.m, false);
-            program.setUniformMatrix3("normalMatrix", normalMatrix.m, false);
-            program.setUniformVec4("ambientLightColorIntensity", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformVec4("lightColorIntensity", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
+            program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+            program.setUniformMatrix3("eyeNormalMatrix", normalMatrix.m, false);
+            program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.0f, 0.6f, 0.9f, 1.0f});
             program.setUniformFloat("shininess", 30.0f);
-            program.setUniformVec3("lightPosition", new float[]{-3, 3, 0});
+            program.setUniformVec3("lightPositionEyeSpace", new float[]{-3, 3, 0});
         }
     }
 }
