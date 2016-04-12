@@ -104,10 +104,10 @@
     </library_effects>
     <library_images>
         <image id="image1_id" name="image1_name">
-            <init_from>image1.png</init_from>
+            <init_from>bsdir/image1.png</init_from>
         </image>
         <image id="image2_id" name="image2_name">
-            <init_from>image2.png</init_from>
+            <init_from>bsdir/image2.png</init_from>
         </image>
     </library_images>
     <library_geometries>
