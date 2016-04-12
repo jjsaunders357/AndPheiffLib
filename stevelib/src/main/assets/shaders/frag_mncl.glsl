@@ -10,7 +10,7 @@ uniform vec3 lightPosition;
 uniform vec4 lightColorIntensity;
 
 //Ambient light color and intensity
-uniform vec4 ambientColorIntensity;
+uniform vec4 ambientLightColorIntensity;
 
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
@@ -23,6 +23,7 @@ varying vec3 varyingNormal;
 
 void main()
 {
+    //TODO: Remove per vertex color.  Instead just use uniform representing matColor * lighting
     //Base color of material
     vec4 baseMaterialColor = varyingColor;
 
@@ -30,7 +31,7 @@ void main()
     vec3 surfaceNormal = normalize(varyingNormal);
 
     //Calc ambient color
-    vec4 ambientColor = baseMaterialColor * ambientColorIntensity;
+    vec4 ambientColor = baseMaterialColor * ambientLightColorIntensity;
     //Calc diffuse color
     vec4 diffuseColor = baseMaterialColor * lightColorIntensity;
     //Calc specular color

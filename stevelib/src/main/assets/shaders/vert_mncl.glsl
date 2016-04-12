@@ -6,7 +6,7 @@ uniform mat4 transformMatrix;
 uniform mat3 normalMatrix;
 
 uniform vec4 lightPosition;
-uniform vec4 ambientColorIntensity;
+uniform vec4 ambientLightColorIntensity;
 uniform vec4 lightColorIntensity;
 uniform float shininess;
 attribute vec4 vertexPosition;
