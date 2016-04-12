@@ -106,6 +106,7 @@ public class MeshExampleFragment extends SimpleGLFragment
             program.setUniformMatrix3("eyeNormalMatrix", normalMatrix.m, false);
             program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+            program.setUniformVec4("specLightMaterialColor", new float[]{0.75f, 0.85f, 1.0f, 1.0f});
             program.setUniformFloat("shininess", 30.0f);
             program.setUniformVec3("lightPositionEyeSpace", new float[]{-3, 3, 0});
         }

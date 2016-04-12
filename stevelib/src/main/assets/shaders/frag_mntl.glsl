@@ -6,8 +6,7 @@ precision mediump float;
 uniform vec3 lightPositionEyeSpace;
 
 //Specular color of material - Assume specular always reflects all light
-//TODO: Make customizable
-const vec4 specMaterialColor = vec4(1.0,1.0,1.0,1.0);
+uniform vec4 specMaterialColor;
 
 //Light color and intensity
 uniform vec4 diffuseLightColor;

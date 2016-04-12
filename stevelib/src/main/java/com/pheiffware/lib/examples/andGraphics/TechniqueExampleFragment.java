@@ -131,6 +131,7 @@ public class TechniqueExampleFragment extends SimpleGLFragment
 
                     program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
                     program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.8f, 0.0f, 0.65f, 1.0f});
+                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
                     program.setUniformFloat("shininess", 30.0f);
                     program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
                     staticObjectManager.render(staticMonkey);
@@ -144,6 +145,7 @@ public class TechniqueExampleFragment extends SimpleGLFragment
 
                     program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
                     program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.6f, 0.8f, 0.3f, 1.0f});
+                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
                     program.setUniformFloat("shininess", 30.0f);
                     program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
                     staticObjectManager.render(staticSphere);
@@ -157,6 +159,7 @@ public class TechniqueExampleFragment extends SimpleGLFragment
 
                     program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
                     program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.5f, 0.5f, 0.7f, 1.0f});
+                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
                     program.setUniformFloat("shininess", 30.0f);
                     program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
                     staticObjectManager.render(staticCube);
