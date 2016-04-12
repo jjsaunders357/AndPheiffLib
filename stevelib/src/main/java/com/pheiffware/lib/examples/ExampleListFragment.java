@@ -17,6 +17,7 @@ import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragme
 import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.TechniqueExampleFragment;
+import com.pheiffware.lib.examples.andGraphics.TextureBoxExampleFragment;
 import com.pheiffware.lib.examples.physics.TestPhysicsExampleFragment;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
     {
         examples = new ArrayList<>(20);
         examples.add(new LibExampleData("Technique", TechniqueExampleFragment.class));
+        examples.add(new LibExampleData("Texture Box", TextureBoxExampleFragment.class));
         examples.add(new LibExampleData("Collada Mesh", MeshExampleFragment.class));
         examples.add(new LibExampleData("GL Render to Texture", RenderToTextureExampleFragment.class));
         examples.add(new LibExampleData("GL Combined Buffer", CombinedVertexBufferExampleFragment.class));
