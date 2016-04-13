@@ -212,7 +212,7 @@ public class Camera
         rotateScreen(angleDegrees, 0, 0, 1);
     }
 
-    public Matrix4 getCameraMatrix()
+    public Matrix4 getViewMatrix()
     {
         return cameraMatrix;
     }
