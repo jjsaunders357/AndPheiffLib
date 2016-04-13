@@ -28,9 +28,9 @@ import java.io.InputStream;
  * Loads a mesh using the Collada library and displays it on the screen.  Allows the camera to be adjusted using TouchTransform events. Created by Steve on 3/27/2016.
  */
 
-public class TechniqueExampleFragment extends SimpleGLFragment
+public class StaticManagerExampleFragment extends SimpleGLFragment
 {
-    public TechniqueExampleFragment()
+    public StaticManagerExampleFragment()
     {
         super(new ExampleRenderer(), FilterQuality.MEDIUM);
     }
