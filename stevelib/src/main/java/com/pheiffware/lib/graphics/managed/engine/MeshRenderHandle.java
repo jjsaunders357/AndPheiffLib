@@ -10,6 +10,10 @@ import com.pheiffware.lib.graphics.managed.mesh.Material;
  */
 public class MeshRenderHandle
 {
+//    final Program program;
+//    final int[] uniformLocations;
+//    final Object[] uniformValues;
+
     final Material material;
     final int vertexOffset;
     final int numVertices;

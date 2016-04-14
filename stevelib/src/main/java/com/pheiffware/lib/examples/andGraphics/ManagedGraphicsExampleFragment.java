@@ -76,7 +76,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
 
 //Example code: Want to be able to do this
-//                collada.loadTextures(manGL);
 //                staticObjectManager.loadPrograms();
 //                collada.loadObjects(staticObjectManager);
 //                staticObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
