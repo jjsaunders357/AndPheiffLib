@@ -25,7 +25,7 @@ public class StaticObjectManager
     private int indexBufferLength = 0;
     private int vertexBufferLength = 0;
     private List<Mesh> transferMeshes = new ArrayList<>();
-    private List<StaticObjectHandle> staticObjectHandles = new ArrayList<>();
+    private List<ObjectRenderHandle> objectRenderHandles = new ArrayList<>();
 
     public StaticObjectManager(Program program, String[] staticAttributes)
     {
@@ -33,9 +33,9 @@ public class StaticObjectManager
         staticVertexBuffer = new StaticVertexBuffer(program, staticAttributes);
     }
 
-    public StaticObjectHandle addMeshGroup(MeshGroup meshGroup)
+    public ObjectRenderHandle addMeshGroup(MeshGroup meshGroup)
     {
-        StaticObjectHandle staticObjectHandle = new StaticObjectHandle();
+        ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
         Map<Material, List<Mesh>> meshMap = meshGroup.getMeshMap();
         for (Map.Entry<Material, List<Mesh>> meshEntry : meshMap.entrySet())
         {
@@ -51,11 +51,11 @@ public class StaticObjectManager
                 meshListLength += mesh.getNumVertexIndices();
                 vertexBufferLength += mesh.getNumUniqueVertices();
             }
-            StaticMeshHandle meshHandle = new StaticMeshHandle(material, meshListOffset, meshListLength);
-            staticObjectHandle.addMeshHandle(meshHandle);
+            MeshRenderHandle meshHandle = new MeshRenderHandle(material, meshListOffset, meshListLength);
+            objectRenderHandle.addMeshHandle(meshHandle);
         }
-        staticObjectHandles.add(staticObjectHandle);
-        return staticObjectHandle;
+        objectRenderHandles.add(objectRenderHandle);
+        return objectRenderHandle;
     }
 
     public void transfer()
@@ -83,11 +83,12 @@ public class StaticObjectManager
         return program;
     }
 
-    public void render(StaticObjectHandle objectHandle)
+    public void render(ObjectRenderHandle objectHandle)
     {
         staticVertexBuffer.bind();
-        for (StaticMeshHandle meshHandle : objectHandle.staticMeshHandles)
+        for (MeshRenderHandle meshHandle : objectHandle.meshRenderHandles)
         {
+
             indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
         }
     }

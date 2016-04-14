@@ -14,6 +14,7 @@ import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffRecyclerViewAdapter;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffViewHolder;
 import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragment;
+import com.pheiffware.lib.examples.andGraphics.ManagedGraphicsExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.StaticManagerExampleFragment;
@@ -47,6 +48,8 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
     private static List<LibExampleData> examples;
     {
         examples = new ArrayList<>(20);
+
+        examples.add(new LibExampleData("Managed Graphics", ManagedGraphicsExampleFragment.class));
         examples.add(new LibExampleData("Static Manager", StaticManagerExampleFragment.class));
         examples.add(new LibExampleData("Texture Box", TextureBoxExampleFragment.class));
         examples.add(new LibExampleData("Collada Mesh", MeshExampleFragment.class));

@@ -16,7 +16,6 @@ import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.StaticObjectManager;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -25,12 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Loads a mesh using the Collada library and displays it on the screen.  Allows the camera to be adjusted using TouchTransform events. Created by Steve on 3/27/2016.
+ * Demonstrates using managed graphics to:
+ * <p/>
+ * 1. Load multiple textures 2. Setup multiple objects for rendering, each composed of multiple pieces, using different programs and uniforms. 3. Allowing generic uniforms which
+ * apply to everything (view/projection matrices for example) 4. Allow the overriding of uniforms in general and per object.  Example: make all objects render as green. Created by
+ * Steve on 3/27/2016.
  */
 
-public class StaticManagerExampleFragment extends SimpleGLFragment
+public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 {
-    public StaticManagerExampleFragment()
+    public ManagedGraphicsExampleFragment()
     {
         super(new ExampleRenderer(), FilterQuality.MEDIUM);
     }
@@ -71,8 +74,14 @@ public class StaticManagerExampleFragment extends SimpleGLFragment
                 InputStream inputStream = am.open("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
-                //Lookup material from loaded file by "name" (what user named it in editing tool)
-                Material material = collada.materialsByName.get("renderMaterial");
+
+//Example code: Want to be able to do this
+//                collada.loadTextures(manGL);
+//                staticObjectManager.loadPrograms();
+//                collada.loadObjects(staticObjectManager);
+//                staticObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+//                staticObjectManager.render(staticMonkey, "shininess",50.0f);
+
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
 

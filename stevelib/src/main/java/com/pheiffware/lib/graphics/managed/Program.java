@@ -53,17 +53,22 @@ public class Program
         }
     }
 
-    private Uniform getUniform(String uniformName)
+    private final Uniform getUniform(String uniformName)
     {
         return uniforms.get(uniformName);
     }
 
-    public Attribute getAttribute(String attributeName)
+    public final Attribute getAttribute(String attributeName)
     {
         return attributes.get(attributeName);
     }
 
-    public Collection<String> getAttributeNames()
+    public final Collection<String> getUniformNames()
+    {
+        return uniforms.keySet();
+    }
+
+    public final Collection<String> getAttributeNames()
     {
         return attributes.keySet();
     }
@@ -86,49 +91,48 @@ public class Program
         return builder.toString();
     }
 
-    public void bind()
+    public final void bind()
     {
         GLES20.glUseProgram(handle);
     }
 
-    public int getHandle()
+    public final int getHandle()
     {
         return handle;
     }
 
-    public void setUniformMatrix4(String uniformName, float[] matrix)
+    public final void setUniformMatrix4(String uniformName, float[] matrix)
     {
         setUniformMatrix4(uniformName, matrix, false);
     }
 
-    public void setUniformMatrix4(String uniformName, float[] matrix, boolean transpose)
+    public final void setUniformMatrix4(String uniformName, float[] matrix, boolean transpose)
     {
         GLES20.glUniformMatrix4fv(getUniform(uniformName).location, 1, transpose, matrix, 0);
     }
 
-    public void setUniformMatrix3(String uniformName, float[] matrix, boolean transpose)
+    public final void setUniformMatrix3(String uniformName, float[] matrix, boolean transpose)
     {
         GLES20.glUniformMatrix3fv(getUniform(uniformName).location, 1, transpose, matrix, 0);
     }
-    public void setUniformTexture2D(String uniformName, Texture texture, int textureUnitIndex)
+
+    public final void setUniformTexture2D(String uniformName, Texture texture, int textureUnitIndex)
     {
         TextureUtils.uniformTexture2D(handle, uniformName, texture.getHandle(), textureUnitIndex);
     }
 
-    public void setUniformVec3(String uniformName, float[] floats)
+    public final void setUniformVec3(String uniformName, float[] floats)
     {
         GLES20.glUniform3fv(getUniform(uniformName).location, 1, floats, 0);
     }
 
-    public void setUniformVec4(String uniformName, float[] floats)
+    public final void setUniformVec4(String uniformName, float[] floats)
     {
         GLES20.glUniform4fv(getUniform(uniformName).location, 1, floats, 0);
     }
 
-    public void setUniformFloat(String uniformName, float value)
+    public final void setUniformFloat(String uniformName, float value)
     {
         GLES20.glUniform1f(getUniform(uniformName).location, value);
     }
-
-
 }
