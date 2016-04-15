@@ -46,7 +46,7 @@ public class DynamicVertexBuffer extends BaseBuffer
     {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
         GLES20.glEnableVertexAttribArray(attribute.location);
-        GLES20.glVertexAttribPointer(attribute.location, attribute.dims, attribute.baseType, false, attribute.byteSize, 0);
+        GLES20.glVertexAttribPointer(attribute.location, attribute.numBaseTypeElements, attribute.baseType, false, attribute.byteSize, 0);
     }
 
     /**

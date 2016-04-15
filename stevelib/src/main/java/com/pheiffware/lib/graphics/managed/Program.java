@@ -1,15 +1,14 @@
 package com.pheiffware.lib.graphics.managed;
 
 import android.opengl.GLES20;
-import android.opengl.GLES30;
 
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Wraps the concept of an opengl program into a convenient object.
@@ -32,20 +31,19 @@ public class Program
 
         int[] numUniformsArray = new int[1];
         GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
-        GLES30 x;
         int numActiveUniforms = numUniformsArray[0];
-        uniforms = new TreeMap<>();
+        uniforms = new HashMap<>();
 
         for (int i = 0; i < numActiveUniforms; i++)
         {
-            Uniform uniform = new Uniform(programHandle, i);
+            Uniform uniform = Uniform.createUniform(programHandle, i);
             uniforms.put(uniform.name, uniform);
         }
 
         int[] numAttributesArray = new int[1];
         GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_ATTRIBUTES, numAttributesArray, 0);
         int numActiveAttributes = numAttributesArray[0];
-        attributes = new TreeMap<>();
+        attributes = new HashMap<>();
         for (int i = 0; i < numActiveAttributes; i++)
         {
             Attribute attribute = new Attribute(programHandle, i);
@@ -53,9 +51,14 @@ public class Program
         }
     }
 
-    private final Uniform getUniform(String uniformName)
+    public final Uniform getUniform(String uniformName)
     {
         return uniforms.get(uniformName);
+    }
+
+    public void setUniformValue(String uniformName, Object value)
+    {
+        getUniform(uniformName).setValue(value);
     }
 
     public final Attribute getAttribute(String attributeName)
@@ -101,6 +104,7 @@ public class Program
         return handle;
     }
 
+
     public final void setUniformMatrix4(String uniformName, float[] matrix)
     {
         setUniformMatrix4(uniformName, matrix, false);
@@ -135,4 +139,5 @@ public class Program
     {
         GLES20.glUniform1f(getUniform(uniformName).location, value);
     }
+
 }
