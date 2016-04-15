@@ -82,9 +82,10 @@ public class StaticManagerExampleFragment extends SimpleGLFragment
 
                 staticObjectManager = new StaticObjectManager(testProgram, new String[]
                         {"vertexPosition", "vertexNormal"});
-                staticMonkey = staticObjectManager.addMeshGroup(monkey.getMeshGroup());
-                staticSphere = staticObjectManager.addMeshGroup(sphere.getMeshGroup());
-                staticCube = staticObjectManager.addMeshGroup(cube.getMeshGroup());
+                //TODO: Fix
+//                staticMonkey = staticObjectManager.addMeshGroup(monkey.getMeshMap());
+//                staticSphere = staticObjectManager.addMeshGroup(sphere.getMeshMap());
+//                staticCube = staticObjectManager.addMeshGroup(cube.getMeshMap());
                 staticObjectManager.transfer();
 
                 PheiffGLUtils.assertNoError();

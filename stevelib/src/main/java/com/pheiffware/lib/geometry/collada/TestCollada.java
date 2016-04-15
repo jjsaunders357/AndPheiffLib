@@ -96,33 +96,45 @@ public class TestCollada
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.getNormalData(), 0);
 
         Map<String, ColladaObject3D> objects = colladaFactory.getObjects();
-        List<ColladaObject3D> anonymousMeshGroups = colladaFactory.getAnonymousObjects();
-        assertEquals(0, anonymousMeshGroups.size());
+        List<ColladaObject3D> anonymousObjects = colladaFactory.getAnonymousObjects();
+        assertEquals(0, anonymousObjects.size());
 
-        MeshGroup dual = objects.get("dual_name").getMeshGroup();
-        assertEquals(20, dual.getMeshes(mat1).get(0).uniqueVertexData.get(Collada.COLLADA_VERTEX_POSITION).length);
-        assertEquals(16, dual.getMeshes(mat2).get(0).uniqueVertexData.get(Collada.COLLADA_VERTEX_POSITION).length);
+        Map<ColladaMaterial, Mesh> dual = objects.get("dual_name").getMeshMap();
 
-        MeshGroup parent = objects.get("parent_name").getMeshGroup();
-        Matrix4 parentMatrix = parent.getInitialTransformMatrix();
+        assertEquals(20, dual.get(mat1).uniqueVertexData.get(Collada.COLLADA_VERTEX_POSITION).length);
+        assertEquals(16, dual.get(mat2).uniqueVertexData.get(Collada.COLLADA_VERTEX_POSITION).length);
+
+        ColladaObject3D parent = objects.get("parent_name");
+        Matrix4 parentMatrix = parent.getInitialMatrix();
         assertArrayEquals(parentMatrix.m, new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1}, 0);
 
         //1st mesh of each material is from parent.
         //It is untransformed
-        assertArrayEquals(parent.getMeshes(mat1).get(0).getPositionData(), new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, 0);
-        assertArrayEquals(parent.getMeshes(mat2).get(0).getPositionData(), new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1}, 0);
 
         //2nd mesh of each material is from child which refers to same geometry.
         //It has z translated by 3
-        assertArrayEquals(parent.getMeshes(mat1).get(1).getPositionData(), new float[]{0, 1, 5, 1, 3, 4, 8, 1, 6, 7, 11, 1, 9, 10, 14, 1, 0, 1, 5, 1}, 0);
-        assertArrayEquals(parent.getMeshes(mat2).get(1).getPositionData(), new float[]{0, 1, 5, 1, 3, 4, 8, 1, 6, 7, 11, 1, 9, 10, 14, 1}, 0);
+        assertArrayEquals(parent.getMeshMap().get(mat1).getPositionData(),
+                new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1, //Mesh 1
+                        0, 1, 5, 1, 3, 4, 8, 1, 6, 7, 11, 1, 9, 10, 14, 1, 0, 1, 5, 1 //Mesh 2
+                }, 0);
+        assertArrayEquals(parent.getMeshMap().get(mat2).getPositionData(),
+                new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, //Mesh 1
+                        0, 1, 5, 1, 3, 4, 8, 1, 6, 7, 11, 1, 9, 10, 14, 1     //Mesh 2
+                }, 0);
 
         //It has z translated by 3, but normals are not affected by translation
-        assertArrayEquals(parent.getMeshes(mat1).get(1).getNormalData(), new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, 0);
-        assertArrayEquals(parent.getMeshes(mat2).get(1).getNormalData(), new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, 0);
+        assertArrayEquals(parent.getMeshMap().get(mat1).getNormalData(),
+                new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5, //Mesh 1
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5  //Mesh 2
+                }, 0);
+        assertArrayEquals(parent.getMeshMap().get(mat2).getNormalData(),
+                new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, //Mesh 1
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2  //Mesh 2
+                }, 0);
 
-        MeshGroup no_mat = objects.get("no_mat_name").getMeshGroup();
-        assertEquals(16, no_mat.getMeshes(defaultMat).get(0).getPositionData().length);
+
+        ColladaObject3D no_mat = objects.get("no_mat_name");
+        assertEquals(16, no_mat.getMeshMap().get(defaultMat).getPositionData().length);
     }
 
     @Test
@@ -216,17 +228,17 @@ public class TestCollada
 
         Map<String, ColladaObject3D> objects = colladaFactory.getObjects();
         List<ColladaObject3D> anonymousObjects = colladaFactory.getAnonymousObjects();
-        assertEquals(2.0, anonymousObjects.get(0).getMeshGroup().getMeshes(mat1).get(0).getPositionData()[1], 0.0);
-        MeshGroup groupOfGroups = objects.get("groupOfGroups_name").getMeshGroup();
+        assertEquals(2.0, anonymousObjects.get(0).getMeshMap().get(mat1).getPositionData()[1], 0.0);
+        ColladaObject3D groupOfGroups = objects.get("groupOfGroups_name");
         //geo1 - y stretched by 3 (originally 1)
-        assertEquals(3, groupOfGroups.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
+        assertEquals(3, groupOfGroups.getMeshMap().get(mat1).getPositionData()[1], 0.0);
         //geo2 - y stretched by 4 (originally 2)
-        assertEquals(8, groupOfGroups.getMeshes(mat2).get(0).getPositionData()[1], 0.0);
-        MeshGroup reference = objects.get("reference_name").getMeshGroup();
-        assertEquals(1.0, reference.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
+        assertEquals(8, groupOfGroups.getMeshMap().get(mat2).getPositionData()[1], 0.0);
+        ColladaObject3D reference = objects.get("reference_name");
+        assertEquals(1.0, reference.getMeshMap().get(mat1).getPositionData()[1], 0.0);
 
-        MeshGroup no_mat = objects.get("no_mat_name").getMeshGroup();
-        assertEquals(2.0, no_mat.getMeshes(defaultMat).get(0).getPositionData()[1], 0.0);
+        ColladaObject3D no_mat = objects.get("no_mat_name");
+        assertEquals(2.0, no_mat.getMeshMap().get(defaultMat).getPositionData()[1], 0.0);
     }
 
     @Test

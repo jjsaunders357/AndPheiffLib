@@ -42,7 +42,7 @@ class SceneColladaNodeProcessor extends BaseColladaNodeProcessor
             String name = topLevelMeshGroupProxy.getName();
             Matrix4 transform = topLevelMeshGroupProxy.getTransform();
             MeshGroup meshGroup = topLevelMeshGroupProxy.retrieveMeshGroup(false);
-            ColladaObject3D colladaObject3D = new ColladaObject3D(transform, meshGroup);
+            ColladaObject3D colladaObject3D = new ColladaObject3D(transform, meshGroup.collapseMeshLists());
             if (name == null)
             {
                 anonymousObjects.add(colladaObject3D);

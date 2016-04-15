@@ -22,7 +22,6 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * Loads a mesh using the Collada library and displays it on the screen.  Allows the camera to be adjusted using TouchTransform events. Created by Steve on 3/27/2016.
@@ -68,8 +67,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
 
 
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-                List<Mesh> meshList = cube3.getMeshGroup().getMeshes(colladaMaterial1);
-                Mesh mesh = meshList.get(0);
+                Mesh mesh = cube3.getMeshMap().get(colladaMaterial1);
                 mesh = mesh.newTransformedMesh(Matrix4.newScale(0.01f, 0.01f, 0.01f));
                 indexBuffer.allocate(mesh.getNumVertexIndices());
                 indexBuffer.putIndices(mesh.vertexIndices);
