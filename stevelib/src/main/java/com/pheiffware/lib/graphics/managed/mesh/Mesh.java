@@ -6,6 +6,7 @@ import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +31,51 @@ public class Mesh
         this.numUniqueVertices = numUniqueVertices;
         this.uniqueVertexData = uniqueVertexData;
         this.vertexIndices = vertexIndices;
+    }
+
+    /**
+     * Create a new mesh out of a list of similar meshes.  All meshes must share the same vertex attributes.
+     *
+     * @param meshes a list of meshes
+     */
+    public Mesh(List<Mesh> meshes)
+    {
+        //Count index and vertex data list sizes
+        int indices = 0;
+        int uniqueVertices = 0;
+        for (Mesh mesh : meshes)
+        {
+            indices += mesh.getNumVertexIndices();
+            uniqueVertices += mesh.getNumUniqueVertices();
+        }
+        //Create new arrays big enough to hold combined data
+        vertexIndices = new short[indices];
+        uniqueVertexData = new HashMap<>();
+        for (String vertexDataKey : meshes.get(0).uniqueVertexData.keySet())
+        {
+            uniqueVertexData.put(vertexDataKey, new float[uniqueVertices]);
+        }
+
+        indices = 0;
+        uniqueVertices = 0;
+        for (Mesh mesh : meshes)
+        {
+            for (String vertexDataKey : mesh.uniqueVertexData.keySet())
+            {
+                short[] srcIndexData = mesh.vertexIndices;
+                System.arraycopy(
+                        srcIndexData, 0,
+                        vertexIndices, indices, srcIndexData.length);
+                indices += srcIndexData.length;
+                float[] srcVertexData = mesh.uniqueVertexData.get(vertexDataKey);
+                System.arraycopy(
+                        srcVertexData, 0,
+                        uniqueVertexData.get(vertexDataKey), uniqueVertices,
+                        srcVertexData.length);
+                uniqueVertices += srcVertexData.length;
+            }
+        }
+        numUniqueVertices = uniqueVertices;
     }
 
     /**

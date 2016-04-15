@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A map from materials to the mesh which should be rendered by them.
- * Created by Steve on 2/16/2016.
+ * A map from materials to the mesh which should be rendered by them. Created by Steve on 2/16/2016.
  */
 public class MeshGroup
 {
@@ -58,8 +57,8 @@ public class MeshGroup
         for (Map.Entry<Material, List<Mesh>> entry : meshes.entrySet())
         {
             Material material = entry.getKey();
-            List<Mesh> meshLists = entry.getValue();
-            for (Mesh mesh : meshLists)
+            List<Mesh> meshList = entry.getValue();
+            for (Mesh mesh : meshList)
             {
                 Mesh transformedMesh = mesh.newTransformedMesh(transformMatrix);
                 transformedMeshGroup.add(material, transformedMesh);
@@ -81,5 +80,32 @@ public class MeshGroup
     public Matrix4 getInitialTransformMatrix()
     {
         return initialTransformMatrix;
+    }
+
+    /**
+     * Goes through all materials and collapses each list of meshes to a single mesh object.
+     *
+     * @return a map from materials to single, collapsed, meshes
+     */
+    public Map<Material, Mesh> collapseMeshLists()
+    {
+        Map<Material, Mesh> materialToMeshMap = new HashMap<>();
+
+        for (Map.Entry<Material, List<Mesh>> entry : meshes.entrySet())
+        {
+            Material material = entry.getKey();
+            List<Mesh> meshList = entry.getValue();
+            Mesh collapsedMesh;
+            if (meshList.size() == 1)
+            {
+                collapsedMesh = meshList.get(0);
+            }
+            else
+            {
+                collapsedMesh = new Mesh(meshList);
+            }
+            materialToMeshMap.put(material, collapsedMesh);
+        }
+        return materialToMeshMap;
     }
 }
