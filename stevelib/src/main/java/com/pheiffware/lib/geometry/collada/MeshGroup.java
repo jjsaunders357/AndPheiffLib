@@ -1,12 +1,14 @@
-package com.pheiffware.lib.graphics.managed.mesh;
+package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Rename and make package scope
 /**
  * A map from materials to the mesh which should be rendered by them. Created by Steve on 2/16/2016.
  */
@@ -16,33 +18,33 @@ public class MeshGroup
     private final Matrix4 initialTransformMatrix;
 
     //A map from each material to a list of meshes with that material
-    private final Map<Material, List<Mesh>> meshes = new HashMap<>();
+    private final Map<ColladaMaterial, List<Mesh>> meshes = new HashMap<>();
 
     public MeshGroup(Matrix4 initialTransformMatrix)
     {
         this.initialTransformMatrix = initialTransformMatrix;
     }
 
-    private List<Mesh> getMeshList(Material material)
+    private List<Mesh> getMeshList(ColladaMaterial colladaMaterial)
     {
-        List<Mesh> meshList = meshes.get(material);
+        List<Mesh> meshList = meshes.get(colladaMaterial);
         if (meshList == null)
         {
             meshList = new LinkedList<>();
-            meshes.put(material, meshList);
+            meshes.put(colladaMaterial, meshList);
         }
         return meshList;
     }
 
-    public void add(Material material, Mesh mesh)
+    public void add(ColladaMaterial colladaMaterial, Mesh mesh)
     {
-        List<Mesh> meshList = getMeshList(material);
+        List<Mesh> meshList = getMeshList(colladaMaterial);
         meshList.add(mesh);
     }
 
     public void add(MeshGroup meshGroup)
     {
-        for (Map.Entry<Material, List<Mesh>> entry : meshGroup.meshes.entrySet())
+        for (Map.Entry<ColladaMaterial, List<Mesh>> entry : meshGroup.meshes.entrySet())
         {
             List<Mesh> destMeshList = getMeshList(entry.getKey());
             List<Mesh> sourceMeshList = meshGroup.getMeshList(entry.getKey());
@@ -54,25 +56,25 @@ public class MeshGroup
     public MeshGroup newTransformedMeshGroup(Matrix4 transformMatrix)
     {
         MeshGroup transformedMeshGroup = new MeshGroup(Matrix4.newIdentity());
-        for (Map.Entry<Material, List<Mesh>> entry : meshes.entrySet())
+        for (Map.Entry<ColladaMaterial, List<Mesh>> entry : meshes.entrySet())
         {
-            Material material = entry.getKey();
+            ColladaMaterial colladaMaterial = entry.getKey();
             List<Mesh> meshList = entry.getValue();
             for (Mesh mesh : meshList)
             {
                 Mesh transformedMesh = mesh.newTransformedMesh(transformMatrix);
-                transformedMeshGroup.add(material, transformedMesh);
+                transformedMeshGroup.add(colladaMaterial, transformedMesh);
             }
         }
         return transformedMeshGroup;
     }
 
-    public List<Mesh> getMeshes(Material material)
+    public List<Mesh> getMeshes(ColladaMaterial colladaMaterial)
     {
-        return meshes.get(material);
+        return meshes.get(colladaMaterial);
     }
 
-    public Map<Material, List<Mesh>> getMeshMap()
+    public Map<ColladaMaterial, List<Mesh>> getMeshMap()
     {
         return meshes;
     }
@@ -87,13 +89,13 @@ public class MeshGroup
      *
      * @return a map from materials to single, collapsed, meshes
      */
-    public Map<Material, Mesh> collapseMeshLists()
+    public Map<ColladaMaterial, Mesh> collapseMeshLists()
     {
-        Map<Material, Mesh> materialToMeshMap = new HashMap<>();
+        Map<ColladaMaterial, Mesh> materialToMeshMap = new HashMap<>();
 
-        for (Map.Entry<Material, List<Mesh>> entry : meshes.entrySet())
+        for (Map.Entry<ColladaMaterial, List<Mesh>> entry : meshes.entrySet())
         {
-            Material material = entry.getKey();
+            ColladaMaterial colladaMaterial = entry.getKey();
             List<Mesh> meshList = entry.getValue();
             Mesh collapsedMesh;
             if (meshList.size() == 1)
@@ -104,7 +106,7 @@ public class MeshGroup
             {
                 collapsedMesh = new Mesh(meshList);
             }
-            materialToMeshMap.put(material, collapsedMesh);
+            materialToMeshMap.put(colladaMaterial, collapsedMesh);
         }
         return materialToMeshMap;
     }

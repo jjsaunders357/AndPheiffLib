@@ -1,8 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -32,7 +30,7 @@ abstract class BaseColladaNodeProcessor
      * @param ignoreMaterialAssignments if parsing blender, materials will already have been assigned inside ColladaGeometries and what is encountered in this node structure is ambiguous and should be ignored.
      * @throws XMLParseException
      */
-    public BaseColladaNodeProcessor(Map<String, Material> materialsByID, Map<String, ColladaGeometry> geometriesByID, boolean ignoreMaterialAssignments) throws XMLParseException
+    public BaseColladaNodeProcessor(Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometriesByID, boolean ignoreMaterialAssignments) throws XMLParseException
     {
         instanceGeometryParser = new InstanceGeometryParser(materialsByID, geometriesByID, ignoreMaterialAssignments);
     }

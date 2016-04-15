@@ -6,6 +6,8 @@ import android.opengl.GLES20;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
+import com.pheiffware.lib.geometry.collada.ColladaMaterial;
+import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
@@ -15,9 +17,7 @@ import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -56,19 +56,19 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup material from loaded file by "name" (what user named it in editing tool)
-                Material material1 = collada.materialsByName.get("Brown_Brick");
-                Material material2 = collada.materialsByName.get("Grey_Brick");
-                Material material3 = collada.materialsByName.get("Stripes");
-                texture = manGL.createImageTexture(am, "images/" + material1.imageFileName, true, GLES20.GL_REPEAT, GLES20.GL_REPEAT);
+                ColladaMaterial colladaMaterial1 = collada.materialsByName.get("Brown_Brick");
+                ColladaMaterial colladaMaterial2 = collada.materialsByName.get("Grey_Brick");
+                ColladaMaterial colladaMaterial3 = collada.materialsByName.get("Stripes");
+                texture = manGL.createImageTexture(am, "images/" + colladaMaterial1.imageFileName, true, GLES20.GL_REPEAT, GLES20.GL_REPEAT);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
-                Object3D cube1 = collada.objects.get("cube1");
-                Object3D cube2 = collada.objects.get("cube2");
-                Object3D cube3 = collada.objects.get("cube3");
+                ColladaObject3D cube1 = collada.objects.get("cube1");
+                ColladaObject3D cube2 = collada.objects.get("cube2");
+                ColladaObject3D cube3 = collada.objects.get("cube3");
 
 
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-                List<Mesh> meshList = cube3.getMeshGroup().getMeshes(material1);
+                List<Mesh> meshList = cube3.getMeshGroup().getMeshes(colladaMaterial1);
                 Mesh mesh = meshList.get(0);
                 mesh = mesh.newTransformedMesh(Matrix4.newScale(0.01f, 0.01f, 0.01f));
                 indexBuffer.allocate(mesh.getNumVertexIndices());

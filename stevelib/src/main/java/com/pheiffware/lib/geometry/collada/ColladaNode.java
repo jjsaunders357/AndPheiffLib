@@ -1,7 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +50,7 @@ class ColladaNode implements MeshGroupProxy
     /**
      * Iterates through child objects, getting their meshes and adding them to its own.  The result is cached and used for the next query.
      *
-     * @param flatten If specified, then children are flattened by applying the given matrix transform.  Only top-level nodes may not be flattened if they are to be turned into Object3D instances.
+     * @param flatten If specified, then children are flattened by applying the given matrix transform.  Only top-level nodes may not be flattened if they are to be turned into ColladaObject3D instances.
      * @return
      */
     @Override

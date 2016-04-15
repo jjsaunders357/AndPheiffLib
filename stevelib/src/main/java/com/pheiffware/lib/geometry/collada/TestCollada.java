@@ -2,10 +2,7 @@ package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.junit.Test;
@@ -47,11 +44,11 @@ public class TestCollada
         Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
-        Map<String, Material> materials = collada.materialsByName;
-        Material mat1 = materials.get("mat_text1_name");
-        Material mat2 = materials.get("mat_text2_name");
-        Material matp = materials.get("mat_purple_name");
-        Material defaultMat = materials.get("");
+        Map<String, ColladaMaterial> materials = collada.materialsByName;
+        ColladaMaterial mat1 = materials.get("mat_text1_name");
+        ColladaMaterial mat2 = materials.get("mat_text2_name");
+        ColladaMaterial matp = materials.get("mat_purple_name");
+        ColladaMaterial defaultMat = materials.get("");
         assert mat1 != null;
         assert mat2 != null;
         assert matp != null;
@@ -98,8 +95,8 @@ public class TestCollada
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.getTexCoordData(), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.getNormalData(), 0);
 
-        Map<String, Object3D> objects = colladaFactory.getObjects();
-        List<Object3D> anonymousMeshGroups = colladaFactory.getAnonymousObjects();
+        Map<String, ColladaObject3D> objects = colladaFactory.getObjects();
+        List<ColladaObject3D> anonymousMeshGroups = colladaFactory.getAnonymousObjects();
         assertEquals(0, anonymousMeshGroups.size());
 
         MeshGroup dual = objects.get("dual_name").getMeshGroup();
@@ -136,11 +133,11 @@ public class TestCollada
         Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
-        Map<String, Material> materials = collada.materialsByName;
-        Material mat1 = materials.get("mat_text1_name");
-        Material mat2 = materials.get("mat_text2_name");
-        Material matp = materials.get("mat_purple_name");
-        Material defaultMat = materials.get("");
+        Map<String, ColladaMaterial> materials = collada.materialsByName;
+        ColladaMaterial mat1 = materials.get("mat_text1_name");
+        ColladaMaterial mat2 = materials.get("mat_text2_name");
+        ColladaMaterial matp = materials.get("mat_purple_name");
+        ColladaMaterial defaultMat = materials.get("");
         assert mat1 != null;
         assert mat2 != null;
         assert matp != null;
@@ -217,8 +214,8 @@ public class TestCollada
         assert groupCompSubNode2 == null;
         assert groupCompSubNode3 == null;
 
-        Map<String, Object3D> objects = colladaFactory.getObjects();
-        List<Object3D> anonymousObjects = colladaFactory.getAnonymousObjects();
+        Map<String, ColladaObject3D> objects = colladaFactory.getObjects();
+        List<ColladaObject3D> anonymousObjects = colladaFactory.getAnonymousObjects();
         assertEquals(2.0, anonymousObjects.get(0).getMeshGroup().getMeshes(mat1).get(0).getPositionData()[1], 0.0);
         MeshGroup groupOfGroups = objects.get("groupOfGroups_name").getMeshGroup();
         //geo1 - y stretched by 3 (originally 1)

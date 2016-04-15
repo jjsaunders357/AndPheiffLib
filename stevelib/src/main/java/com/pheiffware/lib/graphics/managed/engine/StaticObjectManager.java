@@ -1,11 +1,11 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.geometry.collada.ColladaMaterial;
+import com.pheiffware.lib.geometry.collada.MeshGroup;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,10 @@ public class StaticObjectManager
     public ObjectRenderHandle addMeshGroup(MeshGroup meshGroup)
     {
         ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
-        Map<Material, List<Mesh>> meshMap = meshGroup.getMeshMap();
-        for (Map.Entry<Material, List<Mesh>> meshEntry : meshMap.entrySet())
+        Map<ColladaMaterial, List<Mesh>> meshMap = meshGroup.getMeshMap();
+        for (Map.Entry<ColladaMaterial, List<Mesh>> meshEntry : meshMap.entrySet())
         {
-            Material material = meshEntry.getKey();
+            ColladaMaterial colladaMaterial = meshEntry.getKey();
             int meshListOffset = indexBufferLength;
             int meshListLength = 0;
             List<Mesh> meshList = meshEntry.getValue();
@@ -51,7 +51,7 @@ public class StaticObjectManager
                 meshListLength += mesh.getNumVertexIndices();
                 vertexBufferLength += mesh.getNumUniqueVertices();
             }
-            MeshRenderHandle meshHandle = new MeshRenderHandle(material, meshListOffset, meshListLength);
+            MeshRenderHandle meshHandle = new MeshRenderHandle(colladaMaterial, meshListOffset, meshListLength);
             objectRenderHandle.addMeshHandle(meshHandle);
         }
         objectRenderHandles.add(objectRenderHandle);

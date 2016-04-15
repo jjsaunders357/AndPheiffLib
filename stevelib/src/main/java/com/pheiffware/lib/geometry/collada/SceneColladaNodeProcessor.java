@@ -1,9 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
@@ -21,11 +18,11 @@ import java.util.Map;
  */
 class SceneColladaNodeProcessor extends BaseColladaNodeProcessor
 {
-    private Map<String, Object3D> objects = new HashMap<>();
-    private List<Object3D> anonymousObjects = new LinkedList<>();
+    private Map<String, ColladaObject3D> objects = new HashMap<>();
+    private List<ColladaObject3D> anonymousObjects = new LinkedList<>();
 
     /**
-     * On creation, this processes all nodes in the given element hierarchy, using provided libraryMeshGroups, to create Object3D instances.
+     * On creation, this processes all nodes in the given element hierarchy, using provided libraryMeshGroups, to create ColladaObject3D instances.
      * It does not flatten top level objects and instead initializes objects geometry untransformed, but with initial transform specified.
      *
      * @param element                   what to parse
@@ -35,7 +32,7 @@ class SceneColladaNodeProcessor extends BaseColladaNodeProcessor
      * @param libraryMeshGroups         any previous parsed meshGroups mapped by id
      * @throws XMLParseException
      */
-    public SceneColladaNodeProcessor(Element element, Map<String, Material> materialsByID, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments, Map<String, MeshGroup> libraryMeshGroups) throws XMLParseException
+    public SceneColladaNodeProcessor(Element element, Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments, Map<String, MeshGroup> libraryMeshGroups) throws XMLParseException
     {
         super(materialsByID, geometries, ignoreMaterialAssignments);
         injectLibraryNodes(libraryMeshGroups);
@@ -45,21 +42,21 @@ class SceneColladaNodeProcessor extends BaseColladaNodeProcessor
             String name = topLevelMeshGroupProxy.getName();
             Matrix4 transform = topLevelMeshGroupProxy.getTransform();
             MeshGroup meshGroup = topLevelMeshGroupProxy.retrieveMeshGroup(false);
-            Object3D object3D = new Object3D(transform, meshGroup);
+            ColladaObject3D colladaObject3D = new ColladaObject3D(transform, meshGroup);
             if (name == null)
             {
-                anonymousObjects.add(object3D);
+                anonymousObjects.add(colladaObject3D);
             }
             else
             {
                 //We don't want to lose any objects which have the same name (author just didn't care about name) so dump them in anonymous bin.
                 if (!objects.containsKey(name))
                 {
-                    objects.put(name, object3D);
+                    objects.put(name, colladaObject3D);
                 }
                 else
                 {
-                    anonymousObjects.add(object3D);
+                    anonymousObjects.add(colladaObject3D);
                 }
             }
         }
@@ -74,12 +71,12 @@ class SceneColladaNodeProcessor extends BaseColladaNodeProcessor
         }
     }
 
-    public Map<String, Object3D> getObjects()
+    public Map<String, ColladaObject3D> getObjects()
     {
         return objects;
     }
 
-    public List<Object3D> getAnonymousObjects()
+    public List<ColladaObject3D> getAnonymousObjects()
     {
         return anonymousObjects;
     }

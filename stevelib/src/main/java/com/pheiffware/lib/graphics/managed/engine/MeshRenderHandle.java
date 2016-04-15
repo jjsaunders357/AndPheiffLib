@@ -1,6 +1,6 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.managed.mesh.Material;
+import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 
 /**
  * Holds information about a single mesh which should be rendered with a specific Program and specific values for uniforms in that Program.  The set of uniform values may be
@@ -10,13 +10,13 @@ import com.pheiffware.lib.graphics.managed.mesh.Material;
  */
 public class MeshRenderHandle
 {
-    final Material material;
+    final ColladaMaterial colladaMaterial;
     final int vertexOffset;
     final int numVertices;
 
-    public MeshRenderHandle(Material material, int vertexOffset, int numVertices)
+    public MeshRenderHandle(ColladaMaterial colladaMaterial, int vertexOffset, int numVertices)
     {
-        this.material = material;
+        this.colladaMaterial = colladaMaterial;
         this.vertexOffset = vertexOffset;
         this.numVertices = numVertices;
     }
