@@ -101,14 +101,14 @@ public class MeshExampleFragment extends SimpleGLFragment
         @Override
         protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
         {
-            program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
-            program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
-            program.setUniformMatrix3("eyeNormalMatrix", normalMatrix.m, false);
-            program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.0f, 0.6f, 0.9f, 1.0f});
-            program.setUniformVec4("specLightMaterialColor", new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-            program.setUniformFloat("shininess", 30.0f);
-            program.setUniformVec3("lightPositionEyeSpace", new float[]{-3, 3, 0});
+            program.setUniformValue("eyeProjectionMatrix", projectionMatrix.m);
+            program.setUniformValue("eyeTransformMatrix", viewModelMatrix.m);
+            program.setUniformValue("eyeNormalMatrix", normalMatrix.m);
+            program.setUniformValue("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            program.setUniformValue("diffuseLightMaterialColor", new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+            program.setUniformValue("specLightMaterialColor", new float[]{0.75f, 0.85f, 1.0f, 1.0f});
+            program.setUniformValue("shininess", 30.0f);
+            program.setUniformValue("lightPositionEyeSpace", new float[]{-3, 3, 0});
         }
     }
 }

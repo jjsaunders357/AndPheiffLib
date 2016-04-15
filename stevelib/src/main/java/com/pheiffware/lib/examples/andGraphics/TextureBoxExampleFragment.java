@@ -59,7 +59,6 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 Material material1 = collada.materialsByName.get("Brown_Brick");
                 Material material2 = collada.materialsByName.get("Grey_Brick");
                 Material material3 = collada.materialsByName.get("Stripes");
-                System.out.println(material1.imageFileName);
                 texture = manGL.createImageTexture(am, "images/" + material1.imageFileName, true, GLES20.GL_REPEAT, GLES20.GL_REPEAT);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
@@ -106,15 +105,15 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         @Override
         protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
         {
-            program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
-            program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
-            program.setUniformMatrix3("eyeNormalMatrix", normalMatrix.m, false);
-            program.setUniformVec4("ambientLightColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformVec4("diffuseLightColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            program.setUniformVec4("specMaterialColor", new float[]{0.5f, 0.5f, 0.5f, 1.0f});
-            program.setUniformFloat("shininess", 30.0f);
-            program.setUniformVec3("lightPositionEyeSpace", new float[]{-3, 3, 0});
-            program.setUniformTexture2D("diffuseMaterialTexture", texture, 0);
+            program.setUniformValue("eyeProjectionMatrix", projectionMatrix.m);
+            program.setUniformValue("eyeTransformMatrix", viewModelMatrix.m);
+            program.setUniformValue("eyeNormalMatrix", normalMatrix.m);
+            program.setUniformValue("ambientLightColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            program.setUniformValue("diffuseLightColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            program.setUniformValue("specMaterialColor", new float[]{0.5f, 0.5f, 0.5f, 1.0f});
+            program.setUniformValue("shininess", 3.0f);
+            program.setUniformValue("lightPositionEyeSpace", new float[]{-3, 3, 0});
+            program.setUniformValue("diffuseMaterialTexture", texture);
         }
     }
 }
