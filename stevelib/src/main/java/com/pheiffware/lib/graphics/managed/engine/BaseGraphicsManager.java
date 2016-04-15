@@ -4,12 +4,7 @@ import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * TODO: Comment me!
@@ -36,32 +31,6 @@ public abstract class BaseGraphicsManager
             staticVertexBuffers[i] = new StaticVertexBuffer(program);
         }
         transferData = new GraphicsManagerTransferData(indexBuffer, manGL, programs, staticVertexBuffers)
-    }
-
-
-    public ObjectRenderHandle addMeshGroup(MeshGroup meshGroup)
-    {
-        ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
-        Map<Material, List<Mesh>> meshMap = meshGroup.getMeshMap();
-        for (Map.Entry<Material, List<Mesh>> meshEntry : meshMap.entrySet())
-        {
-            Material material = meshEntry.getKey();
-            int meshListOffset = indexBufferLength;
-            int meshListLength = 0;
-            List<Mesh> meshList = meshEntry.getValue();
-            for (Mesh mesh : meshList)
-            {
-                transferMeshes.add(mesh);
-
-                indexBufferLength += mesh.getNumVertexIndices();
-                meshListLength += mesh.getNumVertexIndices();
-                vertexBufferLength += mesh.getNumUniqueVertices();
-            }
-            MeshRenderHandle meshHandle = new MeshRenderHandle(material, meshListOffset, meshListLength);
-            objectRenderHandle.addMeshHandle(meshHandle);
-        }
-        objectRenderHandles.add(objectRenderHandle);
-        return objectRenderHandle;
     }
 
     public void transfer()
