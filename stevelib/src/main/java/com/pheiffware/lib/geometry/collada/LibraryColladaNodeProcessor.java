@@ -31,9 +31,9 @@ class LibraryColladaNodeProcessor extends BaseColladaNodeProcessor
         List<MeshGroupProxy> topLevelMeshGroupProxies = getMeshGroupProxies(element);
         for (MeshGroupProxy topLevelMeshGroupProxy : topLevelMeshGroupProxies)
         {
-            //Apply all top-level transforms to library objects.
-            //It is unlikely there will be any top-level meshgroups with transforms,
+            //It is unlikely there will be any top-level library nodes with transforms,
             //but if these are referenced and further transformed, this would be a problem.
+            //This gets flattened library node (transform applied)
             MeshGroup meshGroup = topLevelMeshGroupProxy.retrieveMeshGroup(true);
 
             String id = topLevelMeshGroupProxy.getID();

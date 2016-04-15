@@ -8,11 +8,9 @@ import com.pheiffware.lib.geometry.Vec3D;
 import java.util.Arrays;
 
 /**
- * Stores and manipulates a 4x4 matrix.  Stored as a 16 element float array in column major order.
- * This is an enhanced version of the built in Matrix4f.
- * 1. Provides more convenience methods
- * 2. Doesn't have a bugged rotation method (Matrix4f's method does not normalize axis properly).
- * 3. Backed by the native Matrix library, so it is slightly faster
+ * Stores and manipulates a 4x4 matrix.  Stored as a 16 element float array in column major order. This is an enhanced version of the built in Matrix4f. 1. Provides more
+ * convenience methods 2. Doesn't have a bugged rotation method (Matrix4f's method does not normalize axis properly). 3. Backed by the native Matrix library, so it is slightly
+ * faster
  * <p/>
  * Created by Steve on 3/9/2016.
  */
@@ -83,8 +81,7 @@ public class Matrix4
     }
 
     /**
-     * Creates a projection matrix. You generally want to set flipVertical to true when using this to render to a texture as texture coordinates are
-     * backward.
+     * Creates a projection matrix. You generally want to set flipVertical to true when using this to render to a texture as texture coordinates are backward.
      *
      * @param fieldOfViewY The field of view in the y direction (in degrees)
      * @param aspect       ratio of width to height
@@ -451,8 +448,8 @@ public class Matrix4
     }
 
     /**
-     * Given a 4d coordinate at the specified offset in the inVectorData array, apply this transform in the outVectorData at the offset.
-     * inVectorData and outVectorData CAN be the same array and read/write position can overlap.
+     * Given a 4d coordinate at the specified offset in the inVectorData array, apply this transform in the outVectorData at the offset. inVectorData and outVectorData CAN be the
+     * same array and read/write position can overlap.
      *
      * @param inVectorData array vectors are read from
      * @param inVectorData array transformed vectors are written to
@@ -500,6 +497,26 @@ public class Matrix4
         return transformedVectorData;
     }
 
+    //Used for testing if a matrix is identity.
+    private static float[] identity = new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+    /**
+     * Checks if the matrix is the identity matrix within the given tolerance.  Tolerance is applied per element of the matrix.
+     *
+     * @return
+     */
+    public boolean isIdentity(float tolerance)
+    {
+        for (int index = 0; index < 16; index++)
+        {
+            float diff = Math.abs(identity[index] - m[index]);
+            if (diff > tolerance)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public String toString()
     {

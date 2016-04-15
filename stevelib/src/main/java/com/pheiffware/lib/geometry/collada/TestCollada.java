@@ -183,6 +183,7 @@ public class TestCollada
 
         //Check all the library meshGroups to make sure they were combined properly
         Map<String, MeshGroup> libMeshGroups = colladaFactory.getLibraryMeshGroups();
+        MeshGroup lib_node_transformed = libMeshGroups.get("lib_node_transformed_id");
         MeshGroup lib_node1 = libMeshGroups.get("lib_node1_id");
         MeshGroup lib_node2 = libMeshGroups.get("lib_node2_id");
         MeshGroup lib_node3 = libMeshGroups.get("lib_node3_id");
@@ -198,6 +199,9 @@ public class TestCollada
         assertEquals(2, lib_node3.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
         assertEquals(2, lib_node_comp.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
         assertEquals(3, lib_node_comp.getMeshes(mat2).get(0).getPositionData()[1], 0.0);
+
+        //This one was scaled by factor of 2
+        assertEquals(2, lib_node_transformed.getMeshes(mat1).get(0).getPositionData()[1], 0.0);
 
         //geo1 - untransformed
         assertEquals(1, lib_node_comp_group.getMeshes(mat1).get(0).getPositionData()[1], 0.0);

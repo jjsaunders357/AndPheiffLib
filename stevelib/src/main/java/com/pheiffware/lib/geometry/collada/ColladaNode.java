@@ -67,7 +67,10 @@ class ColladaNode implements MeshGroupProxy
                 MeshGroup childMeshGroup = meshGroupProxy.retrieveMeshGroup(true);
                 if (flatten)
                 {
-                    childMeshGroup = childMeshGroup.newTransformedMeshGroup(transformMatrix);
+                    if (!transformMatrix.isIdentity(0.0f))
+                    {
+                        childMeshGroup = childMeshGroup.newTransformedMeshGroup(transformMatrix);
+                    }
                 }
                 meshGroup.add(childMeshGroup);
             }
