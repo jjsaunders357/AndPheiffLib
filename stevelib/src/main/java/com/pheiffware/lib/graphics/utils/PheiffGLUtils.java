@@ -153,7 +153,7 @@ public class PheiffGLUtils
      * @param type a semantic such as GLES20.GL_FLOAT
      * @return size in bytes of the semantic
      */
-    public static int getGLTypeSize(int type)
+    public static int getGLTypeByteSize(int type)
     {
         switch (type)
         {

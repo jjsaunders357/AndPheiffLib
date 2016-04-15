@@ -9,7 +9,6 @@ import android.opengl.GLES20;
 import com.pheiffware.lib.graphics.managed.Attribute;
 import com.pheiffware.lib.graphics.managed.Program;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,11 +48,21 @@ public class StaticVertexBuffer extends BaseBuffer
     //The names of the attributes being managed by this buffer
     private String[] attributeNames;
 
-    public StaticVertexBuffer(Program program, Collection<String> attributeNames)
+    /**
+     * Create buffer which holds all vertex attributes for the program.
+     *
+     * @param program
+     */
+    public StaticVertexBuffer(Program program)
     {
-        this(program, attributeNames.toArray(new String[]{}));
+        this(program, program.getAttributeNames().toArray(new String[program.getAttributeNames().size()]));
     }
 
+    /**
+     * Create buffer which holds specific vertex attributes for the program.
+     * @param program
+     * @param attributeNames
+     */
     public StaticVertexBuffer(Program program, String[] attributeNames)
     {
         this.attributeNames = attributeNames;
@@ -84,17 +93,16 @@ public class StaticVertexBuffer extends BaseBuffer
      */
     public final void putAttributeFloats(String attributeName, float[] values, int vertexOffset)
     {
-        putAttributeFloats(attributeByteOffsets.get(attributeName), program.getAttribute(attributeName).dims, values, vertexOffset);
+        putAttributeFloats(attributeByteOffsets.get(attributeName), program.getAttribute(attributeName).numBaseTypeElements, values, vertexOffset);
     }
 
-    public final void putAttributeFloats(int attributeByteOffset, int attributeDims, float[] values, int vertexOffset)
+    public final void putAttributeFloats(int attributeByteOffset, int numBaseTypeElements, float[] values, int vertexOffset)
     {
         int putPosition = attributeByteOffset + vertexByteSize * vertexOffset;
-        int dims = attributeDims;
-        for (int i = 0; i < values.length; i += dims)
+        for (int i = 0; i < values.length; i += numBaseTypeElements)
         {
             byteBuffer.position(putPosition);
-            for (int j = 0; j < dims; j++)
+            for (int j = 0; j < numBaseTypeElements; j++)
             {
                 byteBuffer.putFloat(values[i + j]);
             }
@@ -112,7 +120,7 @@ public class StaticVertexBuffer extends BaseBuffer
         {
             Attribute attribute = program.getAttribute(attributeName);
             GLES20.glEnableVertexAttribArray(attribute.location);
-            GLES20.glVertexAttribPointer(attribute.location, attribute.dims, attribute.baseType, false, vertexByteSize, attributeByteOffsets.get(attributeName));
+            GLES20.glVertexAttribPointer(attribute.location, attribute.numBaseTypeElements, attribute.baseType, false, vertexByteSize, attributeByteOffsets.get(attributeName));
         }
     }
 
