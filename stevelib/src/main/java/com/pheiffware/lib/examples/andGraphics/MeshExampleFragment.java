@@ -11,6 +11,7 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
@@ -68,10 +69,10 @@ public class MeshExampleFragment extends SimpleGLFragment
 
                 StaticVertexBuffer vertexBuffer = new StaticVertexBuffer(program,
                         new String[]
-                                {"vertexPosition", "vertexNormal"});
+                                {ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_NORMAL_ATTRIBUTE});
                 vertexBuffer.allocate(mesh.getNumVertices());
-                vertexBuffer.putAttributeFloats("vertexPosition", mesh.getPositionData(), 0);
-                vertexBuffer.putAttributeFloats("vertexNormal", mesh.getNormalData(), 0);
+                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_POSITION_ATTRIBUTE, mesh.getPositionData(), 0);
+                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_NORMAL_ATTRIBUTE, mesh.getNormalData(), 0);
 
                 vertexBuffer.transfer();
                 return vertexBuffer;
@@ -95,14 +96,14 @@ public class MeshExampleFragment extends SimpleGLFragment
         @Override
         protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
         {
-            program.setUniformValue("eyeProjectionMatrix", projectionMatrix.m);
-            program.setUniformValue("eyeTransformMatrix", viewModelMatrix.m);
-            program.setUniformValue("eyeNormalMatrix", normalMatrix.m);
-            program.setUniformValue("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformValue("diffuseLightMaterialColor", new float[]{0.0f, 0.6f, 0.9f, 1.0f});
-            program.setUniformValue("specLightMaterialColor", new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-            program.setUniformValue("shininess", 30.0f);
-            program.setUniformValue("lightPositionEyeSpace", new float[]{-3, 3, 0});
+            program.setUniformValue(ShadConst.EYE_PROJECTION_MATRIX_UNIFORM, projectionMatrix.m);
+            program.setUniformValue(ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM, viewModelMatrix.m);
+            program.setUniformValue(ShadConst.EYE_NORMAL_MATRIX_UNIFORM, normalMatrix.m);
+            program.setUniformValue(ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            program.setUniformValue(ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+            program.setUniformValue(ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
+            program.setUniformValue(ShadConst.SHININESS_UNIFORM, 30.0f);
+            program.setUniformValue(ShadConst.LIGHT_POS_EYE_UNIFORM, new float[]{-3, 3, 0});
         }
     }
 }

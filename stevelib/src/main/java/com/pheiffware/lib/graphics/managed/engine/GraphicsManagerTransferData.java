@@ -92,15 +92,15 @@ public class GraphicsManagerTransferData
     {
         if (program.getAttributeNames().contains(ShadConst.VERTEX_POSITION_ATTRIBUTE))
         {
-            staticVertexBuffer.putAttributeFloats("vertexPosition", transferMesh.getPositionData(), vertexWriteOffset);
+            staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_POSITION_ATTRIBUTE, transferMesh.getPositionData(), vertexWriteOffset);
         }
         if (program.getAttributeNames().contains(ShadConst.VERTEX_NORMAL_ATTRIBUTE))
         {
-            staticVertexBuffer.putAttributeFloats("vertexNormal", transferMesh.getNormalData(), vertexWriteOffset);
+            staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_NORMAL_ATTRIBUTE, transferMesh.getNormalData(), vertexWriteOffset);
         }
         if (program.getAttributeNames().contains(ShadConst.VERTEX_TEXCOORD_ATTRIBUTE))
         {
-            staticVertexBuffer.putAttributeFloats("vertexTexCoord", transferMesh.getTexCoordData(), vertexWriteOffset);
+            staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_TEXCOORD_ATTRIBUTE, transferMesh.getTexCoordData(), vertexWriteOffset);
         }
     }
 

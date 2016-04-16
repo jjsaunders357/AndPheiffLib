@@ -7,7 +7,6 @@ package com.pheiffware.lib.graphics;
  */
 public class ShadConst
 {
-    //TODO: Replace existing strings
     public static final String VERTEX_POSITION_ATTRIBUTE = "vertexPosition";
     public static final String VERTEX_NORMAL_ATTRIBUTE = "vertexNormal";
     public static final String VERTEX_TEXCOORD_ATTRIBUTE = "vertexTexCoord";
@@ -24,5 +23,5 @@ public class ShadConst
 
     public static final String LIGHT_POS_EYE_UNIFORM = "lightPositionEyeSpace";
     public static final String SHININESS_UNIFORM = "shininess";
-    public static final String DIFFUSE_MATERIAL_TEXTURE_UNIFORM = "diffuseMaterialTexture";
+    public static final String DIFF_MATERIAL_TEXTURE_UNIFORM = "diffuseMaterialTexture";
 }

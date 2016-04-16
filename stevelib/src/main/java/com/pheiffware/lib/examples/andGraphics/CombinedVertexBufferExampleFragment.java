@@ -10,6 +10,7 @@ import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
@@ -68,7 +69,7 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
             cb = new CombinedVertexBuffer(testProgram,
-                    new String[] { "vertexPosition", "vertexTexCoord" },
+                    new String[] { ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_TEXCOORD_ATTRIBUTE },
                     new String[] { "vertexColor" });
             //@formatter:on
             cb.allocate(2000);
