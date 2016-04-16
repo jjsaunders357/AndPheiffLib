@@ -8,12 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-//TODO: Rename and make package scope
-
 /**
- * A map from materials to the mesh which should be rendered by them. Created by Steve on 2/16/2016.
+ * A map from materials to a list of meshes which should be rendered by them.  This is used while loading to efficiently group meshes with the same material.  When finished each
+ * list of meshes is collapsed into one mesh.
+ * <p/>
+ * Created by Steve on 2/16/2016.
  */
-public class MeshGroup
+class MeshGroup
 {
     //The initial transform this object had when loaded.  If not identity, this will NOT have been applied to the loaded mesh.
     private final Matrix4 initialTransformMatrix;
@@ -70,21 +71,6 @@ public class MeshGroup
         return transformedMeshGroup;
     }
 
-    public List<Mesh> getMeshes(ColladaMaterial colladaMaterial)
-    {
-        return meshes.get(colladaMaterial);
-    }
-
-    public Map<ColladaMaterial, List<Mesh>> getMeshMap()
-    {
-        return meshes;
-    }
-
-    public Matrix4 getInitialTransformMatrix()
-    {
-        return initialTransformMatrix;
-    }
-
     /**
      * Goes through all materials and collapses each list of meshes to a single mesh object.
      *
@@ -111,4 +97,20 @@ public class MeshGroup
         }
         return materialToMeshMap;
     }
+
+    public List<Mesh> getMeshes(ColladaMaterial colladaMaterial)
+    {
+        return meshes.get(colladaMaterial);
+    }
+
+    public Map<ColladaMaterial, List<Mesh>> getMeshMap()
+    {
+        return meshes;
+    }
+
+    public Matrix4 getInitialTransformMatrix()
+    {
+        return initialTransformMatrix;
+    }
+
 }

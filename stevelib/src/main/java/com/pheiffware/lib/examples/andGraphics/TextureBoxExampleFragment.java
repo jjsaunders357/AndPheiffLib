@@ -67,7 +67,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
 
 
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-                Mesh mesh = cube3.getMeshMap().get(colladaMaterial1);
+                Mesh mesh = cube3.getMesh(0);
                 mesh = mesh.newTransformedMesh(Matrix4.newScale(0.01f, 0.01f, 0.01f));
                 indexBuffer.allocate(mesh.getNumIndices());
                 indexBuffer.putIndices(mesh.vertexIndices);

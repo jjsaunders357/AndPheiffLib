@@ -11,22 +11,59 @@ import java.util.Map;
 public class ColladaObject3D
 {
     private Matrix4 initialMatrix;
-    //TODO: Convert to parallel lists
-    private final Map<ColladaMaterial, Mesh> meshes;
+    private final ColladaMaterial[] materials;
+    private final Mesh[] meshes;
 
-    public ColladaObject3D(Matrix4 initialMatrix, Map<ColladaMaterial, Mesh> meshes)
+    public ColladaObject3D(Matrix4 initialMatrix, Map<ColladaMaterial, Mesh> meshMap)
     {
         this.initialMatrix = initialMatrix;
-        this.meshes = meshes;
+        materials = new ColladaMaterial[meshMap.size()];
+        meshes = new Mesh[meshMap.size()];
+        int index = 0;
+        for (Map.Entry<ColladaMaterial, Mesh> entry : meshMap.entrySet())
+        {
+            materials[index] = entry.getKey();
+            meshes[index] = entry.getValue();
+            index++;
+        }
     }
 
-    public Matrix4 getInitialMatrix()
+    public final Matrix4 getInitialMatrix()
     {
         return initialMatrix;
     }
 
-    public Map<ColladaMaterial, Mesh> getMeshMap()
+    public final int getNumMeshes()
     {
-        return meshes;
+        return meshes.length;
+    }
+
+    public final ColladaMaterial getMaterial(int meshIndex)
+    {
+        return materials[meshIndex];
+    }
+
+    public final Mesh getMesh(int meshIndex)
+    {
+        return meshes[meshIndex];
+    }
+
+
+    /**
+     * Only for use in testing.  For a given material, this looks up the corresponding mesh.  Not particularly efficient nor an operation for external code to use.
+     *
+     * @param material
+     * @return
+     */
+    Mesh matMeshTO(ColladaMaterial material)
+    {
+        for (int i = 0; i < materials.length; i++)
+        {
+            if (materials[i] == material)
+            {
+                return meshes[i];
+            }
+        }
+        return null;
     }
 }

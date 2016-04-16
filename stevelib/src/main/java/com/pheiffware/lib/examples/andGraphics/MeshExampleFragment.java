@@ -6,7 +6,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
-import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -53,15 +52,11 @@ public class MeshExampleFragment extends SimpleGLFragment
                 inputStream = am.open("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
-                //Lookup material from loaded file by "name" (what user named it in editing tool)
-                ColladaMaterial colladaMaterial = collada.materialsByName.get("renderMaterial");
-
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
                 ColladaObject3D monkey = collada.objects.get("Monkey");
 
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-
-                Mesh mesh = monkey.getMeshMap().get(colladaMaterial);
+                Mesh mesh = monkey.getMesh(0);
 
                 //Extract the translation aspect of the transform
                 DecomposedTransform3D decomposedTransform = monkey.getInitialMatrix().decompose();
