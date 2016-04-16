@@ -4,7 +4,9 @@ import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.utils.MapCounter;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +15,7 @@ import java.util.Map;
  */
 public class Mesh
 {
-    //The number of unique vertices.  Each array in vertex data is this length
+    //The number of unique vertices.  Each array in vertex data has this number of items.  Each item may vary in length.
     public final int numUniqueVertices;
     //Data for each unique vertex.  A map from names like POSITION, NORMAL, TEXCOORD, etc to actual arrays holding vertex data.  The same vertex may be referenced multiple times in the vertexIndices array.
     //POSITION - Stored as 4 element homogeneous coords
@@ -33,6 +35,61 @@ public class Mesh
     }
 
     /**
+     * Create a new mesh out of a collection of similar meshes.  All meshes must share the same vertex attributes.
+     *
+     * @param meshes a collection of meshes
+     */
+    public Mesh(Collection<Mesh> meshes)
+    {
+        //Count index and vertex data list sizes
+        int indices = 0;
+        int uniqueVerticesCounter = 0;
+        MapCounter<String> vertexDataSizes = new MapCounter<>();
+
+        for (Mesh mesh : meshes)
+        {
+            indices += mesh.getNumIndices();
+            uniqueVerticesCounter += mesh.getNumVertices();
+            for (String vertexDataKey : mesh.uniqueVertexData.keySet())
+            {
+                int vertexDataLength = mesh.uniqueVertexData.get(vertexDataKey).length;
+                vertexDataSizes.addCount(vertexDataKey, vertexDataLength);
+            }
+        }
+        numUniqueVertices = uniqueVerticesCounter;
+
+        //Create new arrays big enough to hold combined data
+        vertexIndices = new short[indices];
+        uniqueVertexData = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : vertexDataSizes.entrySet())
+        {
+            uniqueVertexData.put(entry.getKey(), new float[entry.getValue()]);
+        }
+
+        //Copy data from each individual mesh to this mesh
+        indices = 0;
+        MapCounter<String> vertexDataOffsets = new MapCounter<>();
+        for (Mesh mesh : meshes)
+        {
+            short[] srcIndexData = mesh.vertexIndices;
+            System.arraycopy(
+                    srcIndexData, 0,
+                    vertexIndices, indices, srcIndexData.length);
+            indices += srcIndexData.length;
+            for (String vertexDataKey : mesh.uniqueVertexData.keySet())
+            {
+                int offset = vertexDataOffsets.getCount(vertexDataKey);
+                float[] srcVertexData = mesh.uniqueVertexData.get(vertexDataKey);
+                System.arraycopy(
+                        srcVertexData, 0,
+                        uniqueVertexData.get(vertexDataKey), offset,
+                        srcVertexData.length);
+                vertexDataOffsets.addCount(vertexDataKey, srcVertexData.length);
+            }
+        }
+    }
+
+    /**
      * Generates data for shaders requiring per vertex color data.
      *
      * @param color4F Color to use
@@ -42,7 +99,7 @@ public class Mesh
     {
         float[] colors = new float[numUniqueVertices * 4];
         int index = 0;
-        for (int i = 0; i < getNumUniqueVertices(); i++)
+        for (int i = 0; i < getNumVertices(); i++)
         {
             colors[index++] = color4F.getRed();
             colors[index++] = color4F.getGreen();
@@ -52,12 +109,12 @@ public class Mesh
         return colors;
     }
 
-    public int getNumVertexIndices()
+    public int getNumIndices()
     {
         return vertexIndices.length;
     }
 
-    public int getNumUniqueVertices()
+    public int getNumVertices()
     {
         return numUniqueVertices;
     }

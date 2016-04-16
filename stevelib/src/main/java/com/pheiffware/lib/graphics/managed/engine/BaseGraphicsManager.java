@@ -30,7 +30,7 @@ public abstract class BaseGraphicsManager
             Program program = programs[i];
             staticVertexBuffers[i] = new StaticVertexBuffer(program);
         }
-        transferData = new GraphicsManagerTransferData(indexBuffer, manGL, programs, staticVertexBuffers)
+        transferData = new GraphicsManagerTransferData(indexBuffer, manGL, programs, staticVertexBuffers);
     }
 
     public void transfer()
@@ -45,8 +45,8 @@ public abstract class BaseGraphicsManager
             staticVertexBuffer.putAttributeFloats("vertexPosition", transferMesh.getPositionData(), vertexOffset);
             staticVertexBuffer.putAttributeFloats("vertexNormal", transferMesh.getNormalData(), vertexOffset);
             //TODO: Put texture coordinates if applicable
-            indexWriteOffset += transferMesh.getNumVertexIndices();
-            vertexOffset += transferMesh.getNumUniqueVertices();
+            indexWriteOffset += transferMesh.getNumIndices();
+            vertexOffset += transferMesh.getNumVertices();
         }
         indexBuffer.transfer();
         staticVertexBuffer.transfer();

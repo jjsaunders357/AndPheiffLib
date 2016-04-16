@@ -1,7 +1,5 @@
 package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -22,9 +20,9 @@ class InstanceGeometryParser
     //Blender should ignore material assignments here as they will have already been defined and may be ambiguous here.
     private final boolean ignoreMaterialAssignments;
     //All previously loaded materials and a default material under the id ""
-    private final Map<String, Material> materialsByID;
+    private final Map<String, ColladaMaterial> materialsByID;
 
-    public InstanceGeometryParser(Map<String, Material> materialsByID, Map<String, ColladaGeometry> geometriesByID, boolean ignoreMaterialAssignments)
+    public InstanceGeometryParser(Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometriesByID, boolean ignoreMaterialAssignments)
     {
         this.materialsByID = materialsByID;
         this.geometriesByID = geometriesByID;
@@ -63,8 +61,8 @@ class InstanceGeometryParser
             {
                 materialID = "";
             }
-            Material material = materialsByID.get(materialID);
-            return colladaGeometry.createMeshGroup(material);
+            ColladaMaterial colladaMaterial = materialsByID.get(materialID);
+            return colladaGeometry.createMeshGroup(colladaMaterial);
         }
     }
 

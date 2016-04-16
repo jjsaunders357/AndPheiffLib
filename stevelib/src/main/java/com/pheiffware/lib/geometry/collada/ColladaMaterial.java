@@ -1,11 +1,11 @@
-package com.pheiffware.lib.graphics.managed.mesh;
+package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Color4F;
 
 /**
  * Created by Steve on 2/14/2016.
  */
-public class Material
+public class ColladaMaterial
 {
     //Recognizable name used in creation software (ids are unique, but possibly meaningless).
     public final String name;
@@ -15,7 +15,7 @@ public class Material
     public final Color4F specularColor;
     public final float shininess;
 
-    public Material(String name, String imageFileName, Color4F ambientColor, Color4F diffuseColor, Color4F specularColor, float shininess)
+    public ColladaMaterial(String name, String imageFileName, Color4F ambientColor, Color4F diffuseColor, Color4F specularColor, float shininess)
     {
         this.name = name;
         this.imageFileName = imageFileName;
@@ -34,7 +34,7 @@ public class Material
     @Override
     public boolean equals(Object o)
     {
-        return name.equals(((Material) o).name);
+        return name.equals(((ColladaMaterial) o).name);
     }
 
     @Override

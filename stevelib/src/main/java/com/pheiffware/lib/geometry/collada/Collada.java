@@ -1,8 +1,5 @@
 package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,15 +28,15 @@ public class Collada
     public final Collection<String> imageFileNames;
 
     //Map from material names to material data
-    public final Map<String, Material> materialsByName;
+    public final Map<String, ColladaMaterial> materialsByName;
 
     //Map from node names defined in the visual scene to collapsed collections of meshes, keyed by which material is used to render them
-    public final Map<String, Object3D> objects;
+    public final Map<String, ColladaObject3D> objects;
 
     //List of all unnamed objects, either: node didn't have a name attribute, multiple nodes with the same name attribute (all but 1st put in this bin) or top-level geometry instance in a SketchUp node.
-    public final List<Object3D> anonymousObjects;
+    public final List<ColladaObject3D> anonymousObjects;
 
-    public Collada(Collection<String> imageFileNames, Map<String, Material> materialsByID, Map<String, Object3D> objects, List<Object3D> anonymousObjects)
+    public Collada(Collection<String> imageFileNames, Map<String, ColladaMaterial> materialsByID, Map<String, ColladaObject3D> objects, List<ColladaObject3D> anonymousObjects)
     {
         this.imageFileNames = imageFileNames;
         materialsByName = remapMaterialsByName(materialsByID);
@@ -47,14 +44,14 @@ public class Collada
         this.objects = objects;
     }
 
-    private Map<String, Material> remapMaterialsByName(Map<String, Material> materialsByID)
+    private Map<String, ColladaMaterial> remapMaterialsByName(Map<String, ColladaMaterial> materialsByID)
     {
         //Map from material ids to material data
-        Map<String, Material> materialsByNameMap = new HashMap<>();
+        Map<String, ColladaMaterial> materialsByNameMap = new HashMap<>();
         //Map material's by name
-        for (Material material : materialsByID.values())
+        for (ColladaMaterial colladaMaterial : materialsByID.values())
         {
-            materialsByNameMap.put(material.name, material);
+            materialsByNameMap.put(colladaMaterial.name, colladaMaterial);
         }
         return materialsByNameMap;
     }

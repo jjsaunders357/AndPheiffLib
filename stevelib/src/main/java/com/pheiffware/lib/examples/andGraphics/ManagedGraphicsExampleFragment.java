@@ -8,6 +8,7 @@ import com.pheiffware.lib.and.gui.graphics.openGL.TouchViewRenderer;
 import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
+import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
@@ -16,7 +17,6 @@ import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.StaticObjectManager;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -84,15 +84,16 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
 
-                Object3D monkey = collada.objects.get("Monkey");
-                Object3D sphere = collada.objects.get("Sphere");
-                Object3D cube = collada.objects.get("Cube");
+                ColladaObject3D monkey = collada.objects.get("Monkey");
+                ColladaObject3D sphere = collada.objects.get("Sphere");
+                ColladaObject3D cube = collada.objects.get("Cube");
 
                 staticObjectManager = new StaticObjectManager(testProgram, new String[]
                         {"vertexPosition", "vertexNormal"});
-                staticMonkey = staticObjectManager.addMeshGroup(monkey.getMeshGroup());
-                staticSphere = staticObjectManager.addMeshGroup(sphere.getMeshGroup());
-                staticCube = staticObjectManager.addMeshGroup(cube.getMeshGroup());
+                //TODO: Fix
+//                staticMonkey = staticObjectManager.addMeshGroup(monkey.getMeshMap());
+//                staticSphere = staticObjectManager.addMeshGroup(sphere.getMeshMap());
+//                staticCube = staticObjectManager.addMeshGroup(cube.getMeshMap());
                 staticObjectManager.transfer();
 
                 PheiffGLUtils.assertNoError();

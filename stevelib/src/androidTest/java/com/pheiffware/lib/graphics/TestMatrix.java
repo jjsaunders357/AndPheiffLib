@@ -3,11 +3,11 @@ package com.pheiffware.lib.graphics;
 
 import android.test.InstrumentationTestCase;
 
+import com.pheiffware.lib.geometry.DecomposedTransform3D;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
-
-import com.pheiffware.lib.geometry.DecomposedTransform3D;
 
 /**
  * Created by Steve on 3/22/2016.
@@ -63,6 +63,13 @@ public class TestMatrix extends InstrumentationTestCase
         assertEquals(2f, scale.m[0], 0.00001f);
         assertEquals(3f, scale.m[5], 0.00001f);
         assertEquals(4f, scale.m[10], 0.00001f);
+    }
 
+    public void testIdentityCheck()
+    {
+        Matrix4 matrix = Matrix4.newIdentity();
+        matrix.m[0] = 1.5f;
+        assertTrue(matrix.isIdentity(0.5f));
+        assertFalse(matrix.isIdentity(0.4f));
     }
 }

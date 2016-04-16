@@ -1,9 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Color4F;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -33,7 +30,7 @@ public class ColladaFactory
     static final float DEFAULT_SHININESS = 2f;
 
     //If no default material is defined, this this is assigned automatically
-    private static final Material defaultDefaultMaterial = new Material("", null, DEFAULT_AMBIENT, DEFAULT_DIFFUSE, DEFAULT_SPECULAR, DEFAULT_SHININESS);
+    private static final ColladaMaterial DEFAULT_DEFAULT_COLLADA_MATERIAL = new ColladaMaterial("", null, DEFAULT_AMBIENT, DEFAULT_DIFFUSE, DEFAULT_SPECULAR, DEFAULT_SHININESS);
 
     //Used to validate collada files against known schema
     private static final Validator validator = DomUtils.createValidator("collada_schema_1_4_1.xsd");
@@ -45,7 +42,7 @@ public class ColladaFactory
     private final Map<String, ColladaEffect> colladaEffects = new HashMap<>();
 
     //Map from material ids to material data
-    private final Map<String, Material> materialsByID = new HashMap<>();
+    private final Map<String, ColladaMaterial> materialsByID = new HashMap<>();
 
     //Map from ids to ColladaGeometry
     private final Map<String, ColladaGeometry> geometries = new HashMap<>();
@@ -54,10 +51,10 @@ public class ColladaFactory
     private final Map<String, MeshGroup> libraryMeshGroups = new HashMap<>();
 
     //Map from node names defined in the visual scene to collapsed collections of meshes, keyed by which material is used to render them
-    private final Map<String, Object3D> objects = new HashMap<>();
+    private final Map<String, ColladaObject3D> objects = new HashMap<>();
 
     //List of all unnamed objects, either: node didn't have a name attribute, multiple nodes with the same name attribute (all but 1st put in this bin) or top-level geometry instance in a SketchUp node.
-    private final List<Object3D> anonymousObjects = new LinkedList<>();
+    private final List<ColladaObject3D> anonymousObjects = new LinkedList<>();
 
     //When position are loaded, a 1 is appended to the end of the loaded data to create a homogeneous coordinates
     private final boolean homogenizePositions;
@@ -65,14 +62,14 @@ public class ColladaFactory
 
     public ColladaFactory(boolean homogenizePositions)
     {
-        this(homogenizePositions, defaultDefaultMaterial);
+        this(homogenizePositions, DEFAULT_DEFAULT_COLLADA_MATERIAL);
     }
 
-    public ColladaFactory(boolean homogenizePositions, Material defaultMaterial)
+    public ColladaFactory(boolean homogenizePositions, ColladaMaterial defaultColladaMaterial)
     {
         this.homogenizePositions = homogenizePositions;
         //Store default material
-        materialsByID.put("", defaultMaterial);
+        materialsByID.put("", defaultColladaMaterial);
     }
 
     public Collada loadCollada(InputStream input) throws XMLParseException
@@ -132,12 +129,12 @@ public class ColladaFactory
         return libraryMeshGroups;
     }
 
-    Map<String, Object3D> getObjects()
+    Map<String, ColladaObject3D> getObjects()
     {
         return objects;
     }
 
-    List<Object3D> getAnonymousObjects()
+    List<ColladaObject3D> getAnonymousObjects()
     {
         return anonymousObjects;
     }

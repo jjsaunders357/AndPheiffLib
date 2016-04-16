@@ -6,6 +6,8 @@ import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
+import com.pheiffware.lib.geometry.collada.ColladaMaterial;
+import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
@@ -14,14 +16,11 @@ import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.mesh.Object3D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * Loads a mesh using the Collada library and displays it on the screen.  Allows the camera to be adjusted using TouchTransform events. Created by Steve on 3/27/2016.
@@ -55,27 +54,27 @@ public class MeshExampleFragment extends SimpleGLFragment
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup material from loaded file by "name" (what user named it in editing tool)
-                Material material = collada.materialsByName.get("renderMaterial");
+                ColladaMaterial colladaMaterial = collada.materialsByName.get("renderMaterial");
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
-                Object3D monkey = collada.objects.get("Monkey");
+                ColladaObject3D monkey = collada.objects.get("Monkey");
 
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-                List<Mesh> meshList = monkey.getMeshGroup().getMeshes(material);
-                Mesh mesh = meshList.get(0);
+
+                Mesh mesh = monkey.getMeshMap().get(colladaMaterial);
 
                 //Extract the translation aspect of the transform
-                DecomposedTransform3D decomposedTransform = monkey.getMatrix().decompose();
+                DecomposedTransform3D decomposedTransform = monkey.getInitialMatrix().decompose();
                 translationMatrix = decomposedTransform.getTranslation();
 
-                indexBuffer.allocate(mesh.getNumVertexIndices());
+                indexBuffer.allocate(mesh.getNumIndices());
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
                 StaticVertexBuffer vertexBuffer = new StaticVertexBuffer(program,
                         new String[]
                                 {"vertexPosition", "vertexNormal"});
-                vertexBuffer.allocate(mesh.getNumUniqueVertices());
+                vertexBuffer.allocate(mesh.getNumVertices());
                 vertexBuffer.putAttributeFloats("vertexPosition", mesh.getPositionData(), 0);
                 vertexBuffer.putAttributeFloats("vertexNormal", mesh.getNormalData(), 0);
 

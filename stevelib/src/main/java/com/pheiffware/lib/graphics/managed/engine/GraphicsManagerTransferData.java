@@ -5,6 +5,7 @@ import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.utils.MapCounter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class GraphicsManagerTransferData
     private final StaticVertexBuffer[] staticVertexBuffers;
 
     private int indexBufferLength = 0;
-    private int vertexBufferLength = 0;
+    private final MapCounter<Program> vertexBufferLength = new MapCounter<>();
     private final List<Mesh> transferMeshes = new ArrayList<>();
     private final List<ObjectRenderHandle> objectRenderHandles = new ArrayList<>();
 
@@ -34,21 +35,35 @@ public class GraphicsManagerTransferData
         this.staticVertexBuffers = staticVertexBuffers;
     }
 
-    public MeshRenderHandle addMeshes(List<Mesh> meshList, Program program, String[] attributes, Object[] attributeValues)
+    public MeshRenderHandle addMesh(Mesh mesh, Program program, String[] attributes, Object[] attributeValues)
     {
-        int meshListOffset = indexBufferLength;
-        int meshListLength = 0;
-        for (Mesh mesh : meshList)
-        {
-            transferMeshes.add(mesh);
-
-            indexBufferLength += mesh.getNumVertexIndices();
-            meshListLength += mesh.getNumVertexIndices();
-            vertexBufferLength += mesh.getNumUniqueVertices();
-        }
-        return new MeshRenderHandle(program, attributes, attributeValues, meshListOffset, meshListLength);
+        int meshNumIndices = mesh.getNumIndices();
+        int meshIndexOffset = indexBufferLength;
+        transferMeshes.add(mesh);
+        indexBufferLength += meshNumIndices;
+        vertexBufferLength.addCount(program, mesh.getNumVertices());
+        return new MeshRenderHandle(program, attributes, attributeValues, meshIndexOffset, meshNumIndices);
     }
 
+    public void transfer()
+    {
+        indexBuffer.allocate(indexBufferLength);
+        staticVertexBuffer.allocate(vertexBufferLength);
+        int indexWriteOffset = 0;
+        int vertexOffset = 0;
+        for (Mesh transferMesh : transferMeshes)
+        {
+            indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexOffset);
+            staticVertexBuffer.putAttributeFloats("vertexPosition", transferMesh.getPositionData(), vertexOffset);
+            staticVertexBuffer.putAttributeFloats("vertexNormal", transferMesh.getNormalData(), vertexOffset);
+            //TODO: Put texture coordinates if applicable
+            indexWriteOffset += transferMesh.getNumIndices();
+            vertexOffset += transferMesh.getNumVertices();
+        }
+        indexBuffer.transfer();
+        staticVertexBuffer.transfer();
+        transferMeshes = null;
+    }
 //    public ObjectRenderHandle addMeshGroup(MeshGroup meshGroup)
 //    {
 //        ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
@@ -63,9 +78,9 @@ public class GraphicsManagerTransferData
 //            {
 //                transferMeshes.add(mesh);
 //
-//                indexBufferLength += mesh.getNumVertexIndices();
-//                meshListLength += mesh.getNumVertexIndices();
-//                vertexBufferLength += mesh.getNumUniqueVertices();
+//                indexBufferLength += mesh.getNumIndices();
+//                meshListLength += mesh.getNumIndices();
+//                vertexBufferLength += mesh.getNumVertices();
 //            }
 //            MeshRenderHandle meshHandle = new MeshRenderHandle(material, meshListOffset, meshListLength);
 //            objectRenderHandle.addMeshHandle(meshHandle);

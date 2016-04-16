@@ -1,11 +1,11 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.geometry.collada.ColladaMaterial;
+import com.pheiffware.lib.geometry.collada.MeshGroup;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,10 @@ public class StaticObjectManager
     public ObjectRenderHandle addMeshGroup(MeshGroup meshGroup)
     {
         ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
-        Map<Material, List<Mesh>> meshMap = meshGroup.getMeshMap();
-        for (Map.Entry<Material, List<Mesh>> meshEntry : meshMap.entrySet())
+        Map<ColladaMaterial, List<Mesh>> meshMap = meshGroup.getMeshMap();
+        for (Map.Entry<ColladaMaterial, List<Mesh>> meshEntry : meshMap.entrySet())
         {
-            Material material = meshEntry.getKey();
+            ColladaMaterial colladaMaterial = meshEntry.getKey();
             int meshListOffset = indexBufferLength;
             int meshListLength = 0;
             List<Mesh> meshList = meshEntry.getValue();
@@ -47,11 +47,11 @@ public class StaticObjectManager
             {
                 transferMeshes.add(mesh);
 
-                indexBufferLength += mesh.getNumVertexIndices();
-                meshListLength += mesh.getNumVertexIndices();
-                vertexBufferLength += mesh.getNumUniqueVertices();
+                indexBufferLength += mesh.getNumIndices();
+                meshListLength += mesh.getNumIndices();
+                vertexBufferLength += mesh.getNumVertices();
             }
-            MeshRenderHandle meshHandle = new MeshRenderHandle(material, meshListOffset, meshListLength);
+            MeshRenderHandle meshHandle = new MeshRenderHandle(colladaMaterial, meshListOffset, meshListLength);
             objectRenderHandle.addMeshHandle(meshHandle);
         }
         objectRenderHandles.add(objectRenderHandle);
@@ -70,8 +70,8 @@ public class StaticObjectManager
             staticVertexBuffer.putAttributeFloats("vertexPosition", transferMesh.getPositionData(), vertexOffset);
             staticVertexBuffer.putAttributeFloats("vertexNormal", transferMesh.getNormalData(), vertexOffset);
             //TODO: Put texture coordinates if applicable
-            indexWriteOffset += transferMesh.getNumVertexIndices();
-            vertexOffset += transferMesh.getNumUniqueVertices();
+            indexWriteOffset += transferMesh.getNumIndices();
+            vertexOffset += transferMesh.getNumVertices();
         }
         indexBuffer.transfer();
         staticVertexBuffer.transfer();

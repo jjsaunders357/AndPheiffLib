@@ -1,6 +1,5 @@
 package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.graphics.managed.mesh.Material;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.ElementObjectFactory;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -13,7 +12,7 @@ import java.util.Map;
  * Used to extract material from a material element.
  * Created by Steve on 2/15/2016.
  */
-class ColladaMaterialFactory implements ElementObjectFactory<Material>
+class ColladaMaterialFactory implements ElementObjectFactory<ColladaMaterial>
 {
     //A map from image file name ids to image file names
     private final Map<String, String> imageFileNamesFromIDs;
@@ -26,7 +25,7 @@ class ColladaMaterialFactory implements ElementObjectFactory<Material>
     }
 
     @Override
-    public Material createFromElement(Element element) throws XMLParseException
+    public ColladaMaterial createFromElement(Element element) throws XMLParseException
     {
         String name = element.getAttribute("name");
         Element instance_effect = DomUtils.assertGetSubElement(element, "instance_effect");
@@ -37,7 +36,7 @@ class ColladaMaterialFactory implements ElementObjectFactory<Material>
         //Will be null in imageReference is null
         String imageFileName = imageFileNamesFromIDs.get(effect.imageFileNameKey);
 
-        return new Material(name, imageFileName, effect.ambientColor, effect.diffuseColor, effect.specularColor, effect.shininess);
+        return new ColladaMaterial(name, imageFileName, effect.ambientColor, effect.diffuseColor, effect.specularColor, effect.shininess);
     }
 /*Example:
     <material id="ID4" name="material">

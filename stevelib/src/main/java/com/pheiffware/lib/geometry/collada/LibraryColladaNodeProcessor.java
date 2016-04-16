@@ -1,7 +1,5 @@
 package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.graphics.managed.mesh.Material;
-import com.pheiffware.lib.graphics.managed.mesh.MeshGroup;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
@@ -25,15 +23,15 @@ class LibraryColladaNodeProcessor extends BaseColladaNodeProcessor
      * @param ignoreMaterialAssignments if parsing blender, materials will already have been assigned inside ColladaGeometries and what is encountered in this node structure is ambiguous and should be ignored.
      * @throws XMLParseException
      */
-    public LibraryColladaNodeProcessor(Element element, Map<String, Material> materialsByID, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments) throws XMLParseException
+    public LibraryColladaNodeProcessor(Element element, Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments) throws XMLParseException
     {
         super(materialsByID, geometries, ignoreMaterialAssignments);
         List<MeshGroupProxy> topLevelMeshGroupProxies = getMeshGroupProxies(element);
         for (MeshGroupProxy topLevelMeshGroupProxy : topLevelMeshGroupProxies)
         {
-            //Apply all top-level transforms to library objects.
-            //It is unlikely there will be any top-level meshgroups with transforms,
+            //It is unlikely there will be any top-level library nodes with transforms,
             //but if these are referenced and further transformed, this would be a problem.
+            //This gets flattened library node (transform applied)
             MeshGroup meshGroup = topLevelMeshGroupProxy.retrieveMeshGroup(true);
 
             String id = topLevelMeshGroupProxy.getID();
