@@ -67,6 +67,12 @@ public class BaseGraphicsManager
         return objectRenderHandle;
     }
 
+    public final MeshRenderHandle addMesh(Mesh mesh, Program program, String[] defaultUniformNames, Object[] defaultUniformValues)
+    {
+        int programIndex = programIndexLookup.get(program);
+        int meshIndexOffset = transferData.addMesh(mesh, programIndex);
+        return new MeshRenderHandle(programIndex, uniformsFromNames(program, defaultUniformNames), defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
+    }
     public final MeshRenderHandle addMesh(Mesh mesh, int programIndex, Uniform[] defaultUniforms, Object[] defaultUniformValues)
     {
         int meshIndexOffset = transferData.addMesh(mesh, programIndex);
@@ -83,8 +89,8 @@ public class BaseGraphicsManager
     {
         Program program = programs[meshHandle.programIndex];
         StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[meshHandle.programIndex];
-        staticVertexBuffer.bind();
         program.bind();
+        staticVertexBuffer.bind();
         meshHandle.setUniforms();
         for (int i = 0; i < uniformNames.length; i++)
         {
@@ -98,8 +104,8 @@ public class BaseGraphicsManager
         //TODO: Make more efficient
         Program program = programs[meshHandle.programIndex];
         StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[meshHandle.programIndex];
-        staticVertexBuffer.bind();
         program.bind();
+        staticVertexBuffer.bind();
         meshHandle.setUniforms();
         for (int i = 0; i < uniformNames.length; i++)
         {

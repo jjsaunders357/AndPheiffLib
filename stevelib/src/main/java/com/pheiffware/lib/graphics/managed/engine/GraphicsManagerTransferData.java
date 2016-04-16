@@ -71,15 +71,15 @@ public class GraphicsManagerTransferData
 
         for (int i = 0; i < meshesForTransfer.size(); i++)
         {
-            int vertexWriteOffset = programVertexOffsets[i];
             Mesh transferMesh = meshesForTransfer.get(i);
             int programIndex = meshProgramIndices.get(i);
+            int vertexWriteOffset = programVertexOffsets[programIndex];
             Program program = programs[programIndex];
             StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[programIndex];
             indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexWriteOffset);
             transferMeshAttributes(transferMesh, program, staticVertexBuffer, vertexWriteOffset);
             indexWriteOffset += transferMesh.getNumIndices();
-            programVertexOffsets[i] += transferMesh.getNumVertices();
+            programVertexOffsets[programIndex] += transferMesh.getNumVertices();
         }
         indexBuffer.transfer();
         for (int i = 0; i < programs.length; i++)
