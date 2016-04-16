@@ -1,91 +1,107 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.utils.MapCounter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: Comment me!
+ * Manages the job of transferring a collection of meshes/3D objects to the given index buffer and vertex buffers.  Each added mesh specifies the program it will be rendered by and
+ * gets put in the corresponding vertex buffer.  All indices are put into the single provided index buffer.
+ * <p/>
+ * This is a one use class.  The usage pattern of the class is to repeatedly call addMesh() and then call transfer() once to move all data.  Afterwards, the reference to this
+ * object should be forgotten so it can be garbage collected.
  * <p/>
  * Created by Steve on 4/14/2016.
  */
 public class GraphicsManagerTransferData
 {
     private final IndexBuffer indexBuffer;
-    private final ManGL manGL;
+
     private final Program[] programs;
     private final StaticVertexBuffer[] staticVertexBuffers;
+    private final int vertexBufferLengths[];
 
     private int indexBufferLength = 0;
-    private final MapCounter<Program> vertexBufferLength = new MapCounter<>();
-    private final List<Mesh> transferMeshes = new ArrayList<>();
-    private final List<ObjectRenderHandle> objectRenderHandles = new ArrayList<>();
 
-    public GraphicsManagerTransferData(IndexBuffer indexBuffer, ManGL manGL, Program[] programs, StaticVertexBuffer[] staticVertexBuffers)
+    //List of added meshes, in order of addition
+    private final List<Mesh> meshesForTransfer = new ArrayList<>();
+
+    //Program index each added mesh is associated with
+    private final List<Integer> meshProgramIndices = new ArrayList<>();
+
+    public GraphicsManagerTransferData(IndexBuffer indexBuffer, Program[] programs, StaticVertexBuffer[] staticVertexBuffers)
     {
         this.indexBuffer = indexBuffer;
-        this.manGL = manGL;
         this.programs = programs;
         this.staticVertexBuffers = staticVertexBuffers;
+        vertexBufferLengths = new int[programs.length];
     }
 
-    public MeshRenderHandle addMesh(Mesh mesh, Program program, String[] attributes, Object[] attributeValues)
+    /**
+     * Adds a mesh for transfer to the given program's vertex buffer.
+     *
+     * @param mesh         mesh to render
+     * @param programIndex program to render with
+     * @return the location in the index buffer where this mesh will be (specified in terms of vertex offset, *2 will give byte offset)
+     */
+    public int addMesh(Mesh mesh, int programIndex)
     {
-        int meshNumIndices = mesh.getNumIndices();
+        meshesForTransfer.add(mesh);
+        meshProgramIndices.add(programIndex);
         int meshIndexOffset = indexBufferLength;
-        transferMeshes.add(mesh);
-        indexBufferLength += meshNumIndices;
-        vertexBufferLength.addCount(program, mesh.getNumVertices());
-        return new MeshRenderHandle(program, attributes, attributeValues, meshIndexOffset, meshNumIndices);
+        indexBufferLength += mesh.getNumIndices();
+        vertexBufferLengths[programIndex] += mesh.getNumVertices();
+        return meshIndexOffset;
     }
 
     public void transfer()
     {
         indexBuffer.allocate(indexBufferLength);
-        staticVertexBuffer.allocate(vertexBufferLength);
-        int indexWriteOffset = 0;
-        int vertexOffset = 0;
-        for (Mesh transferMesh : transferMeshes)
+        for (int i = 0; i < programs.length; i++)
         {
-            indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexOffset);
-            staticVertexBuffer.putAttributeFloats("vertexPosition", transferMesh.getPositionData(), vertexOffset);
-            staticVertexBuffer.putAttributeFloats("vertexNormal", transferMesh.getNormalData(), vertexOffset);
-            //TODO: Put texture coordinates if applicable
+            staticVertexBuffers[i].allocate(vertexBufferLengths[i]);
+        }
+        int indexWriteOffset = 0;
+        int[] programVertexOffsets = new int[programs.length];
+
+        for (int i = 0; i < meshesForTransfer.size(); i++)
+        {
+            int vertexWriteOffset = programVertexOffsets[i];
+            Mesh transferMesh = meshesForTransfer.get(i);
+            int programIndex = meshProgramIndices.get(i);
+            Program program = programs[programIndex];
+            StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[programIndex];
+            indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexWriteOffset);
+            transferMeshAttributes(transferMesh, program, staticVertexBuffer, vertexWriteOffset);
             indexWriteOffset += transferMesh.getNumIndices();
-            vertexOffset += transferMesh.getNumVertices();
+            programVertexOffsets[i] += transferMesh.getNumVertices();
         }
         indexBuffer.transfer();
-        staticVertexBuffer.transfer();
-        transferMeshes = null;
+        for (int i = 0; i < programs.length; i++)
+        {
+            staticVertexBuffers[i].transfer();
+        }
     }
-//    public ObjectRenderHandle addMeshGroup(MeshGroup meshGroup)
-//    {
-//        ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
-//        Map<Material, List<Mesh>> meshMap = meshGroup.getMeshMap();
-//        for (Map.Entry<Material, List<Mesh>> meshEntry : meshMap.entrySet())
-//        {
-//            Material material = meshEntry.getKey();
-//            int meshListOffset = indexBufferLength;
-//            int meshListLength = 0;
-//            List<Mesh> meshList = meshEntry.getValue();
-//            for (Mesh mesh : meshList)
-//            {
-//                transferMeshes.add(mesh);
-//
-//                indexBufferLength += mesh.getNumIndices();
-//                meshListLength += mesh.getNumIndices();
-//                vertexBufferLength += mesh.getNumVertices();
-//            }
-//            MeshRenderHandle meshHandle = new MeshRenderHandle(material, meshListOffset, meshListLength);
-//            objectRenderHandle.addMeshHandle(meshHandle);
-//        }
-//        objectRenderHandles.add(objectRenderHandle);
-//        return objectRenderHandle;
-//    }
+
+    protected void transferMeshAttributes(Mesh transferMesh, Program program, StaticVertexBuffer staticVertexBuffer, int vertexWriteOffset)
+    {
+        if (program.getAttributeNames().contains(ShadConst.VERTEX_POSITION_ATTRIBUTE))
+        {
+            staticVertexBuffer.putAttributeFloats("vertexPosition", transferMesh.getPositionData(), vertexWriteOffset);
+        }
+        if (program.getAttributeNames().contains(ShadConst.VERTEX_NORMAL_ATTRIBUTE))
+        {
+            staticVertexBuffer.putAttributeFloats("vertexNormal", transferMesh.getNormalData(), vertexWriteOffset);
+        }
+        if (program.getAttributeNames().contains(ShadConst.VERTEX_TEXCOORD_ATTRIBUTE))
+        {
+            staticVertexBuffer.putAttributeFloats("vertexTexCoord", transferMesh.getTexCoordData(), vertexWriteOffset);
+        }
+    }
+
 }

@@ -11,6 +11,7 @@ import java.util.Map;
 public class ColladaObject3D
 {
     private Matrix4 initialMatrix;
+    //TODO: Convert to parallel lists
     private final Map<ColladaMaterial, Mesh> meshes;
 
     public ColladaObject3D(Matrix4 initialMatrix, Map<ColladaMaterial, Mesh> meshes)

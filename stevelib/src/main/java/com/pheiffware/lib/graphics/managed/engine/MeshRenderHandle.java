@@ -1,6 +1,5 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Uniform;
 
 /**
@@ -12,7 +11,7 @@ import com.pheiffware.lib.graphics.managed.Uniform;
 public class MeshRenderHandle
 {
     //The program to use when rendering this mesh
-    final Program program;
+    final int programIndex;
     //Reference to Uniform objects from the program which should be set
     final Uniform[] uniforms;
     //Reference to corresponding uniform values to set uniforms to
@@ -22,27 +21,21 @@ public class MeshRenderHandle
     //The number of vertices to render
     final int numVertices;
 
-    private static Uniform[] uniformsFromNames(Program program, String[] uniformNames)
-    {
-        Uniform[] uniforms = new Uniform[uniformNames.length];
-        for (int i = 0; i < uniforms.length; i++)
-        {
-            uniforms[i] = program.getUniform(uniformNames[i]);
-        }
-        return uniforms;
-    }
 
-    public MeshRenderHandle(Program program, String[] uniformNames, Object[] uniformValues, int vertexOffset, int numVertices)
+    public MeshRenderHandle(int programIndex, Uniform[] uniforms, Object[] uniformValues, int vertexOffset, int numVertices)
     {
-        this(program, uniformsFromNames(program, uniformNames), uniformValues, vertexOffset, numVertices);
-    }
-
-    public MeshRenderHandle(Program program, Uniform[] uniforms, Object[] uniformValues, int vertexOffset, int numVertices)
-    {
-        this.program = program;
+        this.programIndex = programIndex;
         this.uniforms = uniforms;
         this.uniformValues = uniformValues;
         this.vertexOffset = vertexOffset;
         this.numVertices = numVertices;
+    }
+
+    public void setUniforms()
+    {
+        for (int i = 0; i < uniforms.length; i++)
+        {
+            uniforms[i].setValue(uniformValues[i]);
+        }
     }
 }

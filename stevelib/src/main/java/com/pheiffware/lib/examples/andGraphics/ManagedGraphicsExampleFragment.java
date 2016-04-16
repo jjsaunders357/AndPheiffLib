@@ -15,8 +15,8 @@ import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.ManGL;
 import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.StaticObjectManager;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -43,7 +43,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         private float rotation = 0;
         private Matrix3 normalTransform = Matrix3.newZeroMatrix();
         private float[] lightPosition = new float[]{-3, 3, 0, 1};
-        private StaticObjectManager staticObjectManager;
+        private BaseGraphicsManager baseObjectManager;
         private ObjectRenderHandle staticMonkey;
         private ObjectRenderHandle staticSphere;
         private ObjectRenderHandle staticCube;
@@ -76,10 +76,10 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
 
 //Example code: Want to be able to do this
-//                staticObjectManager.loadPrograms();
-//                collada.loadObjects(staticObjectManager);
-//                staticObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
-//                staticObjectManager.render(staticMonkey, "shininess",50.0f);
+//                baseObjectManager.loadPrograms();
+//                collada.loadObjects(baseObjectManager);
+//                baseObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+//                baseObjectManager.render(staticMonkey, "shininess",50.0f);
 
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
@@ -88,13 +88,13 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 ColladaObject3D sphere = collada.objects.get("Sphere");
                 ColladaObject3D cube = collada.objects.get("Cube");
 
-                staticObjectManager = new StaticObjectManager(testProgram, new String[]
-                        {"vertexPosition", "vertexNormal"});
+                baseObjectManager = new BaseGraphicsManager(new Program[]{testProgram});
+
                 //TODO: Fix
-//                staticMonkey = staticObjectManager.addMeshGroup(monkey.getMeshMap());
-//                staticSphere = staticObjectManager.addMeshGroup(sphere.getMeshMap());
-//                staticCube = staticObjectManager.addMeshGroup(cube.getMeshMap());
-                staticObjectManager.transfer();
+//                staticMonkey = baseObjectManager.addMeshGroup(monkey.getMeshMap());
+//                staticSphere = baseObjectManager.addMeshGroup(sphere.getMeshMap());
+//                staticCube = baseObjectManager.addMeshGroup(cube.getMeshMap());
+                baseObjectManager.transfer();
 
                 PheiffGLUtils.assertNoError();
             }
@@ -107,75 +107,75 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix)
         {
-            try
-            {
-                //Default view volume is based on sitting at origin and looking in negative z direction
-                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
-                float[] lightPositionInEyeSpace = viewMatrix.transformFloatVector(lightPosition);
-                Matrix4 modelRotateScale = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
-
-                Matrix4 monkeyTranslation = Matrix4.newTranslation(-3, 2, -5);
-                Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
-                Matrix4 sphereTranslation = Matrix4.newTranslation(3, 2, -5);
-
-
-                Matrix4 viewModelMatrix;
-
-
-                Program program = staticObjectManager.getProgram();
-                program.bind();
-
-                program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
-
-                {
-                    viewModelMatrix = Matrix4.multiply(viewMatrix, monkeyTranslation, modelRotateScale);
-                    normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-                    program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
-                    program.setUniformMatrix3("eyeNormalMatrix", normalTransform.m, false);
-
-                    program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-                    program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.8f, 0.0f, 0.65f, 1.0f});
-                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-                    program.setUniformFloat("shininess", 30.0f);
-                    program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
-                    staticObjectManager.render(staticMonkey);
-                }
-
-                {
-                    viewModelMatrix = Matrix4.multiply(viewMatrix, sphereTranslation, modelRotateScale);
-                    normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-                    program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
-                    program.setUniformMatrix3("eyeNormalMatrix", normalTransform.m, false);
-
-                    program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-                    program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.6f, 0.8f, 0.3f, 1.0f});
-                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-                    program.setUniformFloat("shininess", 30.0f);
-                    program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
-                    staticObjectManager.render(staticSphere);
-                }
-
-                {
-                    viewModelMatrix = Matrix4.multiply(viewMatrix, cubeTranslation, modelRotateScale);
-                    normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-                    program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
-                    program.setUniformMatrix3("eyeNormalMatrix", normalTransform.m, false);
-
-                    program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-                    program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.5f, 0.5f, 0.7f, 1.0f});
-                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-                    program.setUniformFloat("shininess", 30.0f);
-                    program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
-                    staticObjectManager.render(staticCube);
-                }
-                PheiffGLUtils.assertNoError();
-            }
-            catch (GraphicsException e)
-            {
-                FatalErrorHandler.handleFatalError(e);
-            }
-            rotation++;
+//            try
+//            {
+//                //Default view volume is based on sitting at origin and looking in negative z direction
+//                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+//
+//                float[] lightPositionInEyeSpace = viewMatrix.transformFloatVector(lightPosition);
+//                Matrix4 modelRotateScale = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
+//
+//                Matrix4 monkeyTranslation = Matrix4.newTranslation(-3, 2, -5);
+//                Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
+//                Matrix4 sphereTranslation = Matrix4.newTranslation(3, 2, -5);
+//
+//
+//                Matrix4 viewModelMatrix;
+//
+//
+//                Program program = baseObjectManager.getProgram();
+//                program.bind();
+//
+//                program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
+//
+//                {
+//                    viewModelMatrix = Matrix4.multiply(viewMatrix, monkeyTranslation, modelRotateScale);
+//                    normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
+//                    program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+//                    program.setUniformMatrix3("eyeNormalMatrix", normalTransform.m, false);
+//
+//                    program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+//                    program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.8f, 0.0f, 0.65f, 1.0f});
+//                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+//                    program.setUniformFloat("shininess", 30.0f);
+//                    program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
+//                    baseObjectManager.render(staticMonkey);
+//                }
+//
+//                {
+//                    viewModelMatrix = Matrix4.multiply(viewMatrix, sphereTranslation, modelRotateScale);
+//                    normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
+//                    program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+//                    program.setUniformMatrix3("eyeNormalMatrix", normalTransform.m, false);
+//
+//                    program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+//                    program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.6f, 0.8f, 0.3f, 1.0f});
+//                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+//                    program.setUniformFloat("shininess", 30.0f);
+//                    program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
+//                    baseObjectManager.render(staticSphere);
+//                }
+//
+//                {
+//                    viewModelMatrix = Matrix4.multiply(viewMatrix, cubeTranslation, modelRotateScale);
+//                    normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
+//                    program.setUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+//                    program.setUniformMatrix3("eyeNormalMatrix", normalTransform.m, false);
+//
+//                    program.setUniformVec4("ambientLightMaterialColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+//                    program.setUniformVec4("diffuseLightMaterialColor", new float[]{0.5f, 0.5f, 0.7f, 1.0f});
+//                    program.setUniformVec4("specLightMaterialColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+//                    program.setUniformFloat("shininess", 30.0f);
+//                    program.setUniformVec3("lightPositionEyeSpace", lightPositionInEyeSpace);
+//                    baseObjectManager.render(staticCube);
+//                }
+//                PheiffGLUtils.assertNoError();
+//            }
+//            catch (GraphicsException e)
+//            {
+//                FatalErrorHandler.handleFatalError(e);
+//            }
+//            rotation++;
         }
     }
 }

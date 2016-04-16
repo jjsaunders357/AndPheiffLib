@@ -56,9 +56,18 @@ public class Program
         return uniforms.get(uniformName);
     }
 
-    public void setUniformValue(String uniformName, Object value)
+    public final void setUniformValue(String uniformName, Object value)
     {
         getUniform(uniformName).setValue(value);
+    }
+
+    public final void setUniformValueIfExists(String uniformName, Object uniformValue)
+    {
+        Uniform uniform = getUniform(uniformName);
+        if (uniform != null)
+        {
+            uniform.setValue(uniformValue);
+        }
     }
 
     public final Attribute getAttribute(String attributeName)

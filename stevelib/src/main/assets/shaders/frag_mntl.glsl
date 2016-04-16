@@ -6,7 +6,7 @@ precision mediump float;
 uniform vec3 lightPositionEyeSpace;
 
 //Specular color of material - Assume specular always reflects all light
-uniform vec4 specMaterialColor;
+uniform vec4 specLightMaterialColor;
 
 //Light color and intensity
 uniform vec4 diffuseLightColor;
@@ -39,7 +39,7 @@ void main()
     //Calc diffuse color
     vec4 diffuseColor = baseMaterialColor * diffuseLightColor;
     //Calc specular color
-    vec4 specColor = specMaterialColor * diffuseLightColor;
+    vec4 specColor = specLightMaterialColor * diffuseLightColor;
 
     //Incoming light vector to current position
     vec3 incomingLightDirection = normalize(positionEyeSpace.xyz-lightPositionEyeSpace);

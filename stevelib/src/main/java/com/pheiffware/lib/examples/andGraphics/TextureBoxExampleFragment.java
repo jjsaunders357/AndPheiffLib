@@ -108,7 +108,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
             program.setUniformValue("eyeNormalMatrix", normalMatrix.m);
             program.setUniformValue("ambientLightColor", new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             program.setUniformValue("diffuseLightColor", new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            program.setUniformValue("specMaterialColor", new float[]{0.5f, 0.5f, 0.5f, 1.0f});
+            program.setUniformValue("specLightMaterialColor", new float[]{0.5f, 0.5f, 0.5f, 1.0f});
             program.setUniformValue("shininess", 3.0f);
             program.setUniformValue("lightPositionEyeSpace", new float[]{-3, 3, 0});
             program.setUniformValue("diffuseMaterialTexture", texture);
