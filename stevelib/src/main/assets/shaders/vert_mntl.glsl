@@ -15,6 +15,7 @@ varying vec2 texCoord;
 void main()
 {
 	texCoord = vertexTexCoord;
+	//TODO: Decide on normalization policy
 	normalEyeSpace = normalize(eyeNormalMatrix * vertexNormal);
 	positionEyeSpace = eyeTransformMatrix * vertexPosition;
 	gl_Position = eyeProjectionMatrix * positionEyeSpace;
