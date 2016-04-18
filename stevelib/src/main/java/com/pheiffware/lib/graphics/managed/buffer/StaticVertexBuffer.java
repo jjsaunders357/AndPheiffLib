@@ -6,8 +6,8 @@ package com.pheiffware.lib.graphics.managed.buffer;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.managed.Attribute;
-import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.managed.program.Program;
 
 import java.util.HashMap;
 import java.util.Map;

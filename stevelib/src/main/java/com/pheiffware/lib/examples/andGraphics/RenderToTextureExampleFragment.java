@@ -12,9 +12,9 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.ManGL;
-import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
+import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 /**

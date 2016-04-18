@@ -1,8 +1,9 @@
-package com.pheiffware.lib.graphics.managed;
+package com.pheiffware.lib.graphics.managed.program;
 
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 

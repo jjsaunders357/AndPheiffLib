@@ -4,7 +4,7 @@
 */
 package com.pheiffware.lib.graphics.managed.buffer;
 
-import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.managed.program.Program;
 
 /**
  * A combination of a packed vertex buffer and one or more single attribute vertex buffers. All static attributes should be put in the packed buffer while the dynamic ones are put

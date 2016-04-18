@@ -6,8 +6,8 @@ package com.pheiffware.lib.graphics.managed.buffer;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.managed.Attribute;
-import com.pheiffware.lib.graphics.managed.Program;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.managed.program.Program;
 
 /**
  * Sets up a vertex buffer for holding an array of a single attribute. This is generally more efficient for attributes which will change regularly as

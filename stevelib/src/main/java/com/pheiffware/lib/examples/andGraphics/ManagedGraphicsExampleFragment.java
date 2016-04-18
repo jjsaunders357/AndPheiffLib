@@ -13,11 +13,12 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.ManGL;
-import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
+import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -81,7 +82,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
                 //TODO: Fix
 //Example code: Want to be able to do this
-//                baseObjectManager.loadPrograms();
 //                collada.loadObjects(baseObjectManager);
 //                baseObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
 //                baseObjectManager.render(staticMonkey, "shininess",50.0f);
@@ -123,7 +123,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
                 Matrix4 sphereTranslation = Matrix4.newTranslation(3, 2, -5);
 
-
                 Matrix4 viewModelMatrix;
 
 
@@ -131,19 +130,17 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 //TODO: Add global property option
 
 //                program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
-
-
                 viewModelMatrix = Matrix4.multiply(viewMatrix, monkeyTranslation, modelRotate);
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(monkeyMesh,
                         new String[]{
-                                "eyeProjectionMatrix",
-                                "eyeTransformMatrix",
-                                "eyeNormalMatrix",
-                                "ambientLightMaterialColor",
-                                "diffuseLightMaterialColor",
-                                "specLightMaterialColor",
-                                "lightPositionEyeSpace"
+                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
+                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -160,13 +157,13 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(sphereMesh,
                         new String[]{
-                                "eyeProjectionMatrix",
-                                "eyeTransformMatrix",
-                                "eyeNormalMatrix",
-                                "ambientLightMaterialColor",
-                                "diffuseLightMaterialColor",
-                                "specLightMaterialColor",
-                                "lightPositionEyeSpace"
+                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
+                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -183,13 +180,13 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(cubeMesh,
                         new String[]{
-                                "eyeProjectionMatrix",
-                                "eyeTransformMatrix",
-                                "eyeNormalMatrix",
-                                "ambientLightMaterialColor",
-                                "diffuseLightMaterialColor",
-                                "specLightMaterialColor",
-                                "lightPositionEyeSpace"
+                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
+                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,

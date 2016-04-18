@@ -1,11 +1,11 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
-import com.pheiffware.lib.graphics.managed.Program;
-import com.pheiffware.lib.graphics.managed.Uniform;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.Uniform;
 
 import java.util.HashMap;
 import java.util.Map;

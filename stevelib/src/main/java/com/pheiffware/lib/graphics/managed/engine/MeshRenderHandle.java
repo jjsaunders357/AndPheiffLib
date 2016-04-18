@@ -1,6 +1,6 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.managed.Uniform;
+import com.pheiffware.lib.graphics.managed.program.Uniform;
 
 /**
  * Holds information about a single mesh which should be rendered with a specific Program and specific values for uniforms in that Program.  The set of uniform values may be

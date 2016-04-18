@@ -13,10 +13,10 @@ import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.ManGL;
-import com.pheiffware.lib.graphics.managed.Program;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;

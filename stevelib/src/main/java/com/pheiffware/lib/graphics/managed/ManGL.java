@@ -5,6 +5,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.utils.Utils;

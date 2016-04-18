@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed;
+package com.pheiffware.lib.graphics.managed.program;
 
 import android.opengl.GLES20;
 
