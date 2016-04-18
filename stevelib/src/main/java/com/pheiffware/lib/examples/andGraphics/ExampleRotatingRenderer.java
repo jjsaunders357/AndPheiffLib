@@ -8,7 +8,7 @@ import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Program;
@@ -39,16 +39,16 @@ public abstract class ExampleRotatingRenderer extends TouchViewRenderer
         return 3;
     }
 
-    protected abstract Program loadProgram(AssetManager am, ManGL manGL) throws GraphicsException;
+    protected abstract Program loadProgram(AssetManager am, GLCache GLCache) throws GraphicsException;
 
-    protected abstract StaticVertexBuffer loadBuffers(AssetManager am, ManGL manGL, IndexBuffer indexBuffer, Program program) throws GraphicsException;
+    protected abstract StaticVertexBuffer loadBuffers(AssetManager am, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException;
 
     protected abstract Matrix4 getTranslationMatrix();
 
     protected abstract void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix);
 
     @Override
-    public void onSurfaceCreated(AssetManager am, ManGL manGL)
+    public void onSurfaceCreated(AssetManager am, GLCache GLCache)
     {
         try
         {
@@ -61,9 +61,9 @@ public abstract class ExampleRotatingRenderer extends TouchViewRenderer
             GLES20.glEnable(GLES20.GL_CULL_FACE);
 
 
-            program = loadProgram(am, manGL);
+            program = loadProgram(am, GLCache);
             indexBuffer = new IndexBuffer(false);
-            vertexBuffer = loadBuffers(am, manGL, indexBuffer, program);
+            vertexBuffer = loadBuffers(am, GLCache, indexBuffer, program);
             translationMatrix = getTranslationMatrix();
             PheiffGLUtils.assertNoError();
         }

@@ -11,7 +11,7 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.ShadConst;
-import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Program;
@@ -51,7 +51,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(AssetManager am, ManGL manGL)
+        public void onSurfaceCreated(AssetManager am, GLCache GLCache)
         {
             FatalErrorHandler.installUncaughtExceptionHandler();
             // Wait for vertical retrace
@@ -59,14 +59,14 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             try
             {
-                testProgram = manGL.createProgram(am, "testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
-                faceTexture = manGL.createImageTexture(am, "images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                testProgram = GLCache.createProgram(am, "testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+                faceTexture = GLCache.createImageTexture(am, "images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
                 //Creates color texture render target, without alpha channel
-                colorRenderTexture = manGL.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                colorRenderTexture = GLCache.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
                 //Creates a depth texture render target, without alpha channel
-                depthRenderTexture = manGL.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                depthRenderTexture = GLCache.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
                 frameBufferHandle = PheiffGLUtils.createFrameBuffer();
             }
             catch (GraphicsException exception)
@@ -76,7 +76,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
-            cb = new CombinedVertexBuffer(manGL.getProgram("testProgram"),
+            cb = new CombinedVertexBuffer(GLCache.getProgram("testProgram"),
                     new String[]{ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_TEXCOORD_ATTRIBUTE},
                     new String[]{"vertexColor"});
             //@formatter:on

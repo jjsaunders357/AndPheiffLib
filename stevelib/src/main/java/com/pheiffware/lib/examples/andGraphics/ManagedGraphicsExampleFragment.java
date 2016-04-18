@@ -14,7 +14,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.ShadConst;
-import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
@@ -65,7 +65,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetManager am, ManGL manGL)
+        public void onSurfaceCreated(AssetManager am, GLCache GLCache)
         {
             try
             {
@@ -74,7 +74,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 GLES20.glEnable(GLES20.GL_DEPTH_TEST);
                 GLES20.glCullFace(GLES20.GL_BACK);
                 GLES20.glEnable(GLES20.GL_CULL_FACE);
-                Program testProgram = manGL.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+                Program testProgram = GLCache.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
                 ColladaFactory colladaFactory = new ColladaFactory(true);
                 InputStream inputStream = am.open("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);

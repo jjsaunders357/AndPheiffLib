@@ -12,7 +12,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.ShadConst;
-import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
@@ -38,13 +38,13 @@ public class MeshExampleFragment extends SimpleGLFragment
         private Matrix4 translationMatrix;
 
         @Override
-        protected Program loadProgram(AssetManager am, ManGL manGL) throws GraphicsException
+        protected Program loadProgram(AssetManager am, GLCache GLCache) throws GraphicsException
         {
-            return manGL.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+            return GLCache.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
         }
 
         @Override
-        protected StaticVertexBuffer loadBuffers(AssetManager am, ManGL manGL, IndexBuffer indexBuffer, Program program) throws GraphicsException
+        protected StaticVertexBuffer loadBuffers(AssetManager am, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
         {
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;

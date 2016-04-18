@@ -26,7 +26,7 @@ import java.util.Map;
  * <p/>
  * Created by Steve on 2/13/2016.
  */
-public class ManGL
+public class GLCache
 {
     private final Map<String, Integer> vertexShaders = new HashMap<>();
     private final Map<String, Integer> fragmentShaders = new HashMap<>();
@@ -35,7 +35,7 @@ public class ManGL
     private final FilterQuality defaultFilterQuality;
     private final int deviceGLVersion;
 
-    public ManGL(int deviceGLVersion, FilterQuality defaultFilterQuality)
+    public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality)
     {
         this.defaultFilterQuality = defaultFilterQuality;
         this.deviceGLVersion = deviceGLVersion;

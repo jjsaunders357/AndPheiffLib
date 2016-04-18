@@ -15,7 +15,7 @@ import com.pheiffware.lib.and.touch.TouchAnalyzer;
 import com.pheiffware.lib.and.touch.TouchTransformListener;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.Utils;
 
@@ -32,7 +32,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     private final AssetManager assetManager;
     private final SimpleGLRenderer renderer;
     private final TouchAnalyzer touchAnalyzer;
-    private ManGL manGL;
+    private GLCache GLCache;
 
     public SimpleGLView(Context context, SimpleGLRenderer renderer, FilterQuality filterQuality)
     {
@@ -76,9 +76,9 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     public void onSurfaceCreated(GL10 useless, EGLConfig config)
     {
         Utils.logLC(this, "SurfaceCreated");
-        //All resources held by manGL will have been thrown away
-        manGL = new ManGL(PheiffGLUtils.getDeviceGLVersion(getContext()), filterQuality);
-        renderer.onSurfaceCreated(assetManager, manGL);
+        //All resources held by GLCache will have been thrown away
+        GLCache = new GLCache(PheiffGLUtils.getDeviceGLVersion(getContext()), filterQuality);
+        renderer.onSurfaceCreated(assetManager, GLCache);
     }
 
     @Override
@@ -86,9 +86,9 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     {
         Utils.logLC(this, "SurfaceDestroyed");
         super.surfaceDestroyed(holder);
-        manGL.deallocate();
+        GLCache.deallocate();
         //Destroy any reference to GL/EGL object (not sure if this matters).
-        manGL = null;
+        GLCache = null;
     }
 
     @Override

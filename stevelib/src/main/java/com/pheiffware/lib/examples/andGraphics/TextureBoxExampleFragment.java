@@ -13,7 +13,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.ShadConst;
-import com.pheiffware.lib.graphics.managed.ManGL;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
@@ -40,13 +40,13 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         private Texture texture;
 
         @Override
-        protected Program loadProgram(AssetManager am, ManGL manGL) throws GraphicsException
+        protected Program loadProgram(AssetManager am, GLCache GLCache) throws GraphicsException
         {
-            return manGL.createProgram(am, "testProgram3D", "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl");
+            return GLCache.createProgram(am, "testProgram3D", "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl");
         }
 
         @Override
-        protected StaticVertexBuffer loadBuffers(AssetManager am, ManGL manGL, IndexBuffer indexBuffer, Program program) throws GraphicsException
+        protected StaticVertexBuffer loadBuffers(AssetManager am, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
         {
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;
@@ -59,7 +59,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 ColladaMaterial colladaMaterial1 = collada.materialsByName.get("Brown_Brick");
                 ColladaMaterial colladaMaterial2 = collada.materialsByName.get("Grey_Brick");
                 ColladaMaterial colladaMaterial3 = collada.materialsByName.get("Stripes");
-                texture = manGL.createImageTexture(am, "images/" + colladaMaterial1.imageFileName, true, GLES20.GL_REPEAT, GLES20.GL_REPEAT);
+                texture = GLCache.createImageTexture(am, "images/" + colladaMaterial1.imageFileName, true, GLES20.GL_REPEAT, GLES20.GL_REPEAT);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
                 ColladaObject3D cube1 = collada.objects.get("cube1");
