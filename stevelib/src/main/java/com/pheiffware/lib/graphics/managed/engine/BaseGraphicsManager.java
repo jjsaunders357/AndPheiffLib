@@ -4,6 +4,7 @@ import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.Uniform;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,11 +50,10 @@ public class BaseGraphicsManager
         for (int i = 0; i < meshes.length; i++)
         {
             int programIndex = programIndices[i];
-            Program program = programs[programIndex];
             Mesh mesh = meshes[i];
 
             UniformNameValue[] defaultUniformNameValues = defaultUniformNameValuesArray[i];
-            MeshRenderHandle meshRenderHandle = addMesh(mesh, programIndex, program, defaultUniformNameValues);
+            MeshRenderHandle meshRenderHandle = addMesh(mesh, programIndex, defaultUniformNameValues);
             objectRenderHandle.addMeshHandle(meshRenderHandle);
         }
         return objectRenderHandle;
@@ -61,13 +61,27 @@ public class BaseGraphicsManager
 
     public final MeshRenderHandle addMesh(Mesh mesh, Program program, UniformNameValue[] defaultUniformNameValues)
     {
-        return addMesh(mesh, programIndexLookup.get(program), program, defaultUniformNameValues);
+        return addMesh(mesh, program, programIndexLookup.get(program), defaultUniformNameValues);
     }
 
-    private final MeshRenderHandle addMesh(Mesh mesh, int programIndex, Program program, UniformNameValue[] defaultUniformNameValues)
+    private final MeshRenderHandle addMesh(Mesh mesh, int programIndex, UniformNameValue[] defaultUniformNameValues)
+    {
+        return addMesh(mesh, programs[programIndex], programIndex, defaultUniformNameValues);
+    }
+
+    private final MeshRenderHandle addMesh(Mesh mesh, Program program, int programIndex, UniformNameValue[] defaultUniformNameValues)
     {
         int meshIndexOffset = transferData.addMesh(mesh, programIndex);
-        return new MeshRenderHandle(programIndex, program, defaultUniformNameValues, meshIndexOffset, mesh.getNumIndices());
+
+        Uniform[] defaultUniforms = new Uniform[defaultUniformNameValues.length];
+        Object[] defaultUniformValues = new Object[defaultUniformNameValues.length];
+        for (int i = 0; i < defaultUniformNameValues.length; i++)
+        {
+            defaultUniforms[i] = program.getUniform(defaultUniformNameValues[i].name);
+            defaultUniformValues[i] = defaultUniformNameValues[i].value;
+        }
+
+        return new MeshRenderHandle(programIndex, defaultUniforms, defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
     }
 
     public void transfer()

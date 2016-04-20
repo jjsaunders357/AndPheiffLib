@@ -22,16 +22,11 @@ public class MeshRenderHandle
     //The number of vertices to render
     final int numVertices;
 
-    MeshRenderHandle(int programIndex, Program program, UniformNameValue[] defaultUniformNameValues, int vertexOffset, int numVertices)
+    public MeshRenderHandle(int programIndex, Uniform[] defaultUniforms, Object[] defaultUniformValues, int vertexOffset, int numVertices)
     {
         this.programIndex = programIndex;
-        this.defaultUniforms = new Uniform[defaultUniformNameValues.length];
-        this.defaultUniformValues = new Object[defaultUniformNameValues.length];
-        for (int i = 0; i < defaultUniformNameValues.length; i++)
-        {
-            defaultUniforms[i] = program.getUniform(defaultUniformNameValues[i].name);
-            defaultUniformValues[i] = defaultUniformNameValues[i].value;
-        }
+        this.defaultUniforms = defaultUniforms;
+        this.defaultUniformValues = defaultUniformValues;
         this.vertexOffset = vertexOffset;
         this.numVertices = numVertices;
     }
