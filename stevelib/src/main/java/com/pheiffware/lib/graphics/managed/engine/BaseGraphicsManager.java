@@ -10,7 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO: Comment me!
+ * This class manages storing data in index/vertex buffers and then conveniently/efficiently rendering that data.
+ * <p/>
+ * The core organizational structures are MeshHandles.  These contain a reference into the buffers where primitives are stored along with default rendering parameters such as color
+ * and shininess.
+ *
+ * TODO: Finish commenting
  * <p/>
  * Created by Steve on 4/13/2016.
  */
