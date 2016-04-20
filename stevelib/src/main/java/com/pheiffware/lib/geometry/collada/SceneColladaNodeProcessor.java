@@ -18,7 +18,10 @@ import java.util.Map;
  */
 class SceneColladaNodeProcessor extends BaseColladaNodeProcessor
 {
+    //Objects which have the name attribute set.
     private Map<String, ColladaObject3D> objects = new HashMap<>();
+
+    //Objects without a name attribute set.
     private List<ColladaObject3D> anonymousObjects = new LinkedList<>();
 
     /**
