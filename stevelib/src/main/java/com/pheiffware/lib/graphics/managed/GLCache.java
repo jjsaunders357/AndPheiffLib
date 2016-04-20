@@ -117,8 +117,10 @@ public class GLCache
 
 
     /**
-     * Loads an image into a newly created texture or gets previously loaded texture.
+     * Loads an image into a newly created texture with given name or retrieves previously loaded texture with name.
      *
+     * @param am              assetManager
+     * @param name            name used to lookup this texture
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
      * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
@@ -127,12 +129,13 @@ public class GLCache
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(AssetManager am, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    public final Texture createImageTexture(AssetManager am, String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
         Texture texture = new Texture(TextureUtils.genTextureFromImage(am, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
-        textures.put(imageAssetPath, texture);
+        textures.put(name, texture);
         return texture;
     }
+
 
     /**
      * Generates a texture which can have colors rendered onto it.
@@ -145,7 +148,7 @@ public class GLCache
      * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
+    public final Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
         Texture texture = new Texture(TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode));
         textures.put(name, texture);
@@ -162,17 +165,18 @@ public class GLCache
      * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
+    public final Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
         Texture texture = new Texture(TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode));
         textures.put(name, texture);
         return texture;
     }
 
-
     /**
-     * Loads an image into a newly created texture or gets previously loaded texture. Filter quality defaulted.
+     * Loads an image into a newly created texture with given name or retrieves previously loaded texture with name.
      *
+     * @param am              assetManager
+     * @param name            name of image
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
      * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
@@ -180,9 +184,25 @@ public class GLCache
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(AssetManager am, String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    public final Texture createImageTexture(AssetManager am, String name, String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        return createImageTexture(am, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createImageTexture(am, name, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+    }
+
+    /**
+     * Loads an image into a newly created texture or gets previously loaded texture. Filter quality defaulted.
+     *
+     * @param am              assetManager
+     * @param imageAssetPath  image path
+     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
+     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @return GL handle to texture
+     * @throws GraphicsException
+     */
+    public final Texture createImageTexture(AssetManager am, String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    {
+        return createImageTexture(am, imageAssetPath, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
     }
 
     /**
@@ -195,7 +215,7 @@ public class GLCache
      * @param tWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, int sWrapMode, int tWrapMode)
+    public final Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, int sWrapMode, int tWrapMode)
     {
         return createColorRenderTexture(name, pixelWidth, pixelHeight, alpha, defaultFilterQuality, sWrapMode, tWrapMode);
     }
@@ -209,7 +229,7 @@ public class GLCache
      * @param tWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrapMode, int tWrapMode)
+    public final Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrapMode, int tWrapMode)
     {
         return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
     }

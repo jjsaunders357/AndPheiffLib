@@ -38,15 +38,20 @@ public class ColladaObject3D
         return meshes.length;
     }
 
+    public final Mesh getMesh(int meshIndex)
+    {
+        return meshes[meshIndex];
+    }
+
+    public final Mesh[] getMeshes()
+    {
+        return meshes;
+    }
     public final ColladaMaterial getMaterial(int meshIndex)
     {
         return materials[meshIndex];
     }
 
-    public final Mesh getMesh(int meshIndex)
-    {
-        return meshes[meshIndex];
-    }
 
 
     /**
