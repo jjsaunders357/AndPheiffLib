@@ -1,11 +1,9 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.managed.program.Uniform;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,38 +43,31 @@ public class BaseGraphicsManager
         }
     }
 
-    public final ObjectRenderHandle addColladaObject(ColladaObject3D colladaObject3D)
+    public final ObjectRenderHandle addObject(Mesh[] meshes, int[] programIndices, UniformNameValue[][] defaultUniformNameValuesArray)
     {
-        return null;
-    }
-
-    public final ObjectRenderHandle addObject(Mesh[] meshes, Program[] programs, String[][] defaultUniformNamesArray, Object[][] defaultUniformValuesArray)
-    {
-
         ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
         for (int i = 0; i < meshes.length; i++)
         {
-            Program program = programs[i];
+            int programIndex = programIndices[i];
+            Program program = programs[programIndex];
             Mesh mesh = meshes[i];
 
-            String[] defaultUniformNames = defaultUniformNamesArray[i];
-            Object[] defaultUniformValues = defaultUniformValuesArray[i];
-            MeshRenderHandle meshRenderHandle = addMesh(mesh, programIndexLookup.get(program), uniformsFromNames(program, defaultUniformNames), defaultUniformValues);
+            UniformNameValue[] defaultUniformNameValues = defaultUniformNameValuesArray[i];
+            MeshRenderHandle meshRenderHandle = addMesh(mesh, programIndex, program, defaultUniformNameValues);
             objectRenderHandle.addMeshHandle(meshRenderHandle);
         }
         return objectRenderHandle;
     }
 
-    public final MeshRenderHandle addMesh(Mesh mesh, Program program, String[] defaultUniformNames, Object[] defaultUniformValues)
+    public final MeshRenderHandle addMesh(Mesh mesh, Program program, UniformNameValue[] defaultUniformNameValues)
     {
-        int programIndex = programIndexLookup.get(program);
-        int meshIndexOffset = transferData.addMesh(mesh, programIndex);
-        return new MeshRenderHandle(programIndex, uniformsFromNames(program, defaultUniformNames), defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
+        return addMesh(mesh, programIndexLookup.get(program), program, defaultUniformNameValues);
     }
-    public final MeshRenderHandle addMesh(Mesh mesh, int programIndex, Uniform[] defaultUniforms, Object[] defaultUniformValues)
+
+    private final MeshRenderHandle addMesh(Mesh mesh, int programIndex, Program program, UniformNameValue[] defaultUniformNameValues)
     {
         int meshIndexOffset = transferData.addMesh(mesh, programIndex);
-        return new MeshRenderHandle(programIndex, defaultUniforms, defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
+        return new MeshRenderHandle(programIndex, program, defaultUniformNameValues, meshIndexOffset, mesh.getNumIndices());
     }
 
     public void transfer()
@@ -99,21 +90,6 @@ public class BaseGraphicsManager
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
 
-    public void renderOverride(MeshRenderHandle meshHandle, String[] uniformNames, Object[] uniformValues)
-    {
-        //TODO: Make more efficient
-        Program program = programs[meshHandle.programIndex];
-        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[meshHandle.programIndex];
-        program.bind();
-        staticVertexBuffer.bind();
-        meshHandle.setUniforms();
-        for (int i = 0; i < uniformNames.length; i++)
-        {
-            program.setUniformValueIfExists(uniformNames[i], uniformValues[i]);
-        }
-        indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
-    }
-
     public void render(ObjectRenderHandle objectHandle, String[] uniformNames, Object[] uniformValues)
     {
         for (int i = 0; i < objectHandle.meshRenderHandles.size(); i++)
@@ -121,24 +97,6 @@ public class BaseGraphicsManager
             render(objectHandle.meshRenderHandles.get(i), uniformNames, uniformValues);
         }
 
-    }
-
-    public void renderOverride(ObjectRenderHandle objectHandle, String[] uniformNames, Object[] uniformValues)
-    {
-        for (int i = 0; i < objectHandle.meshRenderHandles.size(); i++)
-        {
-            renderOverride(objectHandle.meshRenderHandles.get(i), uniformNames, uniformValues);
-        }
-    }
-
-    private static Uniform[] uniformsFromNames(Program program, String[] uniformNames)
-    {
-        Uniform[] uniforms = new Uniform[uniformNames.length];
-        for (int i = 0; i < uniforms.length; i++)
-        {
-            uniforms[i] = program.getUniform(uniformNames[i]);
-        }
-        return uniforms;
     }
 
 }

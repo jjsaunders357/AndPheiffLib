@@ -18,6 +18,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
+import com.pheiffware.lib.graphics.managed.engine.UniformNameValue;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -94,9 +95,9 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 ColladaObject3D cube = collada.objects.get("Cube");
 
                 baseObjectManager = new BaseGraphicsManager(new Program[]{testProgram});
-                monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), testProgram, new String[]{"shininess"}, new Object[]{30.0f});
-                sphereMesh = baseObjectManager.addMesh(sphere.getMesh(0), testProgram, new String[]{"shininess"}, new Object[]{30.0f});
-                cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), testProgram, new String[]{"shininess"}, new Object[]{30.0f});
+                monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), testProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
+                sphereMesh = baseObjectManager.addMesh(sphere.getMesh(0), testProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
+                cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), testProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
 
                 baseObjectManager.transfer();
 
