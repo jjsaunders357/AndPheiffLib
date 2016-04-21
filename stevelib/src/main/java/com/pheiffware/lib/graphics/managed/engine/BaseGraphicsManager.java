@@ -14,7 +14,7 @@ import java.util.Map;
  * <p/>
  * The core organizational structures are MeshHandles.  These contain a reference into the buffers where primitives are stored along with default rendering parameters such as color
  * and shininess.
- *
+ * <p/>
  * TODO: Finish commenting
  * <p/>
  * Created by Steve on 4/13/2016.
@@ -118,4 +118,21 @@ public class BaseGraphicsManager
 
     }
 
+    public final void bindProgram(MeshRenderHandle meshHandle)
+    {
+        Program program = programs[meshHandle.programIndex];
+        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[meshHandle.programIndex];
+        program.bind();
+        staticVertexBuffer.bind();
+    }
+
+    public final void setDefaultUniformValues(MeshRenderHandle meshHandle)
+    {
+        meshHandle.setUniforms();
+    }
+
+    public final void renderIndexBuffer(MeshRenderHandle meshHandle)
+    {
+        indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
+    }
 }

@@ -57,6 +57,14 @@ public class Program
         return uniforms.get(uniformName);
     }
 
+    public final void setUniformValues(String[] uniformNames, Object[] uniformValues)
+    {
+        for (int i = 0; i < uniformNames.length; i++)
+        {
+            setUniformValue(uniformNames[i], uniformValues[i]);
+        }
+    }
+
     public final void setUniformValue(String uniformName, Object value)
     {
         getUniform(uniformName).setValue(value);
