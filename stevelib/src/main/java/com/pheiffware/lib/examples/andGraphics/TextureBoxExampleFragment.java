@@ -56,20 +56,15 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup material from loaded file by "name" (what user named it in editing tool)
-                ColladaMaterial colladaMaterial1 = collada.materialsByName.get("Brown_Brick");
-                ColladaMaterial colladaMaterial2 = collada.materialsByName.get("Grey_Brick");
-                ColladaMaterial colladaMaterial3 = collada.materialsByName.get("Stripes");
-                texture = GLCache.createImageTexture(am, "images/" + colladaMaterial1.imageFileName, true, GLES20.GL_REPEAT, GLES20.GL_REPEAT);
+                ColladaMaterial brownBrickMaterial = collada.materialsByName.get("brown_brick");
+                texture = GLCache.createImageTexture(am, "images/" + brownBrickMaterial.imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
-                ColladaObject3D cube1 = collada.objects.get("cube1");
-                ColladaObject3D cube2 = collada.objects.get("cube2");
-                ColladaObject3D cube3 = collada.objects.get("cube3");
+                ColladaObject3D brickCube = collada.objects.get("brown");
 
 
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-                Mesh mesh = cube3.getMesh(0);
-                mesh = mesh.newTransformedMesh(Matrix4.newScale(0.01f, 0.01f, 0.01f));
+                Mesh mesh = brickCube.getMesh(0);
                 indexBuffer.allocate(mesh.getNumIndices());
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
