@@ -166,8 +166,8 @@ public class TextureUtils
      */
     public static void uniformTexture2D(int programHandle, String samplerParamName, int textureHandle, int textureUnitIndex)
     {
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         setActiveTextureUnit(textureUnitIndex);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLES20.glUniform1i(GLES20.glGetUniformLocation(programHandle, samplerParamName), textureUnitIndex);
     }
 }
