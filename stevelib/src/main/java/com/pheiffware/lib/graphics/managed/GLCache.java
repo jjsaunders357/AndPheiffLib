@@ -1,15 +1,10 @@
 package com.pheiffware.lib.graphics.managed;
 
-import android.content.res.AssetManager;
-import android.opengl.GLES20;
-
-import com.pheiffware.lib.and.AndUtils;
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +16,7 @@ import java.util.Map;
 //TODO: multisample enable (opengl 3.0 only)
 
 /**
- * A core object which manages references to and between graphics objects.
+ * Keeps references to core graphics objects which should only be loaded once or need to be cleaned up later.
  * <p/>
  * Created by Steve on 2/13/2016.
  */
@@ -30,74 +25,19 @@ public class GLCache
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
     private final int deviceGLVersion;
+    private final AssetLoader ga;
 
-    public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality)
+    public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality, AssetLoader ga)
     {
         this.defaultFilterQuality = defaultFilterQuality;
         this.deviceGLVersion = deviceGLVersion;
+        this.ga = ga;
         if (deviceGLVersion < 2)
         {
             throw new RuntimeException("Cannot work with openGL version below 2.0");
         }
     }
 
-    /**
-     * Loads a vertex shader from the given asset path.
-     *
-     * @param am
-     * @param vertexShaderAssetPath
-     * @return
-     * @throws GraphicsException
-     */
-    public int loadVertexShader(AssetManager am, String vertexShaderAssetPath) throws GraphicsException
-    {
-        try
-        {
-            String code = AndUtils.loadAssetAsString(am, vertexShaderAssetPath);
-            return ProgramUtils.createShader(GLES20.GL_VERTEX_SHADER, code);
-        }
-        catch (IOException e)
-        {
-            throw new GraphicsException(e);
-        }
-    }
-
-    /**
-     * Loads a fragment shader from the given asset path.
-     *
-     * @param am
-     * @param fragmentShaderAssetPath
-     * @return
-     * @throws GraphicsException
-     */
-    public int loadFragmentShader(AssetManager am, String fragmentShaderAssetPath) throws GraphicsException
-    {
-        try
-        {
-            String code = AndUtils.loadAssetAsString(am, fragmentShaderAssetPath);
-            return ProgramUtils.createShader(GLES20.GL_FRAGMENT_SHADER, code);
-        }
-        catch (IOException e)
-        {
-            throw new GraphicsException(e);
-        }
-    }
-
-    /**
-     * Loads a program from the given asset path.
-     *
-     * @param am
-     * @param vertexShaderAssetPath
-     * @param fragmentShaderAssetPath
-     * @return
-     * @throws GraphicsException
-     */
-    public int loadProgram(AssetManager am, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
-    {
-        int vertexShaderHandle = loadVertexShader(am, vertexShaderAssetPath);
-        int fragmentShaderHandle = loadFragmentShader(am, fragmentShaderAssetPath);
-        return ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
-    }
 
     /**
      * Loads an image into a newly created texture or gets previously loaded texture.
@@ -110,9 +50,9 @@ public class GLCache
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(AssetManager am, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        Texture texture = new Texture(TextureUtils.genTextureFromImage(am, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
+        Texture texture = new Texture(ga.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
         textures.put(imageAssetPath, texture);
         return texture;
     }
@@ -163,9 +103,9 @@ public class GLCache
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(AssetManager am, String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        return createImageTexture(am, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createImageTexture(imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
     }
 
     /**
@@ -199,6 +139,7 @@ public class GLCache
 
     public void deallocate()
     {
+        //TODO: dynamic buffers should be created through this class
         //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }
 }

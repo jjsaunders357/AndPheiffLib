@@ -1,7 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.content.res.AssetManager;
-
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.collada.Collada;
@@ -38,19 +37,19 @@ public class MeshExampleFragment extends SimpleGLFragment
         private Matrix4 translationMatrix;
 
         @Override
-        protected Program loadProgram(AssetManager am, GLCache GLCache) throws GraphicsException
+        protected Program loadProgram(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
-            return new Program(GLCache.loadProgram(am, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl"));
+            return new Program(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
         }
 
         @Override
-        protected StaticVertexBuffer loadBuffers(AssetManager am, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
+        protected StaticVertexBuffer loadBuffers(AssetLoader al, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
         {
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;
             try
             {
-                inputStream = am.open("meshes/test_render.dae");
+                inputStream = al.getInputStream("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
@@ -77,11 +76,7 @@ public class MeshExampleFragment extends SimpleGLFragment
                 vertexBuffer.transfer();
                 return vertexBuffer;
             }
-            catch (IOException e)
-            {
-                throw new GraphicsException(e);
-            }
-            catch (XMLParseException e)
+            catch (IOException | XMLParseException e)
             {
                 throw new GraphicsException(e);
             }

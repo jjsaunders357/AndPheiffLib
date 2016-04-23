@@ -1,6 +1,8 @@
 package com.pheiffware.lib.and;
 
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -58,5 +60,18 @@ public class AndUtils
     public static void logLC(Object object, String lifeCycleMethodName)
     {
         Log.d("LifeC - " + object.getClass().getSimpleName(), lifeCycleMethodName);
+    }
+
+    /**
+     * Load an image from an asset file.
+     *
+     * @param assetManager
+     * @param imageAssetPath Path to image
+     * @return image object
+     * @throws IOException
+     */
+    public static Bitmap loadBitmapAsset(AssetManager assetManager, String imageAssetPath) throws IOException
+    {
+        return BitmapFactory.decodeStream(assetManager.open(imageAssetPath));
     }
 }

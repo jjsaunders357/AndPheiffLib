@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.Camera;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 
 /**
@@ -25,12 +26,12 @@ public abstract class TouchViewRenderer implements SimpleGLRenderer
     }
 
     @Override
-    public void onDrawFrame()
+    public void onDrawFrame() throws GraphicsException
     {
         onDrawFrame(camera.getProjectionMatrix(), camera.getViewMatrix());
     }
 
-    protected abstract void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix);
+    protected abstract void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException;
 
     @Override
     public void onSurfaceResize(int width, int height)

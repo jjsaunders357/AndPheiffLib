@@ -1,12 +1,9 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
-import android.util.Log;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
-import com.pheiffware.lib.and.gui.graphics.openGL.TouchViewRenderer;
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
@@ -22,14 +19,11 @@ import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.UniformNameValue;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
-import com.pheiffware.lib.utils.MapCounterLong;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 /**
  * Dirty, temporary, class for profiling how different rendering schemes perform.
@@ -42,7 +36,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
         super(new ExampleRenderer(), FilterQuality.MEDIUM);
     }
 
-    private static class ExampleRenderer extends TouchViewRenderer
+    private static class ExampleRenderer extends Base3DExampleRenderer
     {
         private float rotation = 0;
         private Matrix3 normalTransform = Matrix3.newZeroMatrix();
@@ -55,10 +49,6 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
         private MeshRenderHandle blueMesh;
         private MeshRenderHandle brownMesh;
         private MeshRenderHandle greyMesh;
-        private long startFrameTimeStamp;
-        private final MapCounterLong<String> nanoTimes = new MapCounterLong<>();
-        private int frameCounter;
-        private int logFramePeriod = 100;
         private Texture bbTex;
         private Texture greyTex;
         private Program texProgram;
@@ -77,25 +67,19 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetManager am, GLCache GLCache)
+        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
-            frameCounter = 0;
-            nanoTimes.clear();
+            super.onSurfaceCreated(al, GLCache);
             try
             {
-                FatalErrorHandler.installUncaughtExceptionHandler();
-                GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-                GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-                GLES20.glCullFace(GLES20.GL_BACK);
-                GLES20.glEnable(GLES20.GL_CULL_FACE);
-                colorProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl"));
-                texProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl"));
-                bbTex = GLCache.createImageTexture(am, "images/brown_brick.jpg", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-                greyTex = GLCache.createImageTexture(am, "images/grey_brick.jpg", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                colorProgram = new Program(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+                texProgram = new Program(al, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl");
+                bbTex = GLCache.createImageTexture("images/brown_brick.jpg", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                greyTex = GLCache.createImageTexture("images/grey_brick.jpg", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
 
                 ColladaFactory colladaFactory = new ColladaFactory(true);
-                InputStream inputStream = am.open("meshes/cubes.dae");
+                InputStream inputStream = al.getInputStream("meshes/cubes.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
 
@@ -112,58 +96,26 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 greyMesh = baseObjectManager.addMesh(grey.getMesh(0), texProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
 
                 baseObjectManager.transfer();
-
-                PheiffGLUtils.assertNoError();
             }
-            catch (GraphicsException | XMLParseException | IOException exception)
+            catch (XMLParseException | IOException exception)
             {
-                FatalErrorHandler.handleFatalError(exception);
+                throw new GraphicsException(exception);
             }
         }
 
-        private final void addCount(String key)
-        {
-            long endTime = System.nanoTime();
-            nanoTimes.addCount(key, endTime - startFrameTimeStamp);
-            startFrameTimeStamp = System.nanoTime();
-        }
 
         @Override
-        protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix)
+        protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            try
-            {
-                //Default view volume is based on sitting at origin and looking in negative z direction
-                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+            //Default view volume is based on sitting at origin and looking in negative z direction
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-                startFrameTimeStamp = System.nanoTime();
+            red50(projectionMatrix, viewMatrix);
 
-                red50(projectionMatrix, viewMatrix);
-
-                GLES20.glFinish();
-                addCount("render");
-                frameCounter++;
-                logAverages();
-                PheiffGLUtils.assertNoError();
-            }
-            catch (GraphicsException e)
-            {
-                FatalErrorHandler.handleFatalError(e);
-            }
+            GLES20.glFinish();
             rotation++;
         }
 
-
-        private void logAverages()
-        {
-            if (frameCounter % logFramePeriod == 0)
-            {
-                for (Map.Entry<String, Long> entry : nanoTimes.entrySet())
-                {
-                    Log.i("profile", entry.getKey() + ": " + (0.000000001 * entry.getValue() / frameCounter));
-                }
-            }
-        }
 
         private void red1(Matrix4 projectionMatrix, Matrix4 viewMatrix)
         {

@@ -8,14 +8,19 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.AndUtils;
+import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.touch.TouchAnalyzer;
 import com.pheiffware.lib.and.touch.TouchTransformListener;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
@@ -44,7 +49,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         touchAnalyzer = new TouchAnalyzer(this, metrics.xdpi, metrics.ydpi);
 
-        int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), PheiffGLUtils.getDeviceGLMajorVersion(context));
+        int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), AndGraphicsUtils.getDeviceGLMajorVersion(context));
         setEGLContextClientVersion(requestedGLMajorVersion);
         setRenderer(this);
 
@@ -76,9 +81,18 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     public void onSurfaceCreated(GL10 useless, EGLConfig config)
     {
         AndUtils.logLC(this, "SurfaceCreated");
+        AssetLoader al = new AndAssetLoader(assetManager);
         //All resources held by GLCache will have been thrown away
-        GLCache = new GLCache(PheiffGLUtils.getDeviceGLVersion(getContext()), filterQuality);
-        renderer.onSurfaceCreated(assetManager, GLCache);
+        GLCache = new GLCache(AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, al);
+        try
+        {
+            renderer.onSurfaceCreated(al, GLCache);
+            PheiffGLUtils.assertNoError();
+        }
+        catch (GraphicsException e)
+        {
+            Log.e("Failed Surface Creation", "Error during surface creation", e);
+        }
     }
 
     @Override
@@ -101,6 +115,15 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     @Override
     public void onDrawFrame(GL10 gl)
     {
-        renderer.onDrawFrame();
+        try
+        {
+            renderer.onDrawFrame();
+            PheiffGLUtils.assertNoError();
+        }
+        catch (GraphicsException e)
+        {
+            Log.e("Fatal", "Error during surface render", e);
+        }
+
     }
 }

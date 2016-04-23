@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed.program;
 
+import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.utils.Utils;
 
 import java.util.HashMap;
@@ -27,6 +29,11 @@ public abstract class Technique
     private final Program program;
     //Set of complex properties which combine to set uniforms
     private final Set<String> propertyNames;
+
+    public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, String[] propertyNames) throws GraphicsException
+    {
+        this(new Program(al, vertexShaderAsset, fragmentShaderAsset), propertyNames);
+    }
 
     public Technique(Program program, String[] propertyNames)
     {

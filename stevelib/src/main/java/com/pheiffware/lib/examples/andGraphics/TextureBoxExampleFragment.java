@@ -1,8 +1,8 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
@@ -40,24 +40,24 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         private Texture texture;
 
         @Override
-        protected Program loadProgram(AssetManager am, GLCache GLCache) throws GraphicsException
+        protected Program loadProgram(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
-            return new Program(GLCache.loadProgram(am, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl"));
+            return new Program(al, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl");
         }
 
         @Override
-        protected StaticVertexBuffer loadBuffers(AssetManager am, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
+        protected StaticVertexBuffer loadBuffers(AssetLoader al, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
         {
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;
             try
             {
-                inputStream = am.open("meshes/cubes.dae");
+                inputStream = al.getInputStream("meshes/cubes.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup material from loaded file by "name" (what user named it in editing tool)
                 ColladaMaterial brownBrickMaterial = collada.materialsByName.get("brown_brick");
-                texture = GLCache.createImageTexture(am, "images/" + brownBrickMaterial.imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                texture = GLCache.createImageTexture("images/" + brownBrickMaterial.imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
                 ColladaObject3D brickCube = collada.objects.get("brown");

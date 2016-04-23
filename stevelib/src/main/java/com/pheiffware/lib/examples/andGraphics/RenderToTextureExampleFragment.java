@@ -1,11 +1,10 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLRenderer;
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -51,28 +50,20 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(AssetManager am, GLCache GLCache)
+        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
-            FatalErrorHandler.installUncaughtExceptionHandler();
             // Wait for vertical retrace
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-            try
-            {
-                testProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl"));
-                faceTexture = GLCache.createImageTexture(am, "images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            testProgram = new Program(al, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+            faceTexture = GLCache.createImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
-                //Creates color texture render target, without alpha channel
-                colorRenderTexture = GLCache.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            //Creates color texture render target, without alpha channel
+            colorRenderTexture = GLCache.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
-                //Creates a depth texture render target, without alpha channel
-                depthRenderTexture = GLCache.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-                frameBufferHandle = PheiffGLUtils.createFrameBuffer();
-            }
-            catch (GraphicsException exception)
-            {
-                FatalErrorHandler.handleFatalError(exception);
-            }
+            //Creates a depth texture render target, without alpha channel
+            depthRenderTexture = GLCache.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            frameBufferHandle = PheiffGLUtils.createFrameBuffer();
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
@@ -105,18 +96,11 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.microedition.khronos.opengles.GL10)
          */
         @Override
-        public void onDrawFrame()
+        public void onDrawFrame() throws GraphicsException
         {
             //Set to render to texture.
             PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTexture.getHandle(), 0);
-            try
-            {
-                PheiffGLUtils.assertFrameBufferStatus();
-            }
-            catch (GraphicsException e)
-            {
-                FatalErrorHandler.handleFatalError(e);
-            }
+            PheiffGLUtils.assertFrameBufferStatus();
 
             GLES20.glViewport(0, 0, 512, 512);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
