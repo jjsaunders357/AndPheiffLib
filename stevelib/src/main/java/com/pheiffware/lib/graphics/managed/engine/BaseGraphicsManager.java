@@ -69,12 +69,12 @@ public class BaseGraphicsManager
         return addMesh(mesh, program, programIndexLookup.get(program), defaultUniformNameValues);
     }
 
-    private final MeshRenderHandle addMesh(Mesh mesh, int programIndex, UniformNameValue[] defaultUniformNameValues)
+    private MeshRenderHandle addMesh(Mesh mesh, int programIndex, UniformNameValue[] defaultUniformNameValues)
     {
         return addMesh(mesh, programs[programIndex], programIndex, defaultUniformNameValues);
     }
 
-    private final MeshRenderHandle addMesh(Mesh mesh, Program program, int programIndex, UniformNameValue[] defaultUniformNameValues)
+    private MeshRenderHandle addMesh(Mesh mesh, Program program, int programIndex, UniformNameValue[] defaultUniformNameValues)
     {
         int meshIndexOffset = transferData.addMesh(mesh, programIndex);
 
@@ -85,11 +85,10 @@ public class BaseGraphicsManager
             defaultUniforms[i] = program.getUniform(defaultUniformNameValues[i].name);
             defaultUniformValues[i] = defaultUniformNameValues[i].value;
         }
-
         return new MeshRenderHandle(programIndex, defaultUniforms, defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
     }
 
-    public void transfer()
+    public final void transfer()
     {
         transferData.transfer();
         transferData = null;
