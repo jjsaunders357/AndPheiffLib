@@ -40,7 +40,7 @@ public class MeshExampleFragment extends SimpleGLFragment
         @Override
         protected Program loadProgram(AssetManager am, GLCache GLCache) throws GraphicsException
         {
-            return GLCache.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+            return new Program(GLCache.loadProgram(am, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl"));
         }
 
         @Override

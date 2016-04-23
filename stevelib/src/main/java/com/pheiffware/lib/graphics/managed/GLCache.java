@@ -3,12 +3,11 @@ package com.pheiffware.lib.graphics.managed;
 import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
-import com.pheiffware.lib.utils.Utils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,9 +27,6 @@ import java.util.Map;
  */
 public class GLCache
 {
-    private final Map<String, Integer> vertexShaders = new HashMap<>();
-    private final Map<String, Integer> fragmentShaders = new HashMap<>();
-    private final Map<String, Program> programs = new HashMap<>();
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
     private final int deviceGLVersion;
@@ -46,75 +42,62 @@ public class GLCache
     }
 
     /**
-     * Creates a vertex shader from the given asset path if not already loaded.
+     * Loads a vertex shader from the given asset path.
      *
+     * @param am
      * @param vertexShaderAssetPath
      * @return
      * @throws GraphicsException
      */
-    public int getVertexShader(AssetManager am, String vertexShaderAssetPath) throws GraphicsException
+    public int loadVertexShader(AssetManager am, String vertexShaderAssetPath) throws GraphicsException
     {
-        Integer vertexShaderHandle = vertexShaders.get(vertexShaderAssetPath);
-        if (vertexShaderHandle == null)
+        try
         {
-            try
-            {
-                String code = Utils.loadAssetAsString(am, vertexShaderAssetPath);
-                vertexShaderHandle = ProgramUtils.createShader(GLES20.GL_VERTEX_SHADER, code);
-                vertexShaders.put(vertexShaderAssetPath, vertexShaderHandle);
-            }
-            catch (IOException e)
-            {
-                throw new GraphicsException(e);
-            }
+            String code = AndUtils.loadAssetAsString(am, vertexShaderAssetPath);
+            return ProgramUtils.createShader(GLES20.GL_VERTEX_SHADER, code);
         }
-        return vertexShaderHandle;
+        catch (IOException e)
+        {
+            throw new GraphicsException(e);
+        }
     }
 
     /**
-     * Creates a fragment shader from the given asset path if not already loaded.
+     * Loads a fragment shader from the given asset path.
      *
+     * @param am
      * @param fragmentShaderAssetPath
      * @return
      * @throws GraphicsException
      */
-    public int getFragmentShader(AssetManager am, String fragmentShaderAssetPath) throws GraphicsException
+    public int loadFragmentShader(AssetManager am, String fragmentShaderAssetPath) throws GraphicsException
     {
-        Integer fragmentShaderHandle = fragmentShaders.get(fragmentShaderAssetPath);
-        if (fragmentShaderHandle == null)
+        try
         {
-            try
-            {
-                String code = Utils.loadAssetAsString(am, fragmentShaderAssetPath);
-                fragmentShaderHandle = ProgramUtils.createShader(GLES20.GL_FRAGMENT_SHADER, code);
-                fragmentShaders.put(fragmentShaderAssetPath, fragmentShaderHandle);
-            }
-            catch (IOException e)
-            {
-                throw new GraphicsException(e);
-            }
+            String code = AndUtils.loadAssetAsString(am, fragmentShaderAssetPath);
+            return ProgramUtils.createShader(GLES20.GL_FRAGMENT_SHADER, code);
         }
-        return fragmentShaderHandle;
+        catch (IOException e)
+        {
+            throw new GraphicsException(e);
+        }
     }
 
     /**
-     * Creates a program from given shaders.
+     * Loads a program from the given asset path.
      *
-     * @param name
+     * @param am
      * @param vertexShaderAssetPath
      * @param fragmentShaderAssetPath
      * @return
      * @throws GraphicsException
      */
-    public Program createProgram(AssetManager am, String name, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
+    public int loadProgram(AssetManager am, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
     {
-        int vertexShaderHandle = getVertexShader(am, vertexShaderAssetPath);
-        int fragmentShaderHandle = getFragmentShader(am, fragmentShaderAssetPath);
-        Program program = new Program(vertexShaderHandle, fragmentShaderHandle);
-        programs.put(name, program);
-        return program;
+        int vertexShaderHandle = loadVertexShader(am, vertexShaderAssetPath);
+        int fragmentShaderHandle = loadFragmentShader(am, fragmentShaderAssetPath);
+        return ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
     }
-
 
     /**
      * Loads an image into a newly created texture or gets previously loaded texture.
@@ -212,11 +195,6 @@ public class GLCache
     public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrapMode, int tWrapMode)
     {
         return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
-    }
-
-    public Program getProgram(String name)
-    {
-        return programs.get(name);
     }
 
     public void deallocate()

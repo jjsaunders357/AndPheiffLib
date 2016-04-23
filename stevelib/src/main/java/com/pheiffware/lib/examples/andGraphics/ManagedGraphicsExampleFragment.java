@@ -75,7 +75,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 GLES20.glEnable(GLES20.GL_DEPTH_TEST);
                 GLES20.glCullFace(GLES20.GL_BACK);
                 GLES20.glEnable(GLES20.GL_CULL_FACE);
-                Program testProgram = GLCache.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+                Program testProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl"));
                 ColladaFactory colladaFactory = new ColladaFactory(true);
                 InputStream inputStream = am.open("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);

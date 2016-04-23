@@ -59,7 +59,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             try
             {
-                testProgram = GLCache.createProgram(am, "testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+                testProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl"));
                 faceTexture = GLCache.createImageTexture(am, "images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
                 //Creates color texture render target, without alpha channel
@@ -76,7 +76,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
-            cb = new CombinedVertexBuffer(GLCache.getProgram("testProgram"),
+            cb = new CombinedVertexBuffer(testProgram,
                     new String[]{ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_TEXCOORD_ATTRIBUTE},
                     new String[]{"vertexColor"});
             //@formatter:on

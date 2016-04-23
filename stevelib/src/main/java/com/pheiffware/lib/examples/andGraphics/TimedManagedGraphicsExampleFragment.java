@@ -88,8 +88,8 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 GLES20.glEnable(GLES20.GL_DEPTH_TEST);
                 GLES20.glCullFace(GLES20.GL_BACK);
                 GLES20.glEnable(GLES20.GL_CULL_FACE);
-                colorProgram = GLCache.createProgram(am, "colorProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
-                texProgram = GLCache.createProgram(am, "texProgram3D", "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl");
+                colorProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl"));
+                texProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl"));
                 bbTex = GLCache.createImageTexture(am, "images/brown_brick.jpg", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
                 greyTex = GLCache.createImageTexture(am, "images/grey_brick.jpg", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 

@@ -55,7 +55,7 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
 
             try
             {
-                testProgram = GLCache.createProgram(am, "testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+                testProgram = new Program(GLCache.loadProgram(am, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl"));
                 faceTexture = GLCache.createImageTexture(am, "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
             }
             catch (GraphicsException exception)
