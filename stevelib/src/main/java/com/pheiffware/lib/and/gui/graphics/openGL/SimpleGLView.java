@@ -11,13 +11,13 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.touch.TouchAnalyzer;
 import com.pheiffware.lib.and.touch.TouchTransformListener;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
-import com.pheiffware.lib.utils.Utils;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -75,7 +75,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     @Override
     public void onSurfaceCreated(GL10 useless, EGLConfig config)
     {
-        Utils.logLC(this, "SurfaceCreated");
+        AndUtils.logLC(this, "SurfaceCreated");
         //All resources held by GLCache will have been thrown away
         GLCache = new GLCache(PheiffGLUtils.getDeviceGLVersion(getContext()), filterQuality);
         renderer.onSurfaceCreated(assetManager, GLCache);
@@ -84,7 +84,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
-        Utils.logLC(this, "SurfaceDestroyed");
+        AndUtils.logLC(this, "SurfaceDestroyed");
         super.surfaceDestroyed(holder);
         GLCache.deallocate();
         //Destroy any reference to GL/EGL object (not sure if this matters).
@@ -94,7 +94,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height)
     {
-        Utils.logLC(this, "SurfaceResized");
+        AndUtils.logLC(this, "SurfaceResized");
         renderer.onSurfaceResize(width, height);
     }
 
