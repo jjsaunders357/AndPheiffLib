@@ -65,13 +65,13 @@ public class ColorMaterialTechnique extends Technique
 
 
     @Override
-    public void applyProperties()
+    public void applyPropertiesToUniforms()
     {
-        Matrix4 projMatrix = (Matrix4) getPropertyValue(PropConst.PROJECTION_MATRIX);
+        Matrix4 projMatrix = (Matrix4) getPropertyValue(PropConstEnum.PROJECTION_MATRIX);
         eyeProjUniform.setValue(projMatrix.m);
 
-        Matrix4 viewMatrix = (Matrix4) getPropertyValue(PropConst.VIEW_MATRIX);
-        Matrix4 modelMatrix = (Matrix4) getPropertyValue(PropConst.MODEL_MATRIX);
+        Matrix4 viewMatrix = (Matrix4) getPropertyValue(PropConstEnum.VIEW_MATRIX);
+        Matrix4 modelMatrix = (Matrix4) getPropertyValue(PropConstEnum.MODEL_MATRIX);
         viewModelMatrix.set(viewMatrix);
         viewModelMatrix.multiplyBy(modelMatrix);
 
@@ -79,24 +79,24 @@ public class ColorMaterialTechnique extends Technique
         normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
         eyeNormUniform.setValue(normalTransform.m);
 
-        float[] lightColor = (float[]) getPropertyValue(PropConst.AMBIENT_LIGHT_COLOR);
-        float[] matColor = (float[]) getPropertyValue(PropConst.MAT_COLOR);
+        float[] lightColor = (float[]) getPropertyValue(PropConstEnum.AMBIENT_LIGHT_COLOR);
+        float[] matColor = (float[]) getPropertyValue(PropConstEnum.MAT_COLOR);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         ambLMUniform.setValue(lightMatColor);
 
-        lightColor = (float[]) getPropertyValue(PropConst.LIGHT_COLOR);
+        lightColor = (float[]) getPropertyValue(PropConstEnum.LIGHT_COLOR);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         diffLMUniform.setValue(lightMatColor);
 
-        matColor = (float[]) getPropertyValue(PropConst.SPEC_MAT_COLOR);
+        matColor = (float[]) getPropertyValue(PropConstEnum.SPEC_MAT_COLOR);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         specLMUniform.setValue(lightMatColor);
 
-        float[] lightPosition = (float[]) getPropertyValue(PropConst.LIGHT_POS);
+        float[] lightPosition = (float[]) getPropertyValue(PropConstEnum.LIGHT_POS);
         viewMatrix.transformFloatVector(lightEyeSpace, 0, lightPosition, 0);
         lightEyePosUniform.setValue(lightEyeSpace);
 
-        shininessUniform.setValue(getPropertyValue(PropConst.SHININESS));
+        shininessUniform.setValue(getPropertyValue(PropConstEnum.SHININESS));
     }
 
 }

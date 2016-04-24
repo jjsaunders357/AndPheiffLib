@@ -16,7 +16,7 @@ import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.PropConst;
+import com.pheiffware.lib.graphics.techniques.PropConstEnum;
 import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -103,17 +103,17 @@ public class MeshExampleFragment extends SimpleGLFragment
             viewModelMatrix = new Matrix4(viewMatrix);
             viewModelMatrix.multiplyBy(modelMatrix);
 
-            colorTechnique.setProperty(PropConst.PROJECTION_MATRIX, projectionMatrix);
-            colorTechnique.setProperty(PropConst.VIEW_MATRIX, viewMatrix);
-            colorTechnique.setProperty(PropConst.MODEL_MATRIX, modelMatrix);
-            colorTechnique.setProperty(PropConst.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            colorTechnique.setProperty(PropConst.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            colorTechnique.setProperty(PropConst.LIGHT_POS, new float[]{-3, 3, 0, 1});
+            colorTechnique.setProperty(PropConstEnum.PROJECTION_MATRIX, projectionMatrix);
+            colorTechnique.setProperty(PropConstEnum.VIEW_MATRIX, viewMatrix);
+            colorTechnique.setProperty(PropConstEnum.MODEL_MATRIX, modelMatrix);
+            colorTechnique.setProperty(PropConstEnum.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            colorTechnique.setProperty(PropConstEnum.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            colorTechnique.setProperty(PropConstEnum.LIGHT_POS, new float[]{-3, 3, 0, 1});
 
-            colorTechnique.setProperty(PropConst.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
-            colorTechnique.setProperty(PropConst.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-            colorTechnique.setProperty(PropConst.SHININESS, 30.0f);
-            colorTechnique.applyProperties();
+            colorTechnique.setProperty(PropConstEnum.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+            colorTechnique.setProperty(PropConstEnum.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
+            colorTechnique.setProperty(PropConstEnum.SHININESS, 30.0f);
+            colorTechnique.applyPropertiesToUniforms();
             vertexBuffer.bind();
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
             rotation++;

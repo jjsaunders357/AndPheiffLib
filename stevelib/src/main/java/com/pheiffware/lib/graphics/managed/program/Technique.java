@@ -2,33 +2,37 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.pheiffware.lib.graphics.techniques.PropConstEnum;
 
 /**
- * Wraps a program object to provide a higher level, property based, interface.  Properties can correspond directly to uniforms, or can be combined in arbitrary ways to set other
- * uniforms.  For example:
+ * Provides high-level property interface to a shader program.  Example:
  * <p/>
- * MAT_COLOR and LIGHT_COLOR may jointly be used to determine DIFF_LIGHTMAT_COLOR_UNIFORM.
+ * Rather than computing and setting VIEW_MODEL_MATRIX_UNIFORM, NORMAL_MATRIX_UNIFORM and LIGHT_POS_EYE_UNIFORM
  * <p/>
- * All properties are set and then applyProperties() should be called once before rendering to actually set uniforms.  It is permissible to set properties more than once before
- * rendering, this will be handled efficiently.
+ * Instead set properties: MODEL_MATRIX and VIEW_MATRIX, from which these uniforms can be calculated and set.  Uniforms are applied by calling the applyPropertiesToUniforms()
+ * method.
  * <p/>
- * Important: for efficiency, any properties set are NOT copied.  Until, applyProperties is called, underlying objects should be treated as immutable.
+ * Important: Setting properties is lightweight and reference only.  This has 2 implications:
+ * <p/>
+ * 1. Its possible to quickly set a property once and then overwrite it again before rendering.  This is fast/cheap.
+ * <p/>
+ * 2. If a property is set a reference to the value is retained and will be used in future calls to applyPropertiesToUniforms().  Property values should be considered immutable
+ * after being set.
  * <p/>
  * Created by Steve on 4/17/2016.
  */
 public abstract class Technique
 {
-    //Values of complex properties cached here for use in applyProperties()
-    private final Map<String, Object> propertyValues = new HashMap<>();
+    //Values of properties cached here for use in applyPropertiesToUniforms()
+    private final Object[] propertyValues = new Object[PropConstEnum.values().length];
+
     //Program being wrapped
     private final Program program;
 
     public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
         this(new Program(al, vertexShaderAsset, fragmentShaderAsset));
+
     }
 
     public Technique(Program program)
@@ -39,35 +43,28 @@ public abstract class Technique
     /**
      * Should apply all properties to uniforms as appropriate for the technique.
      */
-    public abstract void applyProperties();
+    public abstract void applyPropertiesToUniforms();
 
-    public void setProperty(String propertyName, Object propertyValue)
+    /**
+     * Set a property value.  This will be translated to a uniform value in the applyPropertiesToUniforms method.
+     *
+     * @param property
+     * @param propertyValue
+     */
+    public final void setProperty(PropConstEnum property, Object propertyValue)
     {
-        propertyValues.put(propertyName, propertyValue);
+        propertyValues[property.ordinal()] = propertyValue;
     }
 
     /**
-     * Get a property value as last set for rendering.  Will be null if never set.
+     * Get a property value as last set.
      *
-     * @param propertyName
+     * @param property
      * @return
      */
-    protected final Object getPropertyValue(String propertyName)
+    protected final Object getPropertyValue(PropConstEnum property)
     {
-        return propertyValues.get(propertyName);
-    }
-
-    /**
-     * Gets a property value as set since last time properties were applied.  If it has not been set to properties were last applied it will be null.
-     *
-     * @param propertyName
-     * @return
-     */
-    protected final Object getPropertyValueSinceApply(String propertyName)
-    {
-        Object value = getPropertyValue(propertyName);
-        propertyValues.remove(propertyName);
-        return value;
+        return propertyValues[property.ordinal()];
     }
 
     protected Uniform getUniform(String uniformName)
