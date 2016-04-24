@@ -43,6 +43,7 @@ public abstract class Base3DExampleRenderer extends TouchViewRenderer
     @Override
     public void onDrawFrame() throws GraphicsException
     {
+        //TODO: Should clear buffer.  Should have 2 times.
         startFrameTimeStamp = System.nanoTime();
         super.onDrawFrame();
         frameCounter++;

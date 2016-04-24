@@ -120,7 +120,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
             renderer.onDrawFrame();
             PheiffGLUtils.assertNoError();
         }
-        catch (GraphicsException e)
+        catch (Exception e)
         {
             Log.e("Fatal", "Error during surface render", e);
         }

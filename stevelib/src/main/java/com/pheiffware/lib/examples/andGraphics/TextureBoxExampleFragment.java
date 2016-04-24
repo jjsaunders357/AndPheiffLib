@@ -10,15 +10,15 @@ import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.PropConstEnum;
 import com.pheiffware.lib.graphics.techniques.ShadConst;
+import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -36,19 +36,25 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         super(new ExampleRenderer(), FilterQuality.MEDIUM);
     }
 
-    private static class ExampleRenderer extends ExampleRotatingRenderer
+    private static class ExampleRenderer extends Base3DExampleRenderer
     {
+        private TextureMaterialTechnique textureTechnique;
+        private IndexBuffer indexBuffer;
+        private StaticVertexBuffer vertexBuffer;
+        private Matrix4 translationMatrix = Matrix4.newTranslation(-3, 2, -5);
         private Texture texture;
+        private int rotation = 0;
 
-        @Override
-        protected Program loadProgram(AssetLoader al, GLCache GLCache) throws GraphicsException
+        public ExampleRenderer()
         {
-            return new Program(al, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl");
+            super(90f, 1.0f, 100.0f, 0.01f);
         }
 
         @Override
-        protected StaticVertexBuffer loadBuffers(AssetLoader al, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
+            super.onSurfaceCreated(al, GLCache);
+            textureTechnique = new TextureMaterialTechnique(al);
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;
             try
@@ -66,11 +72,12 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
 
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
                 Mesh mesh = brickCube.getMesh(0);
+                indexBuffer = new IndexBuffer(false);
                 indexBuffer.allocate(mesh.getNumIndices());
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
-                StaticVertexBuffer vertexBuffer = new StaticVertexBuffer(program,
+                vertexBuffer = new StaticVertexBuffer(textureTechnique.getProgram(),
                         new String[]
                                 {ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_NORMAL_ATTRIBUTE, ShadConst.VERTEX_TEXCOORD_ATTRIBUTE});
                 vertexBuffer.allocate(mesh.getNumVertices());
@@ -79,7 +86,6 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 vertexBuffer.putAttributeFloats(ShadConst.VERTEX_TEXCOORD_ATTRIBUTE, mesh.getTexCoordData(), 0);
 
                 vertexBuffer.transfer();
-                return vertexBuffer;
             }
             catch (IOException | XMLParseException e)
             {
@@ -88,26 +94,31 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         }
 
         @Override
-        protected Matrix4 getTranslationMatrix()
+        public void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            return Matrix4.newTranslation(-3, 2, -5);
-        }
+            //Default view volume is based on sitting at origin and looking in negative z direction
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+            textureTechnique.bind();
 
-        @Override
-        protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
-        {
-            program.setUniformValue(ShadConst.PROJECTION_MATRIX_UNIFORM, projectionMatrix.m);
-            program.setUniformValue(ShadConst.VIEW_MODEL_MATRIX_UNIFORM, viewModelMatrix.m);
-            program.setUniformValue(ShadConst.NORMAL_MATRIX_UNIFORM, normalMatrix.m);
-            program.setUniformValue(ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformValue(ShadConst.LIGHT_COLOR_UNIFORM, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            program.setUniformValue(ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformValue(ShadConst.SHININESS_UNIFORM, 3.0f);
-            program.setUniformValue(ShadConst.LIGHT_POS_EYE_UNIFORM, new float[]{-3, 3, 0});
+            Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
+
+            textureTechnique.setProperty(PropConstEnum.PROJECTION_MATRIX, projectionMatrix);
+            textureTechnique.setProperty(PropConstEnum.VIEW_MATRIX, viewMatrix);
+            textureTechnique.setProperty(PropConstEnum.MODEL_MATRIX, modelMatrix);
+            textureTechnique.setProperty(PropConstEnum.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            textureTechnique.setProperty(PropConstEnum.LIGHT_POS, new float[]{-3, 3, 0, 1});
+            textureTechnique.setProperty(PropConstEnum.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            textureTechnique.setProperty(PropConstEnum.SPEC_MAT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            textureTechnique.setProperty(PropConstEnum.SHININESS, 3.0f);
 
             TextureUtils.setActiveTextureUnit(2);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
-            program.setUniformValue(ShadConst.MATERIAL_SAMPLER_UNIFORM, 2);
+            textureTechnique.setProperty(PropConstEnum.MAT_COLOR_SAMPLER, 2);
+            textureTechnique.applyPropertiesToUniforms();
+            vertexBuffer.bind();
+            indexBuffer.drawAll(GLES20.GL_TRIANGLES);
+            rotation++;
+
         }
     }
 }

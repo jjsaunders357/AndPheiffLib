@@ -99,9 +99,6 @@ public class MeshExampleFragment extends SimpleGLFragment
             colorTechnique.bind();
 
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
-            Matrix4 viewModelMatrix;
-            viewModelMatrix = new Matrix4(viewMatrix);
-            viewModelMatrix.multiplyBy(modelMatrix);
 
             colorTechnique.setProperty(PropConstEnum.PROJECTION_MATRIX, projectionMatrix);
             colorTechnique.setProperty(PropConstEnum.VIEW_MATRIX, viewMatrix);
