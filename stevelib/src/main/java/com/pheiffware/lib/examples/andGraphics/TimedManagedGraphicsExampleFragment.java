@@ -241,10 +241,10 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                                 ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
                                 ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM
+                                ShadConst.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -305,10 +305,10 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                                 ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
                                 ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM
+                                ShadConst.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -346,10 +346,10 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                                 ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
                                 ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM
+                                ShadConst.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -393,7 +393,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                                 ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
                                 ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.LIGHT_POS_EYE_UNIFORM
                         },
@@ -408,7 +408,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                         });
 //                TextureUtils.setActiveTextureUnit(0);
 //                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, bbTex.getHandle());
-                GLES20.glUniform1i(texProgram.getUniform(ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM).location, 0);
+                GLES20.glUniform1i(texProgram.getUniform(ShadConst.MATERIAL_SAMPLER_UNIFORM).location, 0);
 
                 baseObjectManager.renderIndexBuffer(brownMesh);
 
@@ -421,7 +421,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                                 ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
                                 ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.LIGHT_POS_EYE_UNIFORM
                         },
@@ -436,7 +436,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                         });
 //                TextureUtils.setActiveTextureUnit(1);
 //                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, greyTex.getHandle());
-                GLES20.glUniform1i(texProgram.getUniform(ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM).location, 1);
+                GLES20.glUniform1i(texProgram.getUniform(ShadConst.MATERIAL_SAMPLER_UNIFORM).location, 1);
 
                 baseObjectManager.renderIndexBuffer(greyMesh);
             }
@@ -468,10 +468,10 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                                 ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
                                 ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM
+                                ShadConst.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -497,10 +497,10 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                                 ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
                                 ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
+                                ShadConst.LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM
+                                ShadConst.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,

@@ -7,14 +7,16 @@ package com.pheiffware.lib.graphics.techniques;
  */
 public class PropConst
 {
-    public static final String PROJECTION_MATRIX_PROPERTY = "eyep_p";
-    public static final String VIEW_MATRIX_PROPERTY = "eyev_p";
-    public static final String MODEL_MATRIX_PROPERTY = "eyem_p";
-    public static final String LIGHT_POS_PROPERTY = "lipos_p";
-    public static final String AMBIENT_LIGHT_COLOR_PROPERTY = "amblc_p";
-    public static final String LIGHT_COLOR_PROPERTY = "diflc_p";
-    public static final String AMBIENT_MAT_COLOR_PROPERTY = "ambmc_p";
-    public static final String DIFF_MAT_COLOR_PROPERTY = "difmc_p";
-    public static final String SPEC_MAT_COLOR_PROPERTY = "spcmc_p";
-    public static final String SHININESS_PROPERTY = "shin_p";
+    public static final String PROJECTION_MATRIX = "eyep";
+    public static final String VIEW_MATRIX = "eyev";
+    public static final String MODEL_MATRIX = "eyem";
+    public static final String AMBIENT_LIGHT_COLOR = "amblc";
+
+    public static final String LIGHT_POS = "litep";
+    public static final String LIGHT_COLOR = "litec";
+
+    public static final String MAT_COLOR = "mat_c";
+    public static final String MAT_COLOR_SAMPLER = "mat_cs";
+    public static final String SPEC_MAT_COLOR = "spec_mc";
+    public static final String SHININESS = "shin";
 }

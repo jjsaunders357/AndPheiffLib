@@ -19,6 +19,7 @@ import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.techniques.ShadConst;
+import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -99,11 +100,14 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
             program.setUniformValue(ShadConst.VIEW_MODEL_MATRIX_UNIFORM, viewModelMatrix.m);
             program.setUniformValue(ShadConst.NORMAL_MATRIX_UNIFORM, normalMatrix.m);
             program.setUniformValue(ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformValue(ShadConst.DIFF_LIGHT_COLOR_UNIFORM, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            program.setUniformValue(ShadConst.LIGHT_COLOR_UNIFORM, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             program.setUniformValue(ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             program.setUniformValue(ShadConst.SHININESS_UNIFORM, 3.0f);
             program.setUniformValue(ShadConst.LIGHT_POS_EYE_UNIFORM, new float[]{-3, 3, 0});
-            program.setUniformValue(ShadConst.DIFF_MATERIAL_TEXTURE_UNIFORM, texture);
+
+            TextureUtils.setActiveTextureUnit(2);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
+            program.setUniformValue(ShadConst.MATERIAL_SAMPLER_UNIFORM, 2);
         }
     }
 }

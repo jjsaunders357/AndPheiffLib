@@ -103,17 +103,16 @@ public class MeshExampleFragment extends SimpleGLFragment
             viewModelMatrix = new Matrix4(viewMatrix);
             viewModelMatrix.multiplyBy(modelMatrix);
 
-            colorTechnique.setProperty(PropConst.PROJECTION_MATRIX_PROPERTY, projectionMatrix);
-            colorTechnique.setProperty(PropConst.VIEW_MATRIX_PROPERTY, viewMatrix);
-            colorTechnique.setProperty(PropConst.MODEL_MATRIX_PROPERTY, modelMatrix);
-            colorTechnique.setProperty(PropConst.AMBIENT_LIGHT_COLOR_PROPERTY, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            colorTechnique.setProperty(PropConst.LIGHT_COLOR_PROPERTY, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            colorTechnique.setProperty(PropConst.LIGHT_POS_PROPERTY, new float[]{-3, 3, 0, 1});
+            colorTechnique.setProperty(PropConst.PROJECTION_MATRIX, projectionMatrix);
+            colorTechnique.setProperty(PropConst.VIEW_MATRIX, viewMatrix);
+            colorTechnique.setProperty(PropConst.MODEL_MATRIX, modelMatrix);
+            colorTechnique.setProperty(PropConst.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            colorTechnique.setProperty(PropConst.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            colorTechnique.setProperty(PropConst.LIGHT_POS, new float[]{-3, 3, 0, 1});
 
-            colorTechnique.setProperty(PropConst.AMBIENT_MAT_COLOR_PROPERTY, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            colorTechnique.setProperty(PropConst.DIFF_MAT_COLOR_PROPERTY, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
-            colorTechnique.setProperty(PropConst.SPEC_MAT_COLOR_PROPERTY, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-            colorTechnique.setProperty(PropConst.SHININESS_PROPERTY, 30.0f);
+            colorTechnique.setProperty(PropConst.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+            colorTechnique.setProperty(PropConst.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
+            colorTechnique.setProperty(PropConst.SHININESS, 30.0f);
             colorTechnique.applyProperties();
             vertexBuffer.bind();
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);

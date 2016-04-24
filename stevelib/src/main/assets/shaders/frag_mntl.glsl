@@ -9,7 +9,7 @@ uniform vec3 lightPositionEyeSpace;
 uniform vec4 specLightMaterialColor;
 
 //Light color and intensity
-uniform vec4 diffuseLightColor;
+uniform vec4 lightColor;
 
 //Ambient light color and intensity
 uniform vec4 ambientLightColor;
@@ -18,7 +18,7 @@ uniform vec4 ambientLightColor;
 uniform float shininess;
 
 //Texture color of object
-uniform sampler2D diffuseMaterialTexture;
+uniform sampler2D materialColorSampler;
 
 //From vertex shader
 varying vec4 positionEyeSpace;
@@ -29,7 +29,7 @@ varying vec2 texCoord                                                           
 void main()
 {
     //Base color of material
-    vec4 baseMaterialColor = texture2D(diffuseMaterialTexture,texCoord);
+    vec4 baseMaterialColor = texture2D(materialColorSampler,texCoord);
 
     //Normalize the surface's normal
     vec3 surfaceNormal = normalize(normalEyeSpace);
@@ -37,9 +37,9 @@ void main()
     //Calc ambient color
     vec4 ambientColor = baseMaterialColor * ambientLightColor;
     //Calc diffuse color
-    vec4 diffuseColor = baseMaterialColor * diffuseLightColor;
+    vec4 diffuseColor = baseMaterialColor * lightColor;
     //Calc specular color
-    vec4 specColor = specLightMaterialColor * diffuseLightColor;
+    vec4 specColor = specLightMaterialColor * lightColor;
 
     //Incoming light vector to current position
     vec3 incomingLightDirection = normalize(positionEyeSpace.xyz-lightPositionEyeSpace);

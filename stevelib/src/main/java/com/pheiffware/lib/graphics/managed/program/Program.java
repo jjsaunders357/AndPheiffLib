@@ -27,7 +27,6 @@ public class Program
         this(ProgramUtils.loadProgram(al, vertexShaderAsset, fragmentShaderAsset));
     }
 
-    //TODO: Allow loading from AssetLoader
     private Program(int programHandle)
     {
         this.handle = programHandle;

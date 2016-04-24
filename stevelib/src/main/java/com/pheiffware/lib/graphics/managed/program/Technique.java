@@ -10,7 +10,7 @@ import java.util.Map;
  * Wraps a program object to provide a higher level, property based, interface.  Properties can correspond directly to uniforms, or can be combined in arbitrary ways to set other
  * uniforms.  For example:
  * <p/>
- * DIFF_MAT_COLOR_PROPERTY and LIGHT_COLOR_PROPERTY may jointly be used to determine DIFF_LIGHTMAT_COLOR_UNIFORM.
+ * MAT_COLOR and LIGHT_COLOR may jointly be used to determine DIFF_LIGHTMAT_COLOR_UNIFORM.
  * <p/>
  * All properties are set and then applyProperties() should be called once before rendering to actually set uniforms.  It is permissible to set properties more than once before
  * rendering, this will be handled efficiently.
