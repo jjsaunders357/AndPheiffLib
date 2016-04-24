@@ -80,11 +80,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 vertexBuffer.transfer();
                 return vertexBuffer;
             }
-            catch (IOException e)
-            {
-                throw new GraphicsException(e);
-            }
-            catch (XMLParseException e)
+            catch (IOException | XMLParseException e)
             {
                 throw new GraphicsException(e);
             }

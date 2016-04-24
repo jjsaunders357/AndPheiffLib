@@ -73,14 +73,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 InputStream inputStream = al.getInputStream("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
-
-                //TODO: Fix
-//Example code: Want to be able to do this
-//                collada.loadObjects(baseObjectManager);
-//                baseObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
-//                baseObjectManager.render(staticMonkey, "shininess",50.0f);
-
-
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
 
                 ColladaObject3D monkey = collada.objects.get("Monkey");
@@ -93,6 +85,14 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), testProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
 
                 baseObjectManager.transfer();
+
+                //TODO: Fix
+//Example code: Want to be able to do this
+//                collada.loadObjects(baseObjectManager);
+//                baseObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+//                baseObjectManager.render(staticMonkey, "shininess",50.0f);
+
+
 
             }
             catch (XMLParseException | IOException exception)
