@@ -5,6 +5,20 @@ package com.pheiffware.lib.graphics.utils;
  */
 public class GraphicsUtils
 {
+    /**
+     * Multiply 2 vectors component by component.
+     *
+     * @param out
+     * @param vec1
+     * @param vec2
+     */
+    public static final void vecMultiply(int length, float[] out, float[] vec1, float[] vec2)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            out[i] = vec1[i] * vec2[i];
+        }
+    }
 
     /**
      * Given an array of non-homogeneous 3d vectors, create a new array homogeneous vectors, append the given element4 to all vectors and create a new array.

@@ -2,11 +2,9 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Wraps a program object to provide a higher level, property based, interface.  Properties can correspond directly to uniforms, or can be combined in arbitrary ways to set other
@@ -27,18 +25,15 @@ public abstract class Technique
     private final Map<String, Object> propertyValues = new HashMap<>();
     //Program being wrapped
     private final Program program;
-    //Set of complex properties which combine to set uniforms
-    private final Set<String> propertyNames;
 
-    public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, String[] propertyNames) throws GraphicsException
+    public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
-        this(new Program(al, vertexShaderAsset, fragmentShaderAsset), propertyNames);
+        this(new Program(al, vertexShaderAsset, fragmentShaderAsset));
     }
 
-    public Technique(Program program, String[] propertyNames)
+    public Technique(Program program)
     {
         this.program = program;
-        this.propertyNames = Utils.setFromArray(propertyNames);
     }
 
     /**
@@ -52,16 +47,41 @@ public abstract class Technique
     }
 
     /**
-     * Convenience method directly applies listed property values
+     * Get a property value as last set for rendering.  Will be null if never set.
+     *
+     * @param propertyName
+     * @return
      */
-    protected void applyDirectUniformProperties(String[] directPropertyNames)
+    protected final Object getPropertyValue(String propertyName)
     {
-        for (String propertyName : directPropertyNames)
-        {
-            Object value = propertyValues.get(propertyName);
-            program.getUniform(propertyName).setValue(value);
-        }
+        return propertyValues.get(propertyName);
     }
 
+    /**
+     * Gets a property value as set since last time properties were applied.  If it has not been set to properties were last applied it will be null.
+     *
+     * @param propertyName
+     * @return
+     */
+    protected final Object getPropertyValueSinceApply(String propertyName)
+    {
+        Object value = getPropertyValue(propertyName);
+        propertyValues.remove(propertyName);
+        return value;
+    }
 
+    protected Uniform getUniform(String uniformName)
+    {
+        return program.getUniform(uniformName);
+    }
+
+    public final Program getProgram()
+    {
+        return program;
+    }
+
+    public final void bind()
+    {
+        program.bind();
+    }
 }

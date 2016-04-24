@@ -24,4 +24,17 @@ public class ShadConst
     public static final String LIGHT_POS_EYE_UNIFORM = "lightPositionEyeSpace";
     public static final String SHININESS_UNIFORM = "shininess";
     public static final String DIFF_MATERIAL_TEXTURE_UNIFORM = "diffuseMaterialTexture";
+
+    public static final String EYE_PROJECTION_MATRIX_PROPERTY = "eyep_p";
+    public static final String EYE_VIEW_MODEL_MATRIX_PROPERTY = "eyevm_p";
+    public static final String VIEW_MATRIX_PROPERTY = "eyev_p";
+    public static final String MODEL_MATRIX_PROPERTY = "eyem_p";
+    public static final String AMBIENT_LIGHT_COLOR_PROPERTY = "amblc_p";
+    public static final String AMBIENT_MAT_COLOR_PROPERTY = "ambmc_p";
+    public static final String DIFF_LIGHT_COLOR_PROPERTY = "diflc_p";
+    public static final String DIFF_MAT_COLOR_PROPERTY = "difmc_p";
+    public static final String SPEC_LIGHT_COLOR_PROPERTY = "spclc_p";
+    public static final String SPEC_MAT_COLOR_PROPERTY = "spcmc_p";
+    public static final String LIGHT_POS_PROPERTY = "lipos_p";
+    public static final String SHININESS_PROPERTY = "shin_p";
 }
