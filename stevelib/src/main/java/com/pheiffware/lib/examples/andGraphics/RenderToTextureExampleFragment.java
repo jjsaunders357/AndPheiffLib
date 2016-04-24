@@ -9,11 +9,11 @@ import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 /**

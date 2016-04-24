@@ -11,7 +11,6 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
@@ -19,6 +18,7 @@ import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.UniformNameValue;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -129,9 +129,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
             baseObjectManager.setDefaultUniformValues(redMesh);
             colorProgram.setUniformValues(
                     new String[]{
-                            ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                            ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                            ShadConst.PROJECTION_MATRIX_UNIFORM,
+                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                            ShadConst.NORMAL_MATRIX_UNIFORM,
                             ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -169,9 +169,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(redMesh);
                 colorProgram.setUniformValues(
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -210,9 +210,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(redMesh);
                 colorProgram.setUniformValues(
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -237,9 +237,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(brownMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -280,9 +280,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(redMesh,
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -301,9 +301,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(brownMesh,
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -342,9 +342,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(brownMesh,
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -389,9 +389,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(brownMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -417,9 +417,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(greyMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -464,9 +464,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(brownMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -493,9 +493,9 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(greyMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                                ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                                ShadConst.PROJECTION_MATRIX_UNIFORM,
+                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                                ShadConst.NORMAL_MATRIX_UNIFORM,
                                 ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
                                 ShadConst.DIFF_LIGHT_COLOR_UNIFORM,
                                 ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,

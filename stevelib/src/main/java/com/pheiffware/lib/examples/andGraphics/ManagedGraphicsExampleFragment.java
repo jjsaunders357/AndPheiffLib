@@ -11,13 +11,13 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.UniformNameValue;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -84,7 +84,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 //TODO: Fix
 //Example code: Want to be able to do this
 //                collada.loadObjects(baseObjectManager);
-//                baseObjectManager.setGlobalUniformMatrix4("eyeTransformMatrix", viewModelMatrix.m, false);
+//                baseObjectManager.setGlobalUniformMatrix4("viewModelMatrix", viewModelMatrix.m, false);
 //                baseObjectManager.render(staticMonkey, "shininess",50.0f);
 
 
@@ -115,14 +115,14 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 //TODO: Create "property concept".  Should be able to set "properties" such as ambientLightColor.  This would be combined with ambientMaterialColor and then applied to shader uniform ambientLightMaterialColor.
 //TODO: Add global property option
 
-//                program.setUniformMatrix4("eyeProjectionMatrix", projectionMatrix.m, false);
+//                program.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
             viewModelMatrix = Matrix4.multiply(viewMatrix, monkeyTranslation, modelRotate);
             normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
             baseObjectManager.render(monkeyMesh,
                     new String[]{
-                            ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                            ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                            ShadConst.PROJECTION_MATRIX_UNIFORM,
+                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                            ShadConst.NORMAL_MATRIX_UNIFORM,
                             ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -143,9 +143,9 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
             baseObjectManager.render(sphereMesh,
                     new String[]{
-                            ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                            ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                            ShadConst.PROJECTION_MATRIX_UNIFORM,
+                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                            ShadConst.NORMAL_MATRIX_UNIFORM,
                             ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
@@ -166,9 +166,9 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
             baseObjectManager.render(cubeMesh,
                     new String[]{
-                            ShadConst.EYE_PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM,
-                            ShadConst.EYE_NORMAL_MATRIX_UNIFORM,
+                            ShadConst.PROJECTION_MATRIX_UNIFORM,
+                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
+                            ShadConst.NORMAL_MATRIX_UNIFORM,
                             ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
                             ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,

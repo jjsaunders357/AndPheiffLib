@@ -12,13 +12,13 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -95,9 +95,9 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         @Override
         protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
         {
-            program.setUniformValue(ShadConst.EYE_PROJECTION_MATRIX_UNIFORM, projectionMatrix.m);
-            program.setUniformValue(ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM, viewModelMatrix.m);
-            program.setUniformValue(ShadConst.EYE_NORMAL_MATRIX_UNIFORM, normalMatrix.m);
+            program.setUniformValue(ShadConst.PROJECTION_MATRIX_UNIFORM, projectionMatrix.m);
+            program.setUniformValue(ShadConst.VIEW_MODEL_MATRIX_UNIFORM, viewModelMatrix.m);
+            program.setUniformValue(ShadConst.NORMAL_MATRIX_UNIFORM, normalMatrix.m);
             program.setUniformValue(ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             program.setUniformValue(ShadConst.DIFF_LIGHT_COLOR_UNIFORM, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             program.setUniformValue(ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});

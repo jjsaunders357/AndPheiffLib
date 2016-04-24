@@ -11,12 +11,13 @@ import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.techniques.PropConst;
+import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -102,17 +103,17 @@ public class MeshExampleFragment extends SimpleGLFragment
             viewModelMatrix = new Matrix4(viewMatrix);
             viewModelMatrix.multiplyBy(modelMatrix);
 
-            colorTechnique.setProperty(ShadConst.EYE_PROJECTION_MATRIX_PROPERTY, projectionMatrix);
-            colorTechnique.setProperty(ShadConst.EYE_VIEW_MATRIX_PROPERTY, viewMatrix);
-            colorTechnique.setProperty(ShadConst.EYE_MODEL_MATRIX_PROPERTY, modelMatrix);
-            colorTechnique.setProperty(ShadConst.AMBIENT_LIGHT_COLOR_PROPERTY, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            colorTechnique.setProperty(ShadConst.LIGHT_COLOR_PROPERTY, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            colorTechnique.setProperty(ShadConst.LIGHT_POS_PROPERTY, new float[]{-3, 3, 0, 1});
+            colorTechnique.setProperty(PropConst.PROJECTION_MATRIX_PROPERTY, projectionMatrix);
+            colorTechnique.setProperty(PropConst.VIEW_MATRIX_PROPERTY, viewMatrix);
+            colorTechnique.setProperty(PropConst.MODEL_MATRIX_PROPERTY, modelMatrix);
+            colorTechnique.setProperty(PropConst.AMBIENT_LIGHT_COLOR_PROPERTY, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            colorTechnique.setProperty(PropConst.LIGHT_COLOR_PROPERTY, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            colorTechnique.setProperty(PropConst.LIGHT_POS_PROPERTY, new float[]{-3, 3, 0, 1});
 
-            colorTechnique.setProperty(ShadConst.AMBIENT_MAT_COLOR_PROPERTY, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            colorTechnique.setProperty(ShadConst.DIFF_MAT_COLOR_PROPERTY, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
-            colorTechnique.setProperty(ShadConst.SPEC_MAT_COLOR_PROPERTY, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-            colorTechnique.setProperty(ShadConst.SHININESS_PROPERTY, 30.0f);
+            colorTechnique.setProperty(PropConst.AMBIENT_MAT_COLOR_PROPERTY, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            colorTechnique.setProperty(PropConst.DIFF_MAT_COLOR_PROPERTY, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+            colorTechnique.setProperty(PropConst.SPEC_MAT_COLOR_PROPERTY, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
+            colorTechnique.setProperty(PropConst.SHININESS_PROPERTY, 30.0f);
             colorTechnique.applyProperties();
             vertexBuffer.bind();
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
