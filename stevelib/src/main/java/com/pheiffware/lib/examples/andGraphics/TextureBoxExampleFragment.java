@@ -96,8 +96,6 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         @Override
         public void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            //Default view volume is based on sitting at origin and looking in negative z direction
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             textureTechnique.bind();
 
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));

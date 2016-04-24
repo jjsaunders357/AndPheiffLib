@@ -1,7 +1,5 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.opengl.GLES20;
-
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.collada.Collada;
@@ -99,9 +97,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            //Default view volume is based on sitting at origin and looking in negative z direction
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
             float[] lightPositionInEyeSpace = viewMatrix.transformFloatVector(lightPosition);
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
 

@@ -101,9 +101,6 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            //Default view volume is based on sitting at origin and looking in negative z direction
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
             red50(projectionMatrix, viewMatrix);
 
             GLES20.glFinish();

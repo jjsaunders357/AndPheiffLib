@@ -43,12 +43,12 @@ public abstract class Base3DExampleRenderer extends TouchViewRenderer
     @Override
     public void onDrawFrame() throws GraphicsException
     {
-        //TODO: Should clear buffer.  Should have 2 times.
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         startFrameTimeStamp = System.nanoTime();
         super.onDrawFrame();
         frameCounter++;
         logAverages();
-        addFrameProfilePoint("Frame");
+        addFrameProfilePoint("Render");
     }
 
     private void logAverages()
