@@ -179,7 +179,7 @@ public class Matrix4
      */
     public void set(Matrix4 matrix4)
     {
-        System.arraycopy(m, 0, matrix4.m, 0, 16);
+        System.arraycopy(matrix4.m, 0, m, 0, 16);
     }
 
     public final void setTranslate(float x, float y, float z)

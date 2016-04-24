@@ -14,25 +14,25 @@ import com.pheiffware.lib.graphics.utils.GraphicsUtils;
  * <p/>
  * Required Properties:
  * <p/>
- * ShadConst.EYE_PROJECTION_MATRIX_PROPERTY
+ * ShadConst.EYE_PROJECTION_MATRIX_PROPERTY - Matrix4
  * <p/>
- * ShadConst.EYE_VIEW_MODEL_MATRIX_PROPERTY | (ShadConst.EYE_VIEW_MATRIX_PROPERTY & ShadConst.EYE_MODEL_MATRIX_PROPERTY)
+ * ShadConst.EYE_VIEW_MATRIX_PROPERTY - Matrix4
  * <p/>
- * ShadConst.AMBIENT_LIGHT_COLOR_PROPERTY
+ * ShadConst.EYE_MODEL_MATRIX_PROPERTY) - Matrix4
  * <p/>
- * ShadConst.AMBIENT_MAT_COLOR_PROPERTY
+ * ShadConst.LIGHT_POS_PROPERTY - float[4]
  * <p/>
- * ShadConst.DIFF_LIGHT_COLOR_PROPERTY
+ * ShadConst.AMBIENT_LIGHT_COLOR_PROPERTY - float[4]
  * <p/>
- * ShadConst.DIFF_MAT_COLOR_PROPERTY
+ * ShadConst.LIGHT_COLOR_PROPERTY - float[4]
  * <p/>
- * ShadConst.SPEC_LIGHT_COLOR_PROPERTY
+ * ShadConst.AMBIENT_MAT_COLOR_PROPERTY - float[4]
  * <p/>
- * ShadConst.SPEC_MAT_COLOR_PROPERTY
+ * ShadConst.DIFF_MAT_COLOR_PROPERTY - float[4]
  * <p/>
- * ShadConst.SHININESS_PROPERTY
+ * ShadConst.SPEC_MAT_COLOR_PROPERTY - float[4]
  * <p/>
- * ShadConst.LIGHT_POS_PROPERTY
+ * ShadConst.SHININESS_PROPERTY - float
  * <p/>
  * Created by Steve on 4/23/2016.
  */
@@ -48,10 +48,10 @@ public class ColorMaterialTechnique extends Technique
     private final Uniform lightEyePosUniform;
 
     //Used internally to compute values to apply to uniforms
-    private Matrix4 viewModelMatrixProduct = Matrix4.newIdentity();
-    private Matrix3 normalTransform = Matrix3.newIdentity();
-    private float[] lightMatColor = new float[4];
-    private float[] lightEyeSpace = new float[4];
+    private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
+    private final Matrix3 normalTransform = Matrix3.newIdentity();
+    private final float[] lightMatColor = new float[4];
+    private final float[] lightEyeSpace = new float[4];
 
     public ColorMaterialTechnique(AssetLoader al) throws GraphicsException
     {
@@ -70,39 +70,34 @@ public class ColorMaterialTechnique extends Technique
     @Override
     public void applyProperties()
     {
-        eyeProjUniform.setValue(getPropertyValue(ShadConst.EYE_PROJECTION_MATRIX_PROPERTY));
+        Matrix4 projMatrix = (Matrix4) getPropertyValue(ShadConst.EYE_PROJECTION_MATRIX_PROPERTY);
+        eyeProjUniform.setValue(projMatrix.m);
 
-        Matrix4 viewModelMatrix = (Matrix4) getPropertyValueSinceApply(ShadConst.EYE_VIEW_MODEL_MATRIX_PROPERTY);
-        if (viewModelMatrix == null)
-        {
-            Matrix4 viewMatrix = (Matrix4) getPropertyValue(ShadConst.VIEW_MATRIX_PROPERTY);
-            Matrix4 modelMatrix = (Matrix4) getPropertyValue(ShadConst.MODEL_MATRIX_PROPERTY);
-            viewModelMatrixProduct.set(viewMatrix);
-            viewModelMatrixProduct.multiplyBy(modelMatrix);
-            viewModelMatrix = viewModelMatrixProduct;
-        }
+        Matrix4 viewMatrix = (Matrix4) getPropertyValue(ShadConst.EYE_VIEW_MATRIX_PROPERTY);
+        Matrix4 modelMatrix = (Matrix4) getPropertyValue(ShadConst.EYE_MODEL_MATRIX_PROPERTY);
+        viewModelMatrix.set(viewMatrix);
+        viewModelMatrix.multiplyBy(modelMatrix);
 
-        eyeTransUniform.setValue(viewModelMatrix);
+        eyeTransUniform.setValue(viewModelMatrix.m);
         normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-        eyeNormUniform.setValue(normalTransform);
+        eyeNormUniform.setValue(normalTransform.m);
 
         float[] lightColor = (float[]) getPropertyValue(ShadConst.AMBIENT_LIGHT_COLOR_PROPERTY);
         float[] matColor = (float[]) getPropertyValue(ShadConst.AMBIENT_MAT_COLOR_PROPERTY);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         ambLMUniform.setValue(lightMatColor);
 
-        lightColor = (float[]) getPropertyValue(ShadConst.DIFF_LIGHT_COLOR_PROPERTY);
+        lightColor = (float[]) getPropertyValue(ShadConst.LIGHT_COLOR_PROPERTY);
         matColor = (float[]) getPropertyValue(ShadConst.DIFF_MAT_COLOR_PROPERTY);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         diffLMUniform.setValue(lightMatColor);
 
-        lightColor = (float[]) getPropertyValue(ShadConst.SPEC_LIGHT_COLOR_PROPERTY);
         matColor = (float[]) getPropertyValue(ShadConst.SPEC_MAT_COLOR_PROPERTY);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         specLMUniform.setValue(lightMatColor);
 
         float[] lightPosition = (float[]) getPropertyValue(ShadConst.LIGHT_POS_PROPERTY);
-        lightEyeSpace = viewModelMatrix.transformFloatVector(lightPosition);
+        viewMatrix.transformFloatVector(lightEyeSpace, 0, lightPosition, 0);
         lightEyePosUniform.setValue(lightEyeSpace);
 
         shininessUniform.setValue(getPropertyValue(ShadConst.SHININESS_PROPERTY));

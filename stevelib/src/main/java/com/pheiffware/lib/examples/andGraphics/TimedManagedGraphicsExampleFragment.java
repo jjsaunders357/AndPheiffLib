@@ -61,12 +61,6 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
 
 
         @Override
-        public int maxMajorGLVersion()
-        {
-            return 3;
-        }
-
-        @Override
         public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
             super.onSurfaceCreated(al, GLCache);

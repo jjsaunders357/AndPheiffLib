@@ -56,11 +56,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             super(90f, 1.0f, 100.0f, 0.01f);
         }
 
-        @Override
-        public int maxMajorGLVersion()
-        {
-            return 3;
-        }
 
         @Override
         public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException

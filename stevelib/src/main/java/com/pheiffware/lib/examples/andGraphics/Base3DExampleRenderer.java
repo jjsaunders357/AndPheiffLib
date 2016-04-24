@@ -68,4 +68,9 @@ public abstract class Base3DExampleRenderer extends TouchViewRenderer
         startFrameTimeStamp = System.nanoTime();
     }
 
+    @Override
+    public int maxMajorGLVersion()
+    {
+        return 3;
+    }
 }
