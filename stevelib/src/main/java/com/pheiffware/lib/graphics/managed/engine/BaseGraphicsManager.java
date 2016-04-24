@@ -3,8 +3,8 @@ package com.pheiffware.lib.graphics.managed.engine;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.managed.program.Uniform;
+import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,71 +21,71 @@ import java.util.Map;
  */
 public class BaseGraphicsManager
 {
-    private final Program[] programs;
-    private final Map<Program, Integer> programIndexLookup = new HashMap<>();
-    private final IndexBuffer indexBuffer = new IndexBuffer(false);
+    private final Technique[] techniques;
     private final StaticVertexBuffer[] staticVertexBuffers;
+    private final Map<Technique, Integer> techniqueIndexLookup = new HashMap<>();
+    private final IndexBuffer indexBuffer = new IndexBuffer(false);
 
     private GraphicsManagerTransferData transferData;
 
-    public BaseGraphicsManager(Program[] programs)
+    public BaseGraphicsManager(Technique[] techniques)
     {
-        this.programs = programs;
-        for (int i = 0; i < programs.length; i++)
+        this.techniques = techniques;
+        for (int i = 0; i < techniques.length; i++)
         {
-            programIndexLookup.put(programs[i], i);
+            techniqueIndexLookup.put(techniques[i], i);
         }
-        this.staticVertexBuffers = new StaticVertexBuffer[programs.length];
-        createVertexBuffers(programs);
-        transferData = new GraphicsManagerTransferData(indexBuffer, programs, staticVertexBuffers);
+        this.staticVertexBuffers = new StaticVertexBuffer[techniques.length];
+        createVertexBuffers(techniques);
+        transferData = new GraphicsManagerTransferData(indexBuffer, techniques, staticVertexBuffers);
     }
 
-    protected void createVertexBuffers(Program[] programs)
+    protected void createVertexBuffers(Technique[] techniques)
     {
-        for (int i = 0; i < programs.length; i++)
+        for (int i = 0; i < techniques.length; i++)
         {
-            Program program = programs[i];
-            staticVertexBuffers[i] = new StaticVertexBuffer(program);
+            Technique technique = techniques[i];
+            staticVertexBuffers[i] = new StaticVertexBuffer(technique.getProgram());
         }
     }
 
-    public final ObjectRenderHandle addObject(Mesh[] meshes, int[] programIndices, UniformNameValue[][] defaultUniformNameValuesArray)
+    public final ObjectRenderHandle addObject(Mesh[] meshes, int[] techniqueIndices, PropertyValue[][] defaultPropertyValuesArray)
     {
         ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
         for (int i = 0; i < meshes.length; i++)
         {
-            int programIndex = programIndices[i];
+            int techniqueIndex = techniqueIndices[i];
             Mesh mesh = meshes[i];
 
-            UniformNameValue[] defaultUniformNameValues = defaultUniformNameValuesArray[i];
-            MeshRenderHandle meshRenderHandle = addMesh(mesh, programIndex, defaultUniformNameValues);
+            PropertyValue[] defaultPropertyValues = defaultPropertyValuesArray[i];
+            MeshRenderHandle meshRenderHandle = addMesh(mesh, techniqueIndex, defaultPropertyValues);
             objectRenderHandle.addMeshHandle(meshRenderHandle);
         }
         return objectRenderHandle;
     }
 
-    public final MeshRenderHandle addMesh(Mesh mesh, Program program, UniformNameValue[] defaultUniformNameValues)
+    public final MeshRenderHandle addMesh(Mesh mesh, Technique technique, PropertyValue[] defaultPropertyValues)
     {
-        return addMesh(mesh, program, programIndexLookup.get(program), defaultUniformNameValues);
+        return addMesh(mesh, technique, techniqueIndexLookup.get(technique), defaultPropertyValues);
     }
 
-    private MeshRenderHandle addMesh(Mesh mesh, int programIndex, UniformNameValue[] defaultUniformNameValues)
+    private MeshRenderHandle addMesh(Mesh mesh, int techniqueIndex, PropertyValue[] defaultPropertyValues)
     {
-        return addMesh(mesh, programs[programIndex], programIndex, defaultUniformNameValues);
+        return addMesh(mesh, techniques[techniqueIndex], techniqueIndex, defaultPropertyValues);
     }
 
-    private MeshRenderHandle addMesh(Mesh mesh, Program program, int programIndex, UniformNameValue[] defaultUniformNameValues)
+    private MeshRenderHandle addMesh(Mesh mesh, Technique technique, int techniqueIndex, PropertyValue[] defaultPropertyValues)
     {
-        int meshIndexOffset = transferData.addMesh(mesh, programIndex);
+        int meshIndexOffset = transferData.addMesh(mesh, techniqueIndex);
 
-        Uniform[] defaultUniforms = new Uniform[defaultUniformNameValues.length];
-        Object[] defaultUniformValues = new Object[defaultUniformNameValues.length];
-        for (int i = 0; i < defaultUniformNameValues.length; i++)
+        TechniqueProperty[] defaultedProperties = new TechniqueProperty[defaultPropertyValues.length];
+        Object[] defaultUniformValues = new Object[defaultPropertyValues.length];
+        for (int i = 0; i < defaultPropertyValues.length; i++)
         {
-            defaultUniforms[i] = program.getUniform(defaultUniformNameValues[i].name);
-            defaultUniformValues[i] = defaultUniformNameValues[i].value;
+            defaultedProperties[i] = defaultPropertyValues[i].property;
+            defaultUniformValues[i] = defaultPropertyValues[i].value;
         }
-        return new MeshRenderHandle(programIndex, defaultUniforms, defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
+        return new MeshRenderHandle(technique, defaultedProperties, defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
     }
 
     public final void transfer()
@@ -94,40 +94,42 @@ public class BaseGraphicsManager
         transferData = null;
     }
 
-    public void render(MeshRenderHandle meshHandle, String[] uniformNames, Object[] uniformValues)
+    public void render(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
-        Program program = programs[meshHandle.programIndex];
-        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[meshHandle.programIndex];
-        program.bind();
+        Technique technique = meshHandle.technique;
+        int techniqueIndex = techniqueIndexLookup.get(meshHandle.technique);
+        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[techniqueIndex];
+        technique.bind();
         staticVertexBuffer.bind();
-        meshHandle.setUniforms();
-        for (int i = 0; i < uniformNames.length; i++)
+        meshHandle.setDefaultProperties();
+        for (int i = 0; i < properties.length; i++)
         {
-            program.setUniformValue(uniformNames[i], uniformValues[i]);
+            technique.setProperty(properties[i], propertyValues[i]);
         }
+        technique.applyPropertiesToUniforms();
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
 
-    public void render(ObjectRenderHandle objectHandle, String[] uniformNames, Object[] uniformValues)
+    public void render(ObjectRenderHandle objectHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
         for (int i = 0; i < objectHandle.meshRenderHandles.size(); i++)
         {
-            render(objectHandle.meshRenderHandles.get(i), uniformNames, uniformValues);
+            render(objectHandle.meshRenderHandles.get(i), properties, propertyValues);
         }
-
     }
 
-    public final void bindProgram(MeshRenderHandle meshHandle)
+    public final void bindTechnique(MeshRenderHandle meshHandle)
     {
-        Program program = programs[meshHandle.programIndex];
-        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[meshHandle.programIndex];
-        program.bind();
+        Technique technique = meshHandle.technique;
+        int techniqueIndex = techniqueIndexLookup.get(meshHandle.technique);
+        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[techniqueIndex];
+        technique.bind();
         staticVertexBuffer.bind();
     }
 
     public final void setDefaultUniformValues(MeshRenderHandle meshHandle)
     {
-        meshHandle.setUniforms();
+        meshHandle.setDefaultProperties();
     }
 
     public final void renderIndexBuffer(MeshRenderHandle meshHandle)

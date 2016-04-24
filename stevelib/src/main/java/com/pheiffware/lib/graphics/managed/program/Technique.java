@@ -2,7 +2,9 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.techniques.PropConstEnum;
+import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
+import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
 /**
  * Provides high-level property interface to a shader program.  Example:
@@ -24,7 +26,7 @@ import com.pheiffware.lib.graphics.techniques.PropConstEnum;
 public abstract class Technique
 {
     //Values of properties cached here for use in applyPropertiesToUniforms()
-    private final Object[] propertyValues = new Object[PropConstEnum.values().length];
+    private final Object[] propertyValues = new Object[TechniqueProperty.values().length];
 
     //Program being wrapped
     private final Program program;
@@ -51,7 +53,7 @@ public abstract class Technique
      * @param property
      * @param propertyValue
      */
-    public final void setProperty(PropConstEnum property, Object propertyValue)
+    public final void setProperty(TechniqueProperty property, Object propertyValue)
     {
         propertyValues[property.ordinal()] = propertyValue;
     }
@@ -62,7 +64,7 @@ public abstract class Technique
      * @param property
      * @return
      */
-    protected final Object getPropertyValue(PropConstEnum property)
+    protected final Object getPropertyValue(TechniqueProperty property)
     {
         return propertyValues[property.ordinal()];
     }
@@ -81,4 +83,13 @@ public abstract class Technique
     {
         program.bind();
     }
+
+    /**
+     * Responsible for transferring the given mesh vertex data into the given vertex buffer for this technique.
+     *
+     * @param transferMesh
+     * @param staticVertexBuffer
+     * @param vertexWriteOffset
+     */
+    public abstract void transferMeshAttributes(Mesh transferMesh, StaticVertexBuffer staticVertexBuffer, int vertexWriteOffset);
 }

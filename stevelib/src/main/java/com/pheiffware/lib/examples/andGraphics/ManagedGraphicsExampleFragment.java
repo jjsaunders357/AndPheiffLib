@@ -7,15 +7,15 @@ import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.UniformNameValue;
-import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.techniques.ShadConst;
+import com.pheiffware.lib.graphics.managed.engine.PropertyValue;
+import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -38,9 +38,10 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
     private static class ExampleRenderer extends Base3DExampleRenderer
     {
+        private final float[] lightPosition = new float[]{-3, 3, 0, 1};
+        private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
+        private final float[] lightColor = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
         private float rotation = 0;
-        private Matrix3 normalTransform = Matrix3.newZeroMatrix();
-        private float[] lightPosition = new float[]{-3, 3, 0, 1};
         private BaseGraphicsManager baseObjectManager;
         private ObjectRenderHandle staticMonkey;
         private ObjectRenderHandle staticSphere;
@@ -61,22 +62,35 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             super.onSurfaceCreated(al, GLCache);
             try
             {
-                Program testProgram = new Program(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+                Technique colorTechnique = new ColorMaterialTechnique(al);
                 ColladaFactory colladaFactory = new ColladaFactory(true);
                 InputStream inputStream = al.getInputStream("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
-
                 ColladaObject3D monkey = collada.objects.get("Monkey");
                 ColladaObject3D sphere = collada.objects.get("Sphere");
                 ColladaObject3D cube = collada.objects.get("Cube");
 
-                baseObjectManager = new BaseGraphicsManager(new Program[]{testProgram});
-                monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), testProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                sphereMesh = baseObjectManager.addMesh(sphere.getMesh(0), testProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), testProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-
+                baseObjectManager = new BaseGraphicsManager(new Technique[]{colorTechnique});
+                monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), colorTechnique,
+                        new PropertyValue[]{
+                                new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f}),
+                                new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f}),
+                                new PropertyValue(TechniqueProperty.SHININESS, 30.0f)
+                        });
+                cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), colorTechnique,
+                        new PropertyValue[]{
+                                new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.6f, 0.8f, 0.3f, 1.0f}),
+                                new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{1f, 1f, 1f, 1f}), //Is override later
+                                new PropertyValue(TechniqueProperty.SHININESS, 2.0f)
+                        });
+                sphereMesh = baseObjectManager.addMesh(sphere.getMesh(0), colorTechnique,
+                        new PropertyValue[]{
+                                new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.5f, 0.2f, 0.2f, 1.0f}),
+                                new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{1.0f, 0.9f, 0.8f, 1.0f}),
+                                new PropertyValue(TechniqueProperty.SHININESS, 5.0f)
+                        });
                 baseObjectManager.transfer();
 
                 //TODO: Fix
@@ -84,7 +98,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 //                collada.loadObjects(baseObjectManager);
 //                baseObjectManager.setGlobalUniformMatrix4("viewModelMatrix", viewModelMatrix.m, false);
 //                baseObjectManager.render(staticMonkey, "shininess",50.0f);
-
 
 
             }
@@ -97,86 +110,79 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            float[] lightPositionInEyeSpace = viewMatrix.transformFloatVector(lightPosition);
+
+            //baseObjectManager.setGlobalProperties()
+
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
+            Matrix4 modelMatrix;
+
 
             Matrix4 monkeyTranslation = Matrix4.newTranslation(-3, 2, -5);
-            Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
-            Matrix4 sphereTranslation = Matrix4.newTranslation(3, 2, -5);
-
-            Matrix4 viewModelMatrix;
-
-
-//TODO: Create "property concept".  Should be able to set "properties" such as ambientLightColor.  This would be combined with ambientMaterialColor and then applied to shader uniform ambientLightMaterialColor.
-//TODO: Add global property option
-
-//                program.setUniformMatrix4("projectionMatrix", projectionMatrix.m, false);
-            viewModelMatrix = Matrix4.multiply(viewMatrix, monkeyTranslation, modelRotate);
-            normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
+            modelMatrix = Matrix4.multiply(monkeyTranslation, modelRotate);
             baseObjectManager.render(monkeyMesh,
-                    new String[]{
-                            ShadConst.PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                            ShadConst.NORMAL_MATRIX_UNIFORM,
-                            ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.LIGHT_POS_EYE_UNIFORM
+                    new TechniqueProperty[]{
+                            TechniqueProperty.PROJECTION_MATRIX,
+                            TechniqueProperty.VIEW_MATRIX,
+                            TechniqueProperty.MODEL_MATRIX,
+                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_POS,
+
                     },
                     new Object[]{
-                            projectionMatrix.m,
-                            viewModelMatrix.m,
-                            normalTransform.m,
-                            new float[]{0.2f, 0.2f, 0.2f, 1.0f},
-                            new float[]{0.8f, 0.0f, 0.65f, 1.0f},
-                            new float[]{1.0f, 1.0f, 1.0f, 1.0f},
-                            lightPositionInEyeSpace
-                    });
+                            projectionMatrix,
+                            viewMatrix,
+                            modelMatrix,
+                            ambientLightColor,
+                            lightColor,
+                            lightPosition
+                    }
 
+            );
 
-            viewModelMatrix = Matrix4.multiply(viewMatrix, sphereTranslation, modelRotate);
-            normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-            baseObjectManager.render(sphereMesh,
-                    new String[]{
-                            ShadConst.PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                            ShadConst.NORMAL_MATRIX_UNIFORM,
-                            ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.LIGHT_POS_EYE_UNIFORM
-                    },
-                    new Object[]{
-                            projectionMatrix.m,
-                            viewModelMatrix.m,
-                            normalTransform.m,
-                            new float[]{0.2f, 0.2f, 0.2f, 1.0f},
-                            new float[]{0.6f, 0.8f, 0.3f, 1.0f},
-                            new float[]{1.0f, 1.0f, 1.0f, 1.0f},
-                            lightPositionInEyeSpace
-                    });
-
-
-            viewModelMatrix = Matrix4.multiply(viewMatrix, cubeTranslation, modelRotate);
-            normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
+            Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
+            modelMatrix = Matrix4.multiply(cubeTranslation, modelRotate);
             baseObjectManager.render(cubeMesh,
-                    new String[]{
-                            ShadConst.PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                            ShadConst.NORMAL_MATRIX_UNIFORM,
-                            ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.LIGHT_POS_EYE_UNIFORM
+                    new TechniqueProperty[]{
+                            TechniqueProperty.PROJECTION_MATRIX,
+                            TechniqueProperty.VIEW_MATRIX,
+                            TechniqueProperty.MODEL_MATRIX,
+                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_POS,
+
+                            //Override default to make dull
+                            TechniqueProperty.SPEC_MAT_COLOR,
                     },
                     new Object[]{
-                            projectionMatrix.m,
-                            viewModelMatrix.m,
-                            normalTransform.m,
-                            new float[]{0.2f, 0.2f, 0.2f, 1.0f},
-                            new float[]{0.5f, 0.5f, 0.6f, 1.0f},
-                            new float[]{1.0f, 1.0f, 1.0f, 1.0f},
-                            lightPositionInEyeSpace
+                            projectionMatrix,
+                            viewMatrix,
+                            modelMatrix,
+                            ambientLightColor,
+                            lightColor,
+                            lightPosition,
+                            new float[]{0.2f, 0.2f, 0.2f, 1.0f}
+                    });
+
+
+            Matrix4 sphereTranslation = Matrix4.newTranslation(3, 2, -5);
+            modelMatrix = Matrix4.multiply(sphereTranslation, modelRotate);
+            baseObjectManager.render(sphereMesh,
+                    new TechniqueProperty[]{
+                            TechniqueProperty.PROJECTION_MATRIX,
+                            TechniqueProperty.VIEW_MATRIX,
+                            TechniqueProperty.MODEL_MATRIX,
+                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_POS
+                    },
+                    new Object[]{
+                            projectionMatrix,
+                            viewMatrix,
+                            modelMatrix,
+                            ambientLightColor,
+                            lightColor,
+                            lightPosition
                     });
 
             rotation++;

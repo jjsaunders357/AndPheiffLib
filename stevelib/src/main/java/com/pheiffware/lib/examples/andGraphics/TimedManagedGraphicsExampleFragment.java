@@ -4,9 +4,6 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
-import com.pheiffware.lib.geometry.collada.Collada;
-import com.pheiffware.lib.geometry.collada.ColladaFactory;
-import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
@@ -16,14 +13,7 @@ import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.UniformNameValue;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.techniques.ShadConst;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
-import com.pheiffware.lib.utils.dom.XMLParseException;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Dirty, temporary, class for profiling how different rendering schemes perform.
@@ -64,6 +54,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
         public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
             super.onSurfaceCreated(al, GLCache);
+            /*
             try
             {
                 colorProgram = new Program(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
@@ -84,30 +75,30 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 ColladaObject3D grey = collada.objects.get("grey");
 
                 baseObjectManager = new BaseGraphicsManager(new Program[]{colorProgram, texProgram});
-                redMesh = baseObjectManager.addMesh(red.getMesh(0), colorProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                blueMesh = baseObjectManager.addMesh(blue.getMesh(0), colorProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                brownMesh = baseObjectManager.addMesh(brown.getMesh(0), texProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                greyMesh = baseObjectManager.addMesh(grey.getMesh(0), texProgram, new UniformNameValue[]{new UniformNameValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
+                redMesh = baseObjectManager.addMesh(red.getMesh(0), colorProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
+                blueMesh = baseObjectManager.addMesh(blue.getMesh(0), colorProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
+                brownMesh = baseObjectManager.addMesh(brown.getMesh(0), texProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
+                greyMesh = baseObjectManager.addMesh(grey.getMesh(0), texProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
 
                 baseObjectManager.transfer();
             }
             catch (XMLParseException | IOException exception)
             {
                 throw new GraphicsException(exception);
-            }
+            }*/
         }
 
 
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            red50(projectionMatrix, viewMatrix);
+            //red50(projectionMatrix, viewMatrix);
 
             GLES20.glFinish();
             rotation++;
         }
 
-
+/*
         private void red1(Matrix4 projectionMatrix, Matrix4 viewMatrix)
         {
             float[] lightPositionInEyeSpace = viewMatrix.transformFloatVector(lightPosition);
@@ -511,6 +502,6 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                         });
                 baseObjectManager.renderIndexBuffer(greyMesh);
             }
-        }
+        }*/
     }
 }

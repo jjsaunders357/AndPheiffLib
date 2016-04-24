@@ -16,8 +16,8 @@ import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.techniques.PropConstEnum;
 import com.pheiffware.lib.graphics.techniques.ShadConst;
+import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -100,18 +100,18 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
 
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
 
-            textureTechnique.setProperty(PropConstEnum.PROJECTION_MATRIX, projectionMatrix);
-            textureTechnique.setProperty(PropConstEnum.VIEW_MATRIX, viewMatrix);
-            textureTechnique.setProperty(PropConstEnum.MODEL_MATRIX, modelMatrix);
-            textureTechnique.setProperty(PropConstEnum.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            textureTechnique.setProperty(PropConstEnum.LIGHT_POS, new float[]{-3, 3, 0, 1});
-            textureTechnique.setProperty(PropConstEnum.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            textureTechnique.setProperty(PropConstEnum.SPEC_MAT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            textureTechnique.setProperty(PropConstEnum.SHININESS, 3.0f);
+            textureTechnique.setProperty(TechniqueProperty.PROJECTION_MATRIX, projectionMatrix);
+            textureTechnique.setProperty(TechniqueProperty.VIEW_MATRIX, viewMatrix);
+            textureTechnique.setProperty(TechniqueProperty.MODEL_MATRIX, modelMatrix);
+            textureTechnique.setProperty(TechniqueProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            textureTechnique.setProperty(TechniqueProperty.LIGHT_POS, new float[]{-3, 3, 0, 1});
+            textureTechnique.setProperty(TechniqueProperty.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            textureTechnique.setProperty(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            textureTechnique.setProperty(TechniqueProperty.SHININESS, 3.0f);
 
             TextureUtils.setActiveTextureUnit(2);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
-            textureTechnique.setProperty(PropConstEnum.MAT_COLOR_SAMPLER, 2);
+            textureTechnique.setProperty(TechniqueProperty.MAT_COLOR_SAMPLER, 2);
             textureTechnique.applyPropertiesToUniforms();
             vertexBuffer.bind();
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
