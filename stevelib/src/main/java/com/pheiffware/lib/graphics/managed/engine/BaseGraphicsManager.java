@@ -5,9 +5,6 @@ import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * This class manages storing data in index/vertex buffers and then conveniently/efficiently rendering that data.
  * <p/>
@@ -21,7 +18,6 @@ import java.util.Map;
 public class BaseGraphicsManager
 {
     private final Technique[] techniques;
-    private final Map<Technique, Integer> techniqueIndexLookup = new HashMap<>();
     private final IndexBuffer indexBuffer = new IndexBuffer(false);
 
     private GraphicsManagerTransferData transferData;
@@ -29,41 +25,27 @@ public class BaseGraphicsManager
     public BaseGraphicsManager(Technique[] techniques)
     {
         this.techniques = techniques;
-        for (int i = 0; i < techniques.length; i++)
-        {
-            techniqueIndexLookup.put(techniques[i], i);
-        }
         transferData = new GraphicsManagerTransferData(indexBuffer, techniques);
     }
 
-    public final ObjectRenderHandle addObject(Mesh[] meshes, int[] techniqueIndices, PropertyValue[][] defaultPropertyValuesArray)
-    {
-        ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
-        for (int i = 0; i < meshes.length; i++)
-        {
-            int techniqueIndex = techniqueIndices[i];
-            Mesh mesh = meshes[i];
-
-            PropertyValue[] defaultPropertyValues = defaultPropertyValuesArray[i];
-            MeshRenderHandle meshRenderHandle = addMesh(mesh, techniqueIndex, defaultPropertyValues);
-            objectRenderHandle.addMeshHandle(meshRenderHandle);
-        }
-        return objectRenderHandle;
-    }
+//    public final ObjectRenderHandle addObject(Mesh[] meshes, int[] techniqueIndices, PropertyValue[][] defaultPropertyValuesArray)
+//    {
+//        ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
+//        for (int i = 0; i < meshes.length; i++)
+//        {
+//            int techniqueIndex = techniqueIndices[i];
+//            Mesh mesh = meshes[i];
+//
+//            PropertyValue[] defaultPropertyValues = defaultPropertyValuesArray[i];
+//            MeshRenderHandle meshRenderHandle = addMesh(mesh, techniqueIndex, defaultPropertyValues);
+//            objectRenderHandle.addMeshHandle(meshRenderHandle);
+//        }
+//        return objectRenderHandle;
+//    }
 
     public final MeshRenderHandle addMesh(Mesh mesh, Technique technique, PropertyValue[] defaultPropertyValues)
     {
-        return addMesh(mesh, technique, techniqueIndexLookup.get(technique), defaultPropertyValues);
-    }
-
-    private MeshRenderHandle addMesh(Mesh mesh, int techniqueIndex, PropertyValue[] defaultPropertyValues)
-    {
-        return addMesh(mesh, techniques[techniqueIndex], techniqueIndex, defaultPropertyValues);
-    }
-
-    private MeshRenderHandle addMesh(Mesh mesh, Technique technique, int techniqueIndex, PropertyValue[] defaultPropertyValues)
-    {
-        int meshIndexOffset = transferData.addMesh(mesh, techniqueIndex);
+        int meshIndexOffset = transferData.addMesh(mesh, technique);
 
         TechniqueProperty[] defaultedProperties = new TechniqueProperty[defaultPropertyValues.length];
         Object[] defaultUniformValues = new Object[defaultPropertyValues.length];
@@ -98,7 +80,6 @@ public class BaseGraphicsManager
     public void render(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
         Technique technique = meshHandle.technique;
-        int techniqueIndex = techniqueIndexLookup.get(meshHandle.technique);
         technique.bind();
         meshHandle.setDefaultProperties();
         for (int i = 0; i < properties.length; i++)
@@ -120,7 +101,6 @@ public class BaseGraphicsManager
     public final void bindTechnique(MeshRenderHandle meshHandle)
     {
         Technique technique = meshHandle.technique;
-        int techniqueIndex = techniqueIndexLookup.get(meshHandle.technique);
         technique.bind();
     }
 

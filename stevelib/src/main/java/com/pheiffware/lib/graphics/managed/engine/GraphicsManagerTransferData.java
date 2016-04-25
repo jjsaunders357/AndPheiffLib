@@ -3,6 +3,7 @@ package com.pheiffware.lib.graphics.managed.engine;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.utils.MapCounter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,38 +22,38 @@ public class GraphicsManagerTransferData
     private final IndexBuffer indexBuffer;
 
     private final Technique[] techniques;
-    private final int vertexBufferLengths[];
+    private final MapCounter<Technique> techniqueBufferLengths;
 
     private int indexBufferLength = 0;
 
     //List of added meshes, in order of addition
     private final List<Mesh> meshesForTransfer = new ArrayList<>();
 
-    //Technique index each added mesh is associated with
-    private final List<Integer> meshTechniqueIndices = new ArrayList<>();
+    //Technique each added mesh is associated with
+    private final List<Technique> meshTechniques = new ArrayList<>();
 
     public GraphicsManagerTransferData(IndexBuffer indexBuffer, Technique[] techniques)
     {
         this.indexBuffer = indexBuffer;
+        techniqueBufferLengths = new MapCounter<>();
         this.techniques = techniques;
-        vertexBufferLengths = new int[techniques.length];
     }
 
-    //TODO: Remove need to reference by index
     /**
      * Adds a mesh for transfer to the given technique's vertex buffer.
      *
-     * @param mesh         mesh to render
-     * @param techniqueIndex technique to render with
+     * @param mesh      mesh to render
+     * @param technique
      * @return the location in the index buffer where this mesh will be (specified in terms of vertex offset, *2 will give byte offset)
      */
-    public int addMesh(Mesh mesh, int techniqueIndex)
+    public int addMesh(Mesh mesh, Technique technique)
     {
         meshesForTransfer.add(mesh);
-        meshTechniqueIndices.add(techniqueIndex);
+        meshTechniques.add(technique);
+
         int meshIndexOffset = indexBufferLength;
         indexBufferLength += mesh.getNumIndices();
-        vertexBufferLengths[techniqueIndex] += mesh.getNumVertices();
+        techniqueBufferLengths.addCount(technique, mesh.getNumVertices());
         return meshIndexOffset;
     }
 
@@ -61,21 +62,20 @@ public class GraphicsManagerTransferData
         indexBuffer.allocate(indexBufferLength);
         for (int i = 0; i < techniques.length; i++)
         {
-            techniques[i].allocateBuffers(vertexBufferLengths[i]);
+            int techniqueVertexCount = techniqueBufferLengths.getCount(techniques[i]);
+            techniques[i].allocateBuffers(techniqueVertexCount);
         }
         int indexWriteOffset = 0;
-        int[] techniqueVertexOffsets = new int[techniques.length];
-
+        MapCounter<Technique> techniqueVertexOffsets = new MapCounter<>();
         for (int i = 0; i < meshesForTransfer.size(); i++)
         {
             Mesh transferMesh = meshesForTransfer.get(i);
-            int techniqueIndex = meshTechniqueIndices.get(i);
-            int vertexWriteOffset = techniqueVertexOffsets[techniqueIndex];
-            Technique technique = techniques[techniqueIndex];
+            Technique technique = meshTechniques.get(i);
+            int vertexWriteOffset = techniqueVertexOffsets.getCount(technique);
             indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexWriteOffset);
             technique.putVertexAttributes(transferMesh, vertexWriteOffset);
             indexWriteOffset += transferMesh.getNumIndices();
-            techniqueVertexOffsets[techniqueIndex] += transferMesh.getNumVertices();
+            techniqueVertexOffsets.addCount(technique, transferMesh.getNumVertices());
         }
         indexBuffer.transfer();
         for (int i = 0; i < techniques.length; i++)
