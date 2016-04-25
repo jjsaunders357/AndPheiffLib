@@ -88,6 +88,7 @@ public class TextureUtils
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrapMode);
     }
 
+    //TODO: Make this more conveniently bind a texture to the given unit.
     /**
      * Set the active texture unit.  This is much more convenient than mucking around with constants like GLES20.GL_TEXTURE2.
      *
@@ -100,6 +101,7 @@ public class TextureUtils
 
     }
 
+    //TODO: Remove this method
     /**
      * Sets up a texture as a uniform input for the given program.  This uses the specified texture unit.
      * If there a multiple texture inputs for the program each should be given a different text unit.

@@ -110,8 +110,22 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
+            baseObjectManager.setGlobalProperties(
+                    new TechniqueProperty[]{
+                            TechniqueProperty.PROJECTION_MATRIX,
+                            TechniqueProperty.VIEW_MATRIX,
+                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_POS,
 
-            //baseObjectManager.setGlobalProperties()
+                    },
+                    new Object[]{
+                            projectionMatrix,
+                            viewMatrix,
+                            ambientLightColor,
+                            lightColor,
+                            lightPosition
+                    });
 
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
             Matrix4 modelMatrix;
@@ -121,21 +135,10 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             modelMatrix = Matrix4.multiply(monkeyTranslation, modelRotate);
             baseObjectManager.render(monkeyMesh,
                     new TechniqueProperty[]{
-                            TechniqueProperty.PROJECTION_MATRIX,
-                            TechniqueProperty.VIEW_MATRIX,
-                            TechniqueProperty.MODEL_MATRIX,
-                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_POS,
-
+                            TechniqueProperty.MODEL_MATRIX
                     },
                     new Object[]{
-                            projectionMatrix,
-                            viewMatrix,
-                            modelMatrix,
-                            ambientLightColor,
-                            lightColor,
-                            lightPosition
+                            modelMatrix
                     }
 
             );

@@ -108,11 +108,12 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
             textureTechnique.setProperty(TechniqueProperty.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             textureTechnique.setProperty(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             textureTechnique.setProperty(TechniqueProperty.SHININESS, 3.0f);
-
             TextureUtils.setActiveTextureUnit(2);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
             textureTechnique.setProperty(TechniqueProperty.MAT_COLOR_SAMPLER, 2);
+
             textureTechnique.applyPropertiesToUniforms();
+
             vertexBuffer.bind();
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
             rotation++;

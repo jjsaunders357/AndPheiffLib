@@ -94,6 +94,20 @@ public class BaseGraphicsManager
         transferData = null;
     }
 
+    /**
+     * TODO: Implement
+     *
+     * @param techniqueProperties
+     * @param objects
+     */
+    public void setGlobalProperties(TechniqueProperty[] techniqueProperties, Object[] objects)
+    {
+//        for(Technique technique:techniques)
+//        {
+//            technique.setProperties(techniqueProperties,objects);
+//        }
+    }
+
     public void render(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
         Technique technique = meshHandle.technique;
@@ -136,4 +150,5 @@ public class BaseGraphicsManager
     {
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
+
 }

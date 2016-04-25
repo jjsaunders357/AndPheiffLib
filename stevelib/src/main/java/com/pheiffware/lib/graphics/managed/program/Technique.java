@@ -59,6 +59,20 @@ public abstract class Technique
     }
 
     /**
+     * Convenience method to set multiple properties at once.
+     *
+     * @param techniqueProperties
+     * @param objects
+     */
+    public final void setProperties(TechniqueProperty[] techniqueProperties, Object[] objects)
+    {
+        for (int i = 0; i < techniqueProperties.length; i++)
+        {
+            setProperty(techniqueProperties[i], objects[i]);
+        }
+    }
+
+    /**
      * Get a property value as last set.
      *
      * @param property
@@ -68,6 +82,7 @@ public abstract class Technique
     {
         return propertyValues[property.ordinal()];
     }
+
 
     protected Uniform getUniform(String uniformName)
     {
@@ -92,4 +107,5 @@ public abstract class Technique
      * @param vertexWriteOffset
      */
     public abstract void transferMeshAttributes(Mesh transferMesh, StaticVertexBuffer staticVertexBuffer, int vertexWriteOffset);
+
 }
