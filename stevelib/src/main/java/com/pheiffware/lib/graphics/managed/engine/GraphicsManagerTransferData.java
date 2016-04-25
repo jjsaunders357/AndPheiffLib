@@ -32,6 +32,8 @@ public class GraphicsManagerTransferData
     //Technique each added mesh is associated with
     private final List<Technique> meshTechniques = new ArrayList<>();
 
+    private ObjectRenderHandle currentObject = null;
+
     public GraphicsManagerTransferData(IndexBuffer indexBuffer, Technique[] techniques)
     {
         this.indexBuffer = indexBuffer;
@@ -82,5 +84,21 @@ public class GraphicsManagerTransferData
         {
             techniques[i].transferVertexData();
         }
+    }
+
+    ObjectRenderHandle startNewObjectDef()
+    {
+        currentObject = new ObjectRenderHandle();
+        return currentObject;
+    }
+
+    ObjectRenderHandle getCurrentObjectDef()
+    {
+        return currentObject;
+    }
+
+    void endObjectDef()
+    {
+        currentObject = null;
     }
 }

@@ -39,23 +39,26 @@ public class BaseGraphicsManager
         transferData = new GraphicsManagerTransferData(indexBuffer, techniques);
     }
 
-//    public final ObjectRenderHandle addObject(Mesh[] meshes, int[] techniqueIndices, PropertyValue[][] defaultPropertyValuesArray)
-//    {
-//        ObjectRenderHandle objectRenderHandle = new ObjectRenderHandle();
-//        for (int i = 0; i < meshes.length; i++)
-//        {
-//            int techniqueIndex = techniqueIndices[i];
-//            Mesh mesh = meshes[i];
-//
-//            PropertyValue[] propertyValues = defaultPropertyValuesArray[i];
-//            MeshRenderHandle meshRenderHandle = addMesh(mesh, techniqueIndex, propertyValues);
-//            objectRenderHandle.addMeshHandle(meshRenderHandle);
-//        }
-//        return objectRenderHandle;
-//    }
+    /**
+     * Start a new logical object definition.  Each added mesh will become part of this object render handle.
+     *
+     * @return
+     */
+    public final ObjectRenderHandle startNewObjectDef()
+    {
+        return transferData.startNewObjectDef();
+    }
 
     /**
-     * Add a mesh to be rendered with a particular technique and specific property values.
+     * End the object definition.
+     */
+    public final void endObjectDef()
+    {
+        transferData.endObjectDef();
+    }
+
+    /**
+     * Add a mesh to be rendered with a particular technique and specific property values.  The is added to the current object definition if one is being defined.
      *
      * @param mesh
      * @param technique
@@ -73,7 +76,13 @@ public class BaseGraphicsManager
             properties[i] = propertyValues[i].property;
             values[i] = propertyValues[i].value;
         }
-        return new MeshRenderHandle(technique, properties, values, meshIndexOffset, mesh.getNumIndices());
+
+        MeshRenderHandle meshRenderHandle = new MeshRenderHandle(technique, properties, values, meshIndexOffset, mesh.getNumIndices());
+        if (transferData.getCurrentObjectDef() != null)
+        {
+            transferData.getCurrentObjectDef().addMeshHandle(meshRenderHandle);
+        }
+        return meshRenderHandle;
     }
 
     /**
