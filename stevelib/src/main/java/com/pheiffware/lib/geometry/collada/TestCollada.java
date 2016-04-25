@@ -115,6 +115,7 @@ public class TestCollada
         //1st mesh of each material is from parent.
         //It is untransformed
 
+        //TODO: Test mesh concatenation of indices
         //2nd mesh of each material is from child which refers to same geometry.
         //It has z translated by 3
         assertArrayEquals(mat1Mesh.getPositionData(),

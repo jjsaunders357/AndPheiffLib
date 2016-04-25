@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.managed.mesh;
 
 import com.pheiffware.lib.geometry.collada.Collada;
-import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.utils.MapCounter;
@@ -68,14 +67,12 @@ public class Mesh
 
         //Copy data from each individual mesh to this mesh
         indices = 0;
+        uniqueVerticesCounter = 0;
         MapCounter<String> vertexDataOffsets = new MapCounter<>();
         for (Mesh mesh : meshes)
         {
-            short[] srcIndexData = mesh.vertexIndices;
-            System.arraycopy(
-                    srcIndexData, 0,
-                    vertexIndices, indices, srcIndexData.length);
-            indices += srcIndexData.length;
+            copyIndexArray(mesh.vertexIndices, vertexIndices, indices, uniqueVerticesCounter);
+            indices += mesh.vertexIndices.length;
             for (String vertexDataKey : mesh.uniqueVertexData.keySet())
             {
                 int offset = vertexDataOffsets.getCount(vertexDataKey);
@@ -86,27 +83,24 @@ public class Mesh
                         srcVertexData.length);
                 vertexDataOffsets.addCount(vertexDataKey, srcVertexData.length);
             }
+            uniqueVerticesCounter += mesh.getNumVertices();
         }
     }
 
     /**
-     * Generates data for shaders requiring per vertex color data.
+     * Copies index data from the source mesh to the combined mesh.  Copied indices are adjusted by an offset.
      *
-     * @param color4F Color to use
-     * @return Array for putting into a openGL buffer
+     * @param srcMeshIndexData  source index data
+     * @param combinedIndexData destination index data
+     * @param destinationOffset location in destination to copy at
+     * @param indexOffset       how much to offset each copied index
      */
-    public float[] generateSingleColorData(Color4F color4F)
+    private void copyIndexArray(short[] srcMeshIndexData, short[] combinedIndexData, int destinationOffset, int indexOffset)
     {
-        float[] colors = new float[numUniqueVertices * 4];
-        int index = 0;
-        for (int i = 0; i < getNumVertices(); i++)
+        for (int i = 0; i < srcMeshIndexData.length; i++)
         {
-            colors[index++] = color4F.getRed();
-            colors[index++] = color4F.getGreen();
-            colors[index++] = color4F.getBlue();
-            colors[index++] = color4F.getAlpha();
+            combinedIndexData[i + destinationOffset] = (short) (srcMeshIndexData[i] + indexOffset);
         }
-        return colors;
     }
 
     public int getNumIndices()

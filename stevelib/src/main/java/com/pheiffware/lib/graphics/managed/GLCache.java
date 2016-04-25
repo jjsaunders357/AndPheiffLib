@@ -56,7 +56,8 @@ public class GLCache
     public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
         Texture texture = new Texture(GLES20.GL_TEXTURE_2D, al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
-        textures.put(imageAssetPath, texture);
+        System.out.println("WTF - " + name);
+        textures.put(name, texture);
         return texture;
     }
 

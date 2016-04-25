@@ -7,7 +7,8 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 import org.w3c.dom.Element;
 
 /**
- * Used to extract image file name from an image element.  This always removes any leading path, as the assumption is that all files will be loaded from a single directory.
+ * Used to extract image file name from an image element.  This always removes any leading path, as the assumption is that all files will be loaded from a single directory.  Also,
+ * files are all loaded as lower case.
  * <p/>
  * Created by Steve on 2/15/2016.
  */
@@ -19,7 +20,7 @@ class ColladaLibraryImageFactory implements ElementObjectFactory<String>
         Element init_from = DomUtils.assertGetSubElement(element, "init_from");
         String imageFileName = init_from.getFirstChild().getTextContent();
         String[] split = imageFileName.split("/");
-        imageFileName = split[split.length - 1];
+        imageFileName = split[split.length - 1].toLowerCase();
         return imageFileName;
     }
 }
