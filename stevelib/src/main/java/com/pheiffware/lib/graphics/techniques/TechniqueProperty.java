@@ -15,7 +15,7 @@ public enum TechniqueProperty
 
     MODEL_MATRIX,
     MAT_COLOR,
-    MAT_COLOR_SAMPLER,
+    MAT_COLOR_TEXTURE,
     SPEC_MAT_COLOR,
     SHININESS
 }

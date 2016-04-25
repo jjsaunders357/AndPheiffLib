@@ -88,33 +88,21 @@ public class TextureUtils
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrapMode);
     }
 
-    //TODO: Make this more conveniently bind a texture to the given unit.
     /**
-     * Set the active texture unit.  This is much more convenient than mucking around with constants like GLES20.GL_TEXTURE2.
-     *
-     * @param textureUnitIndex
+     * Binds a the given texture handle to a sampler index.
+     * @param textureHandle
+     * @param samplerIndex
+     * @param textureType the type of the texture such as GL_TEXTURE_2D
      */
-    public static void setActiveTextureUnit(int textureUnitIndex)
+    public static void bindTextureToSampler(int textureHandle, int samplerIndex, int textureType)
     {
-        int textureUnitHandle = PheiffGLUtils.getGLTextureUnitHandle(textureUnitIndex);
-        GLES20.glActiveTexture(textureUnitHandle);
-
+        int samplerHandle = PheiffGLUtils.getGLTextureUnitHandle(samplerIndex);
+        GLES20.glActiveTexture(samplerHandle);
+        GLES20.glBindTexture(textureType, textureHandle);
     }
 
-    //TODO: Remove this method
-    /**
-     * Sets up a texture as a uniform input for the given program.  This uses the specified texture unit.
-     * If there a multiple texture inputs for the program each should be given a different text unit.
-     *
-     * @param programHandle    GL handle to the program
-     * @param samplerParamName The name of the uniform sampler variable to be assigned the textureHandle
-     * @param textureHandle    GL handle to texture
-     * @param textureUnitIndex the index of the texture unit to use
-     */
-    public static void uniformTexture2D(int programHandle, String samplerParamName, int textureHandle, int textureUnitIndex)
+    public static void bindTexture2DToSampler(int textureHandle, int samplerIndex)
     {
-        setActiveTextureUnit(textureUnitIndex);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
-        GLES20.glUniform1i(GLES20.glGetUniformLocation(programHandle, samplerParamName), textureUnitIndex);
+        bindTextureToSampler(textureHandle, samplerIndex, GLES20.GL_TEXTURE_2D);
     }
 }

@@ -4,6 +4,7 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
@@ -26,7 +27,7 @@ import com.pheiffware.lib.graphics.utils.GraphicsUtils;
  * <p/>
  * ShadConst.LIGHT_POS - float[4]
  * <p/>
- * ShadConst.MAT_COLOR_SAMPLER - float[4]
+ * ShadConst.MAT_COLOR_TEXTURE - float[4]
  * <p/>
  * ShadConst.SPEC_MAT_COLOR - float[4]
  * <p/>
@@ -64,7 +65,7 @@ public class TextureMaterialTechnique extends Technique
                 TechniqueProperty.SPEC_MAT_COLOR,
                 TechniqueProperty.LIGHT_POS,
                 TechniqueProperty.SHININESS,
-                TechniqueProperty.MAT_COLOR_SAMPLER
+                TechniqueProperty.MAT_COLOR_TEXTURE
         });
         projectionUniform = getUniform(ShadConst.PROJECTION_MATRIX_UNIFORM);
         viewModelUniform = getUniform(ShadConst.VIEW_MODEL_MATRIX_UNIFORM);
@@ -95,7 +96,9 @@ public class TextureMaterialTechnique extends Technique
         ambientLightColorUniform.setValue(getPropertyValue(TechniqueProperty.AMBIENT_LIGHT_COLOR));
         float[] lightColor = (float[]) getPropertyValue(TechniqueProperty.LIGHT_COLOR);
         lightColorUniform.setValue(lightColor);
-        matSamplerUniform.setValue(getPropertyValue(TechniqueProperty.MAT_COLOR_SAMPLER));
+
+        Texture texture = (Texture) getPropertyValue(TechniqueProperty.MAT_COLOR_TEXTURE);
+        matSamplerUniform.setValue(texture.getSampler());
 
         float[] matColor = (float[]) getPropertyValue(TechniqueProperty.SPEC_MAT_COLOR);
 

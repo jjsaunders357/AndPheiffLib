@@ -103,7 +103,8 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             GLES20.glUseProgram(testProgram.getHandle());
             testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix.m);
-            testProgram.setUniformTexture2D("texture", faceTexture, 0);
+            faceTexture.bindToSampler(0);
+            testProgram.setUniformSampler("texture", 0);
             cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
             cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);
             cb.putDynamicVec4(0, 0, 0, globalTestColor, 0);

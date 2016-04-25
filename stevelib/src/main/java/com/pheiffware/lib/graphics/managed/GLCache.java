@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed;
 
+import android.opengl.GLES20;
+
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -53,7 +55,7 @@ public class GLCache
      */
     public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        Texture texture = new Texture(al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
+        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
         textures.put(imageAssetPath, texture);
         return texture;
     }
@@ -118,7 +120,7 @@ public class GLCache
      */
     public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = new Texture(TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode));
+        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode));
         textures.put(name, texture);
         return texture;
     }
@@ -135,7 +137,7 @@ public class GLCache
      */
     public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = new Texture(TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode));
+        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode));
         textures.put(name, texture);
         return texture;
     }

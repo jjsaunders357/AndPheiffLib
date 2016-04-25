@@ -4,9 +4,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -139,9 +137,10 @@ public class Program
         GLES20.glUniformMatrix3fv(getUniform(uniformName).location, 1, transpose, matrix, 0);
     }
 
-    public final void setUniformTexture2D(String uniformName, Texture texture, int textureUnitIndex)
+
+    public final void setUniformSampler(String uniformName, int samplerIndex)
     {
-        TextureUtils.uniformTexture2D(handle, uniformName, texture.getHandle(), textureUnitIndex);
+        GLES20.glUniform1i(getUniform(uniformName).location, samplerIndex);
     }
 
     public final void setUniformVec3(String uniformName, float[] floats)
