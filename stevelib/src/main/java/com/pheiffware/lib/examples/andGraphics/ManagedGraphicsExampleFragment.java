@@ -96,7 +96,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 //TODO: Fix
 //Example code: Want to be able to do this
 //                collada.loadObjects(baseObjectManager);
-//                baseObjectManager.setGlobalUniformMatrix4("viewModelMatrix", viewModelMatrix.m, false);
 
 
             }
@@ -109,7 +108,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            baseObjectManager.setGlobalProperties(
+            baseObjectManager.setDefaultPropertyValues(
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
                             TechniqueProperty.VIEW_MATRIX,
@@ -134,46 +133,24 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             modelMatrix = Matrix4.multiply(monkeyTranslation, modelRotate);
             baseObjectManager.renderNow(monkeyMesh,
                     new TechniqueProperty[]{
-                            TechniqueProperty.PROJECTION_MATRIX,
-                            TechniqueProperty.VIEW_MATRIX,
-                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_POS,
-
-                            TechniqueProperty.MODEL_MATRIX
+                            TechniqueProperty.MODEL_MATRIX,
+                            TechniqueProperty.LIGHT_POS //Overridden default property value.  The other meshes should use the default value.
                     },
                     new Object[]{
-                            projectionMatrix,
-                            viewMatrix,
-                            ambientLightColor,
-                            lightColor,
-                            lightPosition,
-
-                            modelMatrix
+                            modelMatrix,
+                            new float[]{3, 3, 0, 1}
                     }
-
             );
 
             Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
             modelMatrix = Matrix4.multiply(cubeTranslation, modelRotate);
             baseObjectManager.renderNow(cubeMesh,
                     new TechniqueProperty[]{
-                            TechniqueProperty.PROJECTION_MATRIX,
-                            TechniqueProperty.VIEW_MATRIX,
-                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_POS,
-
                             TechniqueProperty.MODEL_MATRIX,
                             //Override default to make dull
                             TechniqueProperty.SPEC_MAT_COLOR,
                     },
                     new Object[]{
-                            projectionMatrix,
-                            viewMatrix,
-                            ambientLightColor,
-                            lightColor,
-                            lightPosition,
                             modelMatrix,
                             new float[]{0.2f, 0.2f, 0.2f, 1.0f}
                     });
@@ -183,19 +160,9 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             modelMatrix = Matrix4.multiply(sphereTranslation, modelRotate);
             baseObjectManager.renderNow(sphereMesh,
                     new TechniqueProperty[]{
-                            TechniqueProperty.PROJECTION_MATRIX,
-                            TechniqueProperty.VIEW_MATRIX,
-                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_POS,
                             TechniqueProperty.MODEL_MATRIX
                     },
                     new Object[]{
-                            projectionMatrix,
-                            viewMatrix,
-                            ambientLightColor,
-                            lightColor,
-                            lightPosition,
                             modelMatrix
                     });
 

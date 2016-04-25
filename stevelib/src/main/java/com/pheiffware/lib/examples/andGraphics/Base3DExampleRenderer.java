@@ -46,6 +46,7 @@ public abstract class Base3DExampleRenderer extends TouchViewRenderer
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         startFrameTimeStamp = System.nanoTime();
         super.onDrawFrame();
+        GLES20.glFinish();
         frameCounter++;
         logAverages();
         addFrameProfilePoint("Render");

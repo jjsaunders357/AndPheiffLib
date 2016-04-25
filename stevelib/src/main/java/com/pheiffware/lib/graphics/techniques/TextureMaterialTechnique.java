@@ -54,7 +54,18 @@ public class TextureMaterialTechnique extends Technique
 
     public TextureMaterialTechnique(AssetLoader al) throws GraphicsException
     {
-        super(al, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl");
+        super(al, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl", new TechniqueProperty[]{
+                TechniqueProperty.PROJECTION_MATRIX,
+                TechniqueProperty.VIEW_MATRIX,
+                TechniqueProperty.MODEL_MATRIX,
+                TechniqueProperty.AMBIENT_LIGHT_COLOR,
+                TechniqueProperty.MAT_COLOR,
+                TechniqueProperty.LIGHT_COLOR,
+                TechniqueProperty.SPEC_MAT_COLOR,
+                TechniqueProperty.LIGHT_POS,
+                TechniqueProperty.SHININESS,
+                TechniqueProperty.MAT_COLOR_SAMPLER
+        });
         projectionUniform = getUniform(ShadConst.PROJECTION_MATRIX_UNIFORM);
         viewModelUniform = getUniform(ShadConst.VIEW_MODEL_MATRIX_UNIFORM);
         normalUniform = getUniform(ShadConst.NORMAL_MATRIX_UNIFORM);

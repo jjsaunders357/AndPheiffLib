@@ -53,7 +53,17 @@ public class ColorMaterialTechnique extends Technique
 
     public ColorMaterialTechnique(AssetLoader al) throws GraphicsException
     {
-        super(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+        super(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl", new TechniqueProperty[]{
+                TechniqueProperty.PROJECTION_MATRIX,
+                TechniqueProperty.VIEW_MATRIX,
+                TechniqueProperty.MODEL_MATRIX,
+                TechniqueProperty.AMBIENT_LIGHT_COLOR,
+                TechniqueProperty.MAT_COLOR,
+                TechniqueProperty.LIGHT_COLOR,
+                TechniqueProperty.SPEC_MAT_COLOR,
+                TechniqueProperty.LIGHT_POS,
+                TechniqueProperty.SHININESS
+        });
         eyeProjUniform = getUniform(ShadConst.PROJECTION_MATRIX_UNIFORM);
         eyeTransUniform = getUniform(ShadConst.VIEW_MODEL_MATRIX_UNIFORM);
         eyeNormUniform = getUniform(ShadConst.NORMAL_MATRIX_UNIFORM);

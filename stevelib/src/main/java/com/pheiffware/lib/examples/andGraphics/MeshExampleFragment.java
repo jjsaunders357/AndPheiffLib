@@ -100,7 +100,7 @@ public class MeshExampleFragment extends SimpleGLFragment
             colorTechnique.setProperty(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
             colorTechnique.setProperty(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
             colorTechnique.setProperty(TechniqueProperty.SHININESS, 30.0f);
-            colorTechnique.applyPropertiesToUniforms();
+            colorTechnique.applyProperties();
 
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
             rotation++;

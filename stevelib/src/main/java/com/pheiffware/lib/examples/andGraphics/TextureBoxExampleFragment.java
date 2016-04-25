@@ -103,7 +103,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
             textureTechnique.setProperty(TechniqueProperty.MAT_COLOR_SAMPLER, 2);
 
-            textureTechnique.applyPropertiesToUniforms();
+            textureTechnique.applyProperties();
 
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
             rotation++;

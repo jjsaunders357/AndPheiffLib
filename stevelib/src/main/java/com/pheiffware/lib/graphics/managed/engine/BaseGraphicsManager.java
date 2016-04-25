@@ -17,7 +17,7 @@ import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
  * <p/>
  * 2. Call transfer()
  * <p/>
- * 3. Call setGlobals()
+ * 3. Call setDefaultPropertyValues()
  * <p/>
  * TODO: Comment once we advance further
  * <p/>
@@ -47,27 +47,38 @@ public class BaseGraphicsManager
 //            int techniqueIndex = techniqueIndices[i];
 //            Mesh mesh = meshes[i];
 //
-//            PropertyValue[] defaultPropertyValues = defaultPropertyValuesArray[i];
-//            MeshRenderHandle meshRenderHandle = addMesh(mesh, techniqueIndex, defaultPropertyValues);
+//            PropertyValue[] propertyValues = defaultPropertyValuesArray[i];
+//            MeshRenderHandle meshRenderHandle = addMesh(mesh, techniqueIndex, propertyValues);
 //            objectRenderHandle.addMeshHandle(meshRenderHandle);
 //        }
 //        return objectRenderHandle;
 //    }
 
-    public final MeshRenderHandle addMesh(Mesh mesh, Technique technique, PropertyValue[] defaultPropertyValues)
+    /**
+     * Add a mesh to be rendered with a particular technique and specific property values.
+     *
+     * @param mesh
+     * @param technique
+     * @param propertyValues
+     * @return
+     */
+    public final MeshRenderHandle addMesh(Mesh mesh, Technique technique, PropertyValue[] propertyValues)
     {
         int meshIndexOffset = transferData.addMesh(mesh, technique);
 
-        TechniqueProperty[] defaultedProperties = new TechniqueProperty[defaultPropertyValues.length];
-        Object[] defaultUniformValues = new Object[defaultPropertyValues.length];
-        for (int i = 0; i < defaultPropertyValues.length; i++)
+        TechniqueProperty[] properties = new TechniqueProperty[propertyValues.length];
+        Object[] values = new Object[propertyValues.length];
+        for (int i = 0; i < propertyValues.length; i++)
         {
-            defaultedProperties[i] = defaultPropertyValues[i].property;
-            defaultUniformValues[i] = defaultPropertyValues[i].value;
+            properties[i] = propertyValues[i].property;
+            values[i] = propertyValues[i].value;
         }
-        return new MeshRenderHandle(technique, defaultedProperties, defaultUniformValues, meshIndexOffset, mesh.getNumIndices());
+        return new MeshRenderHandle(technique, properties, values, meshIndexOffset, mesh.getNumIndices());
     }
 
+    /**
+     * Transfer added mesh data to the GL.
+     */
     public final void transfer()
     {
         transferData.transfer();
@@ -75,29 +86,36 @@ public class BaseGraphicsManager
     }
 
     /**
-     * TODO: Implement
+     * Sets default values for properties across all techniques.
      *
      * @param techniqueProperties
      * @param objects
      */
-    public void setGlobalProperties(TechniqueProperty[] techniqueProperties, Object[] objects)
+    public void setDefaultPropertyValues(TechniqueProperty[] techniqueProperties, Object[] objects)
     {
-//        for(Technique technique:techniques)
-//        {
-//            technique.setProperties(techniqueProperties,objects);
-//        }
+        for (Technique technique : techniques)
+        {
+            technique.setDefaultPropertyValues(techniqueProperties, objects);
+        }
     }
 
+    /**
+     * Renders a given mesh.  Explicitly overrides properties with those given.
+     *
+     * @param meshHandle
+     * @param properties
+     * @param propertyValues
+     */
     public void renderNow(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
         Technique technique = meshHandle.technique;
         technique.bind();
-        meshHandle.setDefaultProperties();
+        meshHandle.setProperties();
         for (int i = 0; i < properties.length; i++)
         {
             technique.setProperty(properties[i], propertyValues[i]);
         }
-        technique.applyPropertiesToUniforms();
+        technique.applyProperties();
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
 
@@ -117,7 +135,7 @@ public class BaseGraphicsManager
 
     public final void setDefaultUniformValues(MeshRenderHandle meshHandle)
     {
-        meshHandle.setDefaultProperties();
+        meshHandle.setProperties();
     }
 
     public final void renderIndexBuffer(MeshRenderHandle meshHandle)
