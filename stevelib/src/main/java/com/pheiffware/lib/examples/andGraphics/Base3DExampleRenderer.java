@@ -29,7 +29,7 @@ public abstract class Base3DExampleRenderer extends TouchViewRenderer
     }
 
     @Override
-    public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
+    public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
     {
         frameCounter = 0;
         nanoTimes.clear();

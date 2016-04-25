@@ -19,7 +19,6 @@ import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Demonstrates using managed graphics to:
@@ -57,15 +56,14 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
-            super.onSurfaceCreated(al, GLCache);
+            super.onSurfaceCreated(al, glCache);
             try
             {
                 Technique colorTechnique = new ColorMaterialTechnique(al);
                 ColladaFactory colladaFactory = new ColladaFactory(true);
-                InputStream inputStream = al.getInputStream("meshes/test_render.dae");
-                Collada collada = colladaFactory.loadCollada(inputStream);
+                Collada collada = colladaFactory.loadCollada(al, "meshes/test_render.dae");
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
                 ColladaObject3D monkey = collada.objects.get("Monkey");
@@ -92,12 +90,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                                 new PropertyValue(TechniqueProperty.SHININESS, 5.0f)
                         });
                 baseObjectManager.transfer();
-
-                //TODO: Fix
-//Example code: Want to be able to do this
-//                collada.loadObjects(baseObjectManager);
-
-
             }
             catch (XMLParseException | IOException exception)
             {

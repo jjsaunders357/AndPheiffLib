@@ -50,19 +50,19 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
             // Wait for vertical retrace
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
             testProgram = new Program(al, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
-            faceTexture = GLCache.createImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            faceTexture = glCache.createImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             //Creates color texture render target, without alpha channel
-            colorRenderTexture = GLCache.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            colorRenderTexture = glCache.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             //Creates a depth texture render target, without alpha channel
-            depthRenderTexture = GLCache.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            depthRenderTexture = glCache.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
             frameBufferHandle = PheiffGLUtils.createFrameBuffer();
 
             float x = 1f, y = 1f, z = 1.1f;

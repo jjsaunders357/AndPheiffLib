@@ -25,13 +25,13 @@ public class GLCache
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
     private final int deviceGLVersion;
-    private final AssetLoader ga;
+    private AssetLoader al;
 
-    public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality, AssetLoader ga)
+    public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality, AssetLoader al)
     {
         this.defaultFilterQuality = defaultFilterQuality;
         this.deviceGLVersion = deviceGLVersion;
-        this.ga = ga;
+        this.al = al;
         if (deviceGLVersion < 2)
         {
             throw new RuntimeException("Cannot work with openGL version below 2.0");
@@ -40,7 +40,42 @@ public class GLCache
 
 
     /**
-     * Loads an image into a newly created texture or gets previously loaded texture.
+     * Loads an image into a newly created texture.
+     *
+     * @param name            a name for retrieval later
+     * @param imageAssetPath  image path
+     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
+     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
+     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @return GL handle to texture
+     * @throws GraphicsException
+     */
+    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    {
+        Texture texture = new Texture(al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
+        textures.put(imageAssetPath, texture);
+        return texture;
+    }
+
+    /**
+     * Loads an image into a newly created texture. Filter quality defaulted.
+     *
+     * @param name            a name for retrieval later
+     * @param imageAssetPath  image path
+     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
+     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @return GL handle to texture
+     * @throws GraphicsException
+     */
+    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    {
+        return createImageTexture(name, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+    }
+
+    /**
+     * Loads an image into a newly created texture.
      *
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
@@ -52,9 +87,22 @@ public class GLCache
      */
     public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        Texture texture = new Texture(ga.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
-        textures.put(imageAssetPath, texture);
-        return texture;
+        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode);
+    }
+
+    /**
+     * Loads an image into a newly created texture. Filter quality defaulted.
+     *
+     * @param imageAssetPath  image path
+     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
+     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @return GL handle to texture
+     * @throws GraphicsException
+     */
+    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    {
+        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
     }
 
     /**
@@ -94,21 +142,6 @@ public class GLCache
 
 
     /**
-     * Loads an image into a newly created texture or gets previously loaded texture. Filter quality defaulted.
-     *
-     * @param imageAssetPath  image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
-    {
-        return createImageTexture(imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
-    }
-
-    /**
      * Generates a texture which can have colors rendered onto it. Filter quality defaulted.
      *
      * @param pixelWidth  width
@@ -139,7 +172,20 @@ public class GLCache
 
     public void deallocate()
     {
+        //Do not retain reference to this as it can leak memory
+        al = null;
         //TODO: dynamic buffers should be created through this class
         //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
+    }
+
+    /**
+     * Retrieve a named texture.
+     *
+     * @param name
+     * @return
+     */
+    public Texture getTexture(String name)
+    {
+        return textures.get(name);
     }
 }

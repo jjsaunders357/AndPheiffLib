@@ -46,13 +46,13 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
             testProgram = new Program(al, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
-            faceTexture = GLCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             pb = new IndexBuffer(false);
             pb.allocate(2000);

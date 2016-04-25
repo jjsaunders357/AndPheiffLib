@@ -16,9 +16,9 @@ public interface SimpleGLRenderer extends TouchTransformListener
      * <p/>
      * All gl resources should be created/recreated.
      *  @param al    asset manager, DO NOT RETAIN REFERENCE
-     * @param GLCache managed opengl object
+     * @param glCache managed opengl object
      */
-    void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException;
+    void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException;
 
     /**
      * Called when surface changes size.

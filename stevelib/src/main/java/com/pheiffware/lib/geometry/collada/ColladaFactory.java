@@ -1,5 +1,6 @@
 package com.pheiffware.lib.geometry.collada;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.utils.dom.DomUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -7,6 +8,7 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,8 +18,8 @@ import java.util.Map;
 import javax.xml.validation.Validator;
 
 /**
- * Main class which parses a Collada file to produce a Collada object.  This holds lots of additional intermediate information which can be used during testing or for other purposes.
- * Created by Steve on 2/19/2016.
+ * Main class which parses a Collada file to produce a Collada object.  This holds lots of additional intermediate information which can be used during testing or for other
+ * purposes. Created by Steve on 2/19/2016.
  */
 public class ColladaFactory
 {
@@ -70,6 +72,11 @@ public class ColladaFactory
         this.homogenizePositions = homogenizePositions;
         //Store default material
         materialsByID.put("", defaultColladaMaterial);
+    }
+
+    public Collada loadCollada(AssetLoader al, String assetPath) throws XMLParseException, IOException
+    {
+        return loadCollada(al.getInputStream(assetPath));
     }
 
     public Collada loadCollada(InputStream input) throws XMLParseException

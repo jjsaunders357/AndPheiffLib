@@ -48,20 +48,19 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
-            super.onSurfaceCreated(al, GLCache);
+            super.onSurfaceCreated(al, glCache);
             textureTechnique = new TextureMaterialTechnique(al);
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;
             try
             {
-                inputStream = al.getInputStream("meshes/cubes.dae");
-                Collada collada = colladaFactory.loadCollada(inputStream);
+                Collada collada = colladaFactory.loadCollada(al, "meshes/cubes.dae");
 
                 //Lookup material from loaded file by "name" (what user named it in editing tool)
                 ColladaMaterial brownBrickMaterial = collada.materialsByName.get("brown_brick");
-                texture = GLCache.createImageTexture("images/" + brownBrickMaterial.imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                texture = glCache.createImageTexture("images/" + brownBrickMaterial.imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
                 ColladaObject3D brickCube = collada.objects.get("brown");

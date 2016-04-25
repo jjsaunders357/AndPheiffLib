@@ -46,16 +46,15 @@ public class MeshExampleFragment extends SimpleGLFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
-            super.onSurfaceCreated(al, GLCache);
+            super.onSurfaceCreated(al, glCache);
             colorTechnique = new ColorMaterialTechnique(al);
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;
             try
             {
-                inputStream = al.getInputStream("meshes/test_render.dae");
-                Collada collada = colladaFactory.loadCollada(inputStream);
+                Collada collada = colladaFactory.loadCollada(al, "meshes/test_render.dae");
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
                 ColladaObject3D monkey = collada.objects.get("Monkey");

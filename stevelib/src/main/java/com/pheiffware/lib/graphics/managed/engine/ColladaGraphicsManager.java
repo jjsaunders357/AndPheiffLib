@@ -20,15 +20,23 @@ import java.util.Map;
  */
 public abstract class ColladaGraphicsManager extends BaseGraphicsManager
 {
-
-    public static void quickLoadTextures(GLCache glCache, String baseImagePath, Collada collada, int defaultWrapMode) throws GraphicsException
+    /**
+     * Simple function to load all textures in a given file into the cache, for a given image directory.  All images are named based on the base file name.
+     *
+     * @param glCache
+     * @param imageAssetDirectory
+     * @param collada
+     * @param defaultWrapMode
+     * @throws GraphicsException
+     */
+    public static void quickLoadTextures(GLCache glCache, String imageAssetDirectory, Collada collada, int defaultWrapMode) throws GraphicsException
     {
         for (ColladaMaterial material : collada.materialsByName.values())
         {
             if (material.imageFileName != null)
             {
-                String assetPath = baseImagePath + "/" + material.imageFileName;
-                glCache.createImageTexture(assetPath, true, defaultWrapMode, defaultWrapMode);
+                String assetPath = imageAssetDirectory + "/" + material.imageFileName;
+                glCache.createImageTexture(material.imageFileName, assetPath, true, defaultWrapMode, defaultWrapMode);
             }
         }
     }
@@ -85,7 +93,7 @@ public abstract class ColladaGraphicsManager extends BaseGraphicsManager
 
 
     //TODO: Comment
-    protected abstract Technique getTechniqueForMesh(String name, Mesh mesh);
+    protected abstract Technique getTechniqueForMesh(String objectName, Mesh mesh);
 
-    protected abstract PropertyValue[] getPropertyValuesForMaterial(String name, ColladaMaterial material);
+    protected abstract PropertyValue[] getPropertyValuesForMaterial(String objectName, ColladaMaterial material);
 }

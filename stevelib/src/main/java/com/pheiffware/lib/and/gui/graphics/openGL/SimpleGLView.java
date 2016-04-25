@@ -37,7 +37,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     private final AssetManager assetManager;
     private final SimpleGLRenderer renderer;
     private final TouchAnalyzer touchAnalyzer;
-    private GLCache GLCache;
+    private GLCache glCache;
 
     public SimpleGLView(Context context, SimpleGLRenderer renderer, FilterQuality filterQuality)
     {
@@ -82,11 +82,11 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     {
         AndUtils.logLC(this, "SurfaceCreated");
         AssetLoader al = new AndAssetLoader(assetManager);
-        //All resources held by GLCache will have been thrown away
-        GLCache = new GLCache(AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, al);
+        //All resources held by glCache will have been thrown away
+        glCache = new GLCache(AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, al);
         try
         {
-            renderer.onSurfaceCreated(al, GLCache);
+            renderer.onSurfaceCreated(al, glCache);
             PheiffGLUtils.assertNoError();
         }
         catch (GraphicsException e)
@@ -100,9 +100,11 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     {
         AndUtils.logLC(this, "SurfaceDestroyed");
         super.surfaceDestroyed(holder);
-        GLCache.deallocate();
+
+        //Deallocate any memory in direct buffers and erase reference to AssetLoader
+        glCache.deallocate();
         //Destroy any reference to GL/EGL object (not sure if this matters).
-        GLCache = null;
+        glCache = null;
     }
 
     @Override
