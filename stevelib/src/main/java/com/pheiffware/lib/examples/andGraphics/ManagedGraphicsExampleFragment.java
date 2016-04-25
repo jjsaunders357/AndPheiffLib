@@ -132,7 +132,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
             Matrix4 monkeyTranslation = Matrix4.newTranslation(-3, 2, -5);
             modelMatrix = Matrix4.multiply(monkeyTranslation, modelRotate);
-            baseObjectManager.render(monkeyMesh,
+            baseObjectManager.renderNow(monkeyMesh,
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
                             TechniqueProperty.VIEW_MATRIX,
@@ -156,7 +156,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
             Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
             modelMatrix = Matrix4.multiply(cubeTranslation, modelRotate);
-            baseObjectManager.render(cubeMesh,
+            baseObjectManager.renderNow(cubeMesh,
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
                             TechniqueProperty.VIEW_MATRIX,
@@ -181,7 +181,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
             Matrix4 sphereTranslation = Matrix4.newTranslation(3, 2, -5);
             modelMatrix = Matrix4.multiply(sphereTranslation, modelRotate);
-            baseObjectManager.render(sphereMesh,
+            baseObjectManager.renderNow(sphereMesh,
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
                             TechniqueProperty.VIEW_MATRIX,

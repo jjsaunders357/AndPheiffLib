@@ -9,9 +9,20 @@ import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
  * This class manages storing data in index/vertex buffers and then conveniently/efficiently rendering that data.
  * <p/>
  * The core organizational structures are MeshHandles.  These contain a reference into the buffers where primitives are stored along with default rendering parameters such as color
- * and shininess.
+ * and shininess.  An ObjectHandle is a reference to a collection of meshes, possibly rendered with different techniques, which share properties such as ModelMatrix.
  * <p/>
- * TODO: Finish commenting
+ * Typical usage:
+ * <p/>
+ * 1. Call addObject() and addMesh() over and over.
+ * <p/>
+ * 2. Call transfer()
+ * <p/>
+ * 3. Call setGlobals()
+ * <p/>
+ * TODO: Comment once we advance further
+ * <p/>
+ * 4. Call renderNow() over and over again
+ * <p/>
  * <p/>
  * Created by Steve on 4/13/2016.
  */
@@ -77,7 +88,7 @@ public class BaseGraphicsManager
 //        }
     }
 
-    public void render(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
+    public void renderNow(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
         Technique technique = meshHandle.technique;
         technique.bind();
@@ -90,11 +101,11 @@ public class BaseGraphicsManager
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
 
-    public void render(ObjectRenderHandle objectHandle, TechniqueProperty[] properties, Object[] propertyValues)
+    public void renderNow(ObjectRenderHandle objectHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
         for (int i = 0; i < objectHandle.meshRenderHandles.size(); i++)
         {
-            render(objectHandle.meshRenderHandles.get(i), properties, propertyValues);
+            renderNow(objectHandle.meshRenderHandles.get(i), properties, propertyValues);
         }
     }
 
