@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
@@ -22,7 +21,6 @@ import java.util.Map;
 public class BaseGraphicsManager
 {
     private final Technique[] techniques;
-    private final StaticVertexBuffer[] staticVertexBuffers;
     private final Map<Technique, Integer> techniqueIndexLookup = new HashMap<>();
     private final IndexBuffer indexBuffer = new IndexBuffer(false);
 
@@ -35,18 +33,7 @@ public class BaseGraphicsManager
         {
             techniqueIndexLookup.put(techniques[i], i);
         }
-        this.staticVertexBuffers = new StaticVertexBuffer[techniques.length];
-        createVertexBuffers(techniques);
-        transferData = new GraphicsManagerTransferData(indexBuffer, techniques, staticVertexBuffers);
-    }
-
-    protected void createVertexBuffers(Technique[] techniques)
-    {
-        for (int i = 0; i < techniques.length; i++)
-        {
-            Technique technique = techniques[i];
-            staticVertexBuffers[i] = new StaticVertexBuffer(technique.getProgram());
-        }
+        transferData = new GraphicsManagerTransferData(indexBuffer, techniques);
     }
 
     public final ObjectRenderHandle addObject(Mesh[] meshes, int[] techniqueIndices, PropertyValue[][] defaultPropertyValuesArray)
@@ -112,9 +99,7 @@ public class BaseGraphicsManager
     {
         Technique technique = meshHandle.technique;
         int techniqueIndex = techniqueIndexLookup.get(meshHandle.technique);
-        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[techniqueIndex];
         technique.bind();
-        staticVertexBuffer.bind();
         meshHandle.setDefaultProperties();
         for (int i = 0; i < properties.length; i++)
         {
@@ -136,9 +121,7 @@ public class BaseGraphicsManager
     {
         Technique technique = meshHandle.technique;
         int techniqueIndex = techniqueIndexLookup.get(meshHandle.technique);
-        StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[techniqueIndex];
         technique.bind();
-        staticVertexBuffer.bind();
     }
 
     public final void setDefaultUniformValues(MeshRenderHandle meshHandle)

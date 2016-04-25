@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 
@@ -22,7 +21,6 @@ public class GraphicsManagerTransferData
     private final IndexBuffer indexBuffer;
 
     private final Technique[] techniques;
-    private final StaticVertexBuffer[] staticVertexBuffers;
     private final int vertexBufferLengths[];
 
     private int indexBufferLength = 0;
@@ -33,11 +31,10 @@ public class GraphicsManagerTransferData
     //Technique index each added mesh is associated with
     private final List<Integer> meshTechniqueIndices = new ArrayList<>();
 
-    public GraphicsManagerTransferData(IndexBuffer indexBuffer, Technique[] techniques, StaticVertexBuffer[] staticVertexBuffers)
+    public GraphicsManagerTransferData(IndexBuffer indexBuffer, Technique[] techniques)
     {
         this.indexBuffer = indexBuffer;
         this.techniques = techniques;
-        this.staticVertexBuffers = staticVertexBuffers;
         vertexBufferLengths = new int[techniques.length];
     }
 
@@ -64,7 +61,7 @@ public class GraphicsManagerTransferData
         indexBuffer.allocate(indexBufferLength);
         for (int i = 0; i < techniques.length; i++)
         {
-            staticVertexBuffers[i].allocate(vertexBufferLengths[i]);
+            techniques[i].allocateBuffers(vertexBufferLengths[i]);
         }
         int indexWriteOffset = 0;
         int[] techniqueVertexOffsets = new int[techniques.length];
@@ -75,17 +72,15 @@ public class GraphicsManagerTransferData
             int techniqueIndex = meshTechniqueIndices.get(i);
             int vertexWriteOffset = techniqueVertexOffsets[techniqueIndex];
             Technique technique = techniques[techniqueIndex];
-            StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[techniqueIndex];
             indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexWriteOffset);
-            technique.transferMeshAttributes(transferMesh, staticVertexBuffer, vertexWriteOffset);
-//            transferMeshAttributes(transferMesh, technique, staticVertexBuffer, vertexWriteOffset);
+            technique.putVertexAttributes(transferMesh, vertexWriteOffset);
             indexWriteOffset += transferMesh.getNumIndices();
             techniqueVertexOffsets[techniqueIndex] += transferMesh.getNumVertices();
         }
         indexBuffer.transfer();
         for (int i = 0; i < techniques.length; i++)
         {
-            staticVertexBuffers[i].transfer();
+            techniques[i].transferVertexData();
         }
     }
 }

@@ -14,9 +14,7 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
@@ -40,7 +38,6 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
     {
         private TextureMaterialTechnique textureTechnique;
         private IndexBuffer indexBuffer;
-        private StaticVertexBuffer vertexBuffer;
         private Matrix4 translationMatrix = Matrix4.newTranslation(-3, 2, -5);
         private Texture texture;
         private int rotation = 0;
@@ -77,15 +74,9 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
-                vertexBuffer = new StaticVertexBuffer(textureTechnique.getProgram(),
-                        new String[]
-                                {ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_NORMAL_ATTRIBUTE, ShadConst.VERTEX_TEXCOORD_ATTRIBUTE});
-                vertexBuffer.allocate(mesh.getNumVertices());
-                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_POSITION_ATTRIBUTE, mesh.getPositionData(), 0);
-                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_NORMAL_ATTRIBUTE, mesh.getNormalData(), 0);
-                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_TEXCOORD_ATTRIBUTE, mesh.getTexCoordData(), 0);
-
-                vertexBuffer.transfer();
+                textureTechnique.allocateBuffers(mesh.getNumVertices());
+                textureTechnique.putVertexAttributes(mesh, 0);
+                textureTechnique.transferVertexData();
             }
             catch (IOException | XMLParseException e)
             {
@@ -114,7 +105,6 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
 
             textureTechnique.applyPropertiesToUniforms();
 
-            vertexBuffer.bind();
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
             rotation++;
 

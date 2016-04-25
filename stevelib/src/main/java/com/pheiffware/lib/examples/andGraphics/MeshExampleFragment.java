@@ -13,10 +13,8 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.ShadConst;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -40,7 +38,6 @@ public class MeshExampleFragment extends SimpleGLFragment
 
         private ColorMaterialTechnique colorTechnique;
         private IndexBuffer indexBuffer;
-        private StaticVertexBuffer vertexBuffer;
         private Matrix4 translationMatrix;
 
         public ExampleRenderer()
@@ -75,14 +72,9 @@ public class MeshExampleFragment extends SimpleGLFragment
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
-                vertexBuffer = new StaticVertexBuffer(colorTechnique.getProgram(),
-                        new String[]
-                                {ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_NORMAL_ATTRIBUTE});
-                vertexBuffer.allocate(mesh.getNumVertices());
-                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_POSITION_ATTRIBUTE, mesh.getPositionData(), 0);
-                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_NORMAL_ATTRIBUTE, mesh.getNormalData(), 0);
-
-                vertexBuffer.transfer();
+                colorTechnique.allocateBuffers(mesh.getNumVertices());
+                colorTechnique.putVertexAttributes(mesh, 0);
+                colorTechnique.transferVertexData();
             }
             catch (IOException | XMLParseException e)
             {
@@ -109,7 +101,7 @@ public class MeshExampleFragment extends SimpleGLFragment
             colorTechnique.setProperty(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
             colorTechnique.setProperty(TechniqueProperty.SHININESS, 30.0f);
             colorTechnique.applyPropertiesToUniforms();
-            vertexBuffer.bind();
+
             indexBuffer.drawAll(GLES20.GL_TRIANGLES);
             rotation++;
         }

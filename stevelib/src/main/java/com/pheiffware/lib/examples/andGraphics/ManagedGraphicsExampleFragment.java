@@ -97,7 +97,6 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 //Example code: Want to be able to do this
 //                collada.loadObjects(baseObjectManager);
 //                baseObjectManager.setGlobalUniformMatrix4("viewModelMatrix", viewModelMatrix.m, false);
-//                baseObjectManager.render(staticMonkey, "shininess",50.0f);
 
 
             }
@@ -135,9 +134,21 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             modelMatrix = Matrix4.multiply(monkeyTranslation, modelRotate);
             baseObjectManager.render(monkeyMesh,
                     new TechniqueProperty[]{
+                            TechniqueProperty.PROJECTION_MATRIX,
+                            TechniqueProperty.VIEW_MATRIX,
+                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_COLOR,
+                            TechniqueProperty.LIGHT_POS,
+
                             TechniqueProperty.MODEL_MATRIX
                     },
                     new Object[]{
+                            projectionMatrix,
+                            viewMatrix,
+                            ambientLightColor,
+                            lightColor,
+                            lightPosition,
+
                             modelMatrix
                     }
 
@@ -149,21 +160,21 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
                             TechniqueProperty.VIEW_MATRIX,
-                            TechniqueProperty.MODEL_MATRIX,
                             TechniqueProperty.AMBIENT_LIGHT_COLOR,
                             TechniqueProperty.LIGHT_COLOR,
                             TechniqueProperty.LIGHT_POS,
 
+                            TechniqueProperty.MODEL_MATRIX,
                             //Override default to make dull
                             TechniqueProperty.SPEC_MAT_COLOR,
                     },
                     new Object[]{
                             projectionMatrix,
                             viewMatrix,
-                            modelMatrix,
                             ambientLightColor,
                             lightColor,
                             lightPosition,
+                            modelMatrix,
                             new float[]{0.2f, 0.2f, 0.2f, 1.0f}
                     });
 
@@ -174,18 +185,18 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
                             TechniqueProperty.VIEW_MATRIX,
-                            TechniqueProperty.MODEL_MATRIX,
                             TechniqueProperty.AMBIENT_LIGHT_COLOR,
                             TechniqueProperty.LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_POS
+                            TechniqueProperty.LIGHT_POS,
+                            TechniqueProperty.MODEL_MATRIX
                     },
                     new Object[]{
                             projectionMatrix,
                             viewMatrix,
-                            modelMatrix,
                             ambientLightColor,
                             lightColor,
-                            lightPosition
+                            lightPosition,
+                            modelMatrix
                     });
 
             rotation++;

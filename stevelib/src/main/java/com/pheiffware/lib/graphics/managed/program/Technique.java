@@ -31,21 +31,29 @@ public abstract class Technique
     //Program being wrapped
     private final Program program;
 
+    //TODO: Should be combined vertex buffer
+    protected final StaticVertexBuffer staticVertexBuffer;
+
     public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
-        this(new Program(al, vertexShaderAsset, fragmentShaderAsset));
-
-    }
-
-    public Technique(Program program)
-    {
-        this.program = program;
+        this.program = (new Program(al, vertexShaderAsset, fragmentShaderAsset));
+        staticVertexBuffer = new StaticVertexBuffer(program);
     }
 
     /**
      * Should apply all properties to uniforms as appropriate for the technique.
      */
     public abstract void applyPropertiesToUniforms();
+
+    /**
+     * Allocates the vertex buffers backing this technique
+     *
+     * @param numVertices
+     */
+    public void allocateBuffers(int numVertices)
+    {
+        staticVertexBuffer.allocate(numVertices);
+    }
 
     /**
      * Set a property value.  This will be translated to a uniform value in the applyPropertiesToUniforms method.
@@ -83,29 +91,43 @@ public abstract class Technique
         return propertyValues[property.ordinal()];
     }
 
-
+    /**
+     * Get a uniform of the underlying program.  This should be called in the constructor to extract uniforms for setting later.
+     *
+     * @param uniformName
+     * @return
+     */
     protected Uniform getUniform(String uniformName)
     {
         return program.getUniform(uniformName);
     }
 
-    public final Program getProgram()
-    {
-        return program;
-    }
-
+    /**
+     * Makes the program/vertex buffers backing this technique active in openGL.
+     */
     public final void bind()
     {
         program.bind();
+        staticVertexBuffer.bind();
+    }
+
+    /**
+     * Transfers data in vertex buffers.  This will only transfer data in static buffers the 1st time it is called.
+     */
+    public void transferVertexData()
+    {
+        if (!staticVertexBuffer.isTransferred())
+        {
+            staticVertexBuffer.transfer();
+        }
     }
 
     /**
      * Responsible for transferring the given mesh vertex data into the given vertex buffer for this technique.
      *
      * @param transferMesh
-     * @param staticVertexBuffer
      * @param vertexWriteOffset
      */
-    public abstract void transferMeshAttributes(Mesh transferMesh, StaticVertexBuffer staticVertexBuffer, int vertexWriteOffset);
+    public abstract void putVertexAttributes(Mesh transferMesh, int vertexWriteOffset);
 
 }
