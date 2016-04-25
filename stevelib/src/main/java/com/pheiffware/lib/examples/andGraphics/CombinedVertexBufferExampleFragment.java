@@ -1,21 +1,20 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLRenderer;
-import com.pheiffware.lib.fatalError.FatalErrorHandler;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.ShadConst;
 
 /**
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.
@@ -47,21 +46,13 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
          * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
          */
         @Override
-        public void onSurfaceCreated(AssetManager am, GLCache GLCache)
+        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
-            FatalErrorHandler.installUncaughtExceptionHandler();
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            try
-            {
-                testProgram = GLCache.createProgram(am, "testProgram", "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
-                faceTexture = GLCache.createImageTexture(am, "face", "images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-            }
-            catch (GraphicsException exception)
-            {
-                FatalErrorHandler.handleFatalError(exception);
-            }
+            testProgram = new Program(al, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+            faceTexture = GLCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             pb = new IndexBuffer(false);
             pb.allocate(2000);

@@ -4,15 +4,9 @@
 */
 package com.pheiffware.lib.graphics.utils;
 
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
 
 import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.GraphicsException;
-
-import java.io.IOException;
 
 /**
  * A number of basic utilities for setting up/using textures and loading images into them.
@@ -29,55 +23,6 @@ public class TextureUtils
         int[] textureHandles = new int[1];
         GLES20.glGenTextures(1, textureHandles, 0);
         return textureHandles[0];
-    }
-    /**
-     * Loads a bitmap into a texture.
-     *
-     * @param bitmap bitmap to load into text
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    public static int genTextureFromImage(Bitmap bitmap, boolean generateMipMaps,
-                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
-    {
-        int textureHandle = genTexture();
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-        bitmap.recycle();
-        filterQuality.applyToBoundTexture(generateMipMaps);
-        setBoundTextureWrapParameters(sWrapMode, tWrapMode);
-        return textureHandle;
-    }
-
-    /**
-     * Loads an image into a newly created texture.
-     *
-     * @param assetManager
-     * @param imageAssetPath  image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    public static int genTextureFromImage(AssetManager assetManager, String imageAssetPath, boolean generateMipMaps,
-                                          FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
-    {
-        Bitmap bitmap;
-        try
-        {
-            bitmap = GraphicsUtils.loadBitmapAsset(assetManager, imageAssetPath);
-            return genTextureFromImage(bitmap, generateMipMaps, filterQuality, sWrapMode, tWrapMode);
-        }
-        catch (IOException exception)
-        {
-            throw new GraphicsException(exception);
-        }
     }
 
     /**
@@ -143,6 +88,7 @@ public class TextureUtils
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrapMode);
     }
 
+    //TODO: Make this more conveniently bind a texture to the given unit.
     /**
      * Set the active texture unit.  This is much more convenient than mucking around with constants like GLES20.GL_TEXTURE2.
      *
@@ -155,6 +101,7 @@ public class TextureUtils
 
     }
 
+    //TODO: Remove this method
     /**
      * Sets up a texture as a uniform input for the given program.  This uses the specified texture unit.
      * If there a multiple texture inputs for the program each should be given a different text unit.
@@ -166,8 +113,8 @@ public class TextureUtils
      */
     public static void uniformTexture2D(int programHandle, String samplerParamName, int textureHandle, int textureUnitIndex)
     {
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         setActiveTextureUnit(textureUnitIndex);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLES20.glUniform1i(GLES20.glGetUniformLocation(programHandle, samplerParamName), textureUnitIndex);
     }
 }

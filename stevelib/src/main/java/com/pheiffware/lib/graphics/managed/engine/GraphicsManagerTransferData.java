@@ -1,10 +1,9 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.utils.MapCounter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,86 +21,66 @@ public class GraphicsManagerTransferData
 {
     private final IndexBuffer indexBuffer;
 
-    private final Program[] programs;
-    private final StaticVertexBuffer[] staticVertexBuffers;
-    private final int vertexBufferLengths[];
+    private final Technique[] techniques;
+    private final MapCounter<Technique> techniqueBufferLengths;
 
     private int indexBufferLength = 0;
 
     //List of added meshes, in order of addition
     private final List<Mesh> meshesForTransfer = new ArrayList<>();
 
-    //Program index each added mesh is associated with
-    private final List<Integer> meshProgramIndices = new ArrayList<>();
+    //Technique each added mesh is associated with
+    private final List<Technique> meshTechniques = new ArrayList<>();
 
-    public GraphicsManagerTransferData(IndexBuffer indexBuffer, Program[] programs, StaticVertexBuffer[] staticVertexBuffers)
+    public GraphicsManagerTransferData(IndexBuffer indexBuffer, Technique[] techniques)
     {
         this.indexBuffer = indexBuffer;
-        this.programs = programs;
-        this.staticVertexBuffers = staticVertexBuffers;
-        vertexBufferLengths = new int[programs.length];
+        techniqueBufferLengths = new MapCounter<>();
+        this.techniques = techniques;
     }
 
     /**
-     * Adds a mesh for transfer to the given program's vertex buffer.
+     * Adds a mesh for transfer to the given technique's vertex buffer.
      *
-     * @param mesh         mesh to render
-     * @param programIndex program to render with
+     * @param mesh      mesh to render
+     * @param technique
      * @return the location in the index buffer where this mesh will be (specified in terms of vertex offset, *2 will give byte offset)
      */
-    public int addMesh(Mesh mesh, int programIndex)
+    public int addMesh(Mesh mesh, Technique technique)
     {
         meshesForTransfer.add(mesh);
-        meshProgramIndices.add(programIndex);
+        meshTechniques.add(technique);
+
         int meshIndexOffset = indexBufferLength;
         indexBufferLength += mesh.getNumIndices();
-        vertexBufferLengths[programIndex] += mesh.getNumVertices();
+        techniqueBufferLengths.addCount(technique, mesh.getNumVertices());
         return meshIndexOffset;
     }
 
     public void transfer()
     {
         indexBuffer.allocate(indexBufferLength);
-        for (int i = 0; i < programs.length; i++)
+        for (int i = 0; i < techniques.length; i++)
         {
-            staticVertexBuffers[i].allocate(vertexBufferLengths[i]);
+            int techniqueVertexCount = techniqueBufferLengths.getCount(techniques[i]);
+            techniques[i].allocateBuffers(techniqueVertexCount);
         }
         int indexWriteOffset = 0;
-        int[] programVertexOffsets = new int[programs.length];
-
+        MapCounter<Technique> techniqueVertexOffsets = new MapCounter<>();
         for (int i = 0; i < meshesForTransfer.size(); i++)
         {
             Mesh transferMesh = meshesForTransfer.get(i);
-            int programIndex = meshProgramIndices.get(i);
-            int vertexWriteOffset = programVertexOffsets[programIndex];
-            Program program = programs[programIndex];
-            StaticVertexBuffer staticVertexBuffer = staticVertexBuffers[programIndex];
+            Technique technique = meshTechniques.get(i);
+            int vertexWriteOffset = techniqueVertexOffsets.getCount(technique);
             indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexWriteOffset);
-            transferMeshAttributes(transferMesh, program, staticVertexBuffer, vertexWriteOffset);
+            technique.putVertexAttributes(transferMesh, vertexWriteOffset);
             indexWriteOffset += transferMesh.getNumIndices();
-            programVertexOffsets[programIndex] += transferMesh.getNumVertices();
+            techniqueVertexOffsets.addCount(technique, transferMesh.getNumVertices());
         }
         indexBuffer.transfer();
-        for (int i = 0; i < programs.length; i++)
+        for (int i = 0; i < techniques.length; i++)
         {
-            staticVertexBuffers[i].transfer();
+            techniques[i].transferVertexData();
         }
     }
-
-    protected void transferMeshAttributes(Mesh transferMesh, Program program, StaticVertexBuffer staticVertexBuffer, int vertexWriteOffset)
-    {
-        if (program.getAttributeNames().contains(ShadConst.VERTEX_POSITION_ATTRIBUTE))
-        {
-            staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_POSITION_ATTRIBUTE, transferMesh.getPositionData(), vertexWriteOffset);
-        }
-        if (program.getAttributeNames().contains(ShadConst.VERTEX_NORMAL_ATTRIBUTE))
-        {
-            staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_NORMAL_ATTRIBUTE, transferMesh.getNormalData(), vertexWriteOffset);
-        }
-        if (program.getAttributeNames().contains(ShadConst.VERTEX_TEXCOORD_ATTRIBUTE))
-        {
-            staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_TEXCOORD_ATTRIBUTE, transferMesh.getTexCoordData(), vertexWriteOffset);
-        }
-    }
-
 }

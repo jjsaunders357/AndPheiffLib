@@ -1,27 +1,23 @@
 package com.pheiffware.lib.graphics.utils;
 
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import java.io.IOException;
-
 /**
  * Created by Steve on 2/13/2016.
  */
 public class GraphicsUtils
 {
     /**
-     * Load an image from an asset file.
+     * Multiply 2 vectors component by component.
      *
-     * @param assetManager
-     * @param imageAssetPath Path to image
-     * @return image object
-     * @throws IOException
+     * @param out
+     * @param vec1
+     * @param vec2
      */
-    public static Bitmap loadBitmapAsset(AssetManager assetManager, String imageAssetPath) throws IOException
+    public static final void vecMultiply(int length, float[] out, float[] vec1, float[] vec2)
     {
-        return BitmapFactory.decodeStream(assetManager.open(imageAssetPath));
+        for (int i = 0; i < length; i++)
+        {
+            out[i] = vec1[i] * vec2[i];
+        }
     }
 
     /**

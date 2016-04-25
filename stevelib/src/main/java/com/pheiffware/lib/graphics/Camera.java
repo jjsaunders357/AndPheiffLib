@@ -4,6 +4,9 @@ import com.pheiffware.lib.geometry.Vec3D;
 
 /**
  * Used for tracking display and orientation.
+ * <p/>
+ * Note: Default openGL view is based on sitting at origin and looking in negative z direction
+ * <p/>
  * Created by Steve on 3/7/2016.
  */
 public class Camera
@@ -101,13 +104,7 @@ public class Camera
     }
 
     /**
-     * Translate in screen coordinate system.
-     * -x is left
-     * +x is right
-     * -y is down
-     * +y is up
-     * -z is forward
-     * +z is back
+     * Translate in screen coordinate system. -x is left +x is right -y is down +y is up -z is forward +z is back
      *
      * @param x x
      * @param y y
@@ -119,8 +116,7 @@ public class Camera
     }
 
     /**
-     * Rotate the camera relative to "screen" coordinate system.
-     * x and y are in the screen and z is perpendicular to the screen.
+     * Rotate the camera relative to "screen" coordinate system. x and y are in the screen and z is perpendicular to the screen.
      *
      * @param angleDegrees
      * @param rotationAxis
@@ -131,8 +127,7 @@ public class Camera
     }
 
     /**
-     * Rotate the camera around the given "screen" axis by the specified amount.
-     * x and y are in the screen and z is perpendicular to the screen.
+     * Rotate the camera around the given "screen" axis by the specified amount. x and y are in the screen and z is perpendicular to the screen.
      *
      * @param angleDegrees
      * @param x            left/right (+/-)
@@ -171,9 +166,8 @@ public class Camera
     }
 
     /**
-     * Used to turn screen input (such as a mouse or touch/drag) into a camera rotation.
-     * Given the direction the camera is looking and an x,y vector, in screen space, rotate om the plane described by the vectors (x,y,0) and (0,0,z).
-     * Rotate by an amount proportional to length.
+     * Used to turn screen input (such as a mouse or touch/drag) into a camera rotation. Given the direction the camera is looking and an x,y vector, in screen space, rotate om the
+     * plane described by the vectors (x,y,0) and (0,0,z). Rotate by an amount proportional to length.
      * <p/>
      * If x,y magnitude is 0, then nothing happens.
      *

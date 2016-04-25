@@ -10,7 +10,6 @@ import com.pheiffware.lib.and.gui.LoggedActivity;
 
 import static com.pheiffware.lib.examples.ExampleListFragment.LibExampleData;
 
-//TODO: Set border offsets uniformly
 public class MainActivity extends LoggedActivity implements ExampleListFragment.Listener
 {
     @Override

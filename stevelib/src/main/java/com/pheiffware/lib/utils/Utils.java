@@ -4,60 +4,29 @@
 */
 package com.pheiffware.lib.utils;
 
-import android.content.res.AssetManager;
-import android.util.Log;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * General utilities.
  */
 public class Utils
 {
-    /**
-     * Loads the contents of a file in the assets directory as a string. Use '/' as separator.
-     *
-     * @param assetManager  assetManager
-     * @param assetFileName assetFileName (relative path to asset file from assets folder)
-     * @return The string contents of the asset
-     * @throws IOException Any problem loading asset
-     */
-    public static String loadAssetAsString(AssetManager assetManager, String assetFileName) throws IOException
-    {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open(assetFileName), "UTF-8"));
-        int character;
-        StringBuilder builder = new StringBuilder();
-        do
-        {
-            character = reader.read();
-            if (character == -1)
-            {
-                break;
-            }
-            else
-            {
-                builder.append((char) character);
-            }
-        } while (true);
-        return builder.toString();
-    }
+
 
     /**
      * Actively destroys a direct buffer. Calling this guarantees that memory is freed immediately. NOTE: Does not work in android!
@@ -81,6 +50,7 @@ public class Utils
 
     /**
      * Get time elapsed between 2 nanosecond time stamps.
+     *
      * @param earlierTimeStamp
      * @param laterTimeStamp
      * @return
@@ -145,20 +115,13 @@ public class Utils
 
     }
 
-    public static URL getAssetURL(String assetPath) throws MalformedURLException
+    public static <T> Set<T> setFromArray(T[] array)
     {
-        return new URL("file:///android_asset/" + assetPath);
+        Set<T> set = new HashSet<>(array.length * 2);
+        for (T element : array)
+        {
+            set.add(element);
+        }
+        return set;
     }
-
-    /**
-     * Logs a life cycle method for a given object.  Log message is debug and will include class name.
-     *
-     * @param object
-     * @param lifeCycleMethodName
-     */
-    public static void logLC(Object object, String lifeCycleMethodName)
-    {
-        Log.d("LifeC - " + object.getClass().getSimpleName(), lifeCycleMethodName);
-    }
-
 }

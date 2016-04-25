@@ -1,9 +1,9 @@
 //Transforms vertices to eye space
-uniform mat4 eyeTransformMatrix;
+uniform mat4 viewModelMatrix;
 //Projects vertices in eye space
-uniform mat4 eyeProjectionMatrix;
+uniform mat4 projectionMatrix;
 //Transforms normals to eye space
-uniform mat3 eyeNormalMatrix;
+uniform mat3 normalMatrix;
 
 attribute vec4 vertexPosition;
 attribute vec3 vertexNormal;
@@ -16,7 +16,7 @@ void main()
 {
 	texCoord = vertexTexCoord;
 	//TODO: Decide on normalization policy
-	normalEyeSpace = normalize(eyeNormalMatrix * vertexNormal);
-	positionEyeSpace = eyeTransformMatrix * vertexPosition;
-	gl_Position = eyeProjectionMatrix * positionEyeSpace;
+	normalEyeSpace = normalize(normalMatrix * vertexNormal);
+	positionEyeSpace = viewModelMatrix * vertexPosition;
+	gl_Position = projectionMatrix * positionEyeSpace;
 }

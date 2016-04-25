@@ -18,6 +18,7 @@ import com.pheiffware.lib.examples.andGraphics.ManagedGraphicsExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.TextureBoxExampleFragment;
+import com.pheiffware.lib.examples.andGraphics.TimedManagedGraphicsExampleFragment;
 import com.pheiffware.lib.examples.physics.TestPhysicsExampleFragment;
 
 import java.util.ArrayList;
@@ -47,13 +48,15 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
     private static List<LibExampleData> examples;
     {
         examples = new ArrayList<>(20);
-
         examples.add(new LibExampleData("Managed Graphics", ManagedGraphicsExampleFragment.class));
         examples.add(new LibExampleData("Texture Box", TextureBoxExampleFragment.class));
         examples.add(new LibExampleData("Collada Mesh", MeshExampleFragment.class));
         examples.add(new LibExampleData("GL Render to Texture", RenderToTextureExampleFragment.class));
         examples.add(new LibExampleData("GL Combined Buffer", CombinedVertexBufferExampleFragment.class));
         examples.add(new LibExampleData("Physics", TestPhysicsExampleFragment.class));
+
+        //TODO: Remove when done testing
+        examples.add(new LibExampleData("Timed Graphics", TimedManagedGraphicsExampleFragment.class));
 
     }
 

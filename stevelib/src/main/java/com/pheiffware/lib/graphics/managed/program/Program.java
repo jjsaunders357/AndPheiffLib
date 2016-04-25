@@ -2,6 +2,7 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
@@ -21,12 +22,12 @@ public class Program
     private final Map<String, Uniform> uniforms;
     private final Map<String, Attribute> attributes;
 
-    public Program(int vertexShaderHandle, int fragmentShaderHandle) throws GraphicsException
+    public Program(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
-        this(ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle));
+        this(ProgramUtils.loadProgram(al, vertexShaderAsset, fragmentShaderAsset));
     }
 
-    public Program(int programHandle)
+    private Program(int programHandle)
     {
         this.handle = programHandle;
 
@@ -55,6 +56,14 @@ public class Program
     public final Uniform getUniform(String uniformName)
     {
         return uniforms.get(uniformName);
+    }
+
+    public final void setUniformValues(String[] uniformNames, Object[] uniformValues)
+    {
+        for (int i = 0; i < uniformNames.length; i++)
+        {
+            setUniformValue(uniformNames[i], uniformValues[i]);
+        }
     }
 
     public final void setUniformValue(String uniformName, Object value)

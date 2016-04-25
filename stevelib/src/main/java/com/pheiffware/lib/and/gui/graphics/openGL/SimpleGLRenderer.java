@@ -1,8 +1,8 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
-import android.content.res.AssetManager;
-
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.touch.TouchTransformListener;
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 
 /**
@@ -15,11 +15,10 @@ public interface SimpleGLRenderer extends TouchTransformListener
      * surrounding it from being deallocated.  This is especially true when the containing fragment's setRetainInstance(true) method was called.
      * <p/>
      * All gl resources should be created/recreated.
-     *
-     * @param am    asset manager, DO NOT RETAIN REFERENCE
+     *  @param al    asset manager, DO NOT RETAIN REFERENCE
      * @param GLCache managed opengl object
      */
-    void onSurfaceCreated(AssetManager am, GLCache GLCache);
+    void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException;
 
     /**
      * Called when surface changes size.
@@ -32,7 +31,7 @@ public interface SimpleGLRenderer extends TouchTransformListener
     /**
      * Called when its time to render a new frame.
      */
-    void onDrawFrame();
+    void onDrawFrame() throws GraphicsException;
 
 
     /**

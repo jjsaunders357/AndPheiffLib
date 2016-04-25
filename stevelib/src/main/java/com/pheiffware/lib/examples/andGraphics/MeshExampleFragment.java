@@ -1,7 +1,8 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.content.res.AssetManager;
+import android.opengl.GLES20;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.collada.Collada;
@@ -9,14 +10,12 @@ import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ShadConst;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -33,24 +32,29 @@ public class MeshExampleFragment extends SimpleGLFragment
         super(new ExampleRenderer(), FilterQuality.MEDIUM);
     }
 
-    private static class ExampleRenderer extends ExampleRotatingRenderer
+    private static class ExampleRenderer extends Base3DExampleRenderer
     {
+        private float rotation = 0;
+
+        private ColorMaterialTechnique colorTechnique;
+        private IndexBuffer indexBuffer;
         private Matrix4 translationMatrix;
 
-        @Override
-        protected Program loadProgram(AssetManager am, GLCache GLCache) throws GraphicsException
+        public ExampleRenderer()
         {
-            return GLCache.createProgram(am, "testProgram3D", "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl");
+            super(90f, 1.0f, 100.0f, 0.01f);
         }
 
         @Override
-        protected StaticVertexBuffer loadBuffers(AssetManager am, GLCache GLCache, IndexBuffer indexBuffer, Program program) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache GLCache) throws GraphicsException
         {
+            super.onSurfaceCreated(al, GLCache);
+            colorTechnique = new ColorMaterialTechnique(al);
             ColladaFactory colladaFactory = new ColladaFactory(true);
             InputStream inputStream = null;
             try
             {
-                inputStream = am.open("meshes/test_render.dae");
+                inputStream = al.getInputStream("meshes/test_render.dae");
                 Collada collada = colladaFactory.loadCollada(inputStream);
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
@@ -63,47 +67,43 @@ public class MeshExampleFragment extends SimpleGLFragment
                 DecomposedTransform3D decomposedTransform = monkey.getInitialMatrix().decompose();
                 translationMatrix = decomposedTransform.getTranslation();
 
+                indexBuffer = new IndexBuffer(false);
                 indexBuffer.allocate(mesh.getNumIndices());
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
-                StaticVertexBuffer vertexBuffer = new StaticVertexBuffer(program,
-                        new String[]
-                                {ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_NORMAL_ATTRIBUTE});
-                vertexBuffer.allocate(mesh.getNumVertices());
-                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_POSITION_ATTRIBUTE, mesh.getPositionData(), 0);
-                vertexBuffer.putAttributeFloats(ShadConst.VERTEX_NORMAL_ATTRIBUTE, mesh.getNormalData(), 0);
-
-                vertexBuffer.transfer();
-                return vertexBuffer;
+                colorTechnique.allocateBuffers(mesh.getNumVertices());
+                colorTechnique.putVertexAttributes(mesh, 0);
+                colorTechnique.transferVertexData();
             }
-            catch (IOException e)
-            {
-                throw new GraphicsException(e);
-            }
-            catch (XMLParseException e)
+            catch (IOException | XMLParseException e)
             {
                 throw new GraphicsException(e);
             }
         }
 
-        @Override
-        protected Matrix4 getTranslationMatrix()
-        {
-            return translationMatrix;
-        }
 
         @Override
-        protected void setUniforms(Program program, Matrix4 projectionMatrix, Matrix4 viewModelMatrix, Matrix3 normalMatrix)
+        protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            program.setUniformValue(ShadConst.EYE_PROJECTION_MATRIX_UNIFORM, projectionMatrix.m);
-            program.setUniformValue(ShadConst.EYE_TRANSFORM_MATRIX_UNIFORM, viewModelMatrix.m);
-            program.setUniformValue(ShadConst.EYE_NORMAL_MATRIX_UNIFORM, normalMatrix.m);
-            program.setUniformValue(ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            program.setUniformValue(ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
-            program.setUniformValue(ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-            program.setUniformValue(ShadConst.SHININESS_UNIFORM, 30.0f);
-            program.setUniformValue(ShadConst.LIGHT_POS_EYE_UNIFORM, new float[]{-3, 3, 0});
+            colorTechnique.bind();
+
+            Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
+
+            colorTechnique.setProperty(TechniqueProperty.PROJECTION_MATRIX, projectionMatrix);
+            colorTechnique.setProperty(TechniqueProperty.VIEW_MATRIX, viewMatrix);
+            colorTechnique.setProperty(TechniqueProperty.MODEL_MATRIX, modelMatrix);
+            colorTechnique.setProperty(TechniqueProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            colorTechnique.setProperty(TechniqueProperty.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            colorTechnique.setProperty(TechniqueProperty.LIGHT_POS, new float[]{-3, 3, 0, 1});
+
+            colorTechnique.setProperty(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+            colorTechnique.setProperty(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
+            colorTechnique.setProperty(TechniqueProperty.SHININESS, 30.0f);
+            colorTechnique.applyProperties();
+
+            indexBuffer.drawAll(GLES20.GL_TRIANGLES);
+            rotation++;
         }
     }
 }

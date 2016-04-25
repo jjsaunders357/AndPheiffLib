@@ -2,9 +2,6 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.managed.Texture;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
-
 /**
  * Holds stats for one uniform of a program Created by Steve on 2/13/2016.
  */
@@ -134,11 +131,7 @@ public abstract class Uniform
                     @Override
                     public void setValue(Object value)
                     {
-                        //TODO: Texture class should contain link to a "SampleManager" rather than always using sampler 0.
-                        Texture texture = (Texture) value;
-                        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
-                        TextureUtils.setActiveTextureUnit(0);
-                        GLES20.glUniform1i(location, 0);
+                        GLES20.glUniform1i(location, (int) value);
                     }
                 };
             case GLES20.GL_BOOL:

@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pheiffware.lib.utils.Utils;
+import com.pheiffware.lib.and.AndUtils;
 
 /**
  * A base fragment class which logs all life cycle methods.  Useful for debugging.
@@ -17,14 +17,14 @@ public class LoggedFragment extends Fragment
     @Override
     public void onAttach(Context context)
     {
-        Utils.logLC(this, "onAttach");
+        AndUtils.logLC(this, "onAttach");
         super.onAttach(context);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        Utils.logLC(this, "onCreate");
+        AndUtils.logLC(this, "onCreate");
         super.onCreate(savedInstanceState);
     }
 
@@ -32,7 +32,7 @@ public class LoggedFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        Utils.logLC(this, "onCreateView");
+        AndUtils.logLC(this, "onCreateView");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -40,56 +40,56 @@ public class LoggedFragment extends Fragment
     @Override
     public void onStart()
     {
-        Utils.logLC(this, "onStart");
+        AndUtils.logLC(this, "onStart");
         super.onStart();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-        Utils.logLC(this, "onSaveInstanceState");
+        AndUtils.logLC(this, "onSaveInstanceState");
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onResume()
     {
-        Utils.logLC(this, "onResume");
+        AndUtils.logLC(this, "onResume");
         super.onResume();
     }
 
     @Override
     public void onPause()
     {
-        Utils.logLC(this, "onPause");
+        AndUtils.logLC(this, "onPause");
         super.onPause();
     }
 
     @Override
     public void onStop()
     {
-        Utils.logLC(this, "onStop");
+        AndUtils.logLC(this, "onStop");
         super.onStop();
     }
 
     @Override
     public void onDestroyView()
     {
-        Utils.logLC(this, "onDestroyView");
+        AndUtils.logLC(this, "onDestroyView");
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy()
     {
-        Utils.logLC(this, "onDestroy");
+        AndUtils.logLC(this, "onDestroy");
         super.onDestroy();
     }
 
     @Override
     public void onDetach()
     {
-        Utils.logLC(this, "onDetach");
+        AndUtils.logLC(this, "onDetach");
         super.onDetach();
     }
 }

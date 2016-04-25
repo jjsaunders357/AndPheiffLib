@@ -172,6 +172,16 @@ public class Matrix4
         //@formatter:on
     }
 
+    /**
+     * Sets matrix to a copy of the given matrix
+     *
+     * @param matrix4
+     */
+    public void set(Matrix4 matrix4)
+    {
+        System.arraycopy(matrix4.m, 0, m, 0, 16);
+    }
+
     public final void setTranslate(float x, float y, float z)
     {
         //@formatter:off
@@ -517,6 +527,7 @@ public class Matrix4
         }
         return true;
     }
+
 
     public String toString()
     {

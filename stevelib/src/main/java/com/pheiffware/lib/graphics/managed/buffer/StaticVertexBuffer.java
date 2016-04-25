@@ -47,6 +47,7 @@ public class StaticVertexBuffer extends BaseBuffer
 
     //The names of the attributes being managed by this buffer
     private String[] attributeNames;
+    private boolean isTransferred = false;
 
     /**
      * Create buffer which holds all vertex attributes for the program.
@@ -60,6 +61,7 @@ public class StaticVertexBuffer extends BaseBuffer
 
     /**
      * Create buffer which holds specific vertex attributes for the program.
+     *
      * @param program
      * @param attributeNames
      */
@@ -129,6 +131,11 @@ public class StaticVertexBuffer extends BaseBuffer
      */
     public void transfer()
     {
+        if (isTransferred)
+        {
+            throw new RuntimeException("Static buffer already transferred");
+        }
+        isTransferred = true;
         // Bind to the buffer. Future commands will affect this buffer specifically.
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
 
@@ -148,5 +155,13 @@ public class StaticVertexBuffer extends BaseBuffer
         deallocateByteBuffer();
     }
 
-
+    /**
+     * Has this buffer been transferred to the GL already?
+     *
+     * @return
+     */
+    public boolean isTransferred()
+    {
+        return isTransferred;
+    }
 }

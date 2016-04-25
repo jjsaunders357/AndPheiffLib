@@ -6,8 +6,10 @@ package com.pheiffware.lib.graphics.utils;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 
+import java.io.IOException;
 import java.nio.IntBuffer;
 
 /**
@@ -15,6 +17,66 @@ import java.nio.IntBuffer;
  */
 public class ProgramUtils
 {
+    /**
+     * Loads a program from the given asset path.
+     *
+     * @param al
+     * @param vertexShaderAssetPath
+     * @param fragmentShaderAssetPath
+     * @return
+     * @throws GraphicsException
+     */
+    public static int loadProgram(AssetLoader al, String vertexShaderAssetPath, String fragmentShaderAssetPath) throws GraphicsException
+    {
+        int vertexShaderHandle = loadVertexShader(al, vertexShaderAssetPath);
+        int fragmentShaderHandle = loadFragmentShader(al, fragmentShaderAssetPath);
+        return ProgramUtils.createProgram(vertexShaderHandle, fragmentShaderHandle);
+    }
+
+    /**
+     * Loads a vertex shader from the given asset path.
+     *
+     * @param al
+     * @param vertexShaderAssetPath
+     * @return
+     * @throws GraphicsException
+     */
+    public static int loadVertexShader(AssetLoader al, String vertexShaderAssetPath) throws GraphicsException
+    {
+        try
+        {
+
+            String code = al.loadAssetAsString(vertexShaderAssetPath);
+            return ProgramUtils.createShader(GLES20.GL_VERTEX_SHADER, code);
+        }
+        catch (IOException e)
+        {
+            throw new GraphicsException(e);
+        }
+    }
+
+    /**
+     * Loads a fragment shader from the given asset path.
+     *
+     * @param al
+     * @param fragmentShaderAssetPath
+     * @return
+     * @throws GraphicsException
+     */
+    public static int loadFragmentShader(AssetLoader al, String fragmentShaderAssetPath) throws GraphicsException
+    {
+        try
+        {
+            String code = al.loadAssetAsString(fragmentShaderAssetPath);
+            return ProgramUtils.createShader(GLES20.GL_FRAGMENT_SHADER, code);
+        }
+        catch (IOException e)
+        {
+            throw new GraphicsException(e);
+        }
+    }
+
+
     /**
      * Link program from loaded fragment/vertex shaders.
      *
