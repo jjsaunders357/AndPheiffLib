@@ -59,7 +59,7 @@ public class StaticVertexBuffer extends BaseBuffer
         for (StdAttribute attribute : attributes)
         {
             setAttributeByteOffset(attribute, attributeByteOffset);
-            attributeByteOffset += attribute.attribute.byteSize;
+            attributeByteOffset += attribute.getByteSize();
         }
         vertexByteSize = attributeByteOffset;
     }
@@ -79,7 +79,7 @@ public class StaticVertexBuffer extends BaseBuffer
      */
     public final void putAttributeFloats(StdAttribute attribute, float[] values, int vertexOffset)
     {
-        putAttributeFloats(getAttributeByteOffset(attribute), attribute.attribute.numBaseTypeElements, values, vertexOffset);
+        putAttributeFloats(getAttributeByteOffset(attribute), attribute.getNumBaseTypeElements(), values, vertexOffset);
     }
 
     public final void putAttributeFloats(int attributeByteOffset, int numBaseTypeElements, float[] values, int vertexOffset)
@@ -104,10 +104,10 @@ public class StaticVertexBuffer extends BaseBuffer
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
         for (StdAttribute attribute : attributes)
         {
-            int location = program.getAttributeLocation(attribute.attribute.name);
+            int location = program.getAttributeLocation(attribute);
             //TODO: Should we just auto-enable this once when the buffer is created?
             GLES20.glEnableVertexAttribArray(location);
-            GLES20.glVertexAttribPointer(location, attribute.attribute.numBaseTypeElements, attribute.attribute.baseType, false, vertexByteSize, getAttributeByteOffset(attribute));
+            GLES20.glVertexAttribPointer(location, attribute.getNumBaseTypeElements(), attribute.getBaseType(), false, vertexByteSize, getAttributeByteOffset(attribute));
         }
     }
 

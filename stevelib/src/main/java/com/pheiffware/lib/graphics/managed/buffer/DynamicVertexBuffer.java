@@ -39,15 +39,15 @@ public class DynamicVertexBuffer extends BaseBuffer
 
     public void allocate(int numVertices)
     {
-        allocateBuffer(numVertices * attribute.attribute.byteSize);
+        allocateBuffer(numVertices * attribute.getByteSize());
     }
 
     public final void bind(Program program)
     {
-        int location = program.getAttributeLocation(attribute.attribute.name);
+        int location = program.getAttributeLocation(attribute);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
         GLES20.glEnableVertexAttribArray(location);
-        GLES20.glVertexAttribPointer(location, attribute.attribute.numBaseTypeElements, attribute.attribute.baseType, false, attribute.attribute.byteSize, 0);
+        GLES20.glVertexAttribPointer(location, attribute.getNumBaseTypeElements(), attribute.getBaseType(), false, attribute.getByteSize(), 0);
     }
 
     /**
