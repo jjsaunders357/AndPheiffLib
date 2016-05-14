@@ -4,7 +4,6 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
 import com.pheiffware.lib.graphics.utils.GraphicsUtils;
@@ -109,12 +108,4 @@ public class ColorMaterialTechnique extends Technique
 
         shininessUniform.setValue(getPropertyValue(TechniqueProperty.SHININESS));
     }
-
-    @Override
-    public void putVertexAttributes(Mesh transferMesh, int vertexWriteOffset)
-    {
-        staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_POSITION_ATTRIBUTE, transferMesh.getPositionData(), vertexWriteOffset);
-        staticVertexBuffer.putAttributeFloats(ShadConst.VERTEX_NORMAL_ATTRIBUTE, transferMesh.getNormalData(), vertexWriteOffset);
-    }
-
 }

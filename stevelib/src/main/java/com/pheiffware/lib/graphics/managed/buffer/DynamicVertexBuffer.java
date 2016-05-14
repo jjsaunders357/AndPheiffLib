@@ -6,8 +6,8 @@ package com.pheiffware.lib.graphics.managed.buffer;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.StdAttribute;
 
 /**
  * Sets up a vertex buffer for holding an array of a single attribute. This is generally more efficient for attributes which will change regularly as
@@ -28,25 +28,26 @@ import com.pheiffware.lib.graphics.managed.program.Program;
 
 public class DynamicVertexBuffer extends BaseBuffer
 {
-    private final Attribute attribute;
+    private final StdAttribute attribute;
 
-    public DynamicVertexBuffer(Program program, String attributeName)
+    public DynamicVertexBuffer(StdAttribute attribute)
     {
         super();
-        attribute = program.getAttribute(attributeName);
+        this.attribute = attribute;
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
     }
 
     public void allocate(int numVertices)
     {
-        allocateBuffer(numVertices * attribute.byteSize);
+        allocateBuffer(numVertices * attribute.attribute.byteSize);
     }
 
-    public final void bind()
+    public final void bind(Program program)
     {
+        int location = program.getAttributeLocation(attribute.attribute.name);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
-        GLES20.glEnableVertexAttribArray(attribute.location);
-        GLES20.glVertexAttribPointer(attribute.location, attribute.numBaseTypeElements, attribute.baseType, false, attribute.byteSize, 0);
+        GLES20.glEnableVertexAttribArray(location);
+        GLES20.glVertexAttribPointer(location, attribute.attribute.numBaseTypeElements, attribute.attribute.baseType, false, attribute.attribute.byteSize, 0);
     }
 
     /**

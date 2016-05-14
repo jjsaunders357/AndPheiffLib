@@ -13,7 +13,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.techniques.ShadConst;
+import com.pheiffware.lib.graphics.techniques.StdAttribute;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 /**
@@ -67,9 +67,12 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
-            cb = new CombinedVertexBuffer(testProgram,
-                    new String[]{ShadConst.VERTEX_POSITION_ATTRIBUTE, ShadConst.VERTEX_TEXCOORD_ATTRIBUTE},
-                    new String[]{"vertexColor"});
+            cb = new CombinedVertexBuffer(new StdAttribute[] {
+                    StdAttribute.POSITION,
+                    StdAttribute.TEXCOORD
+            },new StdAttribute[] {
+                    StdAttribute.COLOR
+            });
             //@formatter:on
             cb.allocate(200);
             cb.putStaticVec4(-x, -y, -z, 1);
@@ -116,7 +119,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
             cb.putDynamicVec4(0, 0, 0, 0, 0);
             cb.putDynamicVec4(0, 0, 0, 0, 0);
             cb.transferDynamic();
-            cb.bind();
+            cb.bind(testProgram);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
             PheiffGLUtils.bindFrameBuffer(0, -1, -1);
 
@@ -133,7 +136,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
             cb.putDynamicVec4(0, 0, 0, 0, 0);
 
             cb.transferDynamic();
-            cb.bind();
+            cb.bind(testProgram);
 
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
             globalTestColor += 0.01;

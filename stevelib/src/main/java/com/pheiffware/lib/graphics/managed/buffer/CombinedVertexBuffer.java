@@ -5,6 +5,7 @@
 package com.pheiffware.lib.graphics.managed.buffer;
 
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.techniques.StdAttribute;
 
 /**
  * A combination of a packed vertex buffer and one or more single attribute vertex buffers. All static attributes should be put in the packed buffer while the dynamic ones are put
@@ -15,13 +16,13 @@ public class CombinedVertexBuffer
     private StaticVertexBuffer staticVertexBuffer;
     private DynamicVertexBuffer[] dynamicVertexBuffers;
 
-    public CombinedVertexBuffer(Program program, String[] staticAttributeNames, String[] dynamicAttributeNames)
+    public CombinedVertexBuffer(StdAttribute[] staticAttributes, StdAttribute[] dynamicAttributes)
     {
-        staticVertexBuffer = new StaticVertexBuffer(program, staticAttributeNames);
-        dynamicVertexBuffers = new DynamicVertexBuffer[dynamicAttributeNames.length];
-        for (int i = 0; i < dynamicAttributeNames.length; i++)
+        staticVertexBuffer = new StaticVertexBuffer(staticAttributes);
+        dynamicVertexBuffers = new DynamicVertexBuffer[dynamicAttributes.length];
+        for (int i = 0; i < dynamicAttributes.length; i++)
         {
-            dynamicVertexBuffers[i] = new DynamicVertexBuffer(program, dynamicAttributeNames[i]);
+            dynamicVertexBuffers[i] = new DynamicVertexBuffer(dynamicAttributes[i]);
         }
     }
 
@@ -34,12 +35,12 @@ public class CombinedVertexBuffer
         }
     }
 
-    public final void bind()
+    public final void bind(Program program)
     {
-        staticVertexBuffer.bind();
+        staticVertexBuffer.bind(program);
         for (int i = 0; i < dynamicVertexBuffers.length; i++)
         {
-            dynamicVertexBuffers[i].bind();
+            dynamicVertexBuffers[i].bind(program);
         }
     }
 
