@@ -75,10 +75,10 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 ColladaObject3D grey = collada.objects.get("grey");
 
                 baseObjectManager = new BaseGraphicsManager(new Program[]{colorProgram, texProgram});
-                redMesh = baseObjectManager.addMesh(red.getMesh(0), colorProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                blueMesh = baseObjectManager.addMesh(blue.getMesh(0), colorProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                brownMesh = baseObjectManager.addMesh(brown.getMesh(0), texProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
-                greyMesh = baseObjectManager.addMesh(grey.getMesh(0), texProgram, new PropertyValue[]{new PropertyValue(ShadConst.SHININESS_UNIFORM, 30.0f)});
+                redMesh = baseObjectManager.addMesh(red.getMesh(0), colorProgram, new PropertyValue[]{new PropertyValue(StdUniforms.SHININESS_UNIFORM, 30.0f)});
+                blueMesh = baseObjectManager.addMesh(blue.getMesh(0), colorProgram, new PropertyValue[]{new PropertyValue(StdUniforms.SHININESS_UNIFORM, 30.0f)});
+                brownMesh = baseObjectManager.addMesh(brown.getMesh(0), texProgram, new PropertyValue[]{new PropertyValue(StdUniforms.SHININESS_UNIFORM, 30.0f)});
+                greyMesh = baseObjectManager.addMesh(grey.getMesh(0), texProgram, new PropertyValue[]{new PropertyValue(StdUniforms.SHININESS_UNIFORM, 30.0f)});
 
                 baseObjectManager.transfer();
             }
@@ -117,13 +117,13 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
             baseObjectManager.setDefaultUniformValues(redMesh);
             colorProgram.setUniformValues(
                     new String[]{
-                            ShadConst.PROJECTION_MATRIX_UNIFORM,
-                            ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                            ShadConst.NORMAL_MATRIX_UNIFORM,
-                            ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                            ShadConst.LIGHT_POS_EYE_UNIFORM
+                            StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                            StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                            StdUniforms.NORMAL_MATRIX_UNIFORM,
+                            StdUniforms.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
+                            StdUniforms.DIFF_LIGHTMAT_COLOR_UNIFORM,
+                            StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                            StdUniforms.LIGHT_POS_EYE_UNIFORM
                     },
                     new Object[]{
                             projectionMatrix.m,
@@ -157,13 +157,13 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(redMesh);
                 colorProgram.setUniformValues(
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.DIFF_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -198,13 +198,13 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(redMesh);
                 colorProgram.setUniformValues(
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.DIFF_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -225,14 +225,14 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(brownMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.MATERIAL_SAMPLER_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM,
+                                StdUniforms.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -268,13 +268,13 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(redMesh,
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.DIFF_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -289,14 +289,14 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(brownMesh,
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.MATERIAL_SAMPLER_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM,
+                                StdUniforms.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -330,14 +330,14 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
                 baseObjectManager.render(brownMesh,
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.MATERIAL_SAMPLER_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM,
+                                StdUniforms.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -377,13 +377,13 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(brownMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -396,7 +396,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                         });
 //                TextureUtils.setActiveTextureUnit(0);
 //                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, bbTex.getHandle());
-                GLES20.glUniform1i(texProgram.getUniform(ShadConst.MATERIAL_SAMPLER_UNIFORM).location, 0);
+                GLES20.glUniform1i(texProgram.getUniform(StdUniforms.MATERIAL_SAMPLER_UNIFORM).location, 0);
 
                 baseObjectManager.renderIndexBuffer(brownMesh);
 
@@ -405,13 +405,13 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(greyMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -424,7 +424,7 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                         });
 //                TextureUtils.setActiveTextureUnit(1);
 //                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, greyTex.getHandle());
-                GLES20.glUniform1i(texProgram.getUniform(ShadConst.MATERIAL_SAMPLER_UNIFORM).location, 1);
+                GLES20.glUniform1i(texProgram.getUniform(StdUniforms.MATERIAL_SAMPLER_UNIFORM).location, 1);
 
                 baseObjectManager.renderIndexBuffer(greyMesh);
             }
@@ -452,14 +452,14 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(brownMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.MATERIAL_SAMPLER_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM,
+                                StdUniforms.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,
@@ -481,14 +481,14 @@ public class TimedManagedGraphicsExampleFragment extends SimpleGLFragment
                 baseObjectManager.setDefaultUniformValues(greyMesh);
                 texProgram.setUniformValues(
                         new String[]{
-                                ShadConst.PROJECTION_MATRIX_UNIFORM,
-                                ShadConst.VIEW_MODEL_MATRIX_UNIFORM,
-                                ShadConst.NORMAL_MATRIX_UNIFORM,
-                                ShadConst.AMBIENT_LIGHT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_COLOR_UNIFORM,
-                                ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM,
-                                ShadConst.LIGHT_POS_EYE_UNIFORM,
-                                ShadConst.MATERIAL_SAMPLER_UNIFORM
+                                StdUniforms.PROJECTION_MATRIX_UNIFORM,
+                                StdUniforms.VIEW_MODEL_MATRIX_UNIFORM,
+                                StdUniforms.NORMAL_MATRIX_UNIFORM,
+                                StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_COLOR_UNIFORM,
+                                StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM,
+                                StdUniforms.LIGHT_POS_EYE_UNIFORM,
+                                StdUniforms.MATERIAL_SAMPLER_UNIFORM
                         },
                         new Object[]{
                                 projectionMatrix.m,

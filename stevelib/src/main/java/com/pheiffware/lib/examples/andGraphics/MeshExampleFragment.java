@@ -15,8 +15,8 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.StdAttribute;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -75,7 +75,7 @@ public class MeshExampleFragment extends SimpleGLFragment
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
-                colorVertexBuffer = new StaticVertexBuffer(new StdAttribute[]{StdAttribute.POSITION, StdAttribute.NORMAL});
+                colorVertexBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
                 colorVertexBuffer.allocate(mesh.getNumVertices());
                 colorVertexBuffer.putVertexAttributes(mesh, 0);
                 colorVertexBuffer.transfer();

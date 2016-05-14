@@ -7,10 +7,8 @@ package com.pheiffware.lib.graphics.managed.buffer;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.techniques.StdAttribute;
-
-//TODO: Rewrite so it is not program centric
 
 /**
  * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over.
@@ -40,10 +38,10 @@ public class StaticVertexBuffer extends BaseBuffer
     private int vertexByteSize;
 
     //Maps standard attributes to their corresponding byte offsets within each vertex data block (EnumSets not supported by Android yet).
-    private int[] attributeByteOffsets = new int[StdAttribute.values().length];
+    private int[] attributeByteOffsets = new int[Attribute.values().length];
 
     //The attributes being managed by this buffer.  This is the order they will appear within each vertex data block
-    private final StdAttribute[] attributes;
+    private final Attribute[] attributes;
 
     //Has the buffer been transferred?  Its illegal to transfer multiple times.
     private boolean isTransferred = false;
@@ -51,12 +49,12 @@ public class StaticVertexBuffer extends BaseBuffer
     /**
      * Create buffer which holds a specific set of standard vertex attributes
      */
-    public StaticVertexBuffer(StdAttribute[] attributes)
+    public StaticVertexBuffer(Attribute[] attributes)
     {
         this.attributes = attributes;
 
         int attributeByteOffset = 0;
-        for (StdAttribute attribute : attributes)
+        for (Attribute attribute : attributes)
         {
             setAttributeByteOffset(attribute, attributeByteOffset);
             attributeByteOffset += attribute.getByteSize();
@@ -77,7 +75,7 @@ public class StaticVertexBuffer extends BaseBuffer
      * @param values
      * @param vertexOffset
      */
-    public final void putAttributeFloats(StdAttribute attribute, float[] values, int vertexOffset)
+    public final void putAttributeFloats(Attribute attribute, float[] values, int vertexOffset)
     {
         putAttributeFloats(getAttributeByteOffset(attribute), attribute.getNumBaseTypeElements(), values, vertexOffset);
     }
@@ -102,7 +100,7 @@ public class StaticVertexBuffer extends BaseBuffer
     public final void bind(Program program)
     {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
-        for (StdAttribute attribute : attributes)
+        for (Attribute attribute : attributes)
         {
             int location = program.getAttributeLocation(attribute);
             //TODO: Should we just auto-enable this once when the buffer is created?
@@ -153,30 +151,30 @@ public class StaticVertexBuffer extends BaseBuffer
 
     public void putVertexAttributes(Mesh mesh, int vertexOffset)
     {
-        for (StdAttribute attribute : attributes)
+        for (Attribute attribute : attributes)
         {
             //TODO: Collada mesh output should be made to follow standard.  This can then be simple loop
-            if (mesh.getPositionData() != null && attribute == StdAttribute.POSITION)
+            if (mesh.getPositionData() != null && attribute == Attribute.POSITION)
             {
                 putAttributeFloats(attribute, mesh.getPositionData(), vertexOffset);
             }
-            if (mesh.getNormalData() != null && attribute == StdAttribute.NORMAL)
+            if (mesh.getNormalData() != null && attribute == Attribute.NORMAL)
             {
                 putAttributeFloats(attribute, mesh.getNormalData(), vertexOffset);
             }
-            if (mesh.getTexCoordData() != null && attribute == StdAttribute.TEXCOORD)
+            if (mesh.getTexCoordData() != null && attribute == Attribute.TEXCOORD)
             {
                 putAttributeFloats(attribute, mesh.getTexCoordData(), vertexOffset);
             }
         }
     }
 
-    private void setAttributeByteOffset(StdAttribute attribute, int byteOffset)
+    private void setAttributeByteOffset(Attribute attribute, int byteOffset)
     {
         attributeByteOffsets[attribute.ordinal()] = byteOffset;
     }
 
-    private int getAttributeByteOffset(StdAttribute attribute)
+    private int getAttributeByteOffset(Attribute attribute)
     {
         return attributeByteOffsets[attribute.ordinal()];
     }
