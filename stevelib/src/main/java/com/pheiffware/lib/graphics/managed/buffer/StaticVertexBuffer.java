@@ -103,7 +103,6 @@ public class StaticVertexBuffer extends BaseBuffer
         for (Attribute attribute : attributes)
         {
             int location = program.getAttributeLocation(attribute);
-            //TODO: Should we just auto-enable this once when the buffer is created?
             GLES20.glEnableVertexAttribArray(location);
             GLES20.glVertexAttribPointer(location, attribute.getNumBaseTypeElements(), attribute.getBaseType(), false, vertexByteSize, getAttributeByteOffset(attribute));
         }
