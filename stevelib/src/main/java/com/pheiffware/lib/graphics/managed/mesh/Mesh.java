@@ -65,14 +65,12 @@ public class Mesh
 
         //Copy data from each individual mesh to this mesh.  This requires offsetting references to vertices in the index buffer appropriately.
         indices = 0;
+        uniqueVerticesCounter = 0;
         MapCounter<Attribute> vertexDataOffsets = new MapCounter<>();
         for (Mesh mesh : meshes)
         {
-            short[] srcIndexData = mesh.vertexIndices;
-            System.arraycopy(
-                    srcIndexData, 0,
-                    vertexIndices, indices, srcIndexData.length);
-            indices += srcIndexData.length;
+            copyIndexArray(mesh.vertexIndices, vertexIndices, indices, uniqueVerticesCounter);
+            indices += mesh.vertexIndices.length;
             for (Attribute attribute : mesh.vertexAttributeData.keySet())
             {
                 int offset = vertexDataOffsets.getCount(attribute);
@@ -83,9 +81,25 @@ public class Mesh
                         srcVertexData.length);
                 vertexDataOffsets.addCount(attribute, srcVertexData.length);
             }
+            uniqueVerticesCounter += mesh.getNumVertices();
         }
     }
 
+    /**
+     * Copies index data from the source mesh to the combined mesh.  Copied indices are adjusted by an offset.
+     *
+     * @param srcMeshIndexData  source index data
+     * @param combinedIndexData destination index data
+     * @param destinationOffset location in destination to copy at
+     * @param indexOffset       how much to offset each copied index
+     */
+    private void copyIndexArray(short[] srcMeshIndexData, short[] combinedIndexData, int destinationOffset, int indexOffset)
+    {
+        for (int i = 0; i < srcMeshIndexData.length; i++)
+        {
+            combinedIndexData[i + destinationOffset] = (short) (srcMeshIndexData[i] + indexOffset);
+        }
+    }
     /**
      * Creates a new mesh by applying the given transform to this mesh's positions/normals.  Original mesh is not affected.
      *

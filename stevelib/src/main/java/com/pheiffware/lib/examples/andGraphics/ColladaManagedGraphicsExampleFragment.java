@@ -12,10 +12,12 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.ColladaGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.PropertyValue;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
@@ -59,13 +61,24 @@ public class ColladaManagedGraphicsExampleFragment extends SimpleGLFragment
             {
                 final Technique textureTechnique = new TextureMaterialTechnique(al);
                 final Technique colorTechnique = new ColorMaterialTechnique(al);
+                final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
+                final StaticVertexBuffer textureBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL,Attribute.TEXCOORD});
+
                 ColladaFactory colladaFactory = new ColladaFactory(true);
 
                 Collada collada = colladaFactory.loadCollada(al, "meshes/cubes.dae");
                 ColladaGraphicsManager.quickLoadTextures(glCache, "images", collada, GLES20.GL_CLAMP_TO_EDGE);
 
                 ColladaObject3D multiCube = collada.objects.get("multi");
-                colladaGraphicsManager = new ColladaGraphicsManager(new Technique[]{colorTechnique, textureTechnique})
+                colladaGraphicsManager = new ColladaGraphicsManager(
+                        new Technique[]{
+                                colorTechnique,
+                                textureTechnique
+                        }, new StaticVertexBuffer[]
+                        {
+                                colorBuffer,
+                                textureBuffer
+                        })
                 {
                     @Override
                     protected Technique getTechniqueForMesh(String objectName, Mesh mesh)
@@ -77,6 +90,19 @@ public class ColladaManagedGraphicsExampleFragment extends SimpleGLFragment
                         else
                         {
                             return textureTechnique;
+                        }
+                    }
+
+                    @Override
+                    protected StaticVertexBuffer getBufferForMesh(String objectName, Mesh mesh)
+                    {
+                        if (mesh.getTexCoordData() == null)
+                        {
+                            return colorBuffer;
+                        }
+                        else
+                        {
+                            return textureBuffer;
                         }
                     }
 

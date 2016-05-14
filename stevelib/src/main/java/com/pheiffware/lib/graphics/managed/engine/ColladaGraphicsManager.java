@@ -5,6 +5,7 @@ import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 
@@ -44,9 +45,9 @@ public abstract class ColladaGraphicsManager extends BaseGraphicsManager
     private final Map<String, ObjectRenderHandle> namedObjects = new HashMap<>();
     private final List<ObjectRenderHandle> anonymousObjects = new ArrayList<>();
 
-    public ColladaGraphicsManager(Technique[] techniques)
+    public ColladaGraphicsManager(Technique[] techniques, StaticVertexBuffer[] vertexBuffers)
     {
-        super(techniques);
+        super(techniques, vertexBuffers);
     }
 
     public void addColladaObjects(Collada collada)
@@ -69,8 +70,9 @@ public abstract class ColladaGraphicsManager extends BaseGraphicsManager
         {
             Mesh mesh = meshes[i];
             Technique technique = getTechniqueForMesh(name, mesh);
+            StaticVertexBuffer vertexBuffer = getBufferForMesh(name, mesh);
             PropertyValue[] propertyValuesArray = getPropertyValuesForMaterial(name, colladaObject3D.getMaterial(i));
-            addMesh(meshes[i], technique, propertyValuesArray);
+            addMesh(meshes[i], vertexBuffer, technique, propertyValuesArray);
         }
         endObjectDef();
 
@@ -94,6 +96,8 @@ public abstract class ColladaGraphicsManager extends BaseGraphicsManager
 
     //TODO: Comment
     protected abstract Technique getTechniqueForMesh(String objectName, Mesh mesh);
+
+    protected abstract StaticVertexBuffer getBufferForMesh(String objectName, Mesh mesh);
 
     protected abstract PropertyValue[] getPropertyValuesForMaterial(String objectName, ColladaMaterial material);
 }
