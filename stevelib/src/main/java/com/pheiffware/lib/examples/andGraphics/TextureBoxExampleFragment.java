@@ -16,7 +16,7 @@ import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.techniques.StdAttribute;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -75,7 +75,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
-                vertexBuffer = new StaticVertexBuffer(new StdAttribute[]{StdAttribute.POSITION, StdAttribute.NORMAL, StdAttribute.TEXCOORD});
+                vertexBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL, Attribute.TEXCOORD});
                 vertexBuffer.allocate(mesh.getNumVertices());
                 vertexBuffer.putVertexAttributes(mesh, 0);
                 vertexBuffer.transfer();

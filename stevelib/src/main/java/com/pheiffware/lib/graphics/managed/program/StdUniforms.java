@@ -1,11 +1,11 @@
-package com.pheiffware.lib.graphics.techniques;
+package com.pheiffware.lib.graphics.managed.program;
 
 /**
  * Naming conventions used in shaders for standard attributes/uniforms.
  * <p/>
  * Created by Steve on 4/15/2016.
  */
-public class ShadConst
+public class StdUniforms
 {
     public static final String PROJECTION_MATRIX_UNIFORM = "projectionMatrix";
     public static final String VIEW_MODEL_MATRIX_UNIFORM = "viewModelMatrix";

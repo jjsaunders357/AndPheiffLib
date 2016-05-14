@@ -6,8 +6,8 @@ package com.pheiffware.lib.graphics.managed.buffer;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.techniques.StdAttribute;
 
 /**
  * Sets up a vertex buffer for holding an array of a single attribute. This is generally more efficient for attributes which will change regularly as
@@ -28,9 +28,9 @@ import com.pheiffware.lib.graphics.techniques.StdAttribute;
 
 public class DynamicVertexBuffer extends BaseBuffer
 {
-    private final StdAttribute attribute;
+    private final Attribute attribute;
 
-    public DynamicVertexBuffer(StdAttribute attribute)
+    public DynamicVertexBuffer(Attribute attribute)
     {
         super();
         this.attribute = attribute;

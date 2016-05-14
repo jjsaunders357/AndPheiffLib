@@ -12,8 +12,8 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.techniques.StdAttribute;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 /**
@@ -67,11 +67,11 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
-            cb = new CombinedVertexBuffer(new StdAttribute[] {
-                    StdAttribute.POSITION,
-                    StdAttribute.TEXCOORD
-            },new StdAttribute[] {
-                    StdAttribute.COLOR
+            cb = new CombinedVertexBuffer(new Attribute[] {
+                    Attribute.POSITION,
+                    Attribute.TEXCOORD
+            },new Attribute[] {
+                    Attribute.COLOR
             });
             //@formatter:on
             cb.allocate(200);

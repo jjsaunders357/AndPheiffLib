@@ -4,6 +4,7 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.program.StdUniforms;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
 import com.pheiffware.lib.graphics.utils.GraphicsUtils;
@@ -13,23 +14,23 @@ import com.pheiffware.lib.graphics.utils.GraphicsUtils;
  * <p/>
  * Required Properties:
  * <p/>
- * ShadConst.PROJECTION_MATRIX - Matrix4
+ * StdUniforms.PROJECTION_MATRIX - Matrix4
  * <p/>
- * ShadConst.VIEW_MATRIX - Matrix4
+ * StdUniforms.VIEW_MATRIX - Matrix4
  * <p/>
- * ShadConst.MODEL_MATRIX) - Matrix4
+ * StdUniforms.MODEL_MATRIX) - Matrix4
  * <p/>
- * ShadConst.AMBIENT_LIGHT_COLOR - float[4]
+ * StdUniforms.AMBIENT_LIGHT_COLOR - float[4]
  * <p/>
- * ShadConst.LIGHT_COLOR - float[4]
+ * StdUniforms.LIGHT_COLOR - float[4]
  * <p/>
- * ShadConst.LIGHT_POS - float[4]
+ * StdUniforms.LIGHT_POS - float[4]
  * <p/>
- * ShadConst.MAT_COLOR - float[4]
+ * StdUniforms.MAT_COLOR - float[4]
  * <p/>
- * ShadConst.SPEC_MAT_COLOR - float[4]
+ * StdUniforms.SPEC_MAT_COLOR - float[4]
  * <p/>
- * ShadConst.SHININESS - float
+ * StdUniforms.SHININESS - float
  * <p/>
  * Created by Steve on 4/23/2016.
  */
@@ -63,14 +64,14 @@ public class ColorMaterialTechnique extends Technique
                 TechniqueProperty.LIGHT_POS,
                 TechniqueProperty.SHININESS
         });
-        eyeProjUniform = getUniform(ShadConst.PROJECTION_MATRIX_UNIFORM);
-        eyeTransUniform = getUniform(ShadConst.VIEW_MODEL_MATRIX_UNIFORM);
-        eyeNormUniform = getUniform(ShadConst.NORMAL_MATRIX_UNIFORM);
-        ambLMUniform = getUniform(ShadConst.AMBIENT_LIGHTMAT_COLOR_UNIFORM);
-        diffLMUniform = getUniform(ShadConst.DIFF_LIGHTMAT_COLOR_UNIFORM);
-        specLMUniform = getUniform(ShadConst.SPEC_LIGHTMAT_COLOR_UNIFORM);
-        lightEyePosUniform = getUniform(ShadConst.LIGHT_POS_EYE_UNIFORM);
-        shininessUniform = getUniform(ShadConst.SHININESS_UNIFORM);
+        eyeProjUniform = getUniform(StdUniforms.PROJECTION_MATRIX_UNIFORM);
+        eyeTransUniform = getUniform(StdUniforms.VIEW_MODEL_MATRIX_UNIFORM);
+        eyeNormUniform = getUniform(StdUniforms.NORMAL_MATRIX_UNIFORM);
+        ambLMUniform = getUniform(StdUniforms.AMBIENT_LIGHTMAT_COLOR_UNIFORM);
+        diffLMUniform = getUniform(StdUniforms.DIFF_LIGHTMAT_COLOR_UNIFORM);
+        specLMUniform = getUniform(StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM);
+        lightEyePosUniform = getUniform(StdUniforms.LIGHT_POS_EYE_UNIFORM);
+        shininessUniform = getUniform(StdUniforms.SHININESS_UNIFORM);
     }
 
 

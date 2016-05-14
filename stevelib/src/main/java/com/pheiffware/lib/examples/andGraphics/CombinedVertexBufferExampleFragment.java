@@ -13,8 +13,8 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.techniques.StdAttribute;
 
 /**
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.
@@ -59,11 +59,11 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
-            cb = new CombinedVertexBuffer(new StdAttribute[] {
-                    StdAttribute.POSITION,
-                    StdAttribute.TEXCOORD
-            },new StdAttribute[] {
-                    StdAttribute.COLOR
+            cb = new CombinedVertexBuffer(new Attribute[] {
+                    Attribute.POSITION,
+                    Attribute.TEXCOORD
+            },new Attribute[] {
+                    Attribute.COLOR
             });
             //@formatter:on
             cb.allocate(2000);

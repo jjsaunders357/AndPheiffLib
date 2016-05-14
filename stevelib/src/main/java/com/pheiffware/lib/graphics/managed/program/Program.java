@@ -5,7 +5,6 @@ import android.opengl.GLES20;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.Texture;
-import com.pheiffware.lib.graphics.techniques.StdAttribute;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
@@ -23,8 +22,8 @@ public class Program
     private final int handle;
     private final Map<String, Uniform> uniforms = new HashMap<>();
     //TODO:Convert to enum sets now that they are available.
-    private final int[] attributeLocations = new int[StdAttribute.values().length];
-    private final StdAttribute[] attributes;
+    private final int[] attributeLocations = new int[Attribute.values().length];
+    private final Attribute[] attributes;
 
     public Program(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
@@ -47,7 +46,7 @@ public class Program
         int[] numAttributesArray = new int[1];
         GLES20.glGetProgramiv(handle, GLES20.GL_ACTIVE_ATTRIBUTES, numAttributesArray, 0);
         int numActiveAttributes = numAttributesArray[0];
-        attributes = new StdAttribute[numActiveAttributes];
+        attributes = new Attribute[numActiveAttributes];
         for (int i = 0; i < numActiveAttributes; i++)
         {
             registerAttributeLocation(i);
@@ -60,12 +59,12 @@ public class Program
         int[] typeArray = new int[1];
         String name = GLES20.glGetActiveAttrib(handle, attributeIndex, arraySizeArray, 0, typeArray, 0);
         int location = GLES20.glGetAttribLocation(handle, name);
-        StdAttribute attribute = StdAttribute.lookupByName(name);
+        Attribute attribute = Attribute.lookupByName(name);
         attributeLocations[attribute.ordinal()] = location;
         attributes[attributeIndex] = attribute;
     }
 
-    public int getAttributeLocation(StdAttribute attribute)
+    public int getAttributeLocation(Attribute attribute)
     {
         return attributeLocations[attribute.ordinal()];
     }
@@ -113,7 +112,7 @@ public class Program
             builder.append(uniform + "\n");
         }
         builder.append("Attribute locations:\n");
-        for (StdAttribute attribute : attributes)
+        for (Attribute attribute : attributes)
         {
             builder.append(attribute.getName() + ": " + getAttributeLocation(attribute) + "\n");
         }
