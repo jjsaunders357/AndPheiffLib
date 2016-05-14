@@ -31,12 +31,16 @@ public class BaseGraphicsManager
     private final Technique[] techniques;
     private final IndexBuffer indexBuffer = new IndexBuffer(false);
 
+    //TODO: Should be combined vertex buffer
+    private final StaticVertexBuffer[] vertexBuffers;
+
     private GraphicsManagerTransferData transferData;
 
-    public BaseGraphicsManager(Technique[] techniques)
+    public BaseGraphicsManager(Technique[] techniques, StaticVertexBuffer[] vertexBuffers)
     {
         this.techniques = techniques;
-        transferData = new GraphicsManagerTransferData(indexBuffer, techniques);
+        this.vertexBuffers = vertexBuffers;
+        transferData = new GraphicsManagerTransferData(indexBuffer, vertexBuffers);
     }
 
     /**
@@ -65,9 +69,9 @@ public class BaseGraphicsManager
      * @param propertyValues
      * @return
      */
-    public final MeshRenderHandle addMesh(Mesh mesh, Technique technique, PropertyValue[] propertyValues)
+    public final MeshRenderHandle addMesh(Mesh mesh, StaticVertexBuffer vertexBuffer, Technique technique, PropertyValue[] propertyValues)
     {
-        int meshIndexOffset = transferData.addMesh(mesh, technique);
+        int meshIndexOffset = transferData.addMesh(mesh, vertexBuffer);
 
         TechniqueProperty[] properties = new TechniqueProperty[propertyValues.length];
         Object[] values = new Object[propertyValues.length];
@@ -77,7 +81,7 @@ public class BaseGraphicsManager
             values[i] = propertyValues[i].value;
         }
 
-        MeshRenderHandle meshRenderHandle = new MeshRenderHandle(technique, properties, values, meshIndexOffset, mesh.getNumIndices());
+        MeshRenderHandle meshRenderHandle = new MeshRenderHandle(technique, properties, values, vertexBuffer, meshIndexOffset, mesh.getNumIndices());
         if (transferData.getCurrentObjectDef() != null)
         {
             transferData.getCurrentObjectDef().addMeshHandle(meshRenderHandle);
@@ -117,14 +121,14 @@ public class BaseGraphicsManager
      */
     public void renderNow(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
-        Technique technique = meshHandle.technique;
-        technique.bind();
+        meshHandle.technique.bind();
+        meshHandle.vertexBuffer.bind(meshHandle.technique.getProgram());
         meshHandle.setProperties();
         for (int i = 0; i < properties.length; i++)
         {
-            technique.setProperty(properties[i], propertyValues[i]);
+            meshHandle.technique.setProperty(properties[i], propertyValues[i]);
         }
-        technique.applyProperties();
+        meshHandle.technique.applyProperties();
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
 

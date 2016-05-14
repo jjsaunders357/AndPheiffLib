@@ -7,10 +7,6 @@ package com.pheiffware.lib.graphics.techniques;
  */
 public class ShadConst
 {
-    public static final String VERTEX_POSITION_ATTRIBUTE = "vertexPosition";
-    public static final String VERTEX_NORMAL_ATTRIBUTE = "vertexNormal";
-    public static final String VERTEX_TEXCOORD_ATTRIBUTE = "vertexTexCoord";
-
     public static final String PROJECTION_MATRIX_UNIFORM = "projectionMatrix";
     public static final String VIEW_MODEL_MATRIX_UNIFORM = "viewModelMatrix";
     public static final String NORMAL_MATRIX_UNIFORM = "normalMatrix";

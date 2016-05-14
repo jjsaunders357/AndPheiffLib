@@ -1,5 +1,6 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
@@ -17,16 +18,19 @@ public class MeshRenderHandle
     final TechniqueProperty[] properties;
     //Reference to corresponding property values
     final Object[] propertyValues;
+    //The vertex buffer where mesh data is stored
+    final StaticVertexBuffer vertexBuffer;
     //The offset in the index buffer to render at
     final int vertexOffset;
     //The number of vertices to render
     final int numVertices;
 
-    public MeshRenderHandle(Technique technique, TechniqueProperty[] properties, Object[] propertyValues, int vertexOffset, int numVertices)
+    public MeshRenderHandle(Technique technique, TechniqueProperty[] properties, Object[] propertyValues, StaticVertexBuffer vertexBuffer, int vertexOffset, int numVertices)
     {
         this.technique = technique;
         this.properties = properties;
         this.propertyValues = propertyValues;
+        this.vertexBuffer = vertexBuffer;
         this.vertexOffset = vertexOffset;
         this.numVertices = numVertices;
     }

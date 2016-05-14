@@ -9,140 +9,25 @@ import com.pheiffware.lib.graphics.GraphicsException;
  */
 public class PheiffGLUtils
 {
-
-
     /**
-     * Get the dimension of a gl semantic Example: GL_FLOAT_VEC2 has dimension 2
-     *
-     * @param type gl semantic constant
-     * @return dimension
+     * Gets the byte size of a base type.
+     * @param type
+     * @return
      */
-    public static int getGLTypeDims(int type)
+    public static int getGLBaseTypeByteSize(int type)
     {
         switch (type)
         {
-            case GLES20.GL_FLOAT:
-                return 1;
-            case GLES20.GL_FLOAT_VEC2:
-                return 2;
-            case GLES20.GL_FLOAT_VEC3:
-                return 3;
-            case GLES20.GL_FLOAT_VEC4:
-                return 4;
-            case GLES20.GL_INT:
-                return 1;
-            case GLES20.GL_INT_VEC2:
-                return 2;
-            case GLES20.GL_INT_VEC3:
-                return 3;
-            case GLES20.GL_INT_VEC4:
-                return 4;
             case GLES20.GL_BOOL:
                 return 1;
-            case GLES20.GL_BOOL_VEC2:
+            case GLES20.GL_SHORT:
                 return 2;
-            case GLES20.GL_BOOL_VEC3:
-                return 3;
-            case GLES20.GL_BOOL_VEC4:
-                return 4;
-            case GLES20.GL_FLOAT_MAT2:
-                return 4;
-            case GLES20.GL_FLOAT_MAT3:
-                return 9;
-            case GLES20.GL_FLOAT_MAT4:
-                return 16;
-            default:
-                throw new RuntimeException("Cannot get size of unsupported opengl semantic: " + type);
-        }
-    }
-
-    /**
-     * Get the "base semantic" for a gl semantic Example, for GL_FLOAT_VEC4, the base semantic is GL_FLOAT.
-     *
-     * @param type the gl semantic
-     * @return the corresponding base semantic
-     */
-    public static int getGLBaseType(int type)
-    {
-        switch (type)
-        {
-            case GLES20.GL_FLOAT:
-                return GLES20.GL_FLOAT;
-            case GLES20.GL_FLOAT_VEC2:
-                return GLES20.GL_FLOAT;
-            case GLES20.GL_FLOAT_VEC3:
-                return GLES20.GL_FLOAT;
-            case GLES20.GL_FLOAT_VEC4:
-                return GLES20.GL_FLOAT;
-            case GLES20.GL_INT:
-                return GLES20.GL_INT;
-            case GLES20.GL_INT_VEC2:
-                return GLES20.GL_INT;
-            case GLES20.GL_INT_VEC3:
-                return GLES20.GL_INT;
-            case GLES20.GL_INT_VEC4:
-                return GLES20.GL_INT;
-            case GLES20.GL_BOOL:
-                return GLES20.GL_BOOL;
-            case GLES20.GL_BOOL_VEC2:
-                return GLES20.GL_BOOL;
-            case GLES20.GL_BOOL_VEC3:
-                return GLES20.GL_BOOL;
-            case GLES20.GL_BOOL_VEC4:
-                return GLES20.GL_BOOL;
-            case GLES20.GL_FLOAT_MAT2:
-                return GLES20.GL_FLOAT;
-            case GLES20.GL_FLOAT_MAT3:
-                return GLES20.GL_FLOAT;
-            case GLES20.GL_FLOAT_MAT4:
-                return GLES20.GL_FLOAT;
-            default:
-                throw new RuntimeException("Cannot get size of unsupported opengl semantic: " + type);
-        }
-    }
-
-    /**
-     * Get the size of a gl semantic
-     *
-     * @param type a semantic such as GLES20.GL_FLOAT
-     * @return size in bytes of the semantic
-     */
-    public static int getGLTypeByteSize(int type)
-    {
-        switch (type)
-        {
-            case GLES20.GL_FLOAT:
-                return 4;
-            case GLES20.GL_FLOAT_VEC2:
-                return 8;
-            case GLES20.GL_FLOAT_VEC3:
-                return 12;
-            case GLES20.GL_FLOAT_VEC4:
-                return 16;
             case GLES20.GL_INT:
                 return 4;
-            case GLES20.GL_INT_VEC2:
-                return 8;
-            case GLES20.GL_INT_VEC3:
-                return 12;
-            case GLES20.GL_INT_VEC4:
-                return 16;
-            case GLES20.GL_BOOL:
-                return 1;
-            case GLES20.GL_BOOL_VEC2:
-                return 1;
-            case GLES20.GL_BOOL_VEC3:
-                return 1;
-            case GLES20.GL_BOOL_VEC4:
-                return 1;
-            case GLES20.GL_FLOAT_MAT2:
-                return 16;
-            case GLES20.GL_FLOAT_MAT3:
-                return 36;
-            case GLES20.GL_FLOAT_MAT4:
-                return 64;
+            case GLES20.GL_FLOAT:
+                return 4;
             default:
-                throw new RuntimeException("Cannot get size of unsupported opengl semantic: " + type);
+                throw new RuntimeException("Cannot get byte size of unsupported opengl basetype: " + type);
         }
     }
 

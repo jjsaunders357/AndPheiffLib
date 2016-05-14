@@ -9,12 +9,14 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.PropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.techniques.StdAttribute;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -70,20 +72,22 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 ColladaObject3D sphere = collada.objects.get("Sphere");
                 ColladaObject3D cube = collada.objects.get("Cube");
 
-                baseObjectManager = new BaseGraphicsManager(new Technique[]{colorTechnique});
-                monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), colorTechnique,
+                StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new StdAttribute[]{StdAttribute.POSITION, StdAttribute.NORMAL});
+
+                baseObjectManager = new BaseGraphicsManager(new Technique[]{colorTechnique}, new StaticVertexBuffer[]{colorBuffer});
+                monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SHININESS, 30.0f)
                         });
-                cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), colorTechnique,
+                cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.6f, 0.8f, 0.3f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{1f, 1f, 1f, 1f}), //Is override later
                                 new PropertyValue(TechniqueProperty.SHININESS, 2.0f)
                         });
-                sphereMesh = baseObjectManager.addMesh(sphere.getMesh(0), colorTechnique,
+                sphereMesh = baseObjectManager.addMesh(sphere.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.5f, 0.2f, 0.2f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{1.0f, 0.9f, 0.8f, 1.0f}),

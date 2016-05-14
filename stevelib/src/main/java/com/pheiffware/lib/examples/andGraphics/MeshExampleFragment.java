@@ -13,8 +13,10 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.techniques.StdAttribute;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -39,6 +41,7 @@ public class MeshExampleFragment extends SimpleGLFragment
         private ColorMaterialTechnique colorTechnique;
         private IndexBuffer indexBuffer;
         private Matrix4 translationMatrix;
+        private StaticVertexBuffer colorVertexBuffer;
 
         public ExampleRenderer()
         {
@@ -71,9 +74,10 @@ public class MeshExampleFragment extends SimpleGLFragment
                 indexBuffer.putIndices(mesh.vertexIndices);
                 indexBuffer.transfer();
 
-                colorTechnique.allocateBuffers(mesh.getNumVertices());
-                colorTechnique.putVertexAttributes(mesh, 0);
-                colorTechnique.transferVertexData();
+                colorVertexBuffer = new StaticVertexBuffer(new StdAttribute[]{StdAttribute.POSITION, StdAttribute.NORMAL});
+                colorVertexBuffer.allocate(mesh.getNumVertices());
+                colorVertexBuffer.putVertexAttributes(mesh, 0);
+                colorVertexBuffer.transfer();
             }
             catch (IOException | XMLParseException e)
             {
@@ -86,7 +90,7 @@ public class MeshExampleFragment extends SimpleGLFragment
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
             colorTechnique.bind();
-
+            colorVertexBuffer.bind(colorTechnique.getProgram());
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
 
             colorTechnique.setProperty(TechniqueProperty.PROJECTION_MATRIX, projectionMatrix);

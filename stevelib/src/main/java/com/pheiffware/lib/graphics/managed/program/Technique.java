@@ -2,8 +2,6 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.Utils;
 
@@ -50,14 +48,10 @@ public abstract class Technique
     //Program being wrapped
     private final Program program;
 
-    //TODO: Should be combined vertex buffer
-    protected final StaticVertexBuffer staticVertexBuffer;
-
     public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, TechniqueProperty[] properties) throws GraphicsException
     {
         this.properties = Utils.setFromArray(properties);
         this.program = (new Program(al, vertexShaderAsset, fragmentShaderAsset));
-        staticVertexBuffer = new StaticVertexBuffer(program);
     }
 
     /**
@@ -82,24 +76,6 @@ public abstract class Technique
      * Should apply all properties to uniforms as appropriate for the technique.
      */
     protected abstract void applyPropertiesToUniforms();
-
-    /**
-     * Responsible for transferring the given mesh vertex data into the given vertex buffer for this technique.
-     *
-     * @param transferMesh
-     * @param vertexWriteOffset
-     */
-    public abstract void putVertexAttributes(Mesh transferMesh, int vertexWriteOffset);
-
-    /**
-     * Allocates the vertex buffers backing this technique
-     *
-     * @param numVertices
-     */
-    public void allocateBuffers(int numVertices)
-    {
-        staticVertexBuffer.allocate(numVertices);
-    }
 
     /**
      * Sets default values for various properties.  These are used every time applyProperties() is called, unless property value explicitly set since the last call to
@@ -180,25 +156,14 @@ public abstract class Technique
         return program.getUniform(uniformName);
     }
 
-    /**
-     * Makes the program/vertex buffers backing this technique active in openGL.
-     */
-    public final void bind()
+    //TODO: Integrate with how vertexbuffer binds program attributes
+    public void bind()
     {
         program.bind();
-        staticVertexBuffer.bind();
     }
 
-    /**
-     * Transfers data in vertex buffers.  This will only transfer data in static buffers the 1st time it is called.
-     */
-    public void transferVertexData()
+    public Program getProgram()
     {
-        if (!staticVertexBuffer.isTransferred())
-        {
-            staticVertexBuffer.transfer();
-        }
+        return program;
     }
-
-
 }

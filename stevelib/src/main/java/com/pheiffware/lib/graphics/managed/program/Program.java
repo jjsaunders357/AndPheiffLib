@@ -11,44 +11,55 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Wraps the concept of an opengl program into a convenient object.
- * Created by Steve on 2/13/2016.
+ * Wraps the concept of an opengl program into a convenient object. Created by Steve on 2/13/2016.
  */
 public class Program
 {
     private final int handle;
-    private final Map<String, Uniform> uniforms;
-    private final Map<String, Attribute> attributes;
+    private final Map<String, Uniform> uniforms = new HashMap<>();
+    private final Map<String, Integer> attributeLocations = new HashMap<>();
 
     public Program(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
         this(ProgramUtils.loadProgram(al, vertexShaderAsset, fragmentShaderAsset));
     }
 
-    private Program(int programHandle)
+    private Program(int handle)
     {
-        this.handle = programHandle;
+        this.handle = handle;
 
         int[] numUniformsArray = new int[1];
-        GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
+        GLES20.glGetProgramiv(handle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
         int numActiveUniforms = numUniformsArray[0];
-        uniforms = new HashMap<>();
 
         for (int i = 0; i < numActiveUniforms; i++)
         {
-            Uniform uniform = Uniform.createUniform(programHandle, i);
+            Uniform uniform = Uniform.createUniform(handle, i);
             uniforms.put(uniform.name, uniform);
         }
 
         int[] numAttributesArray = new int[1];
-        GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_ATTRIBUTES, numAttributesArray, 0);
+        GLES20.glGetProgramiv(handle, GLES20.GL_ACTIVE_ATTRIBUTES, numAttributesArray, 0);
         int numActiveAttributes = numAttributesArray[0];
-        attributes = new HashMap<>();
+
         for (int i = 0; i < numActiveAttributes; i++)
         {
-            Attribute attribute = new Attribute(programHandle, i);
-            attributes.put(attribute.name, attribute);
+            registerAttributeLocation(i);
         }
+    }
+
+    private void registerAttributeLocation(int attributeIndex)
+    {
+        int[] arraySizeArray = new int[1];
+        int[] typeArray = new int[1];
+        String name = GLES20.glGetActiveAttrib(handle, attributeIndex, arraySizeArray, 0, typeArray, 0);
+        int location = GLES20.glGetAttribLocation(handle, name);
+        attributeLocations.put(name, location);
+    }
+
+    public int getAttributeLocation(String name)
+    {
+        return attributeLocations.get(name);
     }
 
     public final Uniform getUniform(String uniformName)
@@ -78,19 +89,9 @@ public class Program
         }
     }
 
-    public final Attribute getAttribute(String attributeName)
-    {
-        return attributes.get(attributeName);
-    }
-
     public final Collection<String> getUniformNames()
     {
         return uniforms.keySet();
-    }
-
-    public final Collection<String> getAttributeNames()
-    {
-        return attributes.keySet();
     }
 
     @Override
@@ -103,10 +104,10 @@ public class Program
         {
             builder.append(uniform + "\n");
         }
-        builder.append("Attributes:\n");
-        for (Attribute attribute : attributes.values())
+        builder.append("Attribute locations:\n");
+        for (Map.Entry<String, Integer> entry : attributeLocations.entrySet())
         {
-            builder.append(attribute + "\n");
+            builder.append(entry.getKey() + ": " + entry.getValue() + "\n");
         }
         return builder.toString();
     }
