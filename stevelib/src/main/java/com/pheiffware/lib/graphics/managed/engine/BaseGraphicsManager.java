@@ -61,6 +61,7 @@ public class BaseGraphicsManager
         transferData.endObjectDef();
     }
 
+    //TODO: This should pick the buffer to put the data in for you!
     /**
      * Add a mesh to be rendered with a particular technique and specific property values.  The is added to the current object definition if one is being defined.
      *
