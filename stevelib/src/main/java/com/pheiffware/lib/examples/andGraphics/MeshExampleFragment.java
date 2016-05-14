@@ -71,7 +71,7 @@ public class MeshExampleFragment extends SimpleGLFragment
 
                 indexBuffer = new IndexBuffer(false);
                 indexBuffer.allocate(mesh.getNumIndices());
-                indexBuffer.putIndices(mesh.vertexIndices);
+                indexBuffer.putIndices(mesh.getVertexIndices());
                 indexBuffer.transfer();
 
                 colorVertexBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});

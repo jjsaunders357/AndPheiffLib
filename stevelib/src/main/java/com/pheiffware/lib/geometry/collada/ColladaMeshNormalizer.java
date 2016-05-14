@@ -1,23 +1,39 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.utils.GraphicsUtils;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Does the ugly job of untangling the ridiculous Collada input meshes vertex index data.  The test cases demonstrate this better though examples than I can explain here.
- * This also homogenizes the data if the flag is present.  POSITION/NORMAL data are padded with an extra element.
+ *
+ * This also homogenizes the position data, if the flag is set (adds 4th coordinate with value 1 to POSITION).
+ *
+ * This produces a Mesh object with a map from Attributes to corresponding data.
+ *
  * The result is a single unified list of indices, each of which, references data in the various arrays stored in the data map.
  * * Created by Steve on 2/15/2016.
  */
 class ColladaMeshNormalizer
 {
+    //Contains a mapping from Collada names for properties to standard attributes
+    private static final Map<String, Attribute> colladaNameToAttribute = new HashMap<>();
+
+    {
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_POSITION, Attribute.POSITION);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_NORMAL, Attribute.NORMAL);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_TEXCOORD, Attribute.TEXCOORD);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_COLOR, Attribute.COLOR);
+    }
+
     //Original mesh as loaded from Collada
     private final ColladaMesh colladaMesh;
 
-    //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
+    //When position are loaded, a 1 is appended to the end of the loaded data to create a homogeneous position
     private final boolean homogenizePositions;
 
     //The number of unique vertices.  Each array in vertex data is this length
@@ -29,7 +45,7 @@ class ColladaMeshNormalizer
 
     /**
      * For each unique combination of indices within a stride (a unique vertex), create a new universal vertex index.
-     * Write these universal vertex indices, in order, in vertexDataIndices.  Also stores the total number of unique vertices in numUniqueVertices.
+     * Write these universal vertex indices, in order, in vertexDataIndices.  Also stores the total number of unique vertices in numVertices.
      */
     private void generateUniversalVertexIndices()
     {
@@ -79,11 +95,10 @@ class ColladaMeshNormalizer
         }
     }
 
-    public ColladaMeshNormalizer(Map<String, ColladaInput> vertexDataInputs, short[] interleavedIndices, int vertexCount, boolean homogenizePositions)
-    {
-        this(new ColladaMesh(vertexDataInputs, interleavedIndices, vertexCount), homogenizePositions);
-    }
-
+    /**
+     * @param colladaMesh         the mesh to normalize
+     * @param homogenizePositions should the positions be normalized? (4th element with value 1 added to each position)
+     */
     public ColladaMeshNormalizer(ColladaMesh colladaMesh, boolean homogenizePositions)
     {
         this.homogenizePositions = homogenizePositions;
@@ -95,7 +110,14 @@ class ColladaMeshNormalizer
         generateUniversalVertexIndices();
         generateUniqueVertexData();
         homogenizePositions();
-        return new Mesh(numUniqueVertices, vertexData, vertexDataIndices);
+
+        EnumMap<Attribute, float[]> attributeData = new EnumMap<>(Attribute.class);
+        for (Map.Entry<String, float[]> entry : vertexData.entrySet())
+        {
+            Attribute attribute = colladaNameToAttribute.get(entry.getKey());
+            attributeData.put(attribute, entry.getValue());
+        }
+        return new Mesh(numUniqueVertices, attributeData, vertexDataIndices);
     }
 
     private void homogenizePositions()
