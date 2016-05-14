@@ -10,6 +10,8 @@ import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
 
+import java.util.EnumMap;
+
 /**
  * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over.
  * <p/>
@@ -37,8 +39,8 @@ public class StaticVertexBuffer extends BaseBuffer
     //Total size of each vertex in this buffer
     private int vertexByteSize;
 
-    //Maps standard attributes to their corresponding byte offsets within each vertex data block (EnumSets not supported by Android yet).
-    private int[] attributeByteOffsets = new int[Attribute.values().length];
+    //Maps standard attributes to their corresponding byte offsets within each vertex data block
+    private EnumMap<Attribute, Integer> attributeVertexByteOffset = new EnumMap<>(Attribute.class);
 
     //The attributes being managed by this buffer.  This is the order they will appear within each vertex data block
     private final Attribute[] attributes;
@@ -68,6 +70,22 @@ public class StaticVertexBuffer extends BaseBuffer
     }
 
     /**
+     * Put all attributes from a given mesh, which this buffer supports, into this buffer a the given vertex offset.
+     *
+     * @param mesh
+     * @param vertexOffset
+     */
+    public void putVertexAttributes(Mesh mesh, int vertexOffset)
+    {
+        for (Attribute attribute : attributes)
+        {
+            if (mesh.hasAttributeData(attribute))
+            {
+                putAttributeFloats(attribute, mesh.getAttributeData(attribute), vertexOffset);
+            }
+        }
+    }
+    /**
      * For a given attribute put an array of floats in the appropriate buffer location, starting at the given vertex offset. Note, this is very inefficient, but is fine for one
      * time setup.
      *
@@ -95,7 +113,7 @@ public class StaticVertexBuffer extends BaseBuffer
     }
 
     /**
-     * Binds this buffer with all specified attributes, such that it will work with the given program.
+     * Binds this buffer with all attributes, such that it will work with the given program.
      */
     public final void bind(Program program)
     {
@@ -147,34 +165,13 @@ public class StaticVertexBuffer extends BaseBuffer
         return isTransferred;
     }
 
-
-    public void putVertexAttributes(Mesh mesh, int vertexOffset)
-    {
-        for (Attribute attribute : attributes)
-        {
-            //TODO: Collada mesh output should be made to follow standard.  This can then be simple loop
-            if (mesh.getPositionData() != null && attribute == Attribute.POSITION)
-            {
-                putAttributeFloats(attribute, mesh.getPositionData(), vertexOffset);
-            }
-            if (mesh.getNormalData() != null && attribute == Attribute.NORMAL)
-            {
-                putAttributeFloats(attribute, mesh.getNormalData(), vertexOffset);
-            }
-            if (mesh.getTexCoordData() != null && attribute == Attribute.TEXCOORD)
-            {
-                putAttributeFloats(attribute, mesh.getTexCoordData(), vertexOffset);
-            }
-        }
-    }
-
     private void setAttributeByteOffset(Attribute attribute, int byteOffset)
     {
-        attributeByteOffsets[attribute.ordinal()] = byteOffset;
+        attributeVertexByteOffset.put(attribute, byteOffset);
     }
 
     private int getAttributeByteOffset(Attribute attribute)
     {
-        return attributeByteOffsets[attribute.ordinal()];
+        return attributeVertexByteOffset.get(attribute);
     }
 }

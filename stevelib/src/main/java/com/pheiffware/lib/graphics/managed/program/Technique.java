@@ -3,9 +3,9 @@ package com.pheiffware.lib.graphics.managed.program;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
-import com.pheiffware.lib.utils.Utils;
 
-import java.util.Set;
+import java.util.EnumMap;
+import java.util.EnumSet;
 
 /**
  * Provides high-level property interface to a shader program.  Example:
@@ -32,25 +32,23 @@ import java.util.Set;
 public abstract class Technique
 {
     //The set of properties which apply to this technique
-    private final Set<TechniqueProperty> properties;
+    private final EnumSet<TechniqueProperty> properties = EnumSet.noneOf(TechniqueProperty.class);
 
     //Default properties which should be used every time unless explicitly overridden in a particular property batch.
-    private final Object[] defaultPropertyValues = new Object[TechniqueProperty.values().length];
-
-    //How many elements of activeDefaultProperties are meaningful
-    private int numActiveDefaultProperties = 0;
-    //List of default properties which are active
-    private int[] activeDefaultProperties = new int[TechniqueProperty.values().length];
+    private final EnumMap<TechniqueProperty, Object> defaultPropertyValues = new EnumMap<>(TechniqueProperty.class);
 
     //Values of properties cached here for use in applyProperties()
-    private final Object[] propertyValues = new Object[TechniqueProperty.values().length];
+    private final EnumMap<TechniqueProperty, Object> propertyValues = new EnumMap<>(TechniqueProperty.class);
 
     //Program being wrapped
     private final Program program;
 
     public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, TechniqueProperty[] properties) throws GraphicsException
     {
-        this.properties = Utils.setFromArray(properties);
+        for (TechniqueProperty property : properties)
+        {
+            this.properties.add(property);
+        }
         this.program = (new Program(al, vertexShaderAsset, fragmentShaderAsset));
     }
 
@@ -60,15 +58,14 @@ public abstract class Technique
     public void applyProperties()
     {
         applyPropertiesToUniforms();
-        resetDefaultProperties();
+        defaultPropertyValues();
     }
 
-    private void resetDefaultProperties()
+    private void defaultPropertyValues()
     {
-        for (int i = 0; i < numActiveDefaultProperties; i++)
+        for (TechniqueProperty property : defaultPropertyValues.keySet())
         {
-            int defaultPropertyIndex = activeDefaultProperties[i];
-            setProperty(defaultPropertyIndex, defaultPropertyValues[defaultPropertyIndex]);
+            setProperty(property, defaultPropertyValues.get(property));
         }
     }
 
@@ -81,21 +78,17 @@ public abstract class Technique
      * Sets default values for various properties.  These are used every time applyProperties() is called, unless property value explicitly set since the last call to
      * applyProperties()
      *
-     * @param defaultProperties
-     * @param objects
+     * @param properties
+     * @param defaultValues
      */
-    public final void setDefaultPropertyValues(TechniqueProperty[] defaultProperties, Object[] objects)
+    public final void setDefaultPropertyValues(TechniqueProperty[] properties, Object[] defaultValues)
     {
-        numActiveDefaultProperties = defaultProperties.length;
-        for (int i = 0; i < defaultProperties.length; i++)
+        defaultPropertyValues.clear();
+        for (int i = 0; i < properties.length; i++)
         {
-            if (properties.contains(defaultProperties[i]))
-            {
-                activeDefaultProperties[i] = defaultProperties[i].ordinal();
-                defaultPropertyValues[defaultProperties[i].ordinal()] = objects[i];
-            }
+            defaultPropertyValues.put(properties[i], defaultValues[i]);
         }
-        resetDefaultProperties();
+        defaultPropertyValues();
     }
 
     /**
@@ -106,18 +99,7 @@ public abstract class Technique
      */
     public final void setProperty(TechniqueProperty property, Object propertyValue)
     {
-        setProperty(property.ordinal(), propertyValue);
-    }
-
-    /**
-     * Set a property value.  This will be translated to a uniform value in the applyProperties method.
-     *
-     * @param propertyIndex
-     * @param propertyValue
-     */
-    private void setProperty(int propertyIndex, Object propertyValue)
-    {
-        propertyValues[propertyIndex] = propertyValue;
+        propertyValues.put(property, propertyValue);
     }
 
     /**
@@ -142,7 +124,7 @@ public abstract class Technique
      */
     protected final Object getPropertyValue(TechniqueProperty property)
     {
-        return propertyValues[property.ordinal()];
+        return propertyValues.get(property);
     }
 
     /**

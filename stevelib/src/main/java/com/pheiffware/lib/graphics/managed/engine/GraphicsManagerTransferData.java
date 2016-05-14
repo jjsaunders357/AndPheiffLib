@@ -70,7 +70,7 @@ public class GraphicsManagerTransferData
             Mesh transferMesh = meshesForTransfer.get(i);
             StaticVertexBuffer vertexBuffer = meshVertexBuffers.get(i);
             int vertexWriteOffset = vertexBufferOffsets.getCount(vertexBuffer);
-            indexBuffer.putIndicesWithOffset(transferMesh.vertexIndices, indexWriteOffset, (short) vertexWriteOffset);
+            indexBuffer.putIndicesWithOffset(transferMesh.getVertexIndices(), indexWriteOffset, (short) vertexWriteOffset);
             vertexBuffer.putVertexAttributes(transferMesh, vertexWriteOffset);
             indexWriteOffset += transferMesh.getNumIndices();
             vertexBufferOffsets.addCount(vertexBuffer, transferMesh.getNumVertices());

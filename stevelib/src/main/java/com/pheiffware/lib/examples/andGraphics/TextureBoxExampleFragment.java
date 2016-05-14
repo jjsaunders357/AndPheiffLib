@@ -74,7 +74,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 Mesh mesh = brickCube.getMesh(0);
                 indexBuffer = new IndexBuffer(false);
                 indexBuffer.allocate(mesh.getNumIndices());
-                indexBuffer.putIndices(mesh.vertexIndices);
+                indexBuffer.putIndices(mesh.getVertexIndices());
                 indexBuffer.transfer();
 
                 vertexBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL, Attribute.TEXCOORD});

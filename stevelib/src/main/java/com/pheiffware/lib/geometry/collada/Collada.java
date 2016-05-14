@@ -24,6 +24,7 @@ public class Collada
     public static final String COLLADA_VERTEX_POSITION = "POSITION";
     public static final String COLLADA_VERTEX_NORMAL = "NORMAL";
     public static final String COLLADA_VERTEX_TEXCOORD = "TEXCOORD";
+    public static final String COLLADA_VERTEX_COLOR = "COLOR";
 
     //A list of all images used in textures in the Collada file
     public final Collection<String> imageFileNames;

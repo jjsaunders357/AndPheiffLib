@@ -9,6 +9,8 @@ import com.pheiffware.lib.graphics.utils.ProgramUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 import java.util.Collection;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +23,8 @@ public class Program
 {
     private final int handle;
     private final Map<String, Uniform> uniforms = new HashMap<>();
-    //TODO:Convert to enum sets now that they are available.
-    private final int[] attributeLocations = new int[Attribute.values().length];
-    private final Attribute[] attributes;
+    private final EnumMap<Attribute, Integer> attributeLocations = new EnumMap<>(Attribute.class);
+    private final EnumSet<Attribute> attributes = EnumSet.noneOf(Attribute.class);
 
     public Program(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
@@ -46,7 +47,6 @@ public class Program
         int[] numAttributesArray = new int[1];
         GLES20.glGetProgramiv(handle, GLES20.GL_ACTIVE_ATTRIBUTES, numAttributesArray, 0);
         int numActiveAttributes = numAttributesArray[0];
-        attributes = new Attribute[numActiveAttributes];
         for (int i = 0; i < numActiveAttributes; i++)
         {
             registerAttributeLocation(i);
@@ -60,13 +60,13 @@ public class Program
         String name = GLES20.glGetActiveAttrib(handle, attributeIndex, arraySizeArray, 0, typeArray, 0);
         int location = GLES20.glGetAttribLocation(handle, name);
         Attribute attribute = Attribute.lookupByName(name);
-        attributeLocations[attribute.ordinal()] = location;
-        attributes[attributeIndex] = attribute;
+        attributeLocations.put(attribute, location);
+        attributes.add(attribute);
     }
 
     public int getAttributeLocation(Attribute attribute)
     {
-        return attributeLocations[attribute.ordinal()];
+        return attributeLocations.get(attribute);
     }
 
     public final Uniform getUniform(String uniformName)
