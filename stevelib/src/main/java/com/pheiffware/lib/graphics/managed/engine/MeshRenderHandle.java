@@ -14,7 +14,7 @@ public class MeshRenderHandle
 {
     //The technique to use when rendering this mesh
     final Technique technique;
-    //Reference to properties which should always be set to specific values for this
+    //Reference to properties which should be set when rendering this mesh
     final TechniqueProperty[] properties;
     //Reference to corresponding property values
     final Object[] propertyValues;

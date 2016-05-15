@@ -19,7 +19,7 @@ import java.util.Map;
  * <p/>
  * Created by Steve on 4/19/2016.
  */
-public abstract class ColladaGraphicsManager extends BaseGraphicsManager
+public abstract class ColladaGraphicsManager extends StandardGraphicsManager
 {
     /**
      * Simple function to load all textures in a given file into the cache, for a given image directory.  All images are named based on the base file name.
@@ -69,10 +69,8 @@ public abstract class ColladaGraphicsManager extends BaseGraphicsManager
         for (int i = 0; i < meshes.length; i++)
         {
             Mesh mesh = meshes[i];
-            Technique technique = getTechniqueForMesh(name, mesh);
-            StaticVertexBuffer vertexBuffer = getBufferForMesh(name, mesh);
-            PropertyValue[] propertyValuesArray = getPropertyValuesForMaterial(name, colladaObject3D.getMaterial(i));
-            addMesh(meshes[i], vertexBuffer, technique, propertyValuesArray);
+            MeshInfo meshInfo = getMeshInfo(name, mesh, colladaObject3D.getMaterial(i));
+            addMesh(mesh, meshInfo);
         }
         endObjectDef();
 
@@ -88,16 +86,19 @@ public abstract class ColladaGraphicsManager extends BaseGraphicsManager
     }
 
 
+
     public final ObjectRenderHandle addColladaObject(ColladaObject3D colladaObject3D)
     {
         return addColladaObject(null, colladaObject3D);
     }
 
-
-    //TODO: Comment
-    protected abstract Technique getTechniqueForMesh(String objectName, Mesh mesh);
-
-    protected abstract StaticVertexBuffer getBufferForMesh(String objectName, Mesh mesh);
-
-    protected abstract PropertyValue[] getPropertyValuesForMaterial(String objectName, ColladaMaterial material);
+    /**
+     * Figures out appropriate information about how to render/store the given mesh given various information
+     *
+     * @param objectName the name of the object this mesh is a part of
+     * @param mesh       the mesh itself
+     * @param material   the collada material used to render this
+     * @return
+     */
+    protected abstract MeshInfo getMeshInfo(String objectName, Mesh mesh, ColladaMaterial material);
 }

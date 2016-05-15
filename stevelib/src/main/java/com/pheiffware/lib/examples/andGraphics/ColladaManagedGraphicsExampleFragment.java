@@ -81,49 +81,37 @@ public class ColladaManagedGraphicsExampleFragment extends SimpleGLFragment
                         })
                 {
                     @Override
-                    protected Technique getTechniqueForMesh(String objectName, Mesh mesh)
+                    protected MeshInfo getMeshInfo(String objectName, Mesh mesh, ColladaMaterial material)
                     {
+                        Technique technique;
+                        StaticVertexBuffer vertexBuffer;
+                        PropertyValue[] propertyValues;
                         if (mesh.getTexCoordData() == null)
                         {
-                            return colorTechnique;
+                            technique = colorTechnique;
+                            vertexBuffer = colorBuffer;
                         }
                         else
                         {
-                            return textureTechnique;
+                            technique = textureTechnique;
+                            vertexBuffer = textureBuffer;
                         }
-                    }
-
-                    @Override
-                    protected StaticVertexBuffer getBufferForMesh(String objectName, Mesh mesh)
-                    {
-                        if (mesh.getTexCoordData() == null)
-                        {
-                            return colorBuffer;
-                        }
-                        else
-                        {
-                            return textureBuffer;
-                        }
-                    }
-
-                    @Override
-                    protected PropertyValue[] getPropertyValuesForMaterial(String objectName, ColladaMaterial material)
-                    {
                         if (material.imageFileName == null)
                         {
-                            return new PropertyValue[]{
+                            propertyValues = new PropertyValue[]{
                                     new PropertyValue(TechniqueProperty.MAT_COLOR, material.diffuseColor.comps),
                                     new PropertyValue(TechniqueProperty.SHININESS, material.shininess),
                                     new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, material.specularColor.comps)};
                         }
                         else
                         {
-                            return new PropertyValue[]{
+                            propertyValues = new PropertyValue[]{
                                     new PropertyValue(TechniqueProperty.MAT_COLOR_TEXTURE, glCache.getTexture(material.imageFileName)),
                                     new PropertyValue(TechniqueProperty.SHININESS, material.shininess),
                                     new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, material.specularColor.comps)};
 
                         }
+                        return new MeshInfo(vertexBuffer, technique, propertyValues);
                     }
                 };
 

@@ -7,25 +7,9 @@ import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
 /**
- * This class manages storing data in index/vertex buffers and then conveniently/efficiently rendering that data.
+ * TODO: Comment me!
  * <p/>
- * The core organizational structures are MeshHandles.  These contain a reference into the buffers where primitives are stored along with default rendering parameters such as color
- * and shininess.  An ObjectHandle is a reference to a collection of meshes, possibly rendered with different techniques, which share properties such as ModelMatrix.
- * <p/>
- * Typical usage:
- * <p/>
- * 1. Call addObject() and addMesh() over and over.
- * <p/>
- * 2. Call transfer()
- * <p/>
- * 3. Call setDefaultPropertyValues()
- * <p/>
- * TODO: Comment once we advance further
- * <p/>
- * 4. Call renderNow() over and over again
- * <p/>
- * <p/>
- * Created by Steve on 4/13/2016.
+ * Created by Steve on 5/15/2016.
  */
 public class BaseGraphicsManager
 {
@@ -62,7 +46,11 @@ public class BaseGraphicsManager
         transferData.endObjectDef();
     }
 
-    //TODO: This should pick the buffer to put the data in for you!
+    public MeshRenderHandle addMesh(Mesh mesh, MeshInfo meshInfo)
+    {
+        return addMesh(mesh, meshInfo.vertexBuffer, meshInfo.technique, meshInfo.propertyValues);
+    }
+
     /**
      * Add a mesh to be rendered with a particular technique and specific property values.  The is added to the current object definition if one is being defined.
      *
@@ -158,4 +146,17 @@ public class BaseGraphicsManager
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
 
+    protected static class MeshInfo
+    {
+        public final StaticVertexBuffer vertexBuffer;
+        public final Technique technique;
+        public final PropertyValue[] propertyValues;
+
+        public MeshInfo(StaticVertexBuffer vertexBuffer, Technique technique, PropertyValue[] propertyValues)
+        {
+            this.vertexBuffer = vertexBuffer;
+            this.technique = technique;
+            this.propertyValues = propertyValues;
+        }
+    }
 }

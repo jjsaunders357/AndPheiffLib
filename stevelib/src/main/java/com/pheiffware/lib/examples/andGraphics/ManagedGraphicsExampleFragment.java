@@ -10,10 +10,10 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.PropertyValue;
+import com.pheiffware.lib.graphics.managed.engine.StandardGraphicsManager;
 import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
@@ -43,7 +43,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private final float[] lightColor = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
         private float rotation = 0;
-        private BaseGraphicsManager baseObjectManager;
+        private StandardGraphicsManager baseObjectManager;
         private ObjectRenderHandle staticMonkey;
         private ObjectRenderHandle staticSphere;
         private ObjectRenderHandle staticCube;
@@ -74,7 +74,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
                 StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
 
-                baseObjectManager = new BaseGraphicsManager(new Technique[]{colorTechnique}, new StaticVertexBuffer[]{colorBuffer});
+                baseObjectManager = new StandardGraphicsManager(new Technique[]{colorTechnique}, new StaticVertexBuffer[]{colorBuffer});
                 monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f}),
