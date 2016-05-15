@@ -7,7 +7,6 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: Should NOT extend a particular GraphicsManager.  Should instead loaded an arbitrary graphics manager.
  * <p/>
  * Created by Steve on 4/19/2016.
  */
-public abstract class ColladaGraphicsManager extends SingleTechniqueGraphicsManager
+public abstract class ColladaGraphicsLoader<M>
 {
+
     /**
      * Simple function to load all textures in a given file into the cache, for a given image directory.  All images are named based on the base file name.
      *
@@ -42,12 +41,13 @@ public abstract class ColladaGraphicsManager extends SingleTechniqueGraphicsMana
         }
     }
 
+    private final BaseGraphicsManager<M> graphicsManager;
     private final Map<String, ObjectRenderHandle> namedObjects = new HashMap<>();
     private final List<ObjectRenderHandle> anonymousObjects = new ArrayList<>();
 
-    public ColladaGraphicsManager(Technique[] techniques, StaticVertexBuffer[] vertexBuffers)
+    public ColladaGraphicsLoader(BaseGraphicsManager<M> graphicsManager)
     {
-        super(vertexBuffers, techniques);
+        this.graphicsManager = graphicsManager;
     }
 
     public void addColladaObjects(Collada collada)
@@ -62,17 +62,17 @@ public abstract class ColladaGraphicsManager extends SingleTechniqueGraphicsMana
         }
     }
 
-    public final ObjectRenderHandle addColladaObject(String name, ColladaObject3D colladaObject3D)
+    public final ObjectRenderHandle<M> addColladaObject(String name, ColladaObject3D colladaObject3D)
     {
-        ObjectRenderHandle renderHandle = startNewObjectDef();
+        ObjectRenderHandle<M> renderHandle = graphicsManager.startNewObjectDef();
         Mesh[] meshes = colladaObject3D.getMeshes();
         for (int i = 0; i < meshes.length; i++)
         {
             Mesh mesh = meshes[i];
-            BufferAndMaterial bufferAndMaterial = getRenderMaterial(name, mesh, colladaObject3D.getMaterial(i));
-            addMesh(mesh, bufferAndMaterial.vertexBuffer, bufferAndMaterial.material);
+            BufferAndMaterial<M> bufferAndMaterial = getRenderMaterial(name, mesh, colladaObject3D.getMaterial(i));
+            graphicsManager.addMesh(mesh, bufferAndMaterial.vertexBuffer, bufferAndMaterial.material);
         }
-        endObjectDef();
+        graphicsManager.endObjectDef();
 
         if (name == null)
         {
@@ -86,18 +86,18 @@ public abstract class ColladaGraphicsManager extends SingleTechniqueGraphicsMana
     }
 
 
-
-    public final ObjectRenderHandle addColladaObject(ColladaObject3D colladaObject3D)
+    public final ObjectRenderHandle<M> addColladaObject(ColladaObject3D colladaObject3D)
     {
         return addColladaObject(null, colladaObject3D);
     }
 
-    public static class BufferAndMaterial
+
+    public static class BufferAndMaterial<M>
     {
         public final StaticVertexBuffer vertexBuffer;
-        public final Material material;
+        public final M material;
 
-        public BufferAndMaterial(StaticVertexBuffer vertexBuffer, Material material)
+        public BufferAndMaterial(StaticVertexBuffer vertexBuffer, M material)
         {
             this.vertexBuffer = vertexBuffer;
             this.material = material;
@@ -112,7 +112,7 @@ public abstract class ColladaGraphicsManager extends SingleTechniqueGraphicsMana
      * @param colladaMaterial   the collada material used to render this
      * @return
      */
-    protected abstract BufferAndMaterial getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial);
+    protected abstract BufferAndMaterial<M> getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial);
 
 
 }

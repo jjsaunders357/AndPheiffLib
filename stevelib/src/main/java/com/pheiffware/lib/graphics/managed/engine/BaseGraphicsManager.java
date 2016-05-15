@@ -34,7 +34,7 @@ public abstract class BaseGraphicsManager<M>
      *
      * @return
      */
-    public final ObjectRenderHandle startNewObjectDef()
+    public final ObjectRenderHandle<M> startNewObjectDef()
     {
         return transferData.startNewObjectDef();
     }
