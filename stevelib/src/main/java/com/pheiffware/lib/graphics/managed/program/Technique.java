@@ -4,6 +4,7 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
@@ -44,10 +45,7 @@ public abstract class Technique
 
     public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, TechniqueProperty[] properties) throws GraphicsException
     {
-        for (TechniqueProperty property : properties)
-        {
-            this.properties.add(property);
-        }
+        Collections.addAll(this.properties, properties);
         this.program = (new Program(al, vertexShaderAsset, fragmentShaderAsset));
     }
 
