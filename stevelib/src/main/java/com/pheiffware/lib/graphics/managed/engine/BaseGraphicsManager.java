@@ -6,6 +6,8 @@ import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
+import java.util.EnumMap;
+
 /**
  * TODO: Comment me!
  * <p/>
@@ -21,7 +23,7 @@ public class BaseGraphicsManager
 
     private GraphicsManagerTransferData transferData;
 
-    public BaseGraphicsManager(Technique[] techniques, StaticVertexBuffer[] vertexBuffers)
+    public BaseGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques)
     {
         this.techniques = techniques;
         this.vertexBuffers = vertexBuffers;
@@ -63,20 +65,22 @@ public class BaseGraphicsManager
     {
         int meshIndexOffset = transferData.addMesh(mesh, vertexBuffer);
 
-        TechniqueProperty[] properties = new TechniqueProperty[propertyValues.length];
-        Object[] values = new Object[propertyValues.length];
-        for (int i = 0; i < propertyValues.length; i++)
-        {
-            properties[i] = propertyValues[i].property;
-            values[i] = propertyValues[i].value;
-        }
-
-        MeshRenderHandle meshRenderHandle = new MeshRenderHandle(technique, properties, values, vertexBuffer, meshIndexOffset, mesh.getNumIndices());
+        MeshRenderHandle meshRenderHandle = new MeshRenderHandle(technique, createPropertyValuesMap(propertyValues), vertexBuffer, meshIndexOffset, mesh.getNumIndices());
         if (transferData.getCurrentObjectDef() != null)
         {
             transferData.getCurrentObjectDef().addMeshHandle(meshRenderHandle);
         }
         return meshRenderHandle;
+    }
+
+    private EnumMap<TechniqueProperty, Object> createPropertyValuesMap(PropertyValue[] propertyValues)
+    {
+        EnumMap<TechniqueProperty, Object> map = new EnumMap<>(TechniqueProperty.class);
+        for (PropertyValue propertyValue : propertyValues)
+        {
+            map.put(propertyValue.property, propertyValue.value);
+        }
+        return map;
     }
 
     /**

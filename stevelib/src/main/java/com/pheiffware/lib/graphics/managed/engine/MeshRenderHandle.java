@@ -4,6 +4,8 @@ import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
+import java.util.EnumMap;
+
 /**
  * Holds information about a single mesh which should be rendered with a specific Program and specific values for properties in that Program.  The set of uniform values may be
  * incomplete as some values (such as ViewMatrix) may be specified more globally.
@@ -14,10 +16,8 @@ public class MeshRenderHandle
 {
     //The technique to use when rendering this mesh
     final Technique technique;
-    //Reference to properties which should be set when rendering this mesh
-    final TechniqueProperty[] properties;
-    //Reference to corresponding property values
-    final Object[] propertyValues;
+    //Properties to use when rendering this mesh
+    final EnumMap<TechniqueProperty, Object> propertyValues = new EnumMap<>(TechniqueProperty.class);
     //The vertex buffer where mesh data is stored
     final StaticVertexBuffer vertexBuffer;
     //The offset in the index buffer to render at
@@ -25,11 +25,10 @@ public class MeshRenderHandle
     //The number of vertices to render
     final int numVertices;
 
-    public MeshRenderHandle(Technique technique, TechniqueProperty[] properties, Object[] propertyValues, StaticVertexBuffer vertexBuffer, int vertexOffset, int numVertices)
+    public MeshRenderHandle(Technique technique, EnumMap<TechniqueProperty, Object> propertyValues, StaticVertexBuffer vertexBuffer, int vertexOffset, int numVertices)
     {
         this.technique = technique;
-        this.properties = properties;
-        this.propertyValues = propertyValues;
+        this.propertyValues.putAll(propertyValues);
         this.vertexBuffer = vertexBuffer;
         this.vertexOffset = vertexOffset;
         this.numVertices = numVertices;
@@ -37,9 +36,6 @@ public class MeshRenderHandle
 
     void setProperties()
     {
-        for (int i = 0; i < properties.length; i++)
-        {
-            technique.setProperty(properties[i], propertyValues[i]);
-        }
+        technique.setProperties(propertyValues);
     }
 }

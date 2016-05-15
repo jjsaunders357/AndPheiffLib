@@ -47,7 +47,7 @@ public abstract class ColladaGraphicsManager extends StandardGraphicsManager
 
     public ColladaGraphicsManager(Technique[] techniques, StaticVertexBuffer[] vertexBuffers)
     {
-        super(techniques, vertexBuffers);
+        super(vertexBuffers, techniques);
     }
 
     public void addColladaObjects(Collada collada)

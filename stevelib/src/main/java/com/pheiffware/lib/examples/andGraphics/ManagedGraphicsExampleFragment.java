@@ -74,7 +74,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
                 StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
 
-                baseObjectManager = new StandardGraphicsManager(new Technique[]{colorTechnique}, new StaticVertexBuffer[]{colorBuffer});
+                baseObjectManager = new StandardGraphicsManager(new StaticVertexBuffer[]{colorBuffer}, new Technique[]{colorTechnique});
                 monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f}),

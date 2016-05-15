@@ -26,8 +26,8 @@ import com.pheiffware.lib.graphics.managed.program.Technique;
  */
 public class StandardGraphicsManager extends BaseGraphicsManager
 {
-    public StandardGraphicsManager(Technique[] techniques, StaticVertexBuffer[] vertexBuffers)
+    public StandardGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques)
     {
-        super(techniques, vertexBuffers);
+        super(vertexBuffers, techniques);
     }
 }

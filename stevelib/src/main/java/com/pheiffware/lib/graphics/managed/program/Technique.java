@@ -12,15 +12,14 @@ import java.util.EnumSet;
  * <p/>
  * Rather than computing and setting VIEW_MODEL_MATRIX_UNIFORM, NORMAL_MATRIX_UNIFORM and LIGHT_POS_EYE_UNIFORM
  * <p/>
- * Instead set properties: MODEL_MATRIX and VIEW_MATRIX, from which these uniforms can be calculated and set.  Uniforms are applied by calling the applyProperties()
- * method.
+ * Instead set properties: MODEL_MATRIX and VIEW_MATRIX, from which these uniforms can be calculated and set.  Uniforms are applied by calling the applyProperties() method.
  * <p/>
  * Setting properties is lightweight and reference only.  This has 2 implications:
  * <p/>
  * 1. Its possible to quickly set a property once and then overwrite it again before rendering.  This is fast/cheap.
  * <p/>
- * 2. If a property is set a reference to the value is retained and will be used in future calls to applyProperties().  Property values should be considered immutable
- * after being set.
+ * 2. If a property is set a reference to the value is retained and will be used in future calls to applyProperties().  Property values should be considered immutable after being
+ * set.
  * <p/>
  * Default property values:
  * <p/>
@@ -92,7 +91,7 @@ public abstract class Technique
     }
 
     /**
-     * Set a property value.  This will be translated to a uniform value in the applyProperties method.
+     * Set a property value for use later in the applyProperties method.
      *
      * @param property
      * @param propertyValue
@@ -105,15 +104,11 @@ public abstract class Technique
     /**
      * Convenience method to set multiple properties at once.
      *
-     * @param techniqueProperties
-     * @param objects
+     * @param propertyValues
      */
-    public final void setProperties(TechniqueProperty[] techniqueProperties, Object[] objects)
+    public void setProperties(EnumMap<TechniqueProperty, Object> propertyValues)
     {
-        for (int i = 0; i < techniqueProperties.length; i++)
-        {
-            setProperty(techniqueProperties[i], objects[i]);
-        }
+        this.propertyValues.putAll(propertyValues);
     }
 
     /**
@@ -148,4 +143,5 @@ public abstract class Technique
     {
         return program;
     }
+
 }
