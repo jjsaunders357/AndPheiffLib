@@ -17,7 +17,7 @@ import java.util.List;
  * <p/>
  * Created by Steve on 4/14/2016.
  */
-public class GraphicsManagerTransferData
+public class GraphicsManagerTransferData<M>
 {
     private final IndexBuffer indexBuffer;
     private final StaticVertexBuffer[] vertexBuffers;
@@ -32,7 +32,7 @@ public class GraphicsManagerTransferData
     private final List<StaticVertexBuffer> meshVertexBuffers = new ArrayList<>();
 
     //The current object being constructed (meshes are being added to it)
-    private ObjectRenderHandle currentObject = null;
+    private ObjectRenderHandle<M> currentObject = null;
 
     public GraphicsManagerTransferData(IndexBuffer indexBuffer, StaticVertexBuffer[] vertexBuffers)
     {
@@ -62,9 +62,9 @@ public class GraphicsManagerTransferData
     public void transfer()
     {
         indexBuffer.allocate(indexBufferLength);
-        for (int i = 0; i < vertexBuffers.length; i++)
+        for (StaticVertexBuffer vertexBuffer1 : vertexBuffers)
         {
-            vertexBuffers[i].allocate(vertexBufferLengths.getCount(vertexBuffers[i]));
+            vertexBuffer1.allocate(vertexBufferLengths.getCount(vertexBuffer1));
         }
         int indexWriteOffset = 0;
         MapCounter<StaticVertexBuffer> vertexBufferOffsets = new MapCounter<>();
@@ -79,19 +79,19 @@ public class GraphicsManagerTransferData
             vertexBufferOffsets.addCount(vertexBuffer, transferMesh.getNumVertices());
         }
         indexBuffer.transfer();
-        for (int i = 0; i < vertexBuffers.length; i++)
+        for (StaticVertexBuffer vertexBuffer : vertexBuffers)
         {
-            vertexBuffers[i].transfer();
+            vertexBuffer.transfer();
         }
     }
 
-    ObjectRenderHandle startNewObjectDef()
+    ObjectRenderHandle<M> startNewObjectDef()
     {
-        currentObject = new ObjectRenderHandle();
+        currentObject = new ObjectRenderHandle<>();
         return currentObject;
     }
 
-    ObjectRenderHandle getCurrentObjectDef()
+    ObjectRenderHandle<M> getCurrentObjectDef()
     {
         return currentObject;
     }

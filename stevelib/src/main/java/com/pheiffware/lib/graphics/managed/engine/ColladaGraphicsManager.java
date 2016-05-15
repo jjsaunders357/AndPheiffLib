@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: Comment me!
+ * TODO: Should NOT extend a particular GraphicsManager.  Should instead loaded an arbitrary graphics manager.
  * <p/>
  * Created by Steve on 4/19/2016.
  */
-public abstract class ColladaGraphicsManager extends StandardGraphicsManager
+public abstract class ColladaGraphicsManager extends SingleTechniqueGraphicsManager
 {
     /**
      * Simple function to load all textures in a given file into the cache, for a given image directory.  All images are named based on the base file name.
@@ -69,8 +69,8 @@ public abstract class ColladaGraphicsManager extends StandardGraphicsManager
         for (int i = 0; i < meshes.length; i++)
         {
             Mesh mesh = meshes[i];
-            MeshInfo meshInfo = getMeshInfo(name, mesh, colladaObject3D.getMaterial(i));
-            addMesh(mesh, meshInfo);
+            BufferAndMaterial bufferAndMaterial = getRenderMaterial(name, mesh, colladaObject3D.getMaterial(i));
+            addMesh(mesh, bufferAndMaterial.vertexBuffer, bufferAndMaterial.material);
         }
         endObjectDef();
 
@@ -92,13 +92,27 @@ public abstract class ColladaGraphicsManager extends StandardGraphicsManager
         return addColladaObject(null, colladaObject3D);
     }
 
+    public static class BufferAndMaterial
+    {
+        public final StaticVertexBuffer vertexBuffer;
+        public final Material material;
+
+        public BufferAndMaterial(StaticVertexBuffer vertexBuffer, Material material)
+        {
+            this.vertexBuffer = vertexBuffer;
+            this.material = material;
+        }
+    }
+
     /**
      * Figures out appropriate information about how to render/store the given mesh given various information
      *
      * @param objectName the name of the object this mesh is a part of
      * @param mesh       the mesh itself
-     * @param material   the collada material used to render this
+     * @param colladaMaterial   the collada material used to render this
      * @return
      */
-    protected abstract MeshInfo getMeshInfo(String objectName, Mesh mesh, ColladaMaterial material);
+    protected abstract BufferAndMaterial getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial);
+
+
 }

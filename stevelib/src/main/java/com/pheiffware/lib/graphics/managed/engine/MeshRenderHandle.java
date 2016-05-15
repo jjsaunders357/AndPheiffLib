@@ -1,10 +1,6 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
-
-import java.util.EnumMap;
 
 /**
  * Holds information about a single mesh which should be rendered with a specific Program and specific values for properties in that Program.  The set of uniform values may be
@@ -12,30 +8,22 @@ import java.util.EnumMap;
  * <p/>
  * Created by Steve on 4/10/2016.
  */
-public class MeshRenderHandle
+public class MeshRenderHandle<M>
 {
-    //The technique to use when rendering this mesh
-    final Technique technique;
-    //Properties to use when rendering this mesh
-    final EnumMap<TechniqueProperty, Object> propertyValues = new EnumMap<>(TechniqueProperty.class);
     //The vertex buffer where mesh data is stored
     final StaticVertexBuffer vertexBuffer;
     //The offset in the index buffer to render at
     final int vertexOffset;
     //The number of vertices to render
     final int numVertices;
+    //GraphicsManager specific material information (such as a technique to render with)
+    final M material;
 
-    public MeshRenderHandle(Technique technique, EnumMap<TechniqueProperty, Object> propertyValues, StaticVertexBuffer vertexBuffer, int vertexOffset, int numVertices)
+    public MeshRenderHandle(StaticVertexBuffer vertexBuffer, int vertexOffset, int numVertices, M material)
     {
-        this.technique = technique;
-        this.propertyValues.putAll(propertyValues);
         this.vertexBuffer = vertexBuffer;
         this.vertexOffset = vertexOffset;
         this.numVertices = numVertices;
-    }
-
-    void setProperties()
-    {
-        technique.setProperties(propertyValues);
+        this.material = material;
     }
 }

@@ -11,11 +11,11 @@ import java.util.List;
  * <p/>
  * Created by Steve on 4/10/2016.
  */
-public class ObjectRenderHandle
+public class ObjectRenderHandle<M>
 {
-    final List<MeshRenderHandle> meshRenderHandles = new ArrayList<>();
+    final List<MeshRenderHandle<M>> meshRenderHandles = new ArrayList<>();
 
-    public void addMeshHandle(MeshRenderHandle meshRenderHandle)
+    public void addMeshHandle(MeshRenderHandle<M> meshRenderHandle)
     {
         meshRenderHandles.add(meshRenderHandle);
     }

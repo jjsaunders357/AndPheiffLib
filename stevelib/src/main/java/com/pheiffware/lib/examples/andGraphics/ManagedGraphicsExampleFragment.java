@@ -13,7 +13,7 @@ import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.engine.PropertyValue;
-import com.pheiffware.lib.graphics.managed.engine.StandardGraphicsManager;
+import com.pheiffware.lib.graphics.managed.engine.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
@@ -43,7 +43,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private final float[] lightColor = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
         private float rotation = 0;
-        private StandardGraphicsManager baseObjectManager;
+        private SingleTechniqueGraphicsManager baseObjectManager;
         private ObjectRenderHandle staticMonkey;
         private ObjectRenderHandle staticSphere;
         private ObjectRenderHandle staticCube;
@@ -74,7 +74,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
                 StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
 
-                baseObjectManager = new StandardGraphicsManager(new StaticVertexBuffer[]{colorBuffer}, new Technique[]{colorTechnique});
+                baseObjectManager = new SingleTechniqueGraphicsManager(new StaticVertexBuffer[]{colorBuffer}, new Technique[]{colorTechnique});
                 monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f}),

@@ -13,22 +13,21 @@ import java.util.EnumMap;
  * <p/>
  * Created by Steve on 5/15/2016.
  */
-public class BaseGraphicsManager
+public abstract class BaseGraphicsManager<M>
 {
     private final Technique[] techniques;
     private final IndexBuffer indexBuffer = new IndexBuffer(false);
 
-    //TODO: Should be combined vertex buffer
-    private final StaticVertexBuffer[] vertexBuffers;
-
-    private GraphicsManagerTransferData transferData;
+    private GraphicsManagerTransferData<M> transferData;
 
     public BaseGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques)
     {
         this.techniques = techniques;
-        this.vertexBuffers = vertexBuffers;
-        transferData = new GraphicsManagerTransferData(indexBuffer, vertexBuffers);
+        transferData = new GraphicsManagerTransferData<>(indexBuffer, vertexBuffers);
     }
+
+    //TODO: Temporary method.  Will be removed once renderNow is converted to queueing scheme
+    protected abstract void bindMeshHandle(MeshRenderHandle<M> meshHandle, EnumMap<TechniqueProperty, Object> propertyValues);
 
     /**
      * Start a new logical object definition.  Each added mesh will become part of this object render handle.
@@ -48,39 +47,17 @@ public class BaseGraphicsManager
         transferData.endObjectDef();
     }
 
-    public MeshRenderHandle addMesh(Mesh mesh, MeshInfo meshInfo)
-    {
-        return addMesh(mesh, meshInfo.vertexBuffer, meshInfo.technique, meshInfo.propertyValues);
-    }
-
-    /**
-     * Add a mesh to be rendered with a particular technique and specific property values.  The is added to the current object definition if one is being defined.
-     *
-     * @param mesh
-     * @param technique
-     * @param propertyValues
-     * @return
-     */
-    public final MeshRenderHandle addMesh(Mesh mesh, StaticVertexBuffer vertexBuffer, Technique technique, PropertyValue[] propertyValues)
+    public MeshRenderHandle addMesh(Mesh mesh, StaticVertexBuffer vertexBuffer, M material)
     {
         int meshIndexOffset = transferData.addMesh(mesh, vertexBuffer);
 
-        MeshRenderHandle meshRenderHandle = new MeshRenderHandle(technique, createPropertyValuesMap(propertyValues), vertexBuffer, meshIndexOffset, mesh.getNumIndices());
+        MeshRenderHandle<M> meshRenderHandle = new MeshRenderHandle<>(vertexBuffer, meshIndexOffset, mesh.getNumIndices(), material);
         if (transferData.getCurrentObjectDef() != null)
         {
             transferData.getCurrentObjectDef().addMeshHandle(meshRenderHandle);
         }
         return meshRenderHandle;
-    }
 
-    private EnumMap<TechniqueProperty, Object> createPropertyValuesMap(PropertyValue[] propertyValues)
-    {
-        EnumMap<TechniqueProperty, Object> map = new EnumMap<>(TechniqueProperty.class);
-        for (PropertyValue propertyValue : propertyValues)
-        {
-            map.put(propertyValue.property, propertyValue.value);
-        }
-        return map;
     }
 
     /**
@@ -106,61 +83,41 @@ public class BaseGraphicsManager
         }
     }
 
+    //TODO: Remove renderNow.  Instead should support queueing.
+
     /**
      * Renders a given mesh.  Explicitly overrides properties with those given.
      *
      * @param meshHandle
-     * @param properties
      * @param propertyValues
      */
-    public void renderNow(MeshRenderHandle meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
+    public final void renderNow(MeshRenderHandle<M> meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
-        meshHandle.technique.bind();
-        meshHandle.vertexBuffer.bind(meshHandle.technique.getProgram());
-        meshHandle.setProperties();
+        EnumMap<TechniqueProperty, Object> propertyValuesMap = new EnumMap<>(TechniqueProperty.class);
         for (int i = 0; i < properties.length; i++)
         {
-            meshHandle.technique.setProperty(properties[i], propertyValues[i]);
+            propertyValuesMap.put(properties[i], propertyValues[i]);
         }
-        meshHandle.technique.applyProperties();
+        renderNow(meshHandle, propertyValuesMap);
+    }
+
+    /**
+     * Renders a given mesh.  Explicitly overrides properties with those given.
+     *
+     * @param meshHandle
+     * @param propertyValues
+     */
+    public final void renderNow(MeshRenderHandle<M> meshHandle, EnumMap<TechniqueProperty, Object> propertyValues)
+    {
+        bindMeshHandle(meshHandle, propertyValues);
         indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
     }
 
-    public void renderNow(ObjectRenderHandle objectHandle, TechniqueProperty[] properties, Object[] propertyValues)
+    public final void renderNow(ObjectRenderHandle<M> objectHandle, TechniqueProperty[] properties, Object[] propertyValues)
     {
         for (int i = 0; i < objectHandle.meshRenderHandles.size(); i++)
         {
             renderNow(objectHandle.meshRenderHandles.get(i), properties, propertyValues);
-        }
-    }
-
-    public final void bindTechnique(MeshRenderHandle meshHandle)
-    {
-        Technique technique = meshHandle.technique;
-        technique.bind();
-    }
-
-    public final void setDefaultUniformValues(MeshRenderHandle meshHandle)
-    {
-        meshHandle.setProperties();
-    }
-
-    public final void renderIndexBuffer(MeshRenderHandle meshHandle)
-    {
-        indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
-    }
-
-    protected static class MeshInfo
-    {
-        public final StaticVertexBuffer vertexBuffer;
-        public final Technique technique;
-        public final PropertyValue[] propertyValues;
-
-        public MeshInfo(StaticVertexBuffer vertexBuffer, Technique technique, PropertyValue[] propertyValues)
-        {
-            this.vertexBuffer = vertexBuffer;
-            this.technique = technique;
-            this.propertyValues = propertyValues;
         }
     }
 }

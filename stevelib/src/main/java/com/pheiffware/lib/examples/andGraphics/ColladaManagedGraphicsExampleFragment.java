@@ -81,7 +81,7 @@ public class ColladaManagedGraphicsExampleFragment extends SimpleGLFragment
                         })
                 {
                     @Override
-                    protected MeshInfo getMeshInfo(String objectName, Mesh mesh, ColladaMaterial material)
+                    protected BufferAndMaterial getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial)
                     {
                         Technique technique;
                         StaticVertexBuffer vertexBuffer;
@@ -96,22 +96,22 @@ public class ColladaManagedGraphicsExampleFragment extends SimpleGLFragment
                             technique = textureTechnique;
                             vertexBuffer = textureBuffer;
                         }
-                        if (material.imageFileName == null)
+                        if (colladaMaterial.imageFileName == null)
                         {
                             propertyValues = new PropertyValue[]{
-                                    new PropertyValue(TechniqueProperty.MAT_COLOR, material.diffuseColor.comps),
-                                    new PropertyValue(TechniqueProperty.SHININESS, material.shininess),
-                                    new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, material.specularColor.comps)};
+                                    new PropertyValue(TechniqueProperty.MAT_COLOR, colladaMaterial.diffuseColor.comps),
+                                    new PropertyValue(TechniqueProperty.SHININESS, colladaMaterial.shininess),
+                                    new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
                         }
                         else
                         {
                             propertyValues = new PropertyValue[]{
-                                    new PropertyValue(TechniqueProperty.MAT_COLOR_TEXTURE, glCache.getTexture(material.imageFileName)),
-                                    new PropertyValue(TechniqueProperty.SHININESS, material.shininess),
-                                    new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, material.specularColor.comps)};
+                                    new PropertyValue(TechniqueProperty.MAT_COLOR_TEXTURE, glCache.getTexture(colladaMaterial.imageFileName)),
+                                    new PropertyValue(TechniqueProperty.SHININESS, colladaMaterial.shininess),
+                                    new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
 
                         }
-                        return new MeshInfo(vertexBuffer, technique, propertyValues);
+                        return new BufferAndMaterial(vertexBuffer, new Material(technique, propertyValues));
                     }
                 };
 
