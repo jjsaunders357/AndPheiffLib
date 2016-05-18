@@ -4,17 +4,20 @@ import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.techniques.PropertyValue;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
-import java.util.EnumMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * TODO: Comment me!
+ * TODO: Comment Class and methods!
  * <p/>
  * Created by Steve on 5/15/2016.
  */
 public abstract class BaseGraphicsManager<M>
 {
+    private final List<RenderItem<M>> renderItems = new ArrayList<>(1000);
     private final Technique[] techniques;
     private final IndexBuffer indexBuffer = new IndexBuffer(false);
 
@@ -25,9 +28,6 @@ public abstract class BaseGraphicsManager<M>
         this.techniques = techniques;
         transferData = new GraphicsManagerTransferData<>(indexBuffer, vertexBuffers);
     }
-
-    //TODO: Temporary method.  Will be removed once renderNow is converted to queueing scheme
-    protected abstract void bindMeshHandle(MeshRenderHandle<M> meshHandle, EnumMap<TechniqueProperty, Object> propertyValues);
 
     /**
      * Start a new logical object definition.  Each added mesh will become part of this object render handle.
@@ -47,11 +47,11 @@ public abstract class BaseGraphicsManager<M>
         transferData.endObjectDef();
     }
 
-    public MeshRenderHandle addMesh(Mesh mesh, StaticVertexBuffer vertexBuffer, M material)
+    public MeshRenderHandle<M> addMesh(Mesh mesh, StaticVertexBuffer vertexBuffer, M material, PropertyValue[] propertyValues)
     {
         int meshIndexOffset = transferData.addMesh(mesh, vertexBuffer);
 
-        MeshRenderHandle<M> meshRenderHandle = new MeshRenderHandle<>(vertexBuffer, meshIndexOffset, mesh.getNumIndices(), material);
+        MeshRenderHandle<M> meshRenderHandle = new MeshRenderHandle<>(vertexBuffer, meshIndexOffset, mesh.getNumIndices(), material, propertyValues);
         if (transferData.getCurrentObjectDef() != null)
         {
             transferData.getCurrentObjectDef().addMeshHandle(meshRenderHandle);
@@ -83,41 +83,56 @@ public abstract class BaseGraphicsManager<M>
         }
     }
 
-    //TODO: Remove renderNow.  Instead should support queueing.
-
-    /**
-     * Renders a given mesh.  Explicitly overrides properties with those given.
-     *
-     * @param meshHandle
-     * @param propertyValues
-     */
-    public final void renderNow(MeshRenderHandle<M> meshHandle, TechniqueProperty[] properties, Object[] propertyValues)
+    public void resetRender()
     {
-        EnumMap<TechniqueProperty, Object> propertyValuesMap = new EnumMap<>(TechniqueProperty.class);
-        for (int i = 0; i < properties.length; i++)
-        {
-            propertyValuesMap.put(properties[i], propertyValues[i]);
-        }
-        renderNow(meshHandle, propertyValuesMap);
+        renderItems.clear();
     }
 
-    /**
-     * Renders a given mesh.  Explicitly overrides properties with those given.
-     *
-     * @param meshHandle
-     * @param propertyValues
-     */
-    public final void renderNow(MeshRenderHandle<M> meshHandle, EnumMap<TechniqueProperty, Object> propertyValues)
+    public final void submitRender(MeshRenderHandle<M> meshHandle, TechniqueProperty[] overrideProperties, Object[] overridePropertyValues)
     {
-        bindMeshHandle(meshHandle, propertyValues);
-        indexBuffer.drawTriangles(meshHandle.vertexOffset, meshHandle.numVertices);
+        renderItems.add(new RenderItem<M>(meshHandle, overrideProperties, overridePropertyValues));
     }
 
-    public final void renderNow(ObjectRenderHandle<M> objectHandle, TechniqueProperty[] properties, Object[] propertyValues)
+    public final void submitRender(ObjectRenderHandle<M> objectHandle, TechniqueProperty[] overrideProperties, Object[] overridePropertyValues)
     {
         for (int i = 0; i < objectHandle.meshRenderHandles.size(); i++)
         {
-            renderNow(objectHandle.meshRenderHandles.get(i), properties, propertyValues);
+            submitRender(objectHandle.meshRenderHandles.get(i), overrideProperties, overridePropertyValues);
+        }
+    }
+
+    protected void sortRenderList(List<RenderItem<M>> renderItems)
+    {
+        //Default is do nothing
+    }
+
+    protected abstract void renderItem(MeshRenderHandle<M> meshHandle, TechniqueProperty[] overrideProperties, Object[] overridePropertyValues);
+
+    protected final void drawIndexBuffer(MeshRenderHandle<Technique> meshHandle)
+    {
+        meshHandle.drawTriangles(indexBuffer);
+    }
+
+    public void render()
+    {
+        sortRenderList(renderItems);
+        for (RenderItem<M> renderItem : renderItems)
+        {
+            renderItem(renderItem.meshHandle, renderItem.overrideProperties, renderItem.overridePropertyValues);
+        }
+    }
+
+    private static class RenderItem<M>
+    {
+        public final MeshRenderHandle<M> meshHandle;
+        public final TechniqueProperty[] overrideProperties;
+        public final Object[] overridePropertyValues;
+
+        public RenderItem(MeshRenderHandle<M> meshHandle, TechniqueProperty[] overrideProperties, Object[] overridePropertyValues)
+        {
+            this.meshHandle = meshHandle;
+            this.overrideProperties = overrideProperties;
+            this.overridePropertyValues = overridePropertyValues;
         }
     }
 }

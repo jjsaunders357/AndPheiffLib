@@ -11,12 +11,11 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.PropertyValue;
 import com.pheiffware.lib.graphics.managed.engine.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.techniques.PropertyValue;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -43,13 +42,10 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private final float[] lightColor = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
         private float rotation = 0;
-        private SingleTechniqueGraphicsManager baseObjectManager;
-        private ObjectRenderHandle staticMonkey;
-        private ObjectRenderHandle staticSphere;
-        private ObjectRenderHandle staticCube;
-        private MeshRenderHandle monkeyMesh;
-        private MeshRenderHandle sphereMesh;
-        private MeshRenderHandle cubeMesh;
+        private SingleTechniqueGraphicsManager graphicsManager;
+        private MeshRenderHandle<Technique> monkeyMesh;
+        private MeshRenderHandle<Technique> sphereMesh;
+        private MeshRenderHandle<Technique> cubeMesh;
 
         public ExampleRenderer()
         {
@@ -74,26 +70,26 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
                 StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
 
-                baseObjectManager = new SingleTechniqueGraphicsManager(new StaticVertexBuffer[]{colorBuffer}, new Technique[]{colorTechnique});
-                monkeyMesh = baseObjectManager.addMesh(monkey.getMesh(0), colorBuffer, colorTechnique,
+                graphicsManager = new SingleTechniqueGraphicsManager(new StaticVertexBuffer[]{colorBuffer}, new Technique[]{colorTechnique});
+                monkeyMesh = graphicsManager.addMesh(monkey.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SHININESS, 30.0f)
                         });
-                cubeMesh = baseObjectManager.addMesh(cube.getMesh(0), colorBuffer, colorTechnique,
+                cubeMesh = graphicsManager.addMesh(cube.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.6f, 0.8f, 0.3f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{1f, 1f, 1f, 1f}), //Is override later
                                 new PropertyValue(TechniqueProperty.SHININESS, 2.0f)
                         });
-                sphereMesh = baseObjectManager.addMesh(sphere.getMesh(0), colorBuffer, colorTechnique,
+                sphereMesh = graphicsManager.addMesh(sphere.getMesh(0), colorBuffer, colorTechnique,
                         new PropertyValue[]{
                                 new PropertyValue(TechniqueProperty.MAT_COLOR, new float[]{0.5f, 0.2f, 0.2f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, new float[]{1.0f, 0.9f, 0.8f, 1.0f}),
                                 new PropertyValue(TechniqueProperty.SHININESS, 5.0f)
                         });
-                baseObjectManager.transfer();
+                graphicsManager.transfer();
             }
             catch (XMLParseException | IOException exception)
             {
@@ -104,7 +100,8 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            baseObjectManager.setDefaultPropertyValues(
+            graphicsManager.resetRender();
+            graphicsManager.setDefaultPropertyValues(
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
                             TechniqueProperty.VIEW_MATRIX,
@@ -127,10 +124,10 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
             Matrix4 monkeyTranslation = Matrix4.newTranslation(-3, 2, -5);
             modelMatrix = Matrix4.multiply(monkeyTranslation, modelRotate);
-            baseObjectManager.renderNow(monkeyMesh,
+            graphicsManager.submitRender(monkeyMesh,
                     new TechniqueProperty[]{
                             TechniqueProperty.MODEL_MATRIX,
-                            TechniqueProperty.LIGHT_POS //Overridden default property value.  The other meshes should use the default value.
+                            TechniqueProperty.LIGHT_POS //Overridden default property value.  The other meshes will use the default value.
                     },
                     new Object[]{
                             modelMatrix,
@@ -140,10 +137,10 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
             Matrix4 cubeTranslation = Matrix4.newTranslation(0, 2, -5);
             modelMatrix = Matrix4.multiply(cubeTranslation, modelRotate);
-            baseObjectManager.renderNow(cubeMesh,
+            graphicsManager.submitRender(cubeMesh,
                     new TechniqueProperty[]{
                             TechniqueProperty.MODEL_MATRIX,
-                            //Override default to make dull
+                            //Override default to make null
                             TechniqueProperty.SPEC_MAT_COLOR,
                     },
                     new Object[]{
@@ -154,7 +151,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
             Matrix4 sphereTranslation = Matrix4.newTranslation(3, 2, -5);
             modelMatrix = Matrix4.multiply(sphereTranslation, modelRotate);
-            baseObjectManager.renderNow(sphereMesh,
+            graphicsManager.submitRender(sphereMesh,
                     new TechniqueProperty[]{
                             TechniqueProperty.MODEL_MATRIX
                     },
@@ -162,6 +159,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                             modelMatrix
                     });
 
+            graphicsManager.render();
             rotation++;
         }
     }

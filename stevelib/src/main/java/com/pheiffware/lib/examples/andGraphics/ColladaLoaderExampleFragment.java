@@ -15,12 +15,12 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.ColladaGraphicsLoader;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.PropertyValue;
 import com.pheiffware.lib.graphics.managed.engine.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.techniques.PropertyValue;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -45,7 +45,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private final float[] lightColor = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
         private float rotation = 0;
-        private ObjectRenderHandle<SingleTechniqueGraphicsManager.Material> multiCubeHandle;
+        private ObjectRenderHandle<Technique> multiCubeHandle;
         private Matrix4 multiCubeTranslation = Matrix4.newTranslation(-3, 2, -5);
         private SingleTechniqueGraphicsManager graphicsManager;
         public ColladaGraphicsExample()
@@ -79,10 +79,10 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                                 colorTechnique,
                                 textureTechnique
                         });
-                ColladaGraphicsLoader<SingleTechniqueGraphicsManager.Material> colladaGraphicsLoader = new ColladaGraphicsLoader<SingleTechniqueGraphicsManager.Material>(graphicsManager)
+                ColladaGraphicsLoader<Technique> colladaGraphicsLoader = new ColladaGraphicsLoader<Technique>(graphicsManager)
                 {
                     @Override
-                    protected BufferAndMaterial<SingleTechniqueGraphicsManager.Material> getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial)
+                    protected BufferAndMaterial<Technique> getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial)
                     {
                         Technique technique;
                         StaticVertexBuffer vertexBuffer;
@@ -112,7 +112,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                                     new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
 
                         }
-                        return new BufferAndMaterial<>(vertexBuffer, new SingleTechniqueGraphicsManager.Material(technique, propertyValues));
+                        return new BufferAndMaterial<>(vertexBuffer, technique, propertyValues);
                     }
                 };
 
@@ -135,6 +135,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
+            graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new TechniqueProperty[]{
                             TechniqueProperty.PROJECTION_MATRIX,
@@ -154,13 +155,14 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
             Matrix4 modelMatrix;
             modelMatrix = Matrix4.multiply(multiCubeTranslation, modelRotate);
-            graphicsManager.renderNow(multiCubeHandle,
+            graphicsManager.submitRender(multiCubeHandle,
                     new TechniqueProperty[]{
                             TechniqueProperty.MODEL_MATRIX
                     },
                     new Object[]{
                             modelMatrix
                     });
+            graphicsManager.render();
             rotation++;
         }
     }

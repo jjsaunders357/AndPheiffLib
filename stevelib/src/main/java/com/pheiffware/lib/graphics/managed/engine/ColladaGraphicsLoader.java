@@ -7,6 +7,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.techniques.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public abstract class ColladaGraphicsLoader<M>
         {
             Mesh mesh = meshes[i];
             BufferAndMaterial<M> bufferAndMaterial = getRenderMaterial(name, mesh, colladaObject3D.getMaterial(i));
-            graphicsManager.addMesh(mesh, bufferAndMaterial.vertexBuffer, bufferAndMaterial.material);
+            graphicsManager.addMesh(mesh, bufferAndMaterial.vertexBuffer, bufferAndMaterial.material, bufferAndMaterial.propertyValues);
         }
         graphicsManager.endObjectDef();
 
@@ -92,24 +93,26 @@ public abstract class ColladaGraphicsLoader<M>
     }
 
 
-    public static class BufferAndMaterial<M>
+    protected static class BufferAndMaterial<M>
     {
-        public final StaticVertexBuffer vertexBuffer;
-        public final M material;
+        protected final StaticVertexBuffer vertexBuffer;
+        protected final M material;
+        protected final PropertyValue[] propertyValues;
 
-        public BufferAndMaterial(StaticVertexBuffer vertexBuffer, M material)
+        public BufferAndMaterial(StaticVertexBuffer vertexBuffer, M material, PropertyValue[] propertyValues)
         {
             this.vertexBuffer = vertexBuffer;
             this.material = material;
+            this.propertyValues = propertyValues;
         }
     }
 
     /**
      * Figures out appropriate information about how to render/store the given mesh given various information
      *
-     * @param objectName the name of the object this mesh is a part of
-     * @param mesh       the mesh itself
-     * @param colladaMaterial   the collada material used to render this
+     * @param objectName      the name of the object this mesh is a part of
+     * @param mesh            the mesh itself
+     * @param colladaMaterial the collada material used to render this
      * @return
      */
     protected abstract BufferAndMaterial<M> getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial);

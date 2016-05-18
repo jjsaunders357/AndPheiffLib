@@ -1,6 +1,4 @@
-package com.pheiffware.lib.graphics.managed.engine;
-
-import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
+package com.pheiffware.lib.graphics.techniques;
 
 /**
  * Holds the name and value for a single uniform.  Used as a convenience when specifying lists of these, inline, as opposed populating a map.

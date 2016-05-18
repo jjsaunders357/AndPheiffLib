@@ -2,6 +2,7 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.techniques.PropertyValue;
 import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
 
 import java.util.Collections;
@@ -107,6 +108,33 @@ public abstract class Technique
     public void setProperties(EnumMap<TechniqueProperty, Object> propertyValues)
     {
         this.propertyValues.putAll(propertyValues);
+    }
+
+    /**
+     * Convenience method to set multiple properties at once.
+     *
+     * @param propertyValues
+     */
+    public void setProperties(PropertyValue[] propertyValues)
+    {
+        for (PropertyValue propertyValue : propertyValues)
+        {
+            this.propertyValues.put(propertyValue.property, propertyValue.value);
+        }
+    }
+
+    /**
+     * Convenience method to set multiple properties at once.
+     *
+     * @param properties
+     * @param propertyValues
+     */
+    public void setProperties(TechniqueProperty[] properties, Object[] propertyValues)
+    {
+        for (int i = 0; i < properties.length; i++)
+        {
+            this.propertyValues.put(properties[i], propertyValues[i]);
+        }
     }
 
     /**

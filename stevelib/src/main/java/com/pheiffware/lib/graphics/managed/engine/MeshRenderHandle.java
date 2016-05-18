@@ -1,6 +1,8 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
+import com.pheiffware.lib.graphics.techniques.PropertyValue;
 
 /**
  * Holds information about a single mesh which should be rendered with a specific Program and specific values for properties in that Program.  The set of uniform values may be
@@ -10,20 +12,29 @@ import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
  */
 public class MeshRenderHandle<M>
 {
+    //The offset in the index buffer to render at
+    private final int vertexOffset;
+    //The number of vertices to render
+    private final int numVertices;
     //The vertex buffer where mesh data is stored
     final StaticVertexBuffer vertexBuffer;
-    //The offset in the index buffer to render at
-    final int vertexOffset;
-    //The number of vertices to render
-    final int numVertices;
     //GraphicsManager specific material information (such as a technique to render with)
     final M material;
 
-    public MeshRenderHandle(StaticVertexBuffer vertexBuffer, int vertexOffset, int numVertices, M material)
+    //Generic property/values to be used when rendering
+    final PropertyValue[] propertyValues;
+
+    public MeshRenderHandle(StaticVertexBuffer vertexBuffer, int vertexOffset, int numVertices, M material, PropertyValue[] propertyValues)
     {
         this.vertexBuffer = vertexBuffer;
         this.vertexOffset = vertexOffset;
         this.numVertices = numVertices;
         this.material = material;
+        this.propertyValues = propertyValues;
+    }
+
+    void drawTriangles(IndexBuffer indexBuffer)
+    {
+        indexBuffer.drawTriangles(vertexOffset, numVertices);
     }
 }
