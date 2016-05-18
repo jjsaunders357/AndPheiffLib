@@ -11,13 +11,13 @@ import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.RenderProperty;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class MeshExampleFragment extends SimpleGLFragment
                 indexBuffer.putIndices(mesh.getVertexIndices());
                 indexBuffer.transfer();
 
-                colorVertexBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
+                colorVertexBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
                 colorVertexBuffer.allocate(mesh.getNumVertices());
                 colorVertexBuffer.putVertexAttributes(mesh, 0);
                 colorVertexBuffer.transfer();
@@ -90,7 +90,7 @@ public class MeshExampleFragment extends SimpleGLFragment
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
             colorTechnique.bind();
-            colorVertexBuffer.bind(colorTechnique.getProgram());
+            colorVertexBuffer.bind(colorTechnique);
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
 
             colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);

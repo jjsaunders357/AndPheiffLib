@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.techniques;
+package com.pheiffware.lib.graphics.managed.program;
 
 /**
  * An enum containing properties for ALL techniques.

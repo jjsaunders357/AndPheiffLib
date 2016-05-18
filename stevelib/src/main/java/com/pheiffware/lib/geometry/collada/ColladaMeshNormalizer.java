@@ -1,7 +1,7 @@
 package com.pheiffware.lib.geometry.collada;
 
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.Mesh;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.utils.GraphicsUtils;
 
 import java.util.EnumMap;
@@ -21,13 +21,13 @@ import java.util.Map;
 class ColladaMeshNormalizer
 {
     //Contains a mapping from Collada names for properties to standard attributes
-    private static final Map<String, Attribute> colladaNameToAttribute = new HashMap<>();
+    private static final Map<String, VertexAttribute> colladaNameToAttribute = new HashMap<>();
 
     {
-        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_POSITION, Attribute.POSITION);
-        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_NORMAL, Attribute.NORMAL);
-        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_TEXCOORD, Attribute.TEXCOORD);
-        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_COLOR, Attribute.COLOR);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_POSITION, VertexAttribute.POSITION);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_NORMAL, VertexAttribute.NORMAL);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_TEXCOORD, VertexAttribute.TEXCOORD);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_COLOR, VertexAttribute.COLOR);
     }
 
     //Original mesh as loaded from Collada
@@ -111,11 +111,11 @@ class ColladaMeshNormalizer
         generateUniqueVertexData();
         homogenizePositions();
 
-        EnumMap<Attribute, float[]> attributeData = new EnumMap<>(Attribute.class);
+        EnumMap<VertexAttribute, float[]> attributeData = new EnumMap<>(VertexAttribute.class);
         for (Map.Entry<String, float[]> entry : vertexData.entrySet())
         {
-            Attribute attribute = colladaNameToAttribute.get(entry.getKey());
-            attributeData.put(attribute, entry.getValue());
+            VertexAttribute vertexAttribute = colladaNameToAttribute.get(entry.getKey());
+            attributeData.put(vertexAttribute, entry.getValue());
         }
         return new Mesh(numUniqueVertices, attributeData, vertexDataIndices);
     }

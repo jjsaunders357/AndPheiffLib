@@ -20,7 +20,6 @@ import java.util.Map;
  */
 public class Collada
 {
-    //TODO: Translate to standard names used in StdUniforms
     public static final String COLLADA_VERTEX_POSITION = "POSITION";
     public static final String COLLADA_VERTEX_NORMAL = "NORMAL";
     public static final String COLLADA_VERTEX_TEXCOORD = "TEXCOORD";

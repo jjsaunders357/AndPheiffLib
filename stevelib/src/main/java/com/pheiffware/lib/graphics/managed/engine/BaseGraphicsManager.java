@@ -1,11 +1,11 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.techniques.RenderProperty;
-import com.pheiffware.lib.graphics.techniques.RenderPropertyValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,7 +180,8 @@ public abstract class BaseGraphicsManager<M>
         sortRenderList(renderItems);
         for (RenderItem<M> renderItem : renderItems)
         {
-            renderItem(renderItem.meshHandle, renderItem.overrideProperties, renderItem.overridePropertyValues);
+            MeshRenderHandle<M> meshHandle = renderItem.meshHandle;
+            renderItem(meshHandle, meshHandle.material, meshHandle.vertexBuffer, meshHandle.propertyValues, renderItem.overrideProperties, renderItem.overridePropertyValues);
         }
     }
 
@@ -198,10 +199,13 @@ public abstract class BaseGraphicsManager<M>
      * Must be implemented by the extending class to actually render a given mesh
      *
      * @param meshHandle
+     * @param material
+     * @param vertexBuffer
+     * @param meshPropertyValues
      * @param overrideProperties
      * @param overridePropertyValues
      */
-    protected abstract void renderItem(MeshRenderHandle<M> meshHandle, RenderProperty[] overrideProperties, Object[] overridePropertyValues);
+    protected abstract void renderItem(MeshRenderHandle<M> meshHandle, M material, StaticVertexBuffer vertexBuffer, RenderPropertyValue[] meshPropertyValues, RenderProperty[] overrideProperties, Object[] overridePropertyValues);
 
     /**
      * Draws the primitives in the index buffer, referenced by the given mesh handle

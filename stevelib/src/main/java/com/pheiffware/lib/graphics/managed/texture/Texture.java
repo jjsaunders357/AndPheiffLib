@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed;
+package com.pheiffware.lib.graphics.managed.texture;
 
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 

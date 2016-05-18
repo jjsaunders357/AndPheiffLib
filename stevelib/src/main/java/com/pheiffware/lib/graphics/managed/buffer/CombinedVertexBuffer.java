@@ -4,8 +4,8 @@
 */
 package com.pheiffware.lib.graphics.managed.buffer;
 
-import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 
 /**
  * A combination of a packed vertex buffer and one or more single attribute vertex buffers. All static attributes should be put in the packed buffer while the dynamic ones are put
@@ -16,13 +16,13 @@ public class CombinedVertexBuffer
     private StaticVertexBuffer staticVertexBuffer;
     private DynamicVertexBuffer[] dynamicVertexBuffers;
 
-    public CombinedVertexBuffer(Attribute[] staticAttributes, Attribute[] dynamicAttributes)
+    public CombinedVertexBuffer(VertexAttribute[] staticVertexAttributes, VertexAttribute[] dynamicVertexAttributes)
     {
-        staticVertexBuffer = new StaticVertexBuffer(staticAttributes);
-        dynamicVertexBuffers = new DynamicVertexBuffer[dynamicAttributes.length];
-        for (int i = 0; i < dynamicAttributes.length; i++)
+        staticVertexBuffer = new StaticVertexBuffer(staticVertexAttributes);
+        dynamicVertexBuffers = new DynamicVertexBuffer[dynamicVertexAttributes.length];
+        for (int i = 0; i < dynamicVertexAttributes.length; i++)
         {
-            dynamicVertexBuffers[i] = new DynamicVertexBuffer(dynamicAttributes[i]);
+            dynamicVertexBuffers[i] = new DynamicVertexBuffer(dynamicVertexAttributes[i]);
         }
     }
 

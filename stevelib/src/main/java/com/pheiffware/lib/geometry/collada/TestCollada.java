@@ -2,8 +2,8 @@ package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.Mesh;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.junit.Test;
@@ -103,8 +103,8 @@ public class TestCollada
         Mesh mat1Mesh = objects.get("dual_name").matMeshTO(mat1);
         Mesh mat2Mesh = objects.get("dual_name").matMeshTO(mat2);
 
-        assertEquals(20, mat1Mesh.getAttributeData(Attribute.POSITION).length);
-        assertEquals(16, mat2Mesh.getAttributeData(Attribute.POSITION).length);
+        assertEquals(20, mat1Mesh.getAttributeData(VertexAttribute.POSITION).length);
+        assertEquals(16, mat2Mesh.getAttributeData(VertexAttribute.POSITION).length);
 
         ColladaObject3D parent = objects.get("parent_name");
         mat1Mesh = objects.get("parent_name").matMeshTO(mat1);
@@ -284,8 +284,8 @@ public class TestCollada
         ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, true);
         Mesh mesh = colladaMeshNormalizer.generateMesh();
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.getVertexIndices());
-        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh.getAttributeData(Attribute.POSITION), 0);
-        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.getAttributeData(Attribute.TEXCOORD), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.getAttributeData(Attribute.NORMAL), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh.getAttributeData(VertexAttribute.POSITION), 0);
+        assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.getAttributeData(VertexAttribute.TEXCOORD), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.getAttributeData(VertexAttribute.NORMAL), 0);
     }
 }

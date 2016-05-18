@@ -9,14 +9,14 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.SingleTechniqueGraphicsManager;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.RenderProperty;
-import com.pheiffware.lib.graphics.techniques.RenderPropertyValue;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                 ColladaObject3D sphere = collada.objects.get("Sphere");
                 ColladaObject3D cube = collada.objects.get("Cube");
 
-                StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
+                StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
 
                 graphicsManager = new SingleTechniqueGraphicsManager(new StaticVertexBuffer[]{colorBuffer}, new Technique[]{colorTechnique});
                 monkeyMesh = graphicsManager.addTransferMesh(monkey.getMesh(0), colorBuffer, colorTechnique,

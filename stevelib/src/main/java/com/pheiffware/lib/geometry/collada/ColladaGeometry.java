@@ -1,7 +1,7 @@
 package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
+import com.pheiffware.lib.graphics.Mesh;
 
 import java.util.ArrayList;
 import java.util.List;

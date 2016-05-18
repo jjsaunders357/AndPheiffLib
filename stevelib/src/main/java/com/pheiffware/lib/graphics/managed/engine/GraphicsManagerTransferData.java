@@ -1,8 +1,8 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.utils.MapCounter;
 
 import java.util.ArrayList;

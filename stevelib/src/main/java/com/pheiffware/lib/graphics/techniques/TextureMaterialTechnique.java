@@ -4,10 +4,11 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.Texture;
-import com.pheiffware.lib.graphics.managed.program.StdUniforms;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
+import com.pheiffware.lib.graphics.managed.program.UniformNames;
+import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.utils.GraphicsUtils;
 
 /**
@@ -15,23 +16,23 @@ import com.pheiffware.lib.graphics.utils.GraphicsUtils;
  * <p/>
  * Required Properties:
  * <p/>
- * StdUniforms.PROJECTION_MATRIX - Matrix4
+ * UniformNames.PROJECTION_MATRIX - Matrix4
  * <p/>
- * StdUniforms.VIEW_MATRIX - Matrix4
+ * UniformNames.VIEW_MATRIX - Matrix4
  * <p/>
- * StdUniforms.MODEL_MATRIX) - Matrix4
+ * UniformNames.MODEL_MATRIX) - Matrix4
  * <p/>
- * StdUniforms.AMBIENT_LIGHT_COLOR - float[4]
+ * UniformNames.AMBIENT_LIGHT_COLOR - float[4]
  * <p/>
- * StdUniforms.LIGHT_COLOR - float[4]
+ * UniformNames.LIGHT_COLOR - float[4]
  * <p/>
- * StdUniforms.LIGHT_POS - float[4]
+ * UniformNames.LIGHT_POS - float[4]
  * <p/>
- * StdUniforms.MAT_COLOR_SAMPLER - float[4]
+ * UniformNames.MAT_COLOR_SAMPLER - float[4]
  * <p/>
- * StdUniforms.SPEC_MAT_COLOR - float[4]
+ * UniformNames.SPEC_MAT_COLOR - float[4]
  * <p/>
- * StdUniforms.SHININESS - float
+ * UniformNames.SHININESS - float
  * <p/>
  * Created by Steve on 4/23/2016.
  */
@@ -67,15 +68,15 @@ public class TextureMaterialTechnique extends Technique
                 RenderProperty.SHININESS,
                 RenderProperty.MAT_COLOR_TEXTURE
         });
-        projectionUniform = getUniform(StdUniforms.PROJECTION_MATRIX_UNIFORM);
-        viewModelUniform = getUniform(StdUniforms.VIEW_MODEL_MATRIX_UNIFORM);
-        normalUniform = getUniform(StdUniforms.NORMAL_MATRIX_UNIFORM);
-        ambientLightColorUniform = getUniform(StdUniforms.AMBIENT_LIGHT_COLOR_UNIFORM);
-        lightColorUniform = getUniform(StdUniforms.LIGHT_COLOR_UNIFORM);
-        specLightMatUniform = getUniform(StdUniforms.SPEC_LIGHTMAT_COLOR_UNIFORM);
-        lightEyePosUniform = getUniform(StdUniforms.LIGHT_POS_EYE_UNIFORM);
-        shininessUniform = getUniform(StdUniforms.SHININESS_UNIFORM);
-        matSamplerUniform = getUniform(StdUniforms.MATERIAL_SAMPLER_UNIFORM);
+        projectionUniform = getUniform(UniformNames.PROJECTION_MATRIX_UNIFORM);
+        viewModelUniform = getUniform(UniformNames.VIEW_MODEL_MATRIX_UNIFORM);
+        normalUniform = getUniform(UniformNames.NORMAL_MATRIX_UNIFORM);
+        ambientLightColorUniform = getUniform(UniformNames.AMBIENT_LIGHT_COLOR_UNIFORM);
+        lightColorUniform = getUniform(UniformNames.LIGHT_COLOR_UNIFORM);
+        specLightMatUniform = getUniform(UniformNames.SPEC_LIGHTMAT_COLOR_UNIFORM);
+        lightEyePosUniform = getUniform(UniformNames.LIGHT_POS_EYE_UNIFORM);
+        shininessUniform = getUniform(UniformNames.SHININESS_UNIFORM);
+        matSamplerUniform = getUniform(UniformNames.MATERIAL_SAMPLER_UNIFORM);
     }
 
     @Override

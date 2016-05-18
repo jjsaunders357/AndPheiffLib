@@ -11,13 +11,13 @@ import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
-import com.pheiffware.lib.graphics.techniques.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
+import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -75,7 +75,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
                 indexBuffer.putIndices(mesh.getVertexIndices());
                 indexBuffer.transfer();
 
-                vertexBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL, Attribute.TEXCOORD});
+                vertexBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
                 vertexBuffer.allocate(mesh.getNumVertices());
                 vertexBuffer.putVertexAttributes(mesh, 0);
                 vertexBuffer.transfer();
@@ -91,7 +91,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
         public void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
             textureTechnique.bind();
-            vertexBuffer.bind(textureTechnique.getProgram());
+            vertexBuffer.bind(textureTechnique);
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
 
             textureTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);

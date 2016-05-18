@@ -13,25 +13,25 @@ import java.util.Map;
  * <p/>
  * Created by Steve on 5/13/2016.
  */
-public enum Attribute
+public enum VertexAttribute
 {
     POSITION("vertexPosition", GLES20.GL_FLOAT, 4, 1),
     NORMAL("vertexNormal", GLES20.GL_FLOAT, 3, 1),
     TEXCOORD("vertexTexCoord", GLES20.GL_FLOAT, 2, 1),
     COLOR("vertexColor", GLES20.GL_FLOAT, 4, 1);
 
-    private static final Map<String, Attribute> nameLookup;
+    private static final Map<String, VertexAttribute> nameLookup;
 
     static
     {
         nameLookup = new HashMap<>();
-        for (Attribute attribute : values())
+        for (VertexAttribute vertexAttribute : values())
         {
-            nameLookup.put(attribute.getName(), attribute);
+            nameLookup.put(vertexAttribute.getName(), vertexAttribute);
         }
     }
 
-    public static Attribute lookupByName(String name)
+    public static VertexAttribute lookupByName(String name)
     {
         return nameLookup.get(name);
     }
@@ -49,7 +49,7 @@ public enum Attribute
     //The total size in bytes of this attribute.  For vec4, this would be 8 if using GL_HALF or 16 if using GL_FLOAT.  If this is an array, the size will be multiplied by the array dimension.
     public final int byteSize;
 
-    Attribute(String name, int baseType, int dims, int arrayLength)
+    VertexAttribute(String name, int baseType, int dims, int arrayLength)
     {
         this.name = name;
         this.baseType = baseType;
@@ -59,32 +59,32 @@ public enum Attribute
         byteSize = PheiffGLUtils.getGLBaseTypeByteSize(baseType) * numBaseTypeElements;
     }
 
-    public String getName()
+    public final String getName()
     {
         return name;
     }
 
-    public int getBaseType()
+    public final int getBaseType()
     {
         return baseType;
     }
 
-    public int getDims()
+    public final int getDims()
     {
         return dims;
     }
 
-    public int getArrayLength()
+    public final int getArrayLength()
     {
         return arrayLength;
     }
 
-    public int getNumBaseTypeElements()
+    public final int getNumBaseTypeElements()
     {
         return numBaseTypeElements;
     }
 
-    public int getByteSize()
+    public final int getByteSize()
     {
         return byteSize;
     }

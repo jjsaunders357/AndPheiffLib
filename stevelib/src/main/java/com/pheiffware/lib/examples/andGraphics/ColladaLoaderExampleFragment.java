@@ -11,17 +11,17 @@ import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.Mesh;
+import com.pheiffware.lib.graphics.managed.ColladaGraphicsLoader;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.engine.ColladaGraphicsLoader;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
-import com.pheiffware.lib.graphics.managed.engine.SingleTechniqueGraphicsManager;
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.RenderProperty;
-import com.pheiffware.lib.graphics.techniques.RenderPropertyValue;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -61,8 +61,8 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
             {
                 final Technique textureTechnique = new TextureMaterialTechnique(al);
                 final Technique colorTechnique = new ColorMaterialTechnique(al);
-                final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL});
-                final StaticVertexBuffer textureBuffer = new StaticVertexBuffer(new Attribute[]{Attribute.POSITION, Attribute.NORMAL,Attribute.TEXCOORD});
+                final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
+                final StaticVertexBuffer textureBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
 
                 ColladaFactory colladaFactory = new ColladaFactory(true);
 

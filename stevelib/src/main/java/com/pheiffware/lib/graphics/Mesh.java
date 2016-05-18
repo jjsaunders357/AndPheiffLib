@@ -1,9 +1,6 @@
-package com.pheiffware.lib.graphics.managed.mesh;
+package com.pheiffware.lib.graphics;
 
-import com.pheiffware.lib.graphics.Color4F;
-import com.pheiffware.lib.graphics.Matrix3;
-import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.utils.MapCounter;
 
 import java.util.Collection;
@@ -19,12 +16,12 @@ public class Mesh
     private final int numVertices;
 
     //Data for each vertex mapped from standard attributes to arrays of floats with the data.
-    private final EnumMap<Attribute, float[]> vertexAttributeData;
+    private final EnumMap<VertexAttribute, float[]> vertexAttributeData;
 
     //Indices to the data itself.  These are grouped together to form primitives (typically triangles)
     private final short[] vertexIndices;
 
-    public Mesh(int numVertices, EnumMap<Attribute, float[]> vertexAttributeData, short[] vertexIndices)
+    public Mesh(int numVertices, EnumMap<VertexAttribute, float[]> vertexAttributeData, short[] vertexIndices)
     {
         this.numVertices = numVertices;
         this.vertexAttributeData = vertexAttributeData;
@@ -41,13 +38,13 @@ public class Mesh
         //Count index and vertex data list sizes
         int indices = 0;
         int uniqueVerticesCounter = 0;
-        MapCounter<Attribute> vertexDataSizes = new MapCounter<>();
+        MapCounter<VertexAttribute> vertexDataSizes = new MapCounter<>();
 
         for (Mesh mesh : meshes)
         {
             indices += mesh.getNumIndices();
             uniqueVerticesCounter += mesh.getNumVertices();
-            for (Attribute vertexAttribute : mesh.vertexAttributeData.keySet())
+            for (VertexAttribute vertexAttribute : mesh.vertexAttributeData.keySet())
             {
                 int vertexDataLength = mesh.vertexAttributeData.get(vertexAttribute).length;
                 vertexDataSizes.addCount(vertexAttribute, vertexDataLength);
@@ -57,8 +54,8 @@ public class Mesh
 
         //Create new arrays big enough to hold combined data
         vertexIndices = new short[indices];
-        vertexAttributeData = new EnumMap<>(Attribute.class);
-        for (Map.Entry<Attribute, Integer> entry : vertexDataSizes.entrySet())
+        vertexAttributeData = new EnumMap<>(VertexAttribute.class);
+        for (Map.Entry<VertexAttribute, Integer> entry : vertexDataSizes.entrySet())
         {
             vertexAttributeData.put(entry.getKey(), new float[entry.getValue()]);
         }
@@ -66,20 +63,20 @@ public class Mesh
         //Copy data from each individual mesh to this mesh.  This requires offsetting references to vertices in the index buffer appropriately.
         indices = 0;
         uniqueVerticesCounter = 0;
-        MapCounter<Attribute> vertexDataOffsets = new MapCounter<>();
+        MapCounter<VertexAttribute> vertexDataOffsets = new MapCounter<>();
         for (Mesh mesh : meshes)
         {
             copyIndexArray(mesh.vertexIndices, vertexIndices, indices, uniqueVerticesCounter);
             indices += mesh.vertexIndices.length;
-            for (Attribute attribute : mesh.vertexAttributeData.keySet())
+            for (VertexAttribute vertexAttribute : mesh.vertexAttributeData.keySet())
             {
-                int offset = vertexDataOffsets.getCount(attribute);
-                float[] srcVertexData = mesh.vertexAttributeData.get(attribute);
+                int offset = vertexDataOffsets.getCount(vertexAttribute);
+                float[] srcVertexData = mesh.vertexAttributeData.get(vertexAttribute);
                 System.arraycopy(
                         srcVertexData, 0,
-                        vertexAttributeData.get(attribute), offset,
+                        vertexAttributeData.get(vertexAttribute), offset,
                         srcVertexData.length);
-                vertexDataOffsets.addCount(attribute, srcVertexData.length);
+                vertexDataOffsets.addCount(vertexAttribute, srcVertexData.length);
             }
             uniqueVerticesCounter += mesh.getNumVertices();
         }
@@ -119,9 +116,9 @@ public class Mesh
         {
             normalData = normalTransform.newTransformedVectors(normalData);
         }
-        EnumMap<Attribute, float[]> transformedVertexData = new EnumMap<>(vertexAttributeData);
-        transformedVertexData.put(Attribute.POSITION, positionData);
-        transformedVertexData.put(Attribute.NORMAL, normalData);
+        EnumMap<VertexAttribute, float[]> transformedVertexData = new EnumMap<>(vertexAttributeData);
+        transformedVertexData.put(VertexAttribute.POSITION, positionData);
+        transformedVertexData.put(VertexAttribute.NORMAL, normalData);
         return new Mesh(numVertices, transformedVertexData, vertexIndices);
     }
 
@@ -155,29 +152,29 @@ public class Mesh
         return numVertices;
     }
 
-    public final float[] getAttributeData(Attribute attribute)
+    public final float[] getAttributeData(VertexAttribute vertexAttribute)
     {
-        return vertexAttributeData.get(attribute);
+        return vertexAttributeData.get(vertexAttribute);
     }
 
-    public boolean hasAttributeData(Attribute attribute)
+    public boolean hasAttributeData(VertexAttribute vertexAttribute)
     {
-        return vertexAttributeData.containsKey(attribute);
+        return vertexAttributeData.containsKey(vertexAttribute);
     }
 
     public final float[] getPositionData()
     {
-        return vertexAttributeData.get(Attribute.POSITION);
+        return vertexAttributeData.get(VertexAttribute.POSITION);
     }
 
     public final float[] getNormalData()
     {
-        return vertexAttributeData.get(Attribute.NORMAL);
+        return vertexAttributeData.get(VertexAttribute.NORMAL);
     }
 
     public final float[] getTexCoordData()
     {
-        return vertexAttributeData.get(Attribute.TEXCOORD);
+        return vertexAttributeData.get(VertexAttribute.TEXCOORD);
     }
 
     public final short[] getVertexIndices()

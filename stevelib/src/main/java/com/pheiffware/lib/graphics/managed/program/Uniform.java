@@ -3,10 +3,10 @@ package com.pheiffware.lib.graphics.managed.program;
 import android.opengl.GLES20;
 
 /**
- * Holds stats for one uniform of a program Created by Steve on 2/13/2016.
+ * Holds stats for one uniform of a program
+ * <p/>
+ * Created by Steve on 2/13/2016.
  */
-
-
 public abstract class Uniform
 {
     /**

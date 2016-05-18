@@ -6,16 +6,17 @@ package com.pheiffware.lib.graphics.managed.buffer;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.managed.program.Attribute;
+import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 
 import java.util.EnumMap;
 
 /**
  * Sets up a packed vertex buffer designed to be filled ONCE and then displayed over and over.
  * <p/>
- * This does not have to include all attributes of a program will use as some attributes may dynamically change and be handled in dynamic buffers.
+ * This does not have to include all vertexAttributes of a program will use as some vertexAttributes may dynamically change and be handled in dynamic buffers.
  * <p/>
  * Usage should look like:
  * <p/>
@@ -39,11 +40,11 @@ public class StaticVertexBuffer extends BaseBuffer
     //Total size of each vertex in this buffer
     private int vertexByteSize;
 
-    //Maps standard attributes to their corresponding byte offsets within each vertex data block
-    private EnumMap<Attribute, Integer> attributeVertexByteOffset = new EnumMap<>(Attribute.class);
+    //Maps standard vertexAttributes to their corresponding byte offsets within each vertex data block
+    private EnumMap<VertexAttribute, Integer> attributeVertexByteOffset = new EnumMap<>(VertexAttribute.class);
 
-    //The attributes being managed by this buffer.  This is the order they will appear within each vertex data block
-    private final Attribute[] attributes;
+    //The vertexAttributes being managed by this buffer.  This is the order they will appear within each vertex data block
+    private final VertexAttribute[] vertexAttributes;
 
     //Has the buffer been transferred?  Its illegal to transfer multiple times.
     private boolean isTransferred = false;
@@ -51,15 +52,15 @@ public class StaticVertexBuffer extends BaseBuffer
     /**
      * Create buffer which holds a specific set of standard vertex attributes
      */
-    public StaticVertexBuffer(Attribute[] attributes)
+    public StaticVertexBuffer(VertexAttribute[] vertexAttributes)
     {
-        this.attributes = attributes;
+        this.vertexAttributes = vertexAttributes;
 
         int attributeByteOffset = 0;
-        for (Attribute attribute : attributes)
+        for (VertexAttribute vertexAttribute : vertexAttributes)
         {
-            setAttributeByteOffset(attribute, attributeByteOffset);
-            attributeByteOffset += attribute.getByteSize();
+            setAttributeByteOffset(vertexAttribute, attributeByteOffset);
+            attributeByteOffset += vertexAttribute.getByteSize();
         }
         vertexByteSize = attributeByteOffset;
     }
@@ -70,32 +71,32 @@ public class StaticVertexBuffer extends BaseBuffer
     }
 
     /**
-     * Put all attributes from a given mesh, which this buffer supports, into this buffer a the given vertex offset.
+     * Put all vertexAttributes from a given mesh, which this buffer supports, into this buffer a the given vertex offset.
      *
      * @param mesh
      * @param vertexOffset
      */
     public void putVertexAttributes(Mesh mesh, int vertexOffset)
     {
-        for (Attribute attribute : attributes)
+        for (VertexAttribute vertexAttribute : vertexAttributes)
         {
-            if (mesh.hasAttributeData(attribute))
+            if (mesh.hasAttributeData(vertexAttribute))
             {
-                putAttributeFloats(attribute, mesh.getAttributeData(attribute), vertexOffset);
+                putAttributeFloats(vertexAttribute, mesh.getAttributeData(vertexAttribute), vertexOffset);
             }
         }
     }
     /**
-     * For a given attribute put an array of floats in the appropriate buffer location, starting at the given vertex offset. Note, this is very inefficient, but is fine for one
+     * For a given vertexAttribute put an array of floats in the appropriate buffer location, starting at the given vertex offset. Note, this is very inefficient, but is fine for one
      * time setup.
      *
-     * @param attribute
+     * @param vertexAttribute
      * @param values
      * @param vertexOffset
      */
-    public final void putAttributeFloats(Attribute attribute, float[] values, int vertexOffset)
+    public final void putAttributeFloats(VertexAttribute vertexAttribute, float[] values, int vertexOffset)
     {
-        putAttributeFloats(getAttributeByteOffset(attribute), attribute.getNumBaseTypeElements(), values, vertexOffset);
+        putAttributeFloats(getAttributeByteOffset(vertexAttribute), vertexAttribute.getNumBaseTypeElements(), values, vertexOffset);
     }
 
     public final void putAttributeFloats(int attributeByteOffset, int numBaseTypeElements, float[] values, int vertexOffset)
@@ -112,17 +113,22 @@ public class StaticVertexBuffer extends BaseBuffer
         }
     }
 
+    public final void bind(Technique technique)
+    {
+        technique.bindBuffer(this);
+    }
+
     /**
-     * Binds this buffer with all attributes, such that it will work with the given program.
+     * Binds this buffer with all vertexAttributes, such that it will work with the given program.
      */
     public final void bind(Program program)
     {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
-        for (Attribute attribute : attributes)
+        for (VertexAttribute vertexAttribute : vertexAttributes)
         {
-            int location = program.getAttributeLocation(attribute);
+            int location = program.getAttributeLocation(vertexAttribute);
             GLES20.glEnableVertexAttribArray(location);
-            GLES20.glVertexAttribPointer(location, attribute.getNumBaseTypeElements(), attribute.getBaseType(), false, vertexByteSize, getAttributeByteOffset(attribute));
+            GLES20.glVertexAttribPointer(location, vertexAttribute.getNumBaseTypeElements(), vertexAttribute.getBaseType(), false, vertexByteSize, getAttributeByteOffset(vertexAttribute));
         }
     }
 
@@ -165,13 +171,13 @@ public class StaticVertexBuffer extends BaseBuffer
         return isTransferred;
     }
 
-    private void setAttributeByteOffset(Attribute attribute, int byteOffset)
+    private void setAttributeByteOffset(VertexAttribute vertexAttribute, int byteOffset)
     {
-        attributeVertexByteOffset.put(attribute, byteOffset);
+        attributeVertexByteOffset.put(vertexAttribute, byteOffset);
     }
 
-    private int getAttributeByteOffset(Attribute attribute)
+    private int getAttributeByteOffset(VertexAttribute vertexAttribute)
     {
-        return attributeVertexByteOffset.get(attribute);
+        return attributeVertexByteOffset.get(vertexAttribute);
     }
 }

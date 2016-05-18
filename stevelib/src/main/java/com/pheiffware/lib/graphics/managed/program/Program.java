@@ -4,9 +4,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.Texture;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -21,10 +19,17 @@ import java.util.Map;
  */
 public class Program
 {
+    //Handle to the GL program
     private final int handle;
+
+    //Map of all uniforms used by the program
     private final Map<String, Uniform> uniforms = new HashMap<>();
-    private final EnumMap<Attribute, Integer> attributeLocations = new EnumMap<>(Attribute.class);
-    private final EnumSet<Attribute> attributes = EnumSet.noneOf(Attribute.class);
+
+    //Map of all program attributes
+    private final EnumSet<VertexAttribute> vertexAttributes = EnumSet.noneOf(VertexAttribute.class);
+
+    //Map of all program attribute locations (location is essentially a GL handle to the attribute itself)
+    private final EnumMap<VertexAttribute, Integer> vertexAttributeLocations = new EnumMap<>(VertexAttribute.class);
 
     public Program(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
@@ -59,14 +64,14 @@ public class Program
         int[] typeArray = new int[1];
         String name = GLES20.glGetActiveAttrib(handle, attributeIndex, arraySizeArray, 0, typeArray, 0);
         int location = GLES20.glGetAttribLocation(handle, name);
-        Attribute attribute = Attribute.lookupByName(name);
-        attributeLocations.put(attribute, location);
-        attributes.add(attribute);
+        VertexAttribute vertexAttribute = VertexAttribute.lookupByName(name);
+        vertexAttributeLocations.put(vertexAttribute, location);
+        vertexAttributes.add(vertexAttribute);
     }
 
-    public int getAttributeLocation(Attribute attribute)
+    public int getAttributeLocation(VertexAttribute vertexAttribute)
     {
-        return attributeLocations.get(attribute);
+        return vertexAttributeLocations.get(vertexAttribute);
     }
 
     public final Uniform getUniform(String uniformName)
@@ -111,10 +116,10 @@ public class Program
         {
             builder.append(uniform + "\n");
         }
-        builder.append("Attribute locations:\n");
-        for (Attribute attribute : attributes)
+        builder.append("VertexAttribute locations:\n");
+        for (VertexAttribute vertexAttribute : vertexAttributes)
         {
-            builder.append(attribute.getName() + ": " + getAttributeLocation(attribute) + "\n");
+            builder.append(vertexAttribute.getName() + ": " + getAttributeLocation(vertexAttribute) + "\n");
         }
         return builder.toString();
     }

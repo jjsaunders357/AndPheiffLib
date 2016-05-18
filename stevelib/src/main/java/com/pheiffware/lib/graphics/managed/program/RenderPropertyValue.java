@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.techniques;
+package com.pheiffware.lib.graphics.managed.program;
 
 /**
  * Holds the name and value for a single uniform.  Used as a convenience when specifying lists of these, inline, as opposed populating a map.

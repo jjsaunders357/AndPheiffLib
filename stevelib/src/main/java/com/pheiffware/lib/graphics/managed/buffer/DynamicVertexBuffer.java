@@ -6,11 +6,11 @@ package com.pheiffware.lib.graphics.managed.buffer;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 
 /**
- * Sets up a vertex buffer for holding an array of a single attribute. This is generally more efficient for attributes which will change regularly as
+ * Sets up a vertex buffer for holding an array of a single vertexAttribute. This is generally more efficient for attributes which will change regularly as
  * they can be quickly copied into buffers and re-transfered.
  * <p/>
  * Usage should look like:
@@ -28,26 +28,26 @@ import com.pheiffware.lib.graphics.managed.program.Program;
 
 public class DynamicVertexBuffer extends BaseBuffer
 {
-    private final Attribute attribute;
+    private final VertexAttribute vertexAttribute;
 
-    public DynamicVertexBuffer(Attribute attribute)
+    public DynamicVertexBuffer(VertexAttribute vertexAttribute)
     {
         super();
-        this.attribute = attribute;
+        this.vertexAttribute = vertexAttribute;
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
     }
 
     public void allocate(int numVertices)
     {
-        allocateBuffer(numVertices * attribute.getByteSize());
+        allocateBuffer(numVertices * vertexAttribute.getByteSize());
     }
 
     public final void bind(Program program)
     {
-        int location = program.getAttributeLocation(attribute);
+        int location = program.getAttributeLocation(vertexAttribute);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferHandle);
         GLES20.glEnableVertexAttribArray(location);
-        GLES20.glVertexAttribPointer(location, attribute.getNumBaseTypeElements(), attribute.getBaseType(), false, attribute.getByteSize(), 0);
+        GLES20.glVertexAttribPointer(location, vertexAttribute.getNumBaseTypeElements(), vertexAttribute.getBaseType(), false, vertexAttribute.getByteSize(), 0);
     }
 
     /**
