@@ -2,8 +2,8 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.techniques.PropertyValue;
-import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
+import com.pheiffware.lib.graphics.techniques.RenderProperty;
+import com.pheiffware.lib.graphics.techniques.RenderPropertyValue;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -33,18 +33,18 @@ import java.util.EnumSet;
 public abstract class Technique
 {
     //The set of properties which apply to this technique
-    private final EnumSet<TechniqueProperty> properties = EnumSet.noneOf(TechniqueProperty.class);
+    private final EnumSet<RenderProperty> properties = EnumSet.noneOf(RenderProperty.class);
 
     //Default properties which should be used every time unless explicitly overridden in a particular property batch.
-    private final EnumMap<TechniqueProperty, Object> defaultPropertyValues = new EnumMap<>(TechniqueProperty.class);
+    private final EnumMap<RenderProperty, Object> defaultPropertyValues = new EnumMap<>(RenderProperty.class);
 
     //Values of properties cached here for use in applyProperties()
-    private final EnumMap<TechniqueProperty, Object> propertyValues = new EnumMap<>(TechniqueProperty.class);
+    private final EnumMap<RenderProperty, Object> propertyValues = new EnumMap<>(RenderProperty.class);
 
     //Program being wrapped
     private final Program program;
 
-    public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, TechniqueProperty[] properties) throws GraphicsException
+    public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, RenderProperty[] properties) throws GraphicsException
     {
         Collections.addAll(this.properties, properties);
         this.program = (new Program(al, vertexShaderAsset, fragmentShaderAsset));
@@ -61,7 +61,7 @@ public abstract class Technique
 
     private void defaultPropertyValues()
     {
-        for (TechniqueProperty property : defaultPropertyValues.keySet())
+        for (RenderProperty property : defaultPropertyValues.keySet())
         {
             setProperty(property, defaultPropertyValues.get(property));
         }
@@ -79,7 +79,7 @@ public abstract class Technique
      * @param properties
      * @param defaultValues
      */
-    public final void setDefaultPropertyValues(TechniqueProperty[] properties, Object[] defaultValues)
+    public final void setDefaultPropertyValues(RenderProperty[] properties, Object[] defaultValues)
     {
         defaultPropertyValues.clear();
         for (int i = 0; i < properties.length; i++)
@@ -95,7 +95,7 @@ public abstract class Technique
      * @param property
      * @param propertyValue
      */
-    public final void setProperty(TechniqueProperty property, Object propertyValue)
+    public final void setProperty(RenderProperty property, Object propertyValue)
     {
         propertyValues.put(property, propertyValue);
     }
@@ -105,7 +105,7 @@ public abstract class Technique
      *
      * @param propertyValues
      */
-    public void setProperties(EnumMap<TechniqueProperty, Object> propertyValues)
+    public void setProperties(EnumMap<RenderProperty, Object> propertyValues)
     {
         this.propertyValues.putAll(propertyValues);
     }
@@ -113,13 +113,13 @@ public abstract class Technique
     /**
      * Convenience method to set multiple properties at once.
      *
-     * @param propertyValues
+     * @param renderPropertyValues
      */
-    public void setProperties(PropertyValue[] propertyValues)
+    public void setProperties(RenderPropertyValue[] renderPropertyValues)
     {
-        for (PropertyValue propertyValue : propertyValues)
+        for (RenderPropertyValue renderPropertyValue : renderPropertyValues)
         {
-            this.propertyValues.put(propertyValue.property, propertyValue.value);
+            this.propertyValues.put(renderPropertyValue.property, renderPropertyValue.value);
         }
     }
 
@@ -129,7 +129,7 @@ public abstract class Technique
      * @param properties
      * @param propertyValues
      */
-    public void setProperties(TechniqueProperty[] properties, Object[] propertyValues)
+    public void setProperties(RenderProperty[] properties, Object[] propertyValues)
     {
         for (int i = 0; i < properties.length; i++)
         {
@@ -143,7 +143,7 @@ public abstract class Technique
      * @param property
      * @return
      */
-    protected final Object getPropertyValue(TechniqueProperty property)
+    protected final Object getPropertyValue(RenderProperty property)
     {
         return propertyValues.get(property);
     }

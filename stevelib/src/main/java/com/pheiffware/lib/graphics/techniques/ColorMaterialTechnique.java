@@ -53,16 +53,16 @@ public class ColorMaterialTechnique extends Technique
 
     public ColorMaterialTechnique(AssetLoader al) throws GraphicsException
     {
-        super(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl", new TechniqueProperty[]{
-                TechniqueProperty.PROJECTION_MATRIX,
-                TechniqueProperty.VIEW_MATRIX,
-                TechniqueProperty.MODEL_MATRIX,
-                TechniqueProperty.AMBIENT_LIGHT_COLOR,
-                TechniqueProperty.MAT_COLOR,
-                TechniqueProperty.LIGHT_COLOR,
-                TechniqueProperty.SPEC_MAT_COLOR,
-                TechniqueProperty.LIGHT_POS,
-                TechniqueProperty.SHININESS
+        super(al, "shaders/vert_mncl.glsl", "shaders/frag_mncl.glsl", new RenderProperty[]{
+                RenderProperty.PROJECTION_MATRIX,
+                RenderProperty.VIEW_MATRIX,
+                RenderProperty.MODEL_MATRIX,
+                RenderProperty.AMBIENT_LIGHT_COLOR,
+                RenderProperty.MAT_COLOR,
+                RenderProperty.LIGHT_COLOR,
+                RenderProperty.SPEC_MAT_COLOR,
+                RenderProperty.LIGHT_POS,
+                RenderProperty.SHININESS
         });
         eyeProjUniform = getUniform(StdUniforms.PROJECTION_MATRIX_UNIFORM);
         eyeTransUniform = getUniform(StdUniforms.VIEW_MODEL_MATRIX_UNIFORM);
@@ -78,11 +78,11 @@ public class ColorMaterialTechnique extends Technique
     @Override
     public void applyPropertiesToUniforms()
     {
-        Matrix4 projMatrix = (Matrix4) getPropertyValue(TechniqueProperty.PROJECTION_MATRIX);
+        Matrix4 projMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
         eyeProjUniform.setValue(projMatrix.m);
 
-        Matrix4 viewMatrix = (Matrix4) getPropertyValue(TechniqueProperty.VIEW_MATRIX);
-        Matrix4 modelMatrix = (Matrix4) getPropertyValue(TechniqueProperty.MODEL_MATRIX);
+        Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
+        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
         viewModelMatrix.set(viewMatrix);
         viewModelMatrix.multiplyBy(modelMatrix);
 
@@ -90,23 +90,23 @@ public class ColorMaterialTechnique extends Technique
         normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
         eyeNormUniform.setValue(normalTransform.m);
 
-        float[] lightColor = (float[]) getPropertyValue(TechniqueProperty.AMBIENT_LIGHT_COLOR);
-        float[] matColor = (float[]) getPropertyValue(TechniqueProperty.MAT_COLOR);
+        float[] lightColor = (float[]) getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR);
+        float[] matColor = (float[]) getPropertyValue(RenderProperty.MAT_COLOR);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         ambLMUniform.setValue(lightMatColor);
 
-        lightColor = (float[]) getPropertyValue(TechniqueProperty.LIGHT_COLOR);
+        lightColor = (float[]) getPropertyValue(RenderProperty.LIGHT_COLOR);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         diffLMUniform.setValue(lightMatColor);
 
-        matColor = (float[]) getPropertyValue(TechniqueProperty.SPEC_MAT_COLOR);
+        matColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
         GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
         specLMUniform.setValue(lightMatColor);
 
-        float[] lightPosition = (float[]) getPropertyValue(TechniqueProperty.LIGHT_POS);
+        float[] lightPosition = (float[]) getPropertyValue(RenderProperty.LIGHT_POS);
         viewMatrix.transformFloatVector(lightEyeSpace, 0, lightPosition, 0);
         lightEyePosUniform.setValue(lightEyeSpace);
 
-        shininessUniform.setValue(getPropertyValue(TechniqueProperty.SHININESS));
+        shininessUniform.setValue(getPropertyValue(RenderProperty.SHININESS));
     }
 }

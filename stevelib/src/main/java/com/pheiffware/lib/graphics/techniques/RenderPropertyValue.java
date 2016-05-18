@@ -5,12 +5,12 @@ package com.pheiffware.lib.graphics.techniques;
  * <p/>
  * Created by Steve on 4/20/2016.
  */
-public class PropertyValue
+public class RenderPropertyValue
 {
-    public final TechniqueProperty property;
+    public final RenderProperty property;
     public final Object value;
 
-    public PropertyValue(TechniqueProperty property, Object value)
+    public RenderPropertyValue(RenderProperty property, Object value)
     {
         this.property = property;
         this.value = value;

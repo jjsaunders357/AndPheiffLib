@@ -7,7 +7,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.mesh.Mesh;
-import com.pheiffware.lib.graphics.techniques.PropertyValue;
+import com.pheiffware.lib.graphics.techniques.RenderPropertyValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +71,7 @@ public abstract class ColladaGraphicsLoader<M>
         {
             Mesh mesh = meshes[i];
             BufferAndMaterial<M> bufferAndMaterial = getRenderMaterial(name, mesh, colladaObject3D.getMaterial(i));
-            graphicsManager.addMesh(mesh, bufferAndMaterial.vertexBuffer, bufferAndMaterial.material, bufferAndMaterial.propertyValues);
+            graphicsManager.addTransferMesh(mesh, bufferAndMaterial.vertexBuffer, bufferAndMaterial.material, bufferAndMaterial.renderPropertyValues);
         }
         graphicsManager.endObjectDef();
 
@@ -97,13 +97,13 @@ public abstract class ColladaGraphicsLoader<M>
     {
         protected final StaticVertexBuffer vertexBuffer;
         protected final M material;
-        protected final PropertyValue[] propertyValues;
+        protected final RenderPropertyValue[] renderPropertyValues;
 
-        public BufferAndMaterial(StaticVertexBuffer vertexBuffer, M material, PropertyValue[] propertyValues)
+        public BufferAndMaterial(StaticVertexBuffer vertexBuffer, M material, RenderPropertyValue[] renderPropertyValues)
         {
             this.vertexBuffer = vertexBuffer;
             this.material = material;
-            this.propertyValues = propertyValues;
+            this.renderPropertyValues = renderPropertyValues;
         }
     }
 

@@ -20,8 +20,8 @@ import com.pheiffware.lib.graphics.managed.mesh.Mesh;
 import com.pheiffware.lib.graphics.managed.program.Attribute;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.PropertyValue;
-import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
+import com.pheiffware.lib.graphics.techniques.RenderProperty;
+import com.pheiffware.lib.graphics.techniques.RenderPropertyValue;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -86,7 +86,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                     {
                         Technique technique;
                         StaticVertexBuffer vertexBuffer;
-                        PropertyValue[] propertyValues;
+                        RenderPropertyValue[] renderPropertyValues;
                         if (mesh.getTexCoordData() == null)
                         {
                             technique = colorTechnique;
@@ -99,20 +99,20 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                         }
                         if (colladaMaterial.imageFileName == null)
                         {
-                            propertyValues = new PropertyValue[]{
-                                    new PropertyValue(TechniqueProperty.MAT_COLOR, colladaMaterial.diffuseColor.comps),
-                                    new PropertyValue(TechniqueProperty.SHININESS, colladaMaterial.shininess),
-                                    new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
+                            renderPropertyValues = new RenderPropertyValue[]{
+                                    new RenderPropertyValue(RenderProperty.MAT_COLOR, colladaMaterial.diffuseColor.comps),
+                                    new RenderPropertyValue(RenderProperty.SHININESS, colladaMaterial.shininess),
+                                    new RenderPropertyValue(RenderProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
                         }
                         else
                         {
-                            propertyValues = new PropertyValue[]{
-                                    new PropertyValue(TechniqueProperty.MAT_COLOR_TEXTURE, glCache.getTexture(colladaMaterial.imageFileName)),
-                                    new PropertyValue(TechniqueProperty.SHININESS, colladaMaterial.shininess),
-                                    new PropertyValue(TechniqueProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
+                            renderPropertyValues = new RenderPropertyValue[]{
+                                    new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, glCache.getTexture(colladaMaterial.imageFileName)),
+                                    new RenderPropertyValue(RenderProperty.SHININESS, colladaMaterial.shininess),
+                                    new RenderPropertyValue(RenderProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
 
                         }
-                        return new BufferAndMaterial<>(vertexBuffer, technique, propertyValues);
+                        return new BufferAndMaterial<>(vertexBuffer, technique, renderPropertyValues);
                     }
                 };
 
@@ -137,12 +137,12 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         {
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
-                    new TechniqueProperty[]{
-                            TechniqueProperty.PROJECTION_MATRIX,
-                            TechniqueProperty.VIEW_MATRIX,
-                            TechniqueProperty.AMBIENT_LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_COLOR,
-                            TechniqueProperty.LIGHT_POS,
+                    new RenderProperty[]{
+                            RenderProperty.PROJECTION_MATRIX,
+                            RenderProperty.VIEW_MATRIX,
+                            RenderProperty.AMBIENT_LIGHT_COLOR,
+                            RenderProperty.LIGHT_COLOR,
+                            RenderProperty.LIGHT_POS,
 
                     },
                     new Object[]{
@@ -156,8 +156,8 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
             Matrix4 modelMatrix;
             modelMatrix = Matrix4.multiply(multiCubeTranslation, modelRotate);
             graphicsManager.submitRender(multiCubeHandle,
-                    new TechniqueProperty[]{
-                            TechniqueProperty.MODEL_MATRIX
+                    new RenderProperty[]{
+                            RenderProperty.MODEL_MATRIX
                     },
                     new Object[]{
                             modelMatrix

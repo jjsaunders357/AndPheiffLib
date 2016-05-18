@@ -9,20 +9,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages the job of transferring a collection of meshes/3D objects to the given index buffer and vertex buffers.  Each added mesh specifies the program it will be rendered by and
- * gets put in the corresponding vertex buffer.  All indices are put into the single provided index buffer.
+ * Manages the job of transferring a collection of meshes/3D objects to the given index buffer and vertex buffers.  Each added mesh specifies the vertex buffer it will be stored
+ * in.  All indices are put into the single provided index buffer.
  * <p/>
- * This is a one use class.  The usage pattern of the class is to repeatedly call addMesh() and then call transfer() once to move all data.  Afterwards, the reference to this
- * object should be forgotten so it can be garbage collected.
+ * This is a one use class.  The usage pattern of the class is to repeatedly call addTransferMesh() and then call transfer() once to move all data.  Afterwards, this clears all references
+ * to Meshes so they can be garbage collected if not needed elsewhere.
  * <p/>
  * Created by Steve on 4/14/2016.
  */
 public class GraphicsManagerTransferData<M>
 {
+    //Where indices are stored for transfer to the GL
     private final IndexBuffer indexBuffer;
+
+    //Where vertices are stored for transfer to the GL
     private final StaticVertexBuffer[] vertexBuffers;
+
+    //Tracks how much has been added for transfer via the vertex buffers
     private final MapCounter<StaticVertexBuffer> vertexBufferLengths;
 
+    //The number of indices stored in the index buffer
     private int indexBufferLength = 0;
 
     //List of added meshes, in order of addition
@@ -42,13 +48,13 @@ public class GraphicsManagerTransferData<M>
     }
 
     /**
-     * Adds a mesh for transfer to the given technique's vertex buffer.
+     * Adds a mesh for transfer to the given vertex buffer.
      *
-     * @param mesh      mesh to render
+     * @param mesh
      * @param vertexBuffer
      * @return the location in the index buffer where this mesh will be (specified in terms of vertex offset, *2 will give byte offset)
      */
-    public int addMesh(Mesh mesh, StaticVertexBuffer vertexBuffer)
+    public int addTransferMesh(Mesh mesh, StaticVertexBuffer vertexBuffer)
     {
         meshesForTransfer.add(mesh);
         meshVertexBuffers.add(vertexBuffer);
@@ -59,6 +65,9 @@ public class GraphicsManagerTransferData<M>
         return meshIndexOffset;
     }
 
+    /**
+     * Allocate all buffers and transfer data to the GL.  After this, it forgets all references to meshes transferred.
+     */
     public void transfer()
     {
         indexBuffer.allocate(indexBufferLength);
@@ -83,21 +92,10 @@ public class GraphicsManagerTransferData<M>
         {
             vertexBuffer.transfer();
         }
+        meshesForTransfer.clear();
+        meshVertexBuffers.clear();
     }
 
-    ObjectRenderHandle<M> startNewObjectDef()
-    {
-        currentObject = new ObjectRenderHandle<>();
-        return currentObject;
-    }
 
-    ObjectRenderHandle<M> getCurrentObjectDef()
-    {
-        return currentObject;
-    }
 
-    void endObjectDef()
-    {
-        currentObject = null;
-    }
 }

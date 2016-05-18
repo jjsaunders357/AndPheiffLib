@@ -2,7 +2,7 @@ package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
+import com.pheiffware.lib.graphics.techniques.RenderProperty;
 
 /**
  * This class manages storing data in index/vertex buffers and then conveniently/efficiently rendering that data.
@@ -12,7 +12,7 @@ import com.pheiffware.lib.graphics.techniques.TechniqueProperty;
  * <p/>
  * Typical usage:
  * <p/>
- * 1. Call addObject() and addMesh() over and over.
+ * 1. Call addObject() and addTransferMesh() over and over.
  * <p/>
  * 2. Call transfer()
  * <p/>
@@ -33,14 +33,14 @@ public class SingleTechniqueGraphicsManager extends BaseGraphicsManager<Techniqu
     }
 
     @Override
-    protected void renderItem(MeshRenderHandle<Technique> meshHandle, TechniqueProperty[] overrideProperties, Object[] overridePropertyValues)
+    protected void renderItem(MeshRenderHandle<Technique> meshHandle, RenderProperty[] overrideProperties, Object[] overridePropertyValues)
     {
         Technique technique = meshHandle.material;
         technique.bind();
         meshHandle.vertexBuffer.bind(technique.getProgram());
-        technique.setProperties(meshHandle.propertyValues);
+        technique.setProperties(meshHandle.renderPropertyValues);
         technique.setProperties(overrideProperties, overridePropertyValues);
         technique.applyProperties();
-        drawIndexBuffer(meshHandle);
+        drawTriangles(meshHandle);
     }
 }

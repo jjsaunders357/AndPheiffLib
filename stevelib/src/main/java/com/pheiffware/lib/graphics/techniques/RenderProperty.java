@@ -5,7 +5,7 @@ package com.pheiffware.lib.graphics.techniques;
  * <p/>
  * Created by Steve on 4/24/2016.
  */
-public enum TechniqueProperty
+public enum RenderProperty
 {
     PROJECTION_MATRIX,
     VIEW_MATRIX,
