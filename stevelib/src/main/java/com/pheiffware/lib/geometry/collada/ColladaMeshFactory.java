@@ -77,8 +77,9 @@ class ColladaMeshFactory
         {
             return null;
         }
-        int vertexCount = Integer.valueOf(triangleElement.getAttribute("count")) * 3;
         Element indicesElement = DomUtils.assertGetSubElement(triangleElement, "p");
+
+        int vertexCount = Integer.valueOf(triangleElement.getAttribute("count")) * 3;
         short[] interleavedIndices = DomUtils.getShortsFromElement(indicesElement);
         return generateRawMeshData(interleavedIndices, vertexCount, inputs);
     }

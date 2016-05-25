@@ -8,37 +8,48 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A group of meshes, nominally mapped by material.
- * In Blender files: the material is meaningful
- * In Sketchup files: the material is meaningless and instead materials have to be determined in geometry instances elsewhere.
+ * A group of meshes each mapped to some local generated material ID.  This ID means nothing except when referenced later when actual geometry instances are created and this local
+ * generated ID is mapped to a real Collada material ID.
  * <p/>
- * For sketchup, this information is later combined with other material/instance information to actually determine material.
  * Created by Steve on 2/16/2016.
  */
 class ColladaGeometry
 {
-    //Parallel lists of materials and meshes.  This cannot be a map because in SketchUp the materials are meaningless and repeat (meaning we would lose meshes).  However, in blenders the materials matter and we don't want to lose them.
-    public final List<String> materialIDs = new ArrayList<>();
+    //Parallel lists of local material IDs and meshes.  This is not a map, because localMaterialIDs repeat.
+    public final List<String> localMaterialIDs = new ArrayList<>();
     public final List<Mesh> meshes = new ArrayList<>();
 
     public void add(String materialID, Mesh mesh)
     {
-        materialIDs.add(materialID);
+        localMaterialIDs.add(materialID);
         meshes.add(mesh);
     }
 
-    public MeshGroup createMeshGroup(Map<String, ColladaMaterial> materials)
+    /**
+     * Creates a mesh group object referencing real ColladaMaterials.  The supplied map, must map this geometry's fake local material IDs to actual Collada materials.
+     *
+     * @param materialMap a map from this geometry's local material naming convention to actual materials.
+     * @return
+     */
+    public MeshGroup createMeshGroup(Map<String, ColladaMaterial> materialMap)
     {
         //No initial transform can be specified in geometry elements
         MeshGroup meshGroup = new MeshGroup(Matrix4.newIdentity());
         for (int i = 0; i < meshes.size(); i++)
         {
-            ColladaMaterial colladaMaterial = materials.get(materialIDs.get(i));
+            ColladaMaterial colladaMaterial = materialMap.get(localMaterialIDs.get(i));
             meshGroup.add(colladaMaterial, meshes.get(i));
         }
         return meshGroup;
     }
 
+    /**
+     * This should be replaced by the above method everywhere.
+     *
+     * @param colladaMaterial
+     * @return
+     */
+    @Deprecated
     public MeshGroup createMeshGroup(ColladaMaterial colladaMaterial)
     {
         //No initial transform can be specified in geometry elements

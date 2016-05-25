@@ -82,8 +82,8 @@ public class TestCollada
         //Check geometry
         Map<String, ColladaGeometry> geometries = colladaFactory.getGeometries();
         ColladaGeometry geo1 = geometries.get("geo1_id");
-        assertEquals("mat_text1_id", geo1.materialIDs.get(0));
-        assertEquals("mat_text2_id", geo1.materialIDs.get(1));
+        assertEquals("mat_text1_id", geo1.localMaterialIDs.get(0));
+        assertEquals("mat_text2_id", geo1.localMaterialIDs.get(1));
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getVertexIndices());
@@ -116,7 +116,6 @@ public class TestCollada
         //1st mesh of each material is from parent.
         //It is untransformed
 
-        //TODO: Test mesh concatenation of indices
         //2nd mesh of each material is from child which refers to same geometry.
         //It has z translated by 3
         assertArrayEquals(mat1Mesh.getPositionData(),
@@ -185,7 +184,7 @@ public class TestCollada
         ColladaGeometry geo1 = geometries.get("geo1_id");
 
         //Sketchup just makes stuff up when it assigns materials to geometries.  Ignore this!
-        assertEquals("completely made up id", geo1.materialIDs.get(0));
+        assertEquals("completely made up id", geo1.localMaterialIDs.get(0));
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getVertexIndices());
@@ -261,7 +260,7 @@ public class TestCollada
 
 
     /**
-     * Tests uncollation.
+     * Tests normalization of mesh.
      */
     @Test
     public void testColladaMeshNormalizer()

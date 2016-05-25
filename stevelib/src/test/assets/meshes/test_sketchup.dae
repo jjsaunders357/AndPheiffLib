@@ -151,13 +151,12 @@
             </vertices>
             <!--VERTEX input should be replaced by all inputs in vertices element.
             However, the offset for VERTEX should be used for all input declared in vertices.-->
-            <polylist material="completely made up id" count="12">
+            <triangles material="completely made up id" count="3">
                 <input semantic="VERTEX" source="#who cares" offset="1"/>
                 <input semantic="NORMAL" source="#input3" offset="0"/>
                 <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
-                <vcount>3 3 3</vcount>
                 <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
-            </polylist>
+            </triangles>
         </mesh>
     </geometry>
     <geometry id="geo2_id" name="geo2_name">
@@ -200,13 +199,12 @@
             </vertices>
             <!--VERTEX input should be replaced by all inputs in vertices element.
             However, the offset for VERTEX should be used for all input declared in vertices.-->
-            <polylist material="completely made up id" count="12">
+            <triangles material="completely made up id" count="3">
                 <input semantic="VERTEX" source="#who cares" offset="1"/>
                 <input semantic="NORMAL" source="#input3" offset="0"/>
                 <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
-                <vcount>3 3 3</vcount>
                 <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
-            </polylist>
+            </triangles>
         </mesh>
     </geometry>
     <geometry id="geo3_id" name="geo3_name">
@@ -242,20 +240,19 @@
                     </accessor>
                 </technique_common>
             </source>
-            <!--vertices, is a useless concept.  Inputs can be declared here instead of in polylist,
+            <!--vertices, is a useless concept.  Inputs can be declared here instead of in triangles,
             which complicates things unnecessarily.-->
             <vertices id="who cares">
                 <input semantic="POSITION" source="#input1"/>
             </vertices>
             <!--VERTEX input should be replaced by all inputs in vertices element.
             However, the offset for VERTEX should be used for all input declared in vertices.-->
-            <polylist material="completely made up id" count="12">
+            <triangles material="completely made up id" count="3">
                 <input semantic="VERTEX" source="#who cares" offset="1"/>
                 <input semantic="NORMAL" source="#input3" offset="0"/>
                 <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
-                <vcount>3 3 3</vcount>
                 <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
-            </polylist>
+            </triangles>
         </mesh>
     </geometry>
     </library_geometries>

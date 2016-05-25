@@ -152,7 +152,7 @@
             </vertices>
             <!--VERTEX input should be replaced by all inputs in vertices element.
             However, the offset for VERTEX should be used for all input declared in vertices.-->
-            <polylist material="mat_text1_id" count="12">
+            <polylist material="mat_text1_id" count="3">
                 <input semantic="VERTEX" source="#who cares" offset="1"/>
                 <input semantic="NORMAL" source="#input3" offset="0"/>
                 <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
@@ -160,7 +160,7 @@
                 <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
             </polylist>
 
-            <polylist material="mat_text2_id" count="12">
+            <polylist material="mat_text2_id" count="2">
                 <input semantic="VERTEX" source="#who cares" offset="0"/>
                 <input semantic="NORMAL" source="#input3" offset="1"/>
                 <input semantic="TEXCOORD" source="#input2" offset="1" set="0"/>
@@ -207,7 +207,7 @@
                 <input semantic="POSITION" source="#input1"/>
             </vertices>
             <!--Mesh with no material assignment-->
-            <polylist count="12">
+            <polylist count="2">
                 <input semantic="VERTEX" source="#who cares" offset="0"/>
                 <input semantic="NORMAL" source="#input3" offset="1"/>
                 <input semantic="TEXCOORD" source="#input2" offset="1" set="0"/>

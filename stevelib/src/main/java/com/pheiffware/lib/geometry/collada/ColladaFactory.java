@@ -16,6 +16,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.validation.Validator;
+//TODO: Eliminate ColladaAuthoringSoftware class
+/*
+* There was a misunderstanding about how Collada manages naming materials used in geometries which needs to be cleared up.
+* The way this works:
+*
+* Each geometry may contain multiple polylist or triangles tags.  Each tag references a fake, local, material id.  Later, when a geometry instance is defined, this fake id is
+* associated with a real material id which refers to a material defined in the file.
+*
+* The current system of managing this uses conventions of how Blender and Sketchup name/use these material and geometries in files, which may not always work.
+*/
+
 
 /**
  * Main class which parses a Collada file to produce a Collada object.  This holds lots of additional intermediate information which can be used during testing or for other
