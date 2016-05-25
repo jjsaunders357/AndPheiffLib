@@ -5,7 +5,10 @@ import android.opengl.GLES20;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 import java.util.HashMap;
@@ -28,6 +31,7 @@ public class GLCache
     private final Map<String, Texture> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
     private final int deviceGLVersion;
+    private final TextureBinder textureBinder;
     private AssetLoader al;
 
     public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality, AssetLoader al)
@@ -39,6 +43,8 @@ public class GLCache
         {
             throw new RuntimeException("Cannot work with openGL version below 2.0");
         }
+
+        textureBinder = new TextureBinder(PheiffGLUtils.getNumTextureUnits(), new MostRecentTextureBindingStrategy(PheiffGLUtils.getNumTextureUnits()));
     }
 
 
@@ -56,8 +62,7 @@ public class GLCache
      */
     public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode));
-        System.out.println("WTF - " + name);
+        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode), textureBinder);
         textures.put(name, texture);
         return texture;
     }
@@ -122,7 +127,7 @@ public class GLCache
      */
     public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode));
+        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode), textureBinder);
         textures.put(name, texture);
         return texture;
     }
@@ -139,7 +144,7 @@ public class GLCache
      */
     public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode));
+        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode), textureBinder);
         textures.put(name, texture);
         return texture;
     }

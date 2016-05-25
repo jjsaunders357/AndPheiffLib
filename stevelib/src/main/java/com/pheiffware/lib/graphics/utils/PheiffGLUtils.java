@@ -10,7 +10,30 @@ import com.pheiffware.lib.graphics.GraphicsException;
 public class PheiffGLUtils
 {
     /**
+     * Gets the total number of texture units available
+     * @return
+     */
+    public static int getNumTextureUnits()
+    {
+        int[] numTextureUnits = new int[1];
+        GLES20.glGetIntegerv(GLES20.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, numTextureUnits, 0);
+        return numTextureUnits[0];
+    }
+
+    /**
+     * Looks up the appropriate texture unit handle for a given index.  Example: 2 - GLES20.GL_TEXTURE2
+     *
+     * @param textureUnitIndex The index of the texture unit
+     * @return
+     */
+    public static int getGLTextureUnitHandle(int textureUnitIndex)
+    {
+        return GLES20.GL_TEXTURE0 + textureUnitIndex;
+    }
+
+    /**
      * Gets the byte size of a base type.
+     *
      * @param type
      * @return
      */
@@ -31,36 +54,6 @@ public class PheiffGLUtils
         }
     }
 
-    /**
-     * Looks up the appropraite texture unit handle for a given index.  Example: 2 - GLES20.GL_TEXTURE2
-     *
-     * @param textureUnitIndex The index of the texture unit
-     * @return
-     */
-    public static int getGLTextureUnitHandle(int textureUnitIndex)
-    {
-        switch (textureUnitIndex)
-        {
-            case 0:
-                return GLES20.GL_TEXTURE0;
-            case 1:
-                return GLES20.GL_TEXTURE1;
-            case 2:
-                return GLES20.GL_TEXTURE2;
-            case 3:
-                return GLES20.GL_TEXTURE3;
-            case 4:
-                return GLES20.GL_TEXTURE4;
-            case 5:
-                return GLES20.GL_TEXTURE5;
-            case 6:
-                return GLES20.GL_TEXTURE6;
-            case 7:
-                return GLES20.GL_TEXTURE7;
-            default:
-                throw new RuntimeException("Cannot get size of unsupported opengl texture unit index: " + textureUnitIndex);
-        }
-    }
 
     /**
      * Creates a new frame buffer object.  This is typically used when rendering to textures.
@@ -119,5 +112,6 @@ public class PheiffGLUtils
                 throw new GraphicsException("Framebuffer  object  is  not  complete");
         }
     }
+
 
 }

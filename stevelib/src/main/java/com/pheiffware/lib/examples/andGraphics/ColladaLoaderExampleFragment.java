@@ -119,12 +119,6 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                 ColladaObject3D multiCube = collada.objects.get("multi");
                 multiCubeHandle = colladaGraphicsLoader.addColladaObject(multiCube);
                 graphicsManager.transfer();
-
-                //TODO: Texture management should be part of rendering system
-                glCache.getTexture("stripes.jpg").bindToSampler(0);
-                glCache.getTexture("grey_brick.jpg").bindToSampler(1);
-                glCache.getTexture("brown_brick.jpg").bindToSampler(2);
-
             }
             catch (XMLParseException | IOException exception)
             {

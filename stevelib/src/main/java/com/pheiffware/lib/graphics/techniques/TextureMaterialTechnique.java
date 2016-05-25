@@ -99,7 +99,8 @@ public class TextureMaterialTechnique extends Technique
         lightColorUniform.setValue(lightColor);
 
         Texture texture = (Texture) getPropertyValue(RenderProperty.MAT_COLOR_TEXTURE);
-        matSamplerUniform.setValue(texture.getSampler());
+        texture.autoBind();
+        matSamplerUniform.setValue(texture.getBoundTextureUnitIndex());
 
         float[] matColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
 

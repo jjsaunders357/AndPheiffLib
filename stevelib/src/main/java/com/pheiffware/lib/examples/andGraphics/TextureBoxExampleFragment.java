@@ -102,7 +102,6 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
             textureTechnique.setProperty(RenderProperty.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             textureTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             textureTechnique.setProperty(RenderProperty.SHININESS, 3.0f);
-            texture.bindToSampler(2);
             textureTechnique.setProperty(RenderProperty.MAT_COLOR_TEXTURE, texture);
 
             textureTechnique.applyProperties();
