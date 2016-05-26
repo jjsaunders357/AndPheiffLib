@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.validation.Validator;
 /**
  * Main class which parses a Collada file to produce a Collada object.  This holds lots of additional intermediate information which can be used during testing or for other
  * purposes. Created by Steve on 2/19/2016.
@@ -32,9 +30,6 @@ public class ColladaFactory
 
     //If no default material is defined, this this is assigned automatically
     private static final ColladaMaterial DEFAULT_DEFAULT_COLLADA_MATERIAL = new ColladaMaterial("", null, DEFAULT_AMBIENT, DEFAULT_DIFFUSE, DEFAULT_SPECULAR, DEFAULT_SHININESS);
-
-    //Used to validate collada files against known schema
-    private static final Validator validator = DomUtils.createValidator("collada_schema_1_4_1.xsd");
 
     //Map from image ids to file names
     private final Map<String, String> imageFileNames = new HashMap<>();
@@ -80,7 +75,8 @@ public class ColladaFactory
 
     public Collada loadCollada(InputStream input) throws XMLParseException
     {
-        Document doc = DomUtils.loadDocumentFromStream(input, validator);
+        //Note: Collada schema downloaded, but it is corrupt/incompatible with Android.  Schema fails to parse...
+        Document doc = DomUtils.loadDocumentFromStream(input, null);
         Element rootElement = doc.getDocumentElement();
         ColladaAuthoringSoftware colladaAuthoringSoftware = ColladaAuthoringSoftware.parse(rootElement);
         Element libraryImagesElement = DomUtils.assertGetSubElement(rootElement, "library_images");
