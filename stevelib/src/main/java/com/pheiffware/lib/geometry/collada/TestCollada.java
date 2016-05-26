@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
+ * Tests Collada loading
+ *
  * Created by Steve on 2/20/2016.
  */
 public class TestCollada
@@ -82,8 +84,8 @@ public class TestCollada
         //Check geometry
         Map<String, ColladaGeometry> geometries = colladaFactory.getGeometries();
         ColladaGeometry geo1 = geometries.get("geo1_id");
-        assertEquals("mat_text1_id", geo1.localMaterialIDs.get(0));
-        assertEquals("mat_text2_id", geo1.localMaterialIDs.get(1));
+        assertEquals("local_mat1_id", geo1.localMaterialIDs.get(0));
+        assertEquals("local_mat2_id", geo1.localMaterialIDs.get(1));
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getVertexIndices());
@@ -183,8 +185,8 @@ public class TestCollada
         Map<String, ColladaGeometry> geometries = colladaFactory.getGeometries();
         ColladaGeometry geo1 = geometries.get("geo1_id");
 
-        //Sketchup just makes stuff up when it assigns materials to geometries.  Ignore this!
-        assertEquals("completely made up id", geo1.localMaterialIDs.get(0));
+        //Local material id
+        assertEquals("local_mat1_id", geo1.localMaterialIDs.get(0));
 
         Mesh mesh1 = geo1.meshes.get(0);
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getVertexIndices());
@@ -245,9 +247,6 @@ public class TestCollada
         assertEquals(8, groupOfGroups.matMeshTO(mat2).getPositionData()[1], 0.0);
         ColladaObject3D reference = objects.get("reference_name");
         assertEquals(1.0, reference.matMeshTO(mat1).getPositionData()[1], 0.0);
-
-        ColladaObject3D no_mat = objects.get("no_mat_name");
-        assertEquals(2.0, no_mat.matMeshTO(defaultMat).getPositionData()[1], 0.0);
     }
 
     @Test

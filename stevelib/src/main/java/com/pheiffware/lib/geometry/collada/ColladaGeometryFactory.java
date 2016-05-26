@@ -45,25 +45,27 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
         List<Element> polylists = DomUtils.getSubElements(meshElement, "polylist");
         for (Element polyListElement : polylists)
         {
-            String materialID = polyListElement.getAttribute("material");
+            //If this does not exist then it will be ""
+            String localMaterialID = polyListElement.getAttribute("material");
             ColladaMesh colladaMesh = colladaMeshFactory.fromPolyListElement(polyListElement);
             if (colladaMesh != null)
             {
                 ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
-                colladaGeometry.add(materialID, mesh);
+                colladaGeometry.add(localMaterialID, mesh);
             }
         }
         List<Element> triangles = DomUtils.getSubElements(meshElement, "triangles");
         for (Element trianglesElement : triangles)
         {
-            String materialID = trianglesElement.getAttribute("material");
+            //If this does not exist then it will be ""
+            String localMaterialID = trianglesElement.getAttribute("material");
             ColladaMesh colladaMesh = colladaMeshFactory.fromTrianglesElement(trianglesElement);
             if (colladaMesh != null)
             {
                 ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
-                colladaGeometry.add(materialID, mesh);
+                colladaGeometry.add(localMaterialID, mesh);
             }
         }
         return colladaGeometry;

@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * A group of meshes each mapped to some local generated material ID.  This ID means nothing except when referenced later when actual geometry instances are created and this local
- * generated ID is mapped to a real Collada material ID.
+ * generated ID is mapped to a real Collada material ID.  Any geometry without a material defined is assigned the default material ID "".
  * <p/>
  * Created by Steve on 2/16/2016.
  */
@@ -26,7 +26,8 @@ class ColladaGeometry
     }
 
     /**
-     * Creates a mesh group object referencing real ColladaMaterials.  The supplied map, must map this geometry's fake local material IDs to actual Collada materials.
+     * Creates a mesh group object referencing real ColladaMaterials.  The supplied map, must map this geometry's fake local material IDs to actual Collada materials. "" should map
+     * to the default material.
      *
      * @param materialMap a map from this geometry's local material naming convention to actual materials.
      * @return
@@ -38,24 +39,6 @@ class ColladaGeometry
         for (int i = 0; i < meshes.size(); i++)
         {
             ColladaMaterial colladaMaterial = materialMap.get(localMaterialIDs.get(i));
-            meshGroup.add(colladaMaterial, meshes.get(i));
-        }
-        return meshGroup;
-    }
-
-    /**
-     * This should be replaced by the above method everywhere.
-     *
-     * @param colladaMaterial
-     * @return
-     */
-    @Deprecated
-    public MeshGroup createMeshGroup(ColladaMaterial colladaMaterial)
-    {
-        //No initial transform can be specified in geometry elements
-        MeshGroup meshGroup = new MeshGroup(Matrix4.newIdentity());
-        for (int i = 0; i < meshes.size(); i++)
-        {
             meshGroup.add(colladaMaterial, meshes.get(i));
         }
         return meshGroup;

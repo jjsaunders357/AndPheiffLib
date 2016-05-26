@@ -152,7 +152,7 @@
             </vertices>
             <!--VERTEX input should be replaced by all inputs in vertices element.
             However, the offset for VERTEX should be used for all input declared in vertices.-->
-            <polylist material="mat_text1_id" count="3">
+            <polylist material="local_mat1_id" count="3">
                 <input semantic="VERTEX" source="#who cares" offset="1"/>
                 <input semantic="NORMAL" source="#input3" offset="0"/>
                 <input semantic="TEXCOORD" source="#input2" offset="0" set="0"/>
@@ -160,7 +160,7 @@
                 <p>0 0 0 1 0 1 0 2 0 3 1 0 0 0 1 0 0 2</p>
             </polylist>
 
-            <polylist material="mat_text2_id" count="2">
+            <polylist material="local_mat2_id" count="2">
                 <input semantic="VERTEX" source="#who cares" offset="0"/>
                 <input semantic="NORMAL" source="#input3" offset="1"/>
                 <input semantic="TEXCOORD" source="#input2" offset="1" set="0"/>
@@ -223,10 +223,10 @@
         <instance_geometry url="#geo1_id" name="who cares">
           <bind_material>
             <technique_common>
-              <instance_material symbol="mat_text1_id" target="#mat_text1_id">
+              <instance_material symbol="local_mat1_id" target="#mat_text1_id">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
-              <instance_material symbol="mat_text2_id" target="#mat_text2_id">
+              <instance_material symbol="local_mat2_id" target="#mat_text2_id">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>
@@ -236,11 +236,33 @@
       <node id="parent_id" name="parent_name" type="NODE">
           <!--Translate z of whole node (parent and child) by 2.  This will not be applied, but appear as initial transform-->
         <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 2 0 0 0 1</matrix>
-        <instance_geometry url="#geo1_id" name="Parent"/>
+        <instance_geometry url="#geo1_id" name="Parent">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="local_mat1_id" target="#mat_text1_id">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="local_mat2_id" target="#mat_text2_id">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
         <node id="child_id" name="child_name" type="NODE">
           <!--Translate child z by 3-->
           <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 3 0 0 0 1</matrix>
-          <instance_geometry url="#geo1_id" name="Child"/>
+          <instance_geometry url="#geo1_id" name="Child">
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="local_mat1_id" target="#mat_text1_id">
+                  <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+                </instance_material>
+                <instance_material symbol="local_mat2_id" target="#mat_text2_id">
+                  <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+                </instance_material>
+              </technique_common>
+            </bind_material>
+          </instance_geometry>
         </node>
       </node>
       <node id="no_mat_id" name="no_mat_name" type="NODE">

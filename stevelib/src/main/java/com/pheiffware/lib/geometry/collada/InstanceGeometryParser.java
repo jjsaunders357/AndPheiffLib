@@ -5,28 +5,31 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.w3c.dom.Element;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Turns instances of instance_geometry into MeshGroups.  This involves looking up ColladaGeometry and possibly assigning materials.
- * SketchUp files should use the single material specified and apply it to shallow copy of the entire ColladaGeometry which is referred to.
- * Blender files may specify multiple materials and should completely ignore this information.
+ * Turns instances of instance_geometry into MeshGroups.
+ *
+ * "url" references the geometry tag defined elsewhere in the file.
+ * "target" references the ID of a material defined in the collada file.
+ * "symbol" references the local material ID defined in the geometry this references.
+ *
+ * For each tag parsed, an individual map is built which maps local material IDs to globally (file) defined materials.
  * Created by Steve on 2/17/2016.
  */
 class InstanceGeometryParser
 {
     //
     private final Map<String, ColladaGeometry> geometriesByID;
-    //Blender should ignore material assignments here as they will have already been defined and may be ambiguous here.
-    private final boolean ignoreMaterialAssignments;
     //All previously loaded materials and a default material under the id ""
     private final Map<String, ColladaMaterial> materialsByID;
 
-    public InstanceGeometryParser(Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometriesByID, boolean ignoreMaterialAssignments)
+    public InstanceGeometryParser(Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometriesByID)
     {
         this.materialsByID = materialsByID;
         this.geometriesByID = geometriesByID;
-        this.ignoreMaterialAssignments = ignoreMaterialAssignments;
     }
 
     /**
@@ -44,37 +47,38 @@ class InstanceGeometryParser
         {
             throw new XMLParseException("Undefined geometry id referenced: " + geometryID);
         }
-        if (ignoreMaterialAssignments)
+        Element technique_common = DomUtils.getSubElementChain(element, "bind_material", "technique_common");
+
+        //Build a map from the geometry's local material naming scheme to the global naming scheme for the whole file
+        Map<String, ColladaMaterial> localMaterialMap = new HashMap<>();
+        localMaterialMap.put("", materialsByID.get(""));
+        if (technique_common != null)
         {
-            return colladaGeometry.createMeshGroup(materialsByID);
-        }
-        else
-        {
-            Element bind_material = DomUtils.getSubElement(element, "bind_material");
-            String materialID;
-            if (bind_material != null)
+            List<Element> instance_materials = DomUtils.getSubElements(technique_common, "instance_material");
+            for (Element instance_material : instance_materials)
             {
-                Element instance_material = DomUtils.assertGetSubElementChain(bind_material, "technique_common", "instance_material");
-                materialID = instance_material.getAttribute("target").substring(1);
+                String realMaterialID = instance_material.getAttribute("target").substring(1);
+                ColladaMaterial material = materialsByID.get(realMaterialID);
+                String geoLocalMaterialID = instance_material.getAttribute("symbol");
+                localMaterialMap.put(geoLocalMaterialID, material);
             }
-            else
-            {
-                materialID = "";
-            }
-            ColladaMaterial colladaMaterial = materialsByID.get(materialID);
-            return colladaGeometry.createMeshGroup(colladaMaterial);
         }
+
+        return colladaGeometry.createMeshGroup(localMaterialMap);
     }
 
 }
-/*Example:
-    <instance_geometry url="#ID76">
-        <bind_material>
-            <technique_common>
-                <instance_material symbol="Material2" target="#ID6">
-                    <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0" />
-                </instance_material>
-            </technique_common>
-        </bind_material>
-    </instance_geometry>
+/*Example, with multiple bound materials:
+<instance_geometry url="#CubeTexMesh-mesh" name="JoinedCubes">
+  <bind_material>
+    <technique_common>
+      <instance_material symbol="Steel-material" target="#Steel-material">
+        <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+      </instance_material>
+      <instance_material symbol="Purple-material" target="#Purple-material">
+        <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+      </instance_material>
+    </technique_common>
+  </bind_material>
+</instance_geometry>
  */

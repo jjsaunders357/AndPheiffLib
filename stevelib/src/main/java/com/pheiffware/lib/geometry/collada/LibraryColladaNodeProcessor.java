@@ -20,12 +20,11 @@ class LibraryColladaNodeProcessor extends BaseColladaNodeProcessor
      * @param element                   what to parse
      * @param materialsByID             library of materials, mapped by id which may be looked up.
      * @param geometries                a map from ids to ColladaGeometries
-     * @param ignoreMaterialAssignments if parsing blender, materials will already have been assigned inside ColladaGeometries and what is encountered in this node structure is ambiguous and should be ignored.
      * @throws XMLParseException
      */
-    public LibraryColladaNodeProcessor(Element element, Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometries, boolean ignoreMaterialAssignments) throws XMLParseException
+    public LibraryColladaNodeProcessor(Element element, Map<String, ColladaMaterial> materialsByID, Map<String, ColladaGeometry> geometries) throws XMLParseException
     {
-        super(materialsByID, geometries, ignoreMaterialAssignments);
+        super(materialsByID, geometries);
         List<MeshGroupProxy> topLevelMeshGroupProxies = getMeshGroupProxies(element);
         for (MeshGroupProxy topLevelMeshGroupProxy : topLevelMeshGroupProxies)
         {

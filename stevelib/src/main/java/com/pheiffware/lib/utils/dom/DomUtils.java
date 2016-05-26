@@ -27,6 +27,7 @@ public class DomUtils
 {
     /**
      * Loads an DOM XML Document from the given stream and validates it.
+     *
      * @param input
      * @return
      * @throws XMLParseException
@@ -132,7 +133,8 @@ public class DomUtils
     }
 
     /**
-     * Go through an Element which contains sub-elements of a known semantic with "id" attributes.  For each sub-element, turn it into an object with given factory and put it in a map using id as the key.
+     * Go through an Element which contains sub-elements of a known semantic with "id" attributes.  For each sub-element, turn it into an object with given factory and put it in a
+     * map using id as the key.
      *
      * @param map                  Where to store resulting id --> T pairs
      * @param rootElement          The element in which to search for sub-elements
@@ -174,7 +176,7 @@ public class DomUtils
     /**
      * Look for a sub-element with given name under given element.  If it doesn't exist throw an exception.
      *
-     * @param element        Element to search in
+     * @param element    Element to search in
      * @param subTagName name of sub-element to search for
      * @return found sub element
      * @throws XMLParseException Can't find sub-element
@@ -195,9 +197,29 @@ public class DomUtils
     /**
      * Look for a sub-element with given name under given element.  If it doesn't exist, return null.
      *
-     * @param element        Element to search in
-     * @param subTagName name of sub-element to search for
-     * @return found sub element
+     * @param element     Element to search in
+     * @param subTagNames a list of the hierarchy of sub tags to look through.  If any element of the chain is missing, return null.
+     * @return found sub element or null
+     */
+    public static Element getSubElementChain(Element element, String... subTagNames)
+    {
+        for (String subTagName : subTagNames)
+        {
+            element = getSubElement(element, subTagName);
+            if (element == null)
+            {
+                return null;
+            }
+        }
+        return element;
+    }
+
+    /**
+     * Look for a sub-element with given name under given element.  If it doesn't exist, return null.
+     *
+     * @param element     Element to search in
+     * @param subTagName a sub tag to look for.  If missing then null is returned.
+     * @return found sub element or null.
      */
     public static Element getSubElement(Element element, String subTagName)
     {

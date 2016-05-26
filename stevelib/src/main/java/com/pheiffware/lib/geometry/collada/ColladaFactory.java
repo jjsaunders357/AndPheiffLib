@@ -16,18 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.validation.Validator;
-//TODO: Eliminate ColladaAuthoringSoftware class
-/*
-* There was a misunderstanding about how Collada manages naming materials used in geometries which needs to be cleared up.
-* The way this works:
-*
-* Each geometry may contain multiple polylist or triangles tags.  Each tag references a fake, local, material id.  Later, when a geometry instance is defined, this fake id is
-* associated with a real material id which refers to a material defined in the file.
-*
-* The current system of managing this uses conventions of how Blender and Sketchup name/use these material and geometries in files, which may not always work.
-*/
-
-
 /**
  * Main class which parses a Collada file to produce a Collada object.  This holds lots of additional intermediate information which can be used during testing or for other
  * purposes. Created by Steve on 2/19/2016.
@@ -107,7 +95,7 @@ public class ColladaFactory
         Element libraryNodesElement = DomUtils.getSubElement(rootElement, "library_nodes");
         if (libraryNodesElement != null)
         {
-            LibraryColladaNodeProcessor colladaNodeProcessor = new LibraryColladaNodeProcessor(libraryNodesElement, materialsByID, geometries, colladaAuthoringSoftware == ColladaAuthoringSoftware.BLENDER);
+            LibraryColladaNodeProcessor colladaNodeProcessor = new LibraryColladaNodeProcessor(libraryNodesElement, materialsByID, geometries);
             libraryMeshGroups.putAll(colladaNodeProcessor.getLibraryMeshGroups());
         }
         Element sceneElement = DomUtils.assertGetSubElementChain(rootElement, "library_visual_scenes", "visual_scene");
@@ -120,7 +108,7 @@ public class ColladaFactory
                 throw new XMLParseException("SketchUp Collada file missing root \"SketchUp\" node in scene");
             }
         }
-        SceneColladaNodeProcessor colladaNodeProcessor = new SceneColladaNodeProcessor(sceneElement, materialsByID, geometries, colladaAuthoringSoftware == ColladaAuthoringSoftware.BLENDER, libraryMeshGroups);
+        SceneColladaNodeProcessor colladaNodeProcessor = new SceneColladaNodeProcessor(sceneElement, materialsByID, geometries, libraryMeshGroups);
         objects.putAll(colladaNodeProcessor.getObjects());
         anonymousObjects.addAll(colladaNodeProcessor.getAnonymousObjects());
         return new Collada(imageFileNames.values(), materialsByID, objects, anonymousObjects);
