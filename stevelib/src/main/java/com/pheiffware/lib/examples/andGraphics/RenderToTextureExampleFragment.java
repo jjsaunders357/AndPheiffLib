@@ -109,7 +109,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             testProgram.bind();
             testProgram.setUniformMatrix4("transformViewMatrix", cameraProjectionMatrix.m);
-            faceTexture.bind(0);
+            faceTexture.manualBind(0);
             testProgram.setUniformSampler("texture", 0);
 
             //Vertex positions and texture coordinates static.  This encodes a color to mix in.  In this case we want a pure texture render.
@@ -128,7 +128,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             testProgram.bind();
             testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix.m);
-            colorRenderTexture.bind(1);
+            colorRenderTexture.manualBind(1);
             testProgram.setUniformSampler("texture", 1);
             cb.putDynamicVec4(0, globalTestColor, 0, 0, 0);
             cb.putDynamicVec4(0, 0, globalTestColor, 0, 0);

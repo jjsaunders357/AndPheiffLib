@@ -32,14 +32,14 @@ public class MostRecentTextureBindingStrategy implements TextureBindingStrategy
     }
 
     @Override
-    public void accessed(Texture texture)
+    public void accessed(Texture boundTexture)
     {
         //Lookup the textureUnit node associated with the given textureUnit and move it to the back.  This textureUnit is now last in line to be unbound.
-        textureUnits.moveToBack(textureUnitNodes[texture.boundTextureUnitIndex]);
+        textureUnits.moveToBack(textureUnitNodes[boundTexture.boundTextureUnitIndex]);
     }
 
     @Override
-    public int chooseTextureUnitIndex(Texture texture)
+    public int getBestTextureUnitIndex(Texture unboundTexture)
     {
         //Always chooses the textureUnit at the front of the list.  This node is then moved to the back as it is now the most recently accessed.
         OpenLinkedList.Node<Integer> leastRecentlyUsedTextureUnit = textureUnits.getFirstNode();
