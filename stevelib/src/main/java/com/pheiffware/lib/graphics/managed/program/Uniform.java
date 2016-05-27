@@ -21,6 +21,10 @@ public abstract class Uniform
         int[] arraySizeArray = new int[1];
         int[] typeArray = new int[1];
         String name = GLES20.glGetActiveUniform(programHandle, uniformIndex, arraySizeArray, 0, typeArray, 0);
+
+        //If this is an array uniform, the name will have [0] on the end.  Remove this to give it a proper name.
+        name = name.replace("[0]", "");
+
         int uniformType = typeArray[0];
         int arraySize = arraySizeArray[0];
 

@@ -1,17 +1,21 @@
 precision mediump float;
 
+const float zero=0.0;
+const int numLights = 1;
 
+//Is the light on?
+uniform bool onState[numLights];
 
 //Position of light
-uniform vec3 lightPositionEyeSpace;
+uniform vec4 lightPositionEyeSpace[numLights];
 
-//Specular color of material - Assume specular always reflects all light
-uniform vec4 specLightMaterialColor;
+//The light color * specular material color
+uniform vec4 specLightMaterialColor[numLights];
 
-//Light color and intensity
-uniform vec4 lightColor;
+//Light color
+uniform vec4 lightColor[numLights];
 
-//Ambient light color and intensity
+//Ambient light color
 uniform vec4 ambientLightColor;
 
 // How shiny the material is.  This determines the exponent used in rendering.
@@ -20,29 +24,18 @@ uniform float shininess;
 //Texture color of object
 uniform sampler2D materialColorSampler;
 
-//From vertex shader
+//Position of point being rendered in eye space
 varying vec4 positionEyeSpace;
 varying vec3 normalEyeSpace;
 varying vec2 texCoord                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;
 
-
-void main()
+vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
-    //Base color of material
-    vec4 baseMaterialColor = texture2D(materialColorSampler,texCoord);
-
     //Normalize the surface's normal
     vec3 surfaceNormal = normalize(normalEyeSpace);
 
-    //Calc ambient color
-    vec4 ambientColor = baseMaterialColor * ambientLightColor;
-    //Calc diffuse color
-    vec4 diffuseColor = baseMaterialColor * lightColor;
-    //Calc specular color
-    vec4 specColor = specLightMaterialColor * lightColor;
-
     //Incoming light vector to current position
-    vec3 incomingLightDirection = normalize(positionEyeSpace.xyz-lightPositionEyeSpace);
+    vec3 incomingLightDirection = normalize(positionEyeSpace.xyz-lightPositionEyeSpace.xyz);
 
     //Reflected light vector from current position
     vec3 outgoingLightDirection = reflect(incomingLightDirection,surfaceNormal);
@@ -51,10 +44,30 @@ void main()
     vec3 positionToEyeDirection = normalize(-positionEyeSpace.xyz);
 
     //Calculate how bright various types of light are
-	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),0.0);
-	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),0.0);
+	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),zero);
+	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),zero);
     specBrightness = pow(specBrightness,shininess);
 
-    //Color of fragment is the combination of all colors
-	gl_FragColor = ambientColor + diffuseBrightness * diffuseColor + specBrightness * specColor;
+	//Sum (light brightness) * (light color) * (material color) for diff and spec.
+	return diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
+}
+void main()
+{
+    //Base color of material
+    vec4 baseMaterialColor = texture2D(materialColorSampler,texCoord);
+
+    //Calc ambient color
+    vec4 ambientLightMaterialColor = baseMaterialColor * ambientLightColor;
+
+    vec4 totalLightMaterialColor = ambientLightMaterialColor;
+    for(int i=0;i<numLights;i++)
+    {
+//        if(onState[i])
+//        {
+            //Calc diffuse color
+            vec4 diffuseLightMaterialColor = baseMaterialColor * lightColor[i];
+            totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor,specLightMaterialColor[i]);
+//        }
+    }
+    gl_FragColor = totalLightMaterialColor;
 }

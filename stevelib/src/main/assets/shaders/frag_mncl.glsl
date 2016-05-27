@@ -1,14 +1,19 @@
 precision mediump float;
 
+const float zero=0.0;
+const int numLights = 1;
+
+//Is the light on?
+uniform bool onState[numLights];
 
 //Position of light
-uniform vec3 lightPositionEyeSpace;
+uniform vec4 lightPositionEyeSpace[numLights];
 
-//Specular color of material - Assume specular always reflects all light
-uniform vec4 specLightMaterialColor;
+//The light color * specular material color
+uniform vec4 specLightMaterialColor[numLights];
 
-//The light color * material color
-uniform vec4 diffuseLightMaterialColor;
+//The light color * diff material color
+uniform vec4 diffuseLightMaterialColor[numLights];
 
 //The ambient light color * material color
 uniform vec4 ambientLightMaterialColor;
@@ -16,17 +21,18 @@ uniform vec4 ambientLightMaterialColor;
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
 
-//From vertex shader
+//Position of point being rendered in eye space
 varying vec4 positionEyeSpace;
 varying vec3 normalEyeSpace;
 
-void main()
+
+vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
     //Normalize the surface's normal
     vec3 surfaceNormal = normalize(normalEyeSpace);
 
     //Incoming light vector to current position
-    vec3 incomingLightDirection = normalize(positionEyeSpace.xyz-lightPositionEyeSpace);
+    vec3 incomingLightDirection = normalize(positionEyeSpace.xyz-lightPositionEyeSpace.xyz);
 
     //Reflected light vector from current position
     vec3 outgoingLightDirection = reflect(incomingLightDirection,surfaceNormal);
@@ -35,10 +41,24 @@ void main()
     vec3 positionToEyeDirection = normalize(-positionEyeSpace.xyz);
 
     //Calculate how bright various types of light are
-	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),0.0);
-	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),0.0);
+	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),zero);
+	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),zero);
     specBrightness = pow(specBrightness,shininess);
 
-    //Color of fragment is the combination of all colors
-	gl_FragColor = ambientLightMaterialColor + diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
+	//Sum (light brightness) * (light color) * (material color) for diff and spec.
+	return diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
 }
+void main()
+{
+    vec4 totalLightMaterialColor = ambientLightMaterialColor;
+    for(int i=0;i<numLights;i++)
+    {
+//        if(onState[i])
+//        {
+            totalLightMaterialColor += light_color(lightPositionEyeSpace[0],diffuseLightMaterialColor[0],specLightMaterialColor[0]);
+//        }
+    }
+    //Color of fragment is the combination of all colors
+	gl_FragColor = totalLightMaterialColor;
+}
+

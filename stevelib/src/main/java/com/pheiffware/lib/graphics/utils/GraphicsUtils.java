@@ -6,17 +6,36 @@ package com.pheiffware.lib.graphics.utils;
 public class GraphicsUtils
 {
     /**
-     * Multiply 2 vectors component by component.
+     * Multiply 2 vectors component by component.  Store in out vector.
      *
-     * @param out
-     * @param vec1
-     * @param vec2
+     * @param length how many components to go through
+     * @param out where result is written
+     * @param vec1 input vector
+     * @param vec2 input vector
      */
     public static final void vecMultiply(int length, float[] out, float[] vec1, float[] vec2)
     {
         for (int i = 0; i < length; i++)
         {
             out[i] = vec1[i] * vec2[i];
+        }
+    }
+
+    /**
+     * Multiply 2 vectors component by component.  Store at given offset in out vector.
+     *
+     * @param length    how many components to go through
+     * @param outOffset write offset in the out array
+     * @param out       where result is written
+     * @param vec1      input vector
+     * @param vec2      input vector
+     */
+    public static final void vecMultiply(int length, int outOffset, float[] out, float[] vec1, float[] vec2)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            out[outOffset] = vec1[i] * vec2[i];
+            outOffset++;
         }
     }
 
