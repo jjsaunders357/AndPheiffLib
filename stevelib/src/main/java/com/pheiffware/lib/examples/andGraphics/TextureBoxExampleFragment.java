@@ -15,6 +15,7 @@ import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
+import com.pheiffware.lib.graphics.managed.light.Light;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
@@ -37,6 +38,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
 
     private static class ExampleRenderer extends Base3DExampleRenderer
     {
+        private final Light light = new Light(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private TextureMaterialTechnique textureTechnique;
         private IndexBuffer indexBuffer;
         private Matrix4 translationMatrix = Matrix4.newTranslation(-3, 2, -5);
@@ -98,8 +100,7 @@ public class TextureBoxExampleFragment extends SimpleGLFragment
             textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
             textureTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
             textureTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            textureTechnique.setProperty(RenderProperty.LIGHT_POS, new float[]{-3, 3, 0, 1});
-            textureTechnique.setProperty(RenderProperty.LIGHT_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            textureTechnique.setProperty(RenderProperty.LIGHT, light);
             textureTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             textureTechnique.setProperty(RenderProperty.SHININESS, 3.0f);
             textureTechnique.setProperty(RenderProperty.MAT_COLOR_TEXTURE, texture);

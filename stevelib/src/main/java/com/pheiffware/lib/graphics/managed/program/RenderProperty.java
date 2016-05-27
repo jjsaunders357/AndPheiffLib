@@ -10,8 +10,7 @@ public enum RenderProperty
     PROJECTION_MATRIX,
     VIEW_MATRIX,
     AMBIENT_LIGHT_COLOR,
-    LIGHT_POS,
-    LIGHT_COLOR,
+    LIGHT,
 
     MODEL_MATRIX,
     MAT_COLOR,

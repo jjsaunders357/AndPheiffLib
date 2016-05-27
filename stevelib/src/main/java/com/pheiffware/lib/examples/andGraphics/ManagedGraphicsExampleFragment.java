@@ -12,6 +12,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
+import com.pheiffware.lib.graphics.managed.light.Light;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
@@ -38,9 +39,9 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
     private static class ExampleRenderer extends Base3DExampleRenderer
     {
-        private final float[] lightPosition = new float[]{-3, 3, 0, 1};
+        private final Light light = new Light(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+        private final Light alternateLight = new Light(new float[]{3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
-        private final float[] lightColor = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
         private float rotation = 0;
         private SingleTechniqueGraphicsManager graphicsManager;
         private MeshRenderHandle<Technique> monkeyMesh;
@@ -106,16 +107,14 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
                             RenderProperty.PROJECTION_MATRIX,
                             RenderProperty.VIEW_MATRIX,
                             RenderProperty.AMBIENT_LIGHT_COLOR,
-                            RenderProperty.LIGHT_COLOR,
-                            RenderProperty.LIGHT_POS,
+                            RenderProperty.LIGHT,
 
                     },
                     new Object[]{
                             projectionMatrix,
                             viewMatrix,
                             ambientLightColor,
-                            lightColor,
-                            lightPosition
+                            light
                     });
 
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
@@ -127,11 +126,11 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             graphicsManager.submitRender(monkeyMesh,
                     new RenderProperty[]{
                             RenderProperty.MODEL_MATRIX,
-                            RenderProperty.LIGHT_POS //Overridden default property value.  The other meshes will use the default value.
+                            RenderProperty.LIGHT //Overridden default property value.  The other meshes will use the default value.
                     },
                     new Object[]{
                             modelMatrix,
-                            new float[]{3, 3, 0, 1}
+                            alternateLight
                     }
             );
 

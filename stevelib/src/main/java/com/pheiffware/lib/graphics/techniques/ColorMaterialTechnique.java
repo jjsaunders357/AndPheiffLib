@@ -4,6 +4,7 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.light.Light;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
@@ -23,9 +24,7 @@ import com.pheiffware.lib.graphics.utils.GraphicsUtils;
  * <p/>
  * UniformNames.AMBIENT_LIGHT_COLOR - float[4]
  * <p/>
- * UniformNames.LIGHT_COLOR - float[4]
- * <p/>
- * UniformNames.LIGHT_POS - float[4]
+ * UniformNames.LIGHT - Light
  * <p/>
  * UniformNames.MAT_COLOR - float[4]
  * <p/>
@@ -59,10 +58,9 @@ public class ColorMaterialTechnique extends Technique
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX,
                 RenderProperty.AMBIENT_LIGHT_COLOR,
+                RenderProperty.LIGHT,
                 RenderProperty.MAT_COLOR,
-                RenderProperty.LIGHT_COLOR,
                 RenderProperty.SPEC_MAT_COLOR,
-                RenderProperty.LIGHT_POS,
                 RenderProperty.SHININESS
         });
         eyeProjUniform = getUniform(UniformNames.PROJECTION_MATRIX_UNIFORM);
@@ -91,21 +89,20 @@ public class ColorMaterialTechnique extends Technique
         normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
         eyeNormUniform.setValue(normalTransform.m);
 
-        float[] lightColor = (float[]) getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR);
+        float[] ambLightColor = (float[]) getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR);
         float[] matColor = (float[]) getPropertyValue(RenderProperty.MAT_COLOR);
-        GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
+        GraphicsUtils.vecMultiply(4, lightMatColor, ambLightColor, matColor);
         ambLMUniform.setValue(lightMatColor);
 
-        lightColor = (float[]) getPropertyValue(RenderProperty.LIGHT_COLOR);
-        GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
+        Light light = (Light) getPropertyValue(RenderProperty.LIGHT);
+        GraphicsUtils.vecMultiply(4, lightMatColor, light.getColor(), matColor);
         diffLMUniform.setValue(lightMatColor);
 
         matColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
-        GraphicsUtils.vecMultiply(4, lightMatColor, lightColor, matColor);
+        GraphicsUtils.vecMultiply(4, lightMatColor, light.getColor(), matColor);
         specLMUniform.setValue(lightMatColor);
 
-        float[] lightPosition = (float[]) getPropertyValue(RenderProperty.LIGHT_POS);
-        viewMatrix.transformFloatVector(lightEyeSpace, 0, lightPosition, 0);
+        viewMatrix.transformFloatVector(lightEyeSpace, 0, light.getPosition(), 0);
         lightEyePosUniform.setValue(lightEyeSpace);
 
         shininessUniform.setValue(getPropertyValue(RenderProperty.SHININESS));

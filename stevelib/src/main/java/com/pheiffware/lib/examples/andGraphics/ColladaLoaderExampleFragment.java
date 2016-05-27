@@ -17,6 +17,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
+import com.pheiffware.lib.graphics.managed.light.Light;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
@@ -41,13 +42,13 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
 
     private static class ColladaGraphicsExample extends Base3DExampleRenderer
     {
-        private final float[] lightPosition = new float[]{-3, 3, 0, 1};
+        private final Light light = new Light(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
-        private final float[] lightColor = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
         private float rotation = 0;
         private ObjectRenderHandle<Technique> multiCubeHandle;
         private Matrix4 multiCubeTranslation = Matrix4.newTranslation(-3, 2, -5);
         private SingleTechniqueGraphicsManager graphicsManager;
+
         public ColladaGraphicsExample()
         {
             super(90f, 1.0f, 100.0f, 0.01f);
@@ -71,10 +72,10 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
 
                 graphicsManager = new SingleTechniqueGraphicsManager(
                         new StaticVertexBuffer[]
-                        {
-                                colorBuffer,
-                                textureBuffer
-                        },
+                                {
+                                        colorBuffer,
+                                        textureBuffer
+                                },
                         new Technique[]{
                                 colorTechnique,
                                 textureTechnique
@@ -135,16 +136,14 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                             RenderProperty.PROJECTION_MATRIX,
                             RenderProperty.VIEW_MATRIX,
                             RenderProperty.AMBIENT_LIGHT_COLOR,
-                            RenderProperty.LIGHT_COLOR,
-                            RenderProperty.LIGHT_POS,
+                            RenderProperty.LIGHT,
 
                     },
                     new Object[]{
                             projectionMatrix,
                             viewMatrix,
                             ambientLightColor,
-                            lightColor,
-                            lightPosition
+                            light,
                     });
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
             Matrix4 modelMatrix;
