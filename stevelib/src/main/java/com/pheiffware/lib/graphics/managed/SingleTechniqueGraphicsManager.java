@@ -15,16 +15,21 @@ import com.pheiffware.lib.graphics.managed.program.Technique;
  * <p/>
  * Typical usage:
  * <p/>
+ * Setup:
+ * <p/>
  * 1. Call addObject() and addTransferMesh() over and over.
  * <p/>
  * 2. Call transfer()
  * <p/>
- * 3. Call setDefaultPropertyValues()
+ * Per frame:
  * <p/>
- * TODO: Comment once we advance further
+ * 1. Call resetRender()
  * <p/>
- * 4. Call renderNow() over and over again
+ * 2. Call setDefaultPropertyValues
  * <p/>
+ * 3. Call submitRender() over and over again for each mesh/object to be rendered this frame
+ * <p/>
+ * 4. Call render() to render all submitted objects
  * <p/>
  * Created by Steve on 4/13/2016.
  */
