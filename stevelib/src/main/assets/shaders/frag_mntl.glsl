@@ -1,7 +1,7 @@
 precision mediump float;
 
 const float zero=0.0;
-const int numLights = 1;
+const int numLights = 4;
 
 //Is the light on?
 uniform bool onState[numLights];
@@ -62,12 +62,12 @@ void main()
     vec4 totalLightMaterialColor = ambientLightMaterialColor;
     for(int i=0;i<numLights;i++)
     {
-//        if(onState[i])
-//        {
+        if(onState[i])
+        {
             //Calc diffuse color
             vec4 diffuseLightMaterialColor = baseMaterialColor * lightColor[i];
             totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor,specLightMaterialColor[i]);
-//        }
+        }
     }
     gl_FragColor = totalLightMaterialColor;
 }

@@ -9,11 +9,11 @@ public class GraphicsUtils
      * Multiply 2 vectors component by component.  Store in out vector.
      *
      * @param length how many components to go through
-     * @param out where result is written
-     * @param vec1 input vector
-     * @param vec2 input vector
+     * @param out    where result is written
+     * @param vec1   input vector
+     * @param vec2   input vector
      */
-    public static final void vecMultiply(int length, float[] out, float[] vec1, float[] vec2)
+    public static void vecMultiply(int length, float[] out, float[] vec1, float[] vec2)
     {
         for (int i = 0; i < length; i++)
         {
@@ -25,17 +25,39 @@ public class GraphicsUtils
      * Multiply 2 vectors component by component.  Store at given offset in out vector.
      *
      * @param length    how many components to go through
-     * @param outOffset write offset in the out array
+     * @param outOffset output vector write offset
      * @param out       where result is written
      * @param vec1      input vector
      * @param vec2      input vector
      */
-    public static final void vecMultiply(int length, int outOffset, float[] out, float[] vec1, float[] vec2)
+    public static void vecMultiply(int length, int outOffset, float[] out, float[] vec1, float[] vec2)
     {
         for (int i = 0; i < length; i++)
         {
             out[outOffset] = vec1[i] * vec2[i];
             outOffset++;
+        }
+    }
+
+    /**
+     * Multiply 2 vectors component by component.  Store at given offset in out vector.  Read from given offsets of input vectors
+     *
+     * @param length    how many components to go through
+     * @param outOffset output vector write offset
+     * @param out       where result is written
+     * @param v1Offset  input vector read offset
+     * @param vec1      input vector
+     * @param v2Offset  input vector read offset
+     * @param vec2      input vector
+     */
+    public static void vecMultiply(int length, int outOffset, float[] out, int v1Offset, float[] vec1, int v2Offset, float[] vec2)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            out[outOffset] = vec1[v1Offset] * vec2[v2Offset];
+            outOffset++;
+            v1Offset++;
+            v2Offset++;
         }
     }
 

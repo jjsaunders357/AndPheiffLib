@@ -17,7 +17,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
-import com.pheiffware.lib.graphics.managed.light.Light;
+import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
@@ -42,7 +42,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
 
     private static class ColladaGraphicsExample extends Base3DExampleRenderer
     {
-        private final Light light = new Light(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+        private final Lighting lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private float rotation = 0;
         private ObjectRenderHandle<Technique> multiCubeHandle;
@@ -130,20 +130,20 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
+            lighting.calcLightPositionsInEyeSpace(viewMatrix);
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new RenderProperty[]{
                             RenderProperty.PROJECTION_MATRIX,
                             RenderProperty.VIEW_MATRIX,
                             RenderProperty.AMBIENT_LIGHT_COLOR,
-                            RenderProperty.LIGHT,
-
+                            RenderProperty.LIGHTING
                     },
                     new Object[]{
                             projectionMatrix,
                             viewMatrix,
                             ambientLightColor,
-                            light,
+                            lighting
                     });
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
             Matrix4 modelMatrix;

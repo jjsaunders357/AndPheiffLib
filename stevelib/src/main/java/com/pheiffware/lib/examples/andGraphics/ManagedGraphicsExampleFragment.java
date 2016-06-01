@@ -12,7 +12,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
-import com.pheiffware.lib.graphics.managed.light.Light;
+import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
@@ -39,8 +39,8 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
     private static class ExampleRenderer extends Base3DExampleRenderer
     {
-        private final Light light = new Light(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-        private final Light alternateLight = new Light(new float[]{3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+        private final Lighting lighting = new Lighting(new float[]{-3, 3, 0, 1, 3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.1f, 0.1f, 1.0f});
+        private final Lighting alternateLighting = new Lighting(new float[]{3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private float rotation = 0;
         private SingleTechniqueGraphicsManager graphicsManager;
@@ -101,20 +101,24 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
+            //Turn 2nd light on and off every 180 degrees
+            lighting.setOnState(1, (rotation % 360) < 180);
+            lighting.calcLightPositionsInEyeSpace(viewMatrix);
+            alternateLighting.calcLightPositionsInEyeSpace(viewMatrix);
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new RenderProperty[]{
                             RenderProperty.PROJECTION_MATRIX,
                             RenderProperty.VIEW_MATRIX,
                             RenderProperty.AMBIENT_LIGHT_COLOR,
-                            RenderProperty.LIGHT,
+                            RenderProperty.LIGHTING,
 
                     },
                     new Object[]{
                             projectionMatrix,
                             viewMatrix,
                             ambientLightColor,
-                            light
+                            lighting
                     });
 
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
@@ -125,12 +129,10 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             modelMatrix = Matrix4.multiply(monkeyTranslation, modelRotate);
             graphicsManager.submitRender(monkeyMesh,
                     new RenderProperty[]{
-                            RenderProperty.MODEL_MATRIX,
-                            RenderProperty.LIGHT //Overridden default property value.  The other meshes will use the default value.
+                            RenderProperty.MODEL_MATRIX
                     },
                     new Object[]{
-                            modelMatrix,
-                            alternateLight
+                            modelMatrix
                     }
             );
 
@@ -139,12 +141,11 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
             graphicsManager.submitRender(cubeMesh,
                     new RenderProperty[]{
                             RenderProperty.MODEL_MATRIX,
-                            //Override default to make null
-                            RenderProperty.SPEC_MAT_COLOR,
+                            RenderProperty.LIGHTING //Overridden default property value.  The other meshes will use the default value.
                     },
                     new Object[]{
                             modelMatrix,
-                            new float[]{0.2f, 0.2f, 0.2f, 1.0f}
+                            alternateLighting
                     });
 
 

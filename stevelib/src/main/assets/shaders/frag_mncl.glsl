@@ -1,7 +1,7 @@
 precision mediump float;
 
 const float zero=0.0;
-const int numLights = 1;
+const int numLights = 4;
 
 //Is the light on?
 uniform bool onState[numLights];
@@ -53,10 +53,10 @@ void main()
     vec4 totalLightMaterialColor = ambientLightMaterialColor;
     for(int i=0;i<numLights;i++)
     {
-//        if(onState[i])
-//        {
-            totalLightMaterialColor += light_color(lightPositionEyeSpace[0],diffuseLightMaterialColor[0],specLightMaterialColor[0]);
-//        }
+        if(onState[i])
+        {
+            totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
+        }
     }
     //Color of fragment is the combination of all colors
 	gl_FragColor = totalLightMaterialColor;

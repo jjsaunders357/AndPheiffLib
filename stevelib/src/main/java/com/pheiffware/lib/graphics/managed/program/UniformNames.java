@@ -20,6 +20,7 @@ public class UniformNames
     public static final String SPEC_LIGHTMAT_COLOR_UNIFORM = "specLightMaterialColor";
 
     public static final String LIGHT_POS_EYE_UNIFORM = "lightPositionEyeSpace";
+    public static final String ON_STATE_UNIFORM = "onState";
     public static final String MATERIAL_SAMPLER_UNIFORM = "materialColorSampler";
     public static final String SHININESS_UNIFORM = "shininess";
 

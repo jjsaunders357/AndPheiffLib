@@ -450,10 +450,10 @@ public class Matrix4
         return new Vec3D(x, y, z);
     }
 
-    public final float[] transformFloatVector(float[] inVectorData)
+    public final float[] transform4DFloatVector(float[] inVectorData)
     {
         float[] outVectorData = new float[4];
-        transformFloatVector(outVectorData, 0, inVectorData, 0);
+        transform4DFloatVector(outVectorData, 0, inVectorData, 0);
         return outVectorData;
     }
 
@@ -466,7 +466,7 @@ public class Matrix4
      * @param inOffset     offset in the in array to read at
      * @param outOffset    offset in the out array to write to
      */
-    public final void transformFloatVector(float[] outVectorData, int outOffset, float[] inVectorData, int inOffset)
+    public final void transform4DFloatVector(float[] outVectorData, int outOffset, float[] inVectorData, int inOffset)
     {
         float x = inVectorData[inOffset] * m[0] + inVectorData[inOffset + 1] * m[4] + inVectorData[inOffset + 2] * m[8] + inVectorData[inOffset + 3] * m[12];
         float y = inVectorData[inOffset] * m[1] + inVectorData[inOffset + 1] * m[5] + inVectorData[inOffset + 2] * m[9] + inVectorData[inOffset + 3] * m[13];
@@ -487,7 +487,7 @@ public class Matrix4
     {
         for (int i = 0; i < vectorData.length; i += 4)
         {
-            transformFloatVector(vectorData, i, vectorData, i);
+            transform4DFloatVector(vectorData, i, vectorData, i);
         }
     }
 
@@ -502,7 +502,7 @@ public class Matrix4
         float[] transformedVectorData = new float[vectorData.length];
         for (int i = 0; i < vectorData.length; i += 4)
         {
-            transformFloatVector(transformedVectorData, i, vectorData, i);
+            transform4DFloatVector(transformedVectorData, i, vectorData, i);
         }
         return transformedVectorData;
     }

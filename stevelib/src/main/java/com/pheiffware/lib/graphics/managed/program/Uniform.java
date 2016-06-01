@@ -31,14 +31,29 @@ public abstract class Uniform
         switch (uniformType)
         {
             case GLES20.GL_FLOAT:
-                return new Uniform(programHandle, name, uniformType, arraySize)
+                //If single type (not vec2, vec3, etc) AND array size is 1 then just set as a float.
+                if (arraySize == 1)
                 {
-                    @Override
-                    public void setValue(Object value)
+                    return new Uniform(programHandle, name, uniformType, arraySize)
                     {
-                        GLES20.glUniform1f(location, (Float) value);
-                    }
-                };
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            GLES20.glUniform1f(location, (Float) value);
+                        }
+                    };
+                }
+                else
+                {
+                    return new Uniform(programHandle, name, uniformType, arraySize)
+                    {
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            GLES20.glUniform1fv(location, arraySize, (float[]) value, 0);
+                        }
+                    };
+                }
             case GLES20.GL_FLOAT_VEC2:
                 return new Uniform(programHandle, name, uniformType, arraySize)
                 {
@@ -67,14 +82,28 @@ public abstract class Uniform
                     }
                 };
             case GLES20.GL_INT:
-                return new Uniform(programHandle, name, uniformType, arraySize)
+                if (arraySize == 1)
                 {
-                    @Override
-                    public void setValue(Object value)
+                    return new Uniform(programHandle, name, uniformType, arraySize)
                     {
-                        GLES20.glUniform1i(location, (Integer) value);
-                    }
-                };
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            GLES20.glUniform1i(location, (Integer) value);
+                        }
+                    };
+                }
+                else
+                {
+                    return new Uniform(programHandle, name, uniformType, arraySize)
+                    {
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            GLES20.glUniform1iv(location, arraySize, (int[]) value, 0);
+                        }
+                    };
+                }
             case GLES20.GL_INT_VEC2:
                 return new Uniform(programHandle, name, uniformType, arraySize)
                 {
@@ -102,6 +131,58 @@ public abstract class Uniform
                         GLES20.glUniform4iv(location, arraySize, (int[]) value, 0);
                     }
                 };
+            case GLES20.GL_BOOL:
+                if (arraySize == 1)
+                {
+                    return new Uniform(programHandle, name, uniformType, arraySize)
+                    {
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            GLES20.glUniform1i(location, (Integer) value);
+                        }
+                    };
+                }
+                else
+                {
+                    return new Uniform(programHandle, name, uniformType, arraySize)
+                    {
+                        @Override
+                        public void setValue(Object value)
+                        {
+                            GLES20.glUniform1iv(location, arraySize, (int[]) value, 0);
+                        }
+                    };
+                }
+            case GLES20.GL_BOOL_VEC2:
+                return new Uniform(programHandle, name, uniformType, arraySize)
+                {
+                    @Override
+                    public void setValue(Object value)
+                    {
+                        GLES20.glUniform2iv(location, arraySize, (int[]) value, 0);
+                    }
+                };
+
+            case GLES20.GL_BOOL_VEC3:
+                return new Uniform(programHandle, name, uniformType, arraySize)
+                {
+                    @Override
+                    public void setValue(Object value)
+                    {
+                        GLES20.glUniform3iv(location, arraySize, (int[]) value, 0);
+                    }
+                };
+            case GLES20.GL_BOOL_VEC4:
+                return new Uniform(programHandle, name, uniformType, arraySize)
+                {
+                    @Override
+                    public void setValue(Object value)
+                    {
+                        GLES20.glUniform4iv(location, arraySize, (int[]) value, 0);
+                    }
+                };
+
             case GLES20.GL_FLOAT_MAT2:
                 return new Uniform(programHandle, name, uniformType, arraySize)
                 {
@@ -138,11 +219,6 @@ public abstract class Uniform
                         GLES20.glUniform1i(location, (int) value);
                     }
                 };
-            case GLES20.GL_BOOL:
-            case GLES20.GL_BOOL_VEC2:
-            case GLES20.GL_BOOL_VEC3:
-            case GLES20.GL_BOOL_VEC4:
-                throw new RuntimeException("Boolean Uniforms not handled yet.");
             case GLES20.GL_SAMPLER_CUBE:
                 throw new RuntimeException("Sampler Cube Uniforms not handled yet.");
             default:
