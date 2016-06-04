@@ -13,12 +13,12 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 

@@ -1,5 +1,9 @@
 package com.pheiffware.lib.graphics.managed.texture;
 
+import android.opengl.GLES20;
+
+import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
+import com.pheiffware.lib.graphics.managed.frameBuffer.RenderTarget;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 /**
@@ -8,7 +12,7 @@ import com.pheiffware.lib.graphics.utils.TextureUtils;
  * <p/>
  * Created by Steve on 2/13/2016.
  */
-public class Texture
+public class Texture implements RenderTarget
 {
     //The type of the texture such as GL_TEXTURE_2D
     final int type;
@@ -24,6 +28,9 @@ public class Texture
 
     //A priority associate with this texture, in terms of desirability to keep it bound to a texture unit.  This could be held by the texture manager, but this is easier/more efficient than keeping a HashMap there.
     double texturePriority = 0;
+
+    //When attaching this to a FrameBuffer, use this mip-level as the attachment point
+    int attachmentLevel = 0;
 
     public Texture(int type, int handle, TextureBinder textureBinder)
     {
@@ -60,5 +67,16 @@ public class Texture
     public final int getBoundTextureUnitIndex()
     {
         return boundTextureUnitIndex;
+    }
+
+    public void setAttachmentLevel(int attachmentLevel)
+    {
+        this.attachmentLevel = attachmentLevel;
+    }
+
+    @Override
+    public void attach(FrameBuffer frameBuffer, int attachmentPoint)
+    {
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, attachmentPoint, GLES20.GL_TEXTURE_2D, handle, attachmentLevel);
     }
 }

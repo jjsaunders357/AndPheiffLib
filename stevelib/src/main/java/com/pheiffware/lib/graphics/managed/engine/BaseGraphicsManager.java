@@ -1,11 +1,11 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.Mesh;
-import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
 package com.pheiffware.lib.graphics.managed;
 
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 /**
  * This class manages storing data in index/vertex buffers and then conveniently/efficiently rendering that data.

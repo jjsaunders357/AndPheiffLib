@@ -2,7 +2,7 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 import java.util.Collections;
 import java.util.EnumMap;

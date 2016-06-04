@@ -5,10 +5,10 @@ import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Mesh;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 import java.util.ArrayList;
 import java.util.HashMap;

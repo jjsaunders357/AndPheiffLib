@@ -1,8 +1,8 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 /**
  * Holds information about a single mesh which should be rendered with a specific Program and specific values for properties in that Program.  The set of uniform values may be

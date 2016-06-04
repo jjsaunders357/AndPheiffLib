@@ -10,10 +10,11 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
+import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.CombinedVertexBuffer;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 /**
@@ -36,7 +37,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
         private Texture depthRenderTexture;
         private CombinedVertexBuffer cb;
         private float globalTestColor = 0.0f;
-        private int frameBufferHandle;
+        private FrameBuffer frameBuffer;
         private int viewWidth;
         private int viewHeight;
 
@@ -63,7 +64,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
 
             //Creates a depth texture render target, without alpha channel
             depthRenderTexture = glCache.createDepthRenderTexture("depthRender1", 512, 512, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-            frameBufferHandle = PheiffGLUtils.createFrameBuffer();
+            frameBuffer = new FrameBuffer();
 
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
@@ -102,7 +103,10 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
         public void onDrawFrame() throws GraphicsException
         {
             //Set to render to texture.
-            PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTexture.getHandle(), 0);
+            frameBuffer.makeActive();
+            frameBuffer.attachColor(0, colorRenderTexture);
+            frameBuffer.attachDepth(null);
+
             PheiffGLUtils.assertFrameBufferStatus();
 
             GLES20.glViewport(0, 0, 512, 512);

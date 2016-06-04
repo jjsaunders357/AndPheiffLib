@@ -2,7 +2,7 @@
  * Created by Stephen Pheiffer.
  * Do not edit, distribute, modify or use without his permission.
 */
-package com.pheiffware.lib.graphics.managed.buffer;
+package com.pheiffware.lib.graphics.managed.vertexBuffer;
 
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;

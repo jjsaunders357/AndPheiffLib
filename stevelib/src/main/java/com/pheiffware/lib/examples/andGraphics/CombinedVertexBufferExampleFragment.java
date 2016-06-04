@@ -10,11 +10,11 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.buffer.CombinedVertexBuffer;
-import com.pheiffware.lib.graphics.managed.buffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.CombinedVertexBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
 
 /**
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.

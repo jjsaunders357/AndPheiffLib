@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.buffer;
+package com.pheiffware.lib.graphics.managed.vertexBuffer;
 
 import android.opengl.GLES20;
 
