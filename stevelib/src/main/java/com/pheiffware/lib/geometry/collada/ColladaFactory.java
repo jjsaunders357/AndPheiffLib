@@ -11,6 +11,7 @@ import org.w3c.dom.Element;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,9 @@ public class ColladaFactory
     //When position are loaded, a 1 is appended to the end of the loaded data to create a homogeneous coordinates
     private final boolean homogenizePositions;
 
+    //Default material for meshes with unassigned material
+    private final ColladaMaterial defaultColladaMaterial;
+
 
     public ColladaFactory(boolean homogenizePositions)
     {
@@ -64,13 +68,28 @@ public class ColladaFactory
     public ColladaFactory(boolean homogenizePositions, ColladaMaterial defaultColladaMaterial)
     {
         this.homogenizePositions = homogenizePositions;
-        //Store default material
-        materialsByID.put("", defaultColladaMaterial);
+        this.defaultColladaMaterial = defaultColladaMaterial;
+        clear();
     }
 
     public Collada loadCollada(AssetLoader al, String assetPath) throws XMLParseException, IOException
     {
+        clear();
         return loadCollada(al.getInputStream(assetPath));
+    }
+
+    private void clear()
+    {
+        imageFileNames.clear();
+        colladaEffects.clear();
+        materialsByID.clear();
+        geometries.clear();
+        libraryMeshGroups.clear();
+        objects.clear();
+        anonymousObjects.clear();
+
+        //Store default material
+        materialsByID.put("", defaultColladaMaterial);
     }
 
     public Collada loadCollada(InputStream input) throws XMLParseException
@@ -79,8 +98,14 @@ public class ColladaFactory
         Document doc = DomUtils.loadDocumentFromStream(input, null);
         Element rootElement = doc.getDocumentElement();
         ColladaAuthoringSoftware colladaAuthoringSoftware = ColladaAuthoringSoftware.parse(rootElement);
-        Element libraryImagesElement = DomUtils.assertGetSubElement(rootElement, "library_images");
-        DomUtils.putSubElementsInMap(imageFileNames, libraryImagesElement, "image", "id", new ColladaLibraryImageFactory());
+
+
+        Element libraryImagesElement = DomUtils.getSubElement(rootElement, "library_images");
+        if (libraryImagesElement != null)
+        {
+            DomUtils.putSubElementsInMap(imageFileNames, libraryImagesElement, "image", "id", new ColladaLibraryImageFactory());
+        }
+
         Element libraryEffectsElement = DomUtils.assertGetSubElement(rootElement, "library_effects");
         DomUtils.putSubElementsInMap(colladaEffects, libraryEffectsElement, "effect", "id", new ColladaEffectFactory());
         Element libraryMaterialsElement = DomUtils.assertGetSubElement(rootElement, "library_materials");
@@ -107,7 +132,7 @@ public class ColladaFactory
         SceneColladaNodeProcessor colladaNodeProcessor = new SceneColladaNodeProcessor(sceneElement, materialsByID, geometries, libraryMeshGroups);
         objects.putAll(colladaNodeProcessor.getObjects());
         anonymousObjects.addAll(colladaNodeProcessor.getAnonymousObjects());
-        return new Collada(imageFileNames.values(), materialsByID, objects, anonymousObjects);
+        return new Collada(new HashSet<>(imageFileNames.values()), new HashMap<>(materialsByID), new HashMap<>(objects), new LinkedList<>(anonymousObjects));
     }
 
 
