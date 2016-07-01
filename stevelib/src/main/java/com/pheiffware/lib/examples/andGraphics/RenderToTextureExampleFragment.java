@@ -103,7 +103,7 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
         public void onDrawFrame() throws GraphicsException
         {
             //Set to render to texture.
-            frameBuffer.makeActive();
+            frameBuffer.bind();
             frameBuffer.attachColor(0, colorRenderTexture);
             frameBuffer.attachDepth(null);
 

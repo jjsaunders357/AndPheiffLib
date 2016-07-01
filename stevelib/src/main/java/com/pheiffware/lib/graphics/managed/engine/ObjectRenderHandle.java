@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.graphics.Matrix4;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +16,15 @@ import java.util.List;
 public class ObjectRenderHandle<M>
 {
     final List<MeshRenderHandle<M>> meshRenderHandles = new ArrayList<>();
+    final Matrix4 matrix = Matrix4.newIdentity();
 
     public void addMeshHandle(MeshRenderHandle<M> meshRenderHandle)
     {
         meshRenderHandles.add(meshRenderHandle);
     }
 
+    public final void setMatrix(Matrix4 matrix)
+    {
+        this.matrix.set(matrix);
+    }
 }

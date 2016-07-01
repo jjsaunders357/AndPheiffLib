@@ -44,8 +44,8 @@ public abstract class ColladaGraphicsLoader<M>
     }
 
     private final BaseGraphicsManager<M> graphicsManager;
-    private final Map<String, ObjectRenderHandle> namedObjects = new HashMap<>();
-    private final List<ObjectRenderHandle> anonymousObjects = new ArrayList<>();
+    private final Map<String, ObjectRenderHandle<M>> namedObjects = new HashMap<>();
+    private final List<ObjectRenderHandle<M>> anonymousObjects = new ArrayList<>();
 
     public ColladaGraphicsLoader(BaseGraphicsManager<M> graphicsManager)
     {
@@ -67,6 +67,7 @@ public abstract class ColladaGraphicsLoader<M>
     public final ObjectRenderHandle<M> addColladaObject(String name, ColladaObject3D colladaObject3D)
     {
         ObjectRenderHandle<M> renderHandle = graphicsManager.startNewObjectDef();
+        renderHandle.setMatrix(colladaObject3D.getInitialMatrix());
         Mesh[] meshes = colladaObject3D.getMeshes();
         for (int i = 0; i < meshes.length; i++)
         {
@@ -93,6 +94,20 @@ public abstract class ColladaGraphicsLoader<M>
         return addColladaObject(null, colladaObject3D);
     }
 
+    public ObjectRenderHandle<M> getNamedObject(String name)
+    {
+        return namedObjects.get(name);
+    }
+
+    public Map<String, ObjectRenderHandle<M>> getNamedObjects()
+    {
+        return namedObjects;
+    }
+
+    public List<ObjectRenderHandle<M>> getAnonymousObjects()
+    {
+        return anonymousObjects;
+    }
 
     protected static class BufferAndMaterial<M>
     {

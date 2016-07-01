@@ -16,9 +16,9 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
+import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;

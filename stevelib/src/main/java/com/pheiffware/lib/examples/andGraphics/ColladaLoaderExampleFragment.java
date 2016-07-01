@@ -7,7 +7,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
-import com.pheiffware.lib.geometry.collada.ColladaObject3D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -15,15 +14,14 @@ import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.ColladaGraphicsLoader;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
-import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
+import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -45,10 +43,10 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         private final Lighting lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private float rotation = 0;
-        private ObjectRenderHandle<Technique> multiCubeHandle;
+        //        private ObjectRenderHandle<Technique> multiCubeHandle;
         private Matrix4 multiCubeTranslation = Matrix4.newTranslation(-3, 2, -5);
         private SingleTechniqueGraphicsManager graphicsManager;
-
+        private ColladaGraphicsLoader<Technique> colladaGraphicsLoader;
         public ColladaGraphicsExample()
         {
             super(90f, 1.0f, 100.0f, 0.01f);
@@ -80,7 +78,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                                 colorTechnique,
                                 textureTechnique
                         });
-                ColladaGraphicsLoader<Technique> colladaGraphicsLoader = new ColladaGraphicsLoader<Technique>(graphicsManager)
+                colladaGraphicsLoader = new ColladaGraphicsLoader<Technique>(graphicsManager)
                 {
                     @Override
                     protected BufferAndMaterial<Technique> getRenderMaterial(String objectName, Mesh mesh, ColladaMaterial colladaMaterial)
@@ -116,9 +114,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                         return new BufferAndMaterial<>(vertexBuffer, technique, renderPropertyValues);
                     }
                 };
-
-                ColladaObject3D multiCube = collada.objects.get("multi");
-                multiCubeHandle = colladaGraphicsLoader.addColladaObject(multiCube);
+                colladaGraphicsLoader.addColladaObjects(collada);
                 graphicsManager.transfer();
             }
             catch (XMLParseException | IOException exception)
@@ -145,10 +141,14 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
                             ambientLightColor,
                             lighting
                     });
+
+//                ColladaObject3D multiCube = collada.objects.get("multi");
+//                multiCubeHandle = colladaGraphicsLoader.addColladaObject(multiCube);
+
             Matrix4 modelRotate = Matrix4.multiply(Matrix4.newRotate(rotation, 1, 1, 0));
             Matrix4 modelMatrix;
             modelMatrix = Matrix4.multiply(multiCubeTranslation, modelRotate);
-            graphicsManager.submitRender(multiCubeHandle,
+            graphicsManager.submitRender(colladaGraphicsLoader.getNamedObject("multi"),
                     new RenderProperty[]{
                             RenderProperty.MODEL_MATRIX
                     },
