@@ -32,5 +32,8 @@ public enum RenderProperty
     SPEC_MAT_COLOR,
 
     //The shininess of the material (exponent used during spectral lighting equations)
-    SHININESS
+    SHININESS,
+
+    //The position of a light to use to render a depth buffer from
+    LIGHT_RENDER_POSITION
 }

@@ -142,6 +142,15 @@ public abstract class BaseGraphicsManager<M>
         renderItems.clear();
     }
 
+
+    public final void submitRenderWithMatrix(ObjectRenderHandle<M> objectHandle)
+    {
+        for (int i = 0; i < objectHandle.meshRenderHandles.size(); i++)
+        {
+            submitRender(objectHandle.meshRenderHandles.get(i), new RenderProperty[]{RenderProperty.MODEL_MATRIX}, new Object[]{objectHandle.matrix});
+        }
+    }
+
     /**
      * Submit an object for rendering once.
      *

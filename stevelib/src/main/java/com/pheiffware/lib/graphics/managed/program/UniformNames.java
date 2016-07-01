@@ -7,6 +7,7 @@ package com.pheiffware.lib.graphics.managed.program;
  */
 public class UniformNames
 {
+    public static final String PROJECTION_VIEW_MODEL_MATRIX_UNIFORM = "projectionViewModelMatrix";
     public static final String PROJECTION_MATRIX_UNIFORM = "projectionMatrix";
     public static final String VIEW_MODEL_MATRIX_UNIFORM = "viewModelMatrix";
     public static final String NORMAL_MATRIX_UNIFORM = "normalMatrix";
