@@ -1,7 +1,7 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.touch.TouchTransformListener;
+import com.pheiffware.lib.and.input.TouchTransformListener;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 

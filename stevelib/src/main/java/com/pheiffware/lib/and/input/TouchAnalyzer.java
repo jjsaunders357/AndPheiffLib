@@ -1,4 +1,4 @@
-package com.pheiffware.lib.and.touch;
+package com.pheiffware.lib.and.input;
 
 import android.view.MotionEvent;
 
