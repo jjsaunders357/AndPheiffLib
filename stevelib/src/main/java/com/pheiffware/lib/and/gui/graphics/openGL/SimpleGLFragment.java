@@ -55,4 +55,9 @@ public abstract class SimpleGLFragment extends LoggedFragment
         super.onDestroyView();
         simpleGLView = null;
     }
+
+    public SimpleGLRenderer getRenderer()
+    {
+        return renderer;
+    }
 }

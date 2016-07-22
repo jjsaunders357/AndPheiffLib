@@ -1,9 +1,15 @@
 package com.pheiffware.lib.and;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.Surface;
+import android.view.WindowManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,5 +79,45 @@ public class AndUtils
     public static Bitmap loadBitmapAsset(AssetManager assetManager, String imageAssetPath) throws IOException
     {
         return BitmapFactory.decodeStream(assetManager.open(imageAssetPath));
+    }
+
+    public static int getDisplayRotation(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        return wm.getDefaultDisplay().getRotation();
+    }
+
+    public static void disableScreenOrientationChange(Activity activity)
+    {
+        final int orientation = activity.getResources().getConfiguration().orientation;
+        final int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+
+        if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90)
+        {
+            if (orientation == Configuration.ORIENTATION_PORTRAIT)
+            {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+            else if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+        }
+        else if (rotation == Surface.ROTATION_180 || rotation == Surface.ROTATION_270)
+        {
+            if (orientation == Configuration.ORIENTATION_PORTRAIT)
+            {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+            }
+            else if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            }
+        }
+    }
+
+    public static void enableScreenOrientationChange(Activity activity)
+    {
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 }
