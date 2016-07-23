@@ -32,5 +32,8 @@ public enum RenderProperty
     SPEC_MAT_COLOR,
 
     //The shininess of the material (exponent used during spectral lighting equations)
-    SHININESS
+    SHININESS,
+
+    //Contains data related to holographic projection
+    HOLO_PROJECTION
 }

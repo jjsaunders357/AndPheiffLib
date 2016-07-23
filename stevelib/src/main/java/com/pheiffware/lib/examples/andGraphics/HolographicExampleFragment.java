@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
-import com.pheiffware.lib.and.input.PositionOrientationSensor;
+import com.pheiffware.lib.and.input.OrientationTracker;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
+import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
@@ -20,7 +22,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.HoloColorMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -34,7 +36,6 @@ import java.io.IOException;
 public class HolographicExampleFragment extends SimpleGLFragment
 {
     private final ExampleRenderer renderer;
-    private PositionOrientationSensor positionOrientationSensor;
 
     public HolographicExampleFragment()
     {
@@ -51,13 +52,17 @@ public class HolographicExampleFragment extends SimpleGLFragment
 
     private static class ExampleRenderer extends Base3DExampleRenderer
     {
-        private final Lighting lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+        private OrientationTracker orientationTracker;
+        private final Lighting lighting = new Lighting(new float[]{-3, -3, 1, 1, -2, 1, 1, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.3f, 0.2f, 1.0f});
         private float rotation = 0;
 
-        private ColorMaterialTechnique colorTechnique;
+        private HoloColorMaterialTechnique holoColorTechnique;
         private IndexBuffer indexBuffer;
         private Matrix4 translationMatrix;
         private StaticVertexBuffer colorVertexBuffer;
+
+        //Represents the position of the eye relative to surface of the direct center of the screen
+        private final float[] eyePositionRelativeToScreen = new float[]{0, 0, 3, 1};
 
         public ExampleRenderer()
         {
@@ -68,7 +73,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache);
-            colorTechnique = new ColorMaterialTechnique(al);
+            holoColorTechnique = new HoloColorMaterialTechnique(al);
             ColladaFactory colladaFactory = new ColladaFactory(true);
             try
             {
@@ -104,27 +109,83 @@ public class HolographicExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
-            colorTechnique.bind();
-            colorVertexBuffer.bind(colorTechnique);
-            Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));
+            Matrix4 orientationMatrix = orientationTracker.calcOrientation();
+            if (orientationMatrix != null)
+            {
+                float[] values = new float[3];
+//                SensorManager.getOrientation(orientationMatrix.m, values);
+//                float x = (float) Math.toDegrees(values[0]);
+//                float y = (float) Math.toDegrees(values[1]);
+//                float z = (float) Math.toDegrees(values[2]);
+//                Log.i("sensor", "orientation: (" + x + " , " + y + " , " + z + ")");
 
-            colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
-            colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
-            colorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
-            colorTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+                float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
+                Log.i("sensor", "eyePosition: (" + eyePosition[0] + " , " + eyePosition[1] + " , " + eyePosition[2] + ")");
 
-            colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+                //lighting.calcLightPositionsInEyeSpace(viewMatrix);
+                holoColorTechnique.bind();
+                colorVertexBuffer.bind(holoColorTechnique);
+                translationMatrix = Matrix4.newTranslation(0.3f, 0.3f, 0.2f);
+                Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
 
-            colorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
-            colorTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-            colorTechnique.setProperty(RenderProperty.SHININESS, 30.0f);
-            colorTechnique.applyProperties();
+                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
+                holoColorTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
 
-            indexBuffer.drawAll(GLES20.GL_TRIANGLES);
-            rotation++;
+                holoColorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+
+                holoColorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
+                holoColorTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
+                holoColorTechnique.setProperty(RenderProperty.SHININESS, 30.0f);
+                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 1f, 30f));
+                holoColorTechnique.applyProperties();
+
+                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
+
+                translationMatrix = Matrix4.newTranslation(-0.2f, 0.0f, -0.2f);
+                modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
+
+                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
+                holoColorTechnique.applyProperties();
+
+                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
+                //rotation++;
+            }
         }
 
+        @Override
+        public void touchTransformEvent(int numPointers, Transform2D transform)
+        {
+            if (numPointers == 1)
+            {
+                //Scale distance of eye from the screen
+                eyePositionRelativeToScreen[2] += transform.translation.x / 200.0f;
+            }
+//            if (numPointers > 2)
+//            {
+//                camera.zoom((float) transform.scale.x);
+//            }
+//            else if (numPointers > 1)
+//            {
+//                camera.roll((float) (180 * transform.rotation / Math.PI));
+//                camera.rotateScreenInputVector((float) transform.translation.x, (float) -transform.translation.y);
+//            }
+//            else
+//            {
+//                float cameraX = (float) (transform.translation.x * screenDragToCameraTranslation);
+//                float cameraZ = (float) (transform.translation.y * screenDragToCameraTranslation);
+//                camera.translateScreen(cameraX, 0, cameraZ);
+//            }
+        }
+
+        public void setOrientationTracker(OrientationTracker orientationTracker)
+        {
+            this.orientationTracker = orientationTracker;
+        }
+
+        public OrientationTracker getOrientationTracker()
+        {
+            return orientationTracker;
+        }
     }
 
     @Override
@@ -132,27 +193,27 @@ public class HolographicExampleFragment extends SimpleGLFragment
     {
         super.onAttach(context);
         SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        positionOrientationSensor = new PositionOrientationSensor(sensorManager);
+        renderer.setOrientationTracker(new OrientationTracker(sensorManager, true));
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        positionOrientationSensor.register();
+        renderer.getOrientationTracker().register();
     }
 
     @Override
     public void onPause()
     {
-        positionOrientationSensor.unregister();
+        renderer.getOrientationTracker().unregister();
         super.onPause();
     }
 
     @Override
     public void onDetach()
     {
-        positionOrientationSensor = null;
+        renderer.setOrientationTracker(null);
         super.onDetach();
     }
 }

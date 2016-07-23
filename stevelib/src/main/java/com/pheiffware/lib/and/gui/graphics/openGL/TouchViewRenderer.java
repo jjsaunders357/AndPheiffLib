@@ -51,7 +51,7 @@ public abstract class TouchViewRenderer implements SimpleGLRenderer
     {
         if (numPointers > 2)
         {
-            camera.zoom((float) transform.scale.x);
+            camera.zoom((float) transform.scale.magnitude());
         }
         else if (numPointers > 1)
         {

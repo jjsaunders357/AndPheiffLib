@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class TouchAnalyzer
 {
+    private static final double squareRoot2 = Math.sqrt(2);
     //The registered listener
     private final TouchTransformListener listener;
 
@@ -36,7 +37,7 @@ public class TouchAnalyzer
     /**
      * Reports touch transform events in terms of pixels (dp for screen with DPI of 160).
      *
-     * @param listener               listener to receive touchTransform events
+     * @param listener listener to receive touchTransform events
      */
     public TouchAnalyzer(TouchTransformListener listener)
     {
@@ -208,6 +209,9 @@ public class TouchAnalyzer
         {
             uniformScale = 1;
         }
+        //x and y are both scaled by this amount
+        uniformScale /= squareRoot2;
+
         Vec2D translation = new Vec2D(center.x - oldX, center.y - oldY);
         //The difference between the current state and the last update
         return new Transform2D(translation, weightedRotation, new Vec2D(uniformScale, uniformScale));

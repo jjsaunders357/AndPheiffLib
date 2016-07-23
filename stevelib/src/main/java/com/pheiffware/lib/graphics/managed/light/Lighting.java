@@ -175,6 +175,15 @@ public class Lighting
     }
 
     /**
+     * Gets the absolute positions of the lights
+     * @return
+     */
+    public float[] getLightPositions()
+    {
+        return positions;
+    }
+
+    /**
      * Calculates and returns the array containing the multiplication of the given material color (4-element array) with each light individually.  Note, for efficiency, the
      * returned value is reused every time and its value will be changed every time this is called.
      *
