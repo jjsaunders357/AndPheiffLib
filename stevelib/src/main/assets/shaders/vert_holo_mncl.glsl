@@ -14,6 +14,9 @@ uniform float zNear;
 //Far visible plane
 uniform float zFar;
 
+// x / y ratio
+uniform float aspectRatio;
+
 //Position of the vertex in screen space.  0,0,0 represents the center of the surface of the screen.  -z goes into the screen, +z projects out from the screen.
 attribute vec4 vertexPosition;
 attribute vec3 vertexNormal;
@@ -23,7 +26,7 @@ void main()
 {
 	normal = normalize(normalMatrix * vertexNormal);
 	position = modelMatrix * vertexPosition;
-    position.y *= 0.6;
+    position.y *= aspectRatio;
 	float wp = eyePosition.z - position.z;
 	float xp = position.x * wp - position.z * (eyePosition.x - position.x);
 	float yp = position.y * wp - position.z * (eyePosition.y - position.y);

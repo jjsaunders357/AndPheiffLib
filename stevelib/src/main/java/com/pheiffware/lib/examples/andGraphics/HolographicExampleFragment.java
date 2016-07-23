@@ -63,6 +63,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
 
         //Represents the position of the eye relative to surface of the direct center of the screen
         private final float[] eyePositionRelativeToScreen = new float[]{0, 0, 3, 1};
+        private float aspectRatio;
 
         public ExampleRenderer()
         {
@@ -136,7 +137,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
                 holoColorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SHININESS, 30.0f);
-                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 1f, 30f));
+                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 1f, 30f, aspectRatio));
                 holoColorTechnique.applyProperties();
 
                 indexBuffer.drawAll(GLES20.GL_TRIANGLES);
@@ -177,6 +178,14 @@ public class HolographicExampleFragment extends SimpleGLFragment
 //            }
         }
 
+        @Override
+        public void onSurfaceResize(int width, int height)
+        {
+            GLES20.glViewport(0, 0, width, height);
+            aspectRatio = width / (float) height;
+
+        }
+
         public void setOrientationTracker(OrientationTracker orientationTracker)
         {
             this.orientationTracker = orientationTracker;
@@ -193,7 +202,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
     {
         super.onAttach(context);
         SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        renderer.setOrientationTracker(new OrientationTracker(sensorManager, true));
+        renderer.setOrientationTracker(new OrientationTracker(sensorManager, true, 0.03f));
     }
 
     @Override

@@ -37,6 +37,7 @@ public class HoloColorMaterialTechnique extends Technique
     private final Uniform eyePositionUniform;
     private final Uniform zNearUniform;
     private final Uniform zFarUniform;
+    private final Uniform aspectRatioUniform;
     private final Uniform modelUniform;
     private final Uniform normalUniform;
     private final Uniform ambientLightColorUniform;
@@ -64,6 +65,7 @@ public class HoloColorMaterialTechnique extends Technique
         eyePositionUniform = getUniform(UniformNames.EYE_POSITION_UNIFORM);
         zNearUniform = getUniform(UniformNames.ZNEAR_UNIFORM);
         zFarUniform = getUniform(UniformNames.ZFAR_UNIFORM);
+        aspectRatioUniform = getUniform(UniformNames.ASPECT_RATIO_UNIFORM);
         modelUniform = getUniform(UniformNames.MODEL_MATRIX_UNIFORM);
         normalUniform = getUniform(UniformNames.NORMAL_MATRIX_UNIFORM);
         ambientLightColorUniform = getUniform(UniformNames.AMBIENT_LIGHTMAT_COLOR_UNIFORM);
@@ -101,6 +103,7 @@ public class HoloColorMaterialTechnique extends Technique
         eyePositionUniform.setValue(holoData.eye);
         zNearUniform.setValue(holoData.zNear);
         zFarUniform.setValue(holoData.zFar);
+        aspectRatioUniform.setValue(holoData.aspectRatio);
     }
 
     public static class HoloData
@@ -108,12 +111,14 @@ public class HoloColorMaterialTechnique extends Technique
         public final float[] eye;
         public float zNear;
         public float zFar;
+        public float aspectRatio;
 
-        public HoloData(float[] eye, float zNear, float zFar)
+        public HoloData(float[] eye, float zNear, float zFar, float aspectRatio)
         {
             this.eye = eye;
             this.zNear = zNear;
             this.zFar = zFar;
+            this.aspectRatio = aspectRatio;
         }
     }
 }

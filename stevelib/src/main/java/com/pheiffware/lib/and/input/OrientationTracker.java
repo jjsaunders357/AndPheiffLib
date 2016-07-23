@@ -20,6 +20,9 @@ public class OrientationTracker implements SensorEventListener
     boolean readAcc = false;
     boolean readMag = false;
 
+    //Temp storage location for reading raw orientation matrix and possibly filtering out if it has not changed significantly.
+    private Matrix4 newRawOrientationMatrix = Matrix4.newIdentity();
+
     //Storage location for raw orientation matrix calculated from last hardware readings
     private Matrix4 rawOrientationMatrix = Matrix4.newIdentity();
 
@@ -31,11 +34,13 @@ public class OrientationTracker implements SensorEventListener
 
     //A convenience which causes the orientation to zero out on 1st successful reading
     private boolean zeroOnFirstReading;
+    private float sensitivity;
 
-    public OrientationTracker(SensorManager sensorManager, boolean zeroOnFirstReading)
+    public OrientationTracker(SensorManager sensorManager, boolean zeroOnFirstReading, float sensitivity)
     {
         this.sensorManager = sensorManager;
         this.zeroOnFirstReading = zeroOnFirstReading;
+        this.sensitivity = sensitivity;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class OrientationTracker implements SensorEventListener
 
     /**
      * Calculates and returns the latest orientation matrix.  If one is not ready yet (not enough sensor events) this will return null. If an error is encountered, such as the
-     * device dropping (making orientation impossible to calculate) the last orientation will be returned.
+     * device dropping (making orientation impossible to calculate) the last calculated orientation (possibly null) will be returned.
      *
      * @return
      */
@@ -79,7 +84,8 @@ public class OrientationTracker implements SensorEventListener
                 zeroOnFirstReading = false;
                 setZeroOrientationMatrix(rawOrientationMatrix);
             }
-            orientationMatrix = Matrix4.multiply(rawOrientationMatrix, invZeroOrientationMatrix);
+            orientationMatrix.set(rawOrientationMatrix);
+            orientationMatrix.multiplyBy(invZeroOrientationMatrix);
             return orientationMatrix;
         }
     }
@@ -93,7 +99,15 @@ public class OrientationTracker implements SensorEventListener
     {
         if (readAcc && readMag)
         {
-            SensorManager.getRotationMatrix(rawOrientationMatrix.m, null, lastReadAcc, lastReadMagnet);
+            float[] newAngles = new float[3];
+            float[] oldAngles = new float[3];
+            SensorManager.getRotationMatrix(newRawOrientationMatrix.m, null, lastReadAcc, lastReadMagnet);
+            SensorManager.getOrientation(newRawOrientationMatrix.m, newAngles);
+            SensorManager.getOrientation(rawOrientationMatrix.m, oldAngles);
+            if ((newAngles[0] - oldAngles[0]) * (newAngles[0] - oldAngles[0]) + (newAngles[1] - oldAngles[1]) * (newAngles[1] - oldAngles[1]) + (newAngles[2] - oldAngles[2]) * (newAngles[2] - oldAngles[2]) > sensitivity * sensitivity)
+            {
+                rawOrientationMatrix.set(newRawOrientationMatrix);
+            }
             return rawOrientationMatrix;
         }
         else
