@@ -5,7 +5,11 @@ import com.pheiffware.lib.geometry.Vec3D;
 /**
  * Used for tracking display and orientation.
  * <p/>
- * Note: Default openGL view is based on sitting at origin and looking in negative z direction
+ * Note:
+ * <p/>
+ * In normalized device coordinates, the nearest, visible, vertices are at z=-1 and the furthest are at z=1.
+ * <p/>
+ * Standard projection matrix operates with the idea that the standard view is sitting at origin and looking in negative z direction.
  * <p/>
  * Created by Steve on 3/7/2016.
  */
