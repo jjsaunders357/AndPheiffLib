@@ -12,7 +12,10 @@ import com.pheiffware.lib.graphics.managed.program.UniformNames;
 import com.pheiffware.lib.graphics.utils.GraphicsUtils;
 
 /**
- * Shades mesh with a constant surface color and one light.  Handles, ambient, diffuse and specular lighting.
+ * Mesh projected such that it appears embedded below or projecting out from screen surface.  All vertex locations should be expressed in screen space. [0,0,0] represents the
+ * center of the screen on the surface.  A distance of 1, in any direction, corresponds to 1/2 of the width of the screen.
+ *
+ * Shades mesh with a constant surface color and multiple lights light.  Handles, ambient, diffuse and specular lighting.
  * <p/>
  * Required Properties:
  * <p/>
@@ -34,18 +37,20 @@ import com.pheiffware.lib.graphics.utils.GraphicsUtils;
  */
 public class HoloColorMaterialTechnique extends Technique
 {
-    private final Uniform eyePositionUniform;
-    private final Uniform zNearUniform;
-    private final Uniform zFarUniform;
-    private final Uniform aspectRatioUniform;
-    private final Uniform modelUniform;
-    private final Uniform normalUniform;
-    private final Uniform ambientLightColorUniform;
-    private final Uniform diffLightMaterialUniform;
-    private final Uniform specLightMaterialUniform;
-    private final Uniform lightPosUniform;
-    private final Uniform onStateUniform;
-    private final Uniform shininessUniform;
+    private final Uniform modelUniform = getUniform(UniformNames.MODEL_MATRIX_UNIFORM);
+    private final Uniform normalUniform = getUniform(UniformNames.NORMAL_MATRIX_UNIFORM);
+    private final Uniform ambientLightColorUniform = getUniform(UniformNames.AMBIENT_LIGHTMAT_COLOR_UNIFORM);
+    private final Uniform diffLightMaterialUniform = getUniform(UniformNames.DIFF_LIGHTMAT_COLOR_UNIFORM);
+    private final Uniform specLightMaterialUniform = getUniform(UniformNames.SPEC_LIGHTMAT_COLOR_UNIFORM);
+    private final Uniform lightPosUniform = getUniform(UniformNames.LIGHT_POS_UNIFORM);
+    private final Uniform onStateUniform = getUniform(UniformNames.ON_STATE_UNIFORM);
+    private final Uniform shininessUniform = getUniform(UniformNames.SHININESS_UNIFORM);
+    private final Uniform eyePositionUniform = getUniform(UniformNames.EYE_POSITION_UNIFORM);
+    private final Uniform zNearUniform = getUniform(UniformNames.ZNEAR_UNIFORM);
+    private final Uniform zNearFadeStartUniform = getUniform(UniformNames.ZNEAR_FADE_START_UNIFORM);
+    private final Uniform zFarUniform = getUniform(UniformNames.ZFAR_UNIFORM);
+    private final Uniform aspectRatioUniform = getUniform(UniformNames.ASPECT_RATIO_UNIFORM);
+    private final Uniform screenColorUniform = getUniform(UniformNames.SCREEN_COLOR_UNIFORM);
 
     //Used internally to compute values to apply to uniforms
     private final Matrix3 normalTransform = Matrix3.newIdentity();
@@ -62,18 +67,7 @@ public class HoloColorMaterialTechnique extends Technique
                 RenderProperty.SPEC_MAT_COLOR,
                 RenderProperty.SHININESS
         });
-        eyePositionUniform = getUniform(UniformNames.EYE_POSITION_UNIFORM);
-        zNearUniform = getUniform(UniformNames.ZNEAR_UNIFORM);
-        zFarUniform = getUniform(UniformNames.ZFAR_UNIFORM);
-        aspectRatioUniform = getUniform(UniformNames.ASPECT_RATIO_UNIFORM);
-        modelUniform = getUniform(UniformNames.MODEL_MATRIX_UNIFORM);
-        normalUniform = getUniform(UniformNames.NORMAL_MATRIX_UNIFORM);
-        ambientLightColorUniform = getUniform(UniformNames.AMBIENT_LIGHTMAT_COLOR_UNIFORM);
-        diffLightMaterialUniform = getUniform(UniformNames.DIFF_LIGHTMAT_COLOR_UNIFORM);
-        specLightMaterialUniform = getUniform(UniformNames.SPEC_LIGHTMAT_COLOR_UNIFORM);
-        lightPosUniform = getUniform(UniformNames.LIGHT_POS_UNIFORM);
-        onStateUniform = getUniform(UniformNames.ON_STATE_UNIFORM);
-        shininessUniform = getUniform(UniformNames.SHININESS_UNIFORM);
+
     }
 
 
@@ -102,23 +96,29 @@ public class HoloColorMaterialTechnique extends Technique
         HoloData holoData = (HoloData) getPropertyValue(RenderProperty.HOLO_PROJECTION);
         eyePositionUniform.setValue(holoData.eye);
         zNearUniform.setValue(holoData.zNear);
+        zNearFadeStartUniform.setValue(holoData.zNearFadeStart);
         zFarUniform.setValue(holoData.zFar);
         aspectRatioUniform.setValue(holoData.aspectRatio);
+        screenColorUniform.setValue(holoData.screenColor);
     }
 
     public static class HoloData
     {
         public final float[] eye;
         public float zNear;
+        public float zNearFadeStart;
         public float zFar;
         public float aspectRatio;
+        public float[] screenColor;
 
-        public HoloData(float[] eye, float zNear, float zFar, float aspectRatio)
+        public HoloData(float[] eye, float zNear, float zNearFadeStart, float zFar, float aspectRatio, float[] screenColor)
         {
             this.eye = eye;
             this.zNear = zNear;
+            this.zNearFadeStart = zNearFadeStart;
             this.zFar = zFar;
             this.aspectRatio = aspectRatio;
+            this.screenColor = screenColor;
         }
     }
 }
