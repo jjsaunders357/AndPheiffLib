@@ -15,32 +15,30 @@ import com.pheiffware.lib.graphics.Matrix4;
 public class OrientationTracker implements SensorEventListener
 {
     private final SensorManager sensorManager;
-    private float[] lastReadAcc = new float[3];
-    private float[] lastReadMagnet = new float[3];
-    boolean readAcc = false;
-    boolean readMag = false;
 
-    //Temp storage location for reading raw orientation matrix and possibly filtering out if it has not changed significantly.
-    private Matrix4 newRawOrientationMatrix = Matrix4.newIdentity();
+    //This tracks whether a sensor event has come in yet.  If not, then calling getCurrentOrientation, will return null.
+    private boolean initialSensorStateRead = false;
+
+    //The last raw values read from the sensor.  Nothing is done with these until getCurrentOrientation is called.
+    private float[] lastReadSensorValues = new float[4];
 
     //Storage location for raw orientation matrix calculated from last hardware readings
-    private Matrix4 rawOrientationMatrix = Matrix4.newIdentity();
+    private final Matrix4 rawOrientationMatrix = Matrix4.newIdentity();
 
     //Storage location for the orientation matrix which is appropriately offset by the zero matrix
-    private Matrix4 orientationMatrix = Matrix4.newIdentity();
+    private final Matrix4 orientationMatrix = Matrix4.newIdentity();
 
     //Holds inverse of the zero orientation which should be considered identity.
-    private Matrix4 invZeroOrientationMatrix = Matrix4.newIdentity();
+    private final Matrix4 invZeroOrientationMatrix = Matrix4.newIdentity();
 
-    //A convenience which causes the orientation to zero out on 1st successful reading
+    //A convenience which causes the orientation to zero out on 1st successful (non-null) reading.  All future readings are relative to the initial state.
     private boolean zeroOnFirstReading;
-    private float sensitivity;
 
-    public OrientationTracker(SensorManager sensorManager, boolean zeroOnFirstReading, float sensitivity)
+
+    public OrientationTracker(SensorManager sensorManager, boolean zeroOnFirstReading)
     {
         this.sensorManager = sensorManager;
         this.zeroOnFirstReading = zeroOnFirstReading;
-        this.sensitivity = sensitivity;
     }
 
     @Override
@@ -48,73 +46,39 @@ public class OrientationTracker implements SensorEventListener
     {
         switch (event.sensor.getType())
         {
-            case Sensor.TYPE_ACCELEROMETER:
-                //Log.i("sensor", "Acc: (" + event.values[0] + " , " + event.values[1] + " , " + event.values[2] + ")");
-                lastReadAcc[0] = event.values[0];
-                lastReadAcc[1] = event.values[1];
-                lastReadAcc[2] = event.values[2];
-                readAcc = true;
-                break;
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                lastReadMagnet[0] = event.values[0];
-                lastReadMagnet[1] = event.values[1];
-                lastReadMagnet[2] = event.values[2];
-                readMag = true;
+            case Sensor.TYPE_ROTATION_VECTOR:
+                lastReadSensorValues[0] = event.values[0];
+                lastReadSensorValues[1] = event.values[1];
+                lastReadSensorValues[2] = event.values[2];
+                lastReadSensorValues[3] = event.values[3];
+                initialSensorStateRead = true;
                 break;
         }
     }
 
 
     /**
-     * Calculates and returns the latest orientation matrix.  If one is not ready yet (not enough sensor events) this will return null. If an error is encountered, such as the
-     * device dropping (making orientation impossible to calculate) the last calculated orientation (possibly null) will be returned.
+     * Calculates and returns the latest orientation matrix.  If there is no orientation matrix available then null is returned.
      *
      * @return
      */
-    public Matrix4 calcOrientation()
+    public Matrix4 getCurrentOrientation()
     {
-        if (calcRawOrientation() == null)
+        if (!initialSensorStateRead)
         {
             return null;
         }
-        else
+        SensorManager.getRotationMatrixFromVector(rawOrientationMatrix.m, lastReadSensorValues);
+        if (zeroOnFirstReading)
         {
-            if (zeroOnFirstReading)
-            {
-                zeroOnFirstReading = false;
-                setZeroOrientationMatrix(rawOrientationMatrix);
-            }
-            orientationMatrix.set(rawOrientationMatrix);
-            orientationMatrix.multiplyBy(invZeroOrientationMatrix);
-            return orientationMatrix;
+            zeroOnFirstReading = false;
+            setZeroOrientationMatrix(rawOrientationMatrix);
         }
+        orientationMatrix.set(rawOrientationMatrix);
+        orientationMatrix.multiplyBy(invZeroOrientationMatrix);
+        return orientationMatrix;
     }
 
-    /**
-     * Returns the raw orientation matrix (not modified by the zero)
-     *
-     * @return
-     */
-    public Matrix4 calcRawOrientation()
-    {
-        if (readAcc && readMag)
-        {
-            float[] newAngles = new float[3];
-            float[] oldAngles = new float[3];
-            SensorManager.getRotationMatrix(newRawOrientationMatrix.m, null, lastReadAcc, lastReadMagnet);
-            SensorManager.getOrientation(newRawOrientationMatrix.m, newAngles);
-            SensorManager.getOrientation(rawOrientationMatrix.m, oldAngles);
-            if ((newAngles[0] - oldAngles[0]) * (newAngles[0] - oldAngles[0]) + (newAngles[1] - oldAngles[1]) * (newAngles[1] - oldAngles[1]) + (newAngles[2] - oldAngles[2]) * (newAngles[2] - oldAngles[2]) > sensitivity * sensitivity)
-            {
-                rawOrientationMatrix.set(newRawOrientationMatrix);
-            }
-            return rawOrientationMatrix;
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     /**
      * Sets the orientation which should be regarded as identity.  This is typically used to set the current orientation as identity so that all further orientation changes will be
@@ -133,16 +97,14 @@ public class OrientationTracker implements SensorEventListener
      */
     public void zeroOrientationMatrix()
     {
-        Matrix4 currentRawOrientation = calcRawOrientation();
-        setZeroOrientationMatrix(currentRawOrientation);
+        SensorManager.getRotationMatrixFromVector(rawOrientationMatrix.m, lastReadSensorValues);
+        setZeroOrientationMatrix(rawOrientationMatrix);
     }
 
     public void register()
     {
-        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        Sensor compass = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-        sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_FASTEST);
+        Sensor roto = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        sensorManager.registerListener(this, roto, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void unregister()

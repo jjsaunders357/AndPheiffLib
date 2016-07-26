@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
-import android.util.Log;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
@@ -115,7 +114,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            Matrix4 orientationMatrix = orientationTracker.calcOrientation();
+            Matrix4 orientationMatrix = orientationTracker.getCurrentOrientation();
             if (orientationMatrix != null)
             {
                 float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
@@ -123,7 +122,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
                 lighting.calcOnLightPositionsInEyeSpace(orientationMatrix);
                 float[] vals = new float[3];
                 SensorManager.getOrientation(orientationMatrix.m, vals);
-                Log.i("sensor", Math.toDegrees(vals[0]) + " , " + Math.toDegrees(vals[1]) + " , " + Math.toDegrees(vals[2]));
+//                Log.i("sensor", Math.toDegrees(vals[0]) + " , " + Math.toDegrees(vals[1]) + " , " + Math.toDegrees(vals[2]));
 
                 holoColorTechnique.bind();
                 colorVertexBuffer.bind(holoColorTechnique);
@@ -143,7 +142,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
 
                 indexBuffer.drawAll(GLES20.GL_TRIANGLES);
 
-                translationMatrix = Matrix4.newTranslation(-0.2f, 0.0f, -0.2f);
+                translationMatrix = Matrix4.newTranslation(-0.3f, 0.0f, -0.3f);
                 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
 
                 holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
@@ -211,7 +210,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
     {
         super.onAttach(context);
         SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        renderer.setOrientationTracker(new OrientationTracker(sensorManager, true, 0.01f));
+        renderer.setOrientationTracker(new OrientationTracker(sensorManager, true));
     }
 
     @Override
