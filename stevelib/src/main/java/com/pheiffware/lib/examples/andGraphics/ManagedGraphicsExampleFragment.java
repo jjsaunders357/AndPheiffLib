@@ -103,8 +103,8 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         {
             //Turn 2nd light on and off every 180 degrees
             lighting.setOnState(1, (rotation % 360) < 180);
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
-            alternateLighting.calcLightPositionsInEyeSpace(viewMatrix);
+            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
+            alternateLighting.calcOnLightPositionsInEyeSpace(viewMatrix);
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new RenderProperty[]{

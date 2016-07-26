@@ -35,9 +35,6 @@ uniform vec4 screenColor;
 //Near visible plane, relative to eye.  In other words, minimum distance from eye, in z direction, towards screen, which is visible.
 uniform float zNear;
 
-//Near zDistance at which fragments start to fade.  They completely disappear by the time they reach zNear
-uniform float zNearFadeStart;
-
 vec4 light_color(vec4 lightPosition,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
     //Normalize the surface's normal
@@ -81,16 +78,6 @@ void main()
     {
         totalLightMaterialColor = blendScreen(totalLightMaterialColor);
     }
-
-    if(eyePosition.z-position.z < zNearFadeStart)
-    {
-        float alpha = min((eyePosition.z-position.z-zNear)/(zNearFadeStart-zNear),ONE);
-        totalLightMaterialColor.a*=alpha;
-    }
-    //float alpha = clamp((eyePosition.z-position.z-zNear)/(zNearFadeStart-zNear),ZERO,ONE);
-
-//    float alpha = clamp((eyePosition.z-position.z-zNear)/(zNearFadeStart-zNear),ZERO,ONE);
-//    totalLightMaterialColor.a *= alpha * 0.000001;
 	gl_FragColor = totalLightMaterialColor;
 }
 

@@ -89,7 +89,7 @@ public class MeshExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
+            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
             colorTechnique.bind();
             colorVertexBuffer.bind(colorTechnique);
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));

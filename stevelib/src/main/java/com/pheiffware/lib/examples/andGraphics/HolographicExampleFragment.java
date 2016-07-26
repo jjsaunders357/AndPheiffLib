@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
@@ -18,7 +19,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.light.HoloLighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.techniques.HoloColorMaterialTechnique;
@@ -52,8 +53,9 @@ public class HolographicExampleFragment extends SimpleGLFragment
 
     private static class ExampleRenderer extends Base3DExampleRenderer
     {
+        private static final float SCREEN_ALPHA = 0.3f;
         private OrientationTracker orientationTracker;
-        private final Lighting lighting = new Lighting(new float[]{-3, -3, 1, 1, -2, 1, 1, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.3f, 0.2f, 1.0f});
+        private final HoloLighting lighting = new HoloLighting(new float[]{2, 2, 3, 1}, new float[]{0.7f, 0.7f, 0.7f, 1.0f}, new boolean[]{true});
         private float rotation = 0;
 
         private HoloColorMaterialTechnique holoColorTechnique;
@@ -62,7 +64,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
         private StaticVertexBuffer colorVertexBuffer;
 
         //Represents the position of the eye relative to surface of the direct center of the screen
-        private final float[] eyePositionRelativeToScreen = new float[]{0, 0, 3, 1};
+        private final float[] eyePositionRelativeToScreen = new float[]{0, 0, 6, 1};
         private float aspectRatio;
 
         public ExampleRenderer()
@@ -74,6 +76,8 @@ public class HolographicExampleFragment extends SimpleGLFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache);
+            GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
+
             PheiffGLUtils.enableAlphaTransparency();
             holoColorTechnique = new HoloColorMaterialTechnique(al);
             ColladaFactory colladaFactory = new ColladaFactory(true);
@@ -116,7 +120,11 @@ public class HolographicExampleFragment extends SimpleGLFragment
             {
                 float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
 
-                //lighting.calcLightPositionsInEyeSpace(viewMatrix);
+                lighting.calcOnLightPositionsInEyeSpace(orientationMatrix);
+                float[] vals = new float[3];
+                SensorManager.getOrientation(orientationMatrix.m, vals);
+                Log.i("sensor", Math.toDegrees(vals[0]) + " , " + Math.toDegrees(vals[1]) + " , " + Math.toDegrees(vals[2]));
+
                 holoColorTechnique.bind();
                 colorVertexBuffer.bind(holoColorTechnique);
                 translationMatrix = Matrix4.newTranslation(0.3f, 0.3f, 0.2f);
@@ -130,7 +138,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
                 holoColorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SHININESS, 30.0f);
-                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 0.5f, 0.8f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, 0.65f}));
+                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 0.1f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, SCREEN_ALPHA}));
                 holoColorTechnique.applyProperties();
 
                 indexBuffer.drawAll(GLES20.GL_TRIANGLES);
@@ -143,7 +151,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
 
                 indexBuffer.drawAll(GLES20.GL_TRIANGLES);
 
-                translationMatrix = Matrix4.newTranslation(0.0f, -0.2f, 0f);
+                translationMatrix = Matrix4.newTranslation(0.0f, -0.2f, -0.1f);
                 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
 
                 holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
@@ -160,7 +168,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
             if (numPointers == 1)
             {
                 //Scale distance of eye from the screen
-                eyePositionRelativeToScreen[2] += transform.translation.x / 200.0f;
+                eyePositionRelativeToScreen[2] += transform.translation.x / 100.0f;
             }
 //            if (numPointers > 2)
 //            {

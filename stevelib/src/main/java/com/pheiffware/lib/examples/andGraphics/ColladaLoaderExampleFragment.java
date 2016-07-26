@@ -126,7 +126,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
+            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new RenderProperty[]{

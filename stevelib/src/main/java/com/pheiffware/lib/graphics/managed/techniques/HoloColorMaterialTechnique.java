@@ -47,7 +47,6 @@ public class HoloColorMaterialTechnique extends Technique
     private final Uniform shininessUniform = getUniform(UniformNames.SHININESS_UNIFORM);
     private final Uniform eyePositionUniform = getUniform(UniformNames.EYE_POSITION_UNIFORM);
     private final Uniform zNearUniform = getUniform(UniformNames.ZNEAR_UNIFORM);
-    private final Uniform zNearFadeStartUniform = getUniform(UniformNames.ZNEAR_FADE_START_UNIFORM);
     private final Uniform zFarUniform = getUniform(UniformNames.ZFAR_UNIFORM);
     private final Uniform aspectRatioUniform = getUniform(UniformNames.ASPECT_RATIO_UNIFORM);
     private final Uniform screenColorUniform = getUniform(UniformNames.SCREEN_COLOR_UNIFORM);
@@ -86,7 +85,8 @@ public class HoloColorMaterialTechnique extends Technique
         ambientLightColorUniform.setValue(ambLightMatColor);
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        lightPosUniform.setValue(lighting.getLightPositions());
+//        lightPosUniform.setValue(lighting.getRawLightPositions());
+        lightPosUniform.setValue(lighting.getLightPositionsInEyeSpace());
 
         diffLightMaterialUniform.setValue(lighting.calcLightMatColors(diffMatColor));
         specLightMaterialUniform.setValue(lighting.calcLightMatColors(specMatColor));
@@ -96,7 +96,6 @@ public class HoloColorMaterialTechnique extends Technique
         HoloData holoData = (HoloData) getPropertyValue(RenderProperty.HOLO_PROJECTION);
         eyePositionUniform.setValue(holoData.eye);
         zNearUniform.setValue(holoData.zNear);
-        zNearFadeStartUniform.setValue(holoData.zNearFadeStart);
         zFarUniform.setValue(holoData.zFar);
         aspectRatioUniform.setValue(holoData.aspectRatio);
         screenColorUniform.setValue(holoData.screenColor);
@@ -106,16 +105,14 @@ public class HoloColorMaterialTechnique extends Technique
     {
         public final float[] eye;
         public float zNear;
-        public float zNearFadeStart;
         public float zFar;
         public float aspectRatio;
         public float[] screenColor;
 
-        public HoloData(float[] eye, float zNear, float zNearFadeStart, float zFar, float aspectRatio, float[] screenColor)
+        public HoloData(float[] eye, float zNear, float zFar, float aspectRatio, float[] screenColor)
         {
             this.eye = eye;
             this.zNear = zNear;
-            this.zNearFadeStart = zNearFadeStart;
             this.zFar = zFar;
             this.aspectRatio = aspectRatio;
             this.screenColor = screenColor;

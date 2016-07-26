@@ -18,6 +18,7 @@ uniform float zFar;
 uniform float aspectRatio;
 
 //Position of the vertex in screen space.  0,0,0 represents the center of the surface of the screen.  -z goes into the screen, +z projects out from the screen.
+//A length of 1 corresponds to 1/2 the width of the screen.
 attribute vec4 vertexPosition;
 attribute vec3 vertexNormal;
 varying vec4 position;
@@ -37,7 +38,7 @@ void main()
 // z mapped to range [-1,1]
     z = 2.0 * z - 1.0;
 
-// z mapped to range [-w,w]
+// z mapped to range [-w,w] (pre-homogeneous divide).
     z *= w;
 	gl_Position = vec4(x,y,z,w);
 }

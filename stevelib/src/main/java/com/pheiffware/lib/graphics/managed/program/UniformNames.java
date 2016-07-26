@@ -28,7 +28,6 @@ public class UniformNames
 
     public static final String EYE_POSITION_UNIFORM = "eyePosition";
     public static final String ZNEAR_UNIFORM = "zNear";
-    public static final String ZNEAR_FADE_START_UNIFORM = "zNearFadeStart";
     public static final String ZFAR_UNIFORM = "zFar";
     public static final String ASPECT_RATIO_UNIFORM = "aspectRatio";
     public static final String SCREEN_COLOR_UNIFORM = "screenColor";

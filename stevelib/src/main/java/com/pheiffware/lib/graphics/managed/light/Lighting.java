@@ -146,26 +146,36 @@ public class Lighting
     }
 
     /**
-     * Calculates and retains the value of light positions as transformed by a view matrix.  This is generally done once per frame and the result is obtained many times via the
-     * corresponding getter.
+     * Calculates and retains the value of all active light positions as transformed by a lightToEyeSpaceMatrix matrix.  This is generally done once per frame and the result is
+     * obtained many times via the corresponding getter.
      *
-     * @param viewMatrix
+     * @param lightToEyeSpaceMatrix
      */
-    public void calcLightPositionsInEyeSpace(Matrix4 viewMatrix)
+    public void calcOnLightPositionsInEyeSpace(Matrix4 lightToEyeSpaceMatrix)
     {
-        int offset = 0;
         for (int i = 0; i < numLightsSupported; i++)
         {
             if (onStates[i] == 1)
             {
-                viewMatrix.transform4DFloatVector(lightPositionsInEyeSpace, offset, positions, offset);
+                calcLightPositionInEyeSpace(i, lightToEyeSpaceMatrix);
             }
-            offset += 4;
         }
     }
 
     /**
-     * Obtains the result of previous call to calcLightPositionsInEyeSpace
+     * Calculates and retains the value of a single light position as transformed by a lightToEyeSpaceMatrix matrix.
+     *
+     * @param lightIndex
+     * @param lightToEyeSpaceMatrix
+     */
+    protected void calcLightPositionInEyeSpace(int lightIndex, Matrix4 lightToEyeSpaceMatrix)
+    {
+        int offset = lightIndex * 4;
+        lightToEyeSpaceMatrix.transform4DFloatVector(lightPositionsInEyeSpace, offset, positions, offset);
+    }
+
+    /**
+     * Obtains the result of previous call to calcOnLightPositionsInEyeSpace
      *
      * @return
      */
@@ -176,9 +186,10 @@ public class Lighting
 
     /**
      * Gets the absolute positions of the lights
+     *
      * @return
      */
-    public float[] getLightPositions()
+    public float[] getRawLightPositions()
     {
         return positions;
     }
