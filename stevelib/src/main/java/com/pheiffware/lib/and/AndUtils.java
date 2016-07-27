@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.Surface;
+import android.view.Window;
 import android.view.WindowManager;
 
 import java.io.BufferedReader;
@@ -81,12 +82,47 @@ public class AndUtils
         return BitmapFactory.decodeStream(assetManager.open(imageAssetPath));
     }
 
+    /**
+     * Get the screen's current brightness level.
+     *
+     * @param window
+     * @return
+     */
+    public static float getBrightness(Window window)
+    {
+        WindowManager.LayoutParams layout = window.getAttributes();
+        return layout.screenBrightness;
+    }
+
+    /**
+     * Set the screen's brightness level.
+     *
+     * @param window
+     * @param brightness
+     */
+    public static void setBrightness(Window window, float brightness)
+    {
+        WindowManager.LayoutParams layout = window.getAttributes();
+        layout.screenBrightness = brightness;
+        window.setAttributes(layout);
+    }
+
+    /**
+     * Get the constant describing the rotation of the screen.
+     *
+     * @param context
+     * @return
+     */
     public static int getDisplayRotation(Context context)
     {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return wm.getDefaultDisplay().getRotation();
     }
 
+    /**
+     * Untested, taken from stack-overflow.
+     * @param activity
+     */
     public static void disableScreenOrientationChange(Activity activity)
     {
         final int orientation = activity.getResources().getConfiguration().orientation;
@@ -116,6 +152,10 @@ public class AndUtils
         }
     }
 
+    /**
+     * Untested, taken from stack-overflow.
+     * @param activity
+     */
     public static void enableScreenOrientationChange(Activity activity)
     {
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
