@@ -115,6 +115,8 @@ public class HolographicExampleFragment extends SimpleGLFragment
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
             Matrix4 orientationMatrix = orientationTracker.getCurrentOrientation();
+
+
             if (orientationMatrix != null)
             {
                 float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
@@ -191,7 +193,6 @@ public class HolographicExampleFragment extends SimpleGLFragment
         {
             GLES20.glViewport(0, 0, width, height);
             aspectRatio = width / (float) height;
-
         }
 
         public void setOrientationTracker(OrientationTracker orientationTracker)
@@ -203,6 +204,11 @@ public class HolographicExampleFragment extends SimpleGLFragment
         {
             return orientationTracker;
         }
+
+        public boolean receivesOrientationEvents()
+        {
+            return false;
+        }
     }
 
     @Override
@@ -211,6 +217,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
         super.onAttach(context);
         SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         renderer.setOrientationTracker(new OrientationTracker(sensorManager, true));
+        //AndUtils.setBrightness(getActivity().getWindow(),0.0f);
     }
 
     @Override

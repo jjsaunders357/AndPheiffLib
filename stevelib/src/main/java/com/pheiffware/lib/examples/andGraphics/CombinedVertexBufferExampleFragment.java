@@ -142,5 +142,17 @@ public class CombinedVertexBufferExampleFragment extends SimpleGLFragment
         public void touchTransformEvent(int numPointers, Transform2D transform)
         {
         }
+
+        @Override
+        public boolean receivesTouchTransformEvents()
+        {
+            return false;
+        }
+
+        @Override
+        public boolean receivesOrientationEvents()
+        {
+            return false;
+        }
     }
 }

@@ -43,4 +43,16 @@ public interface SimpleGLRenderer extends TouchTransformListener
      * GL_VERSION_31.
      */
     int maxMajorGLVersion();
+
+    /**
+     * If this returns true, then the renderer will receive touchTransformEvents.
+     * @return
+     */
+    boolean receivesTouchTransformEvents();
+
+    /**
+     * If this returns true, then the renderer will receive orientationChanged events.
+     * @return
+     */
+    boolean receivesOrientationEvents();
 }

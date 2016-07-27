@@ -44,6 +44,7 @@ public class OrientationTracker implements SensorEventListener
     @Override
     public void onSensorChanged(SensorEvent event)
     {
+        //TODO: Remove switch (should only get one type of event)
         switch (event.sensor.getType())
         {
             case Sensor.TYPE_ROTATION_VECTOR:

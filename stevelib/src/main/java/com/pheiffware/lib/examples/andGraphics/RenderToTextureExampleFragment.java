@@ -170,5 +170,18 @@ public class RenderToTextureExampleFragment extends SimpleGLFragment
         {
 
         }
+
+        @Override
+        public boolean receivesTouchTransformEvents()
+        {
+            return false;
+        }
+
+        @Override
+        public boolean receivesOrientationEvents()
+        {
+            return false;
+        }
+
     }
 }

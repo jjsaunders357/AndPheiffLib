@@ -37,6 +37,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
     private final AssetManager assetManager;
     private final SimpleGLRenderer renderer;
     private final TouchAnalyzer touchAnalyzer;
+    private final boolean receivesTouchTransformEvents;
     private GLCache glCache;
 
     public SimpleGLView(Context context, SimpleGLRenderer renderer, FilterQuality filterQuality)
@@ -45,6 +46,10 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
         this.filterQuality = filterQuality;
         this.assetManager = context.getAssets();
         this.renderer = renderer;
+        receivesTouchTransformEvents = renderer.receivesTouchTransformEvents();
+        if (renderer.receivesOrientationEvents())
+        {
+        }
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         touchAnalyzer = new TouchAnalyzer(this, metrics.xdpi, metrics.ydpi);
@@ -60,8 +65,12 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
 
     public boolean onTouchEvent(MotionEvent event)
     {
-        touchAnalyzer.interpretRawEvent(event);
-        return true;
+        if (renderer.receivesTouchTransformEvents())
+        {
+            touchAnalyzer.interpretRawEvent(event);
+            return true;
+        }
+        return false;
     }
 
     @Override

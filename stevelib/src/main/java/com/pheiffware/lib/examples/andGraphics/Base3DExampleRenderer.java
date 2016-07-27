@@ -71,6 +71,18 @@ public abstract class Base3DExampleRenderer extends TouchViewRenderer
     }
 
     @Override
+    public boolean receivesTouchTransformEvents()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean receivesOrientationEvents()
+    {
+        return false;
+    }
+
+    @Override
     public int maxMajorGLVersion()
     {
         return 3;
