@@ -9,7 +9,7 @@ import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
 import com.pheiffware.lib.graphics.managed.program.UniformNames;
-import com.pheiffware.lib.graphics.utils.GraphicsUtils;
+import com.pheiffware.lib.utils.GraphicsUtils;
 
 /**
  * Mesh projected such that it appears embedded below or projecting out from screen surface.  All vertex locations should be expressed in screen space. [0,0,0] represents the

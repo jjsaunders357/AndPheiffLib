@@ -9,7 +9,7 @@ import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
 import com.pheiffware.lib.graphics.managed.program.UniformNames;
-import com.pheiffware.lib.graphics.utils.GraphicsUtils;
+import com.pheiffware.lib.utils.GraphicsUtils;
 
 /**
  * Shades mesh with a constant surface color and one light.  Handles, ambient, diffuse and specular lighting.

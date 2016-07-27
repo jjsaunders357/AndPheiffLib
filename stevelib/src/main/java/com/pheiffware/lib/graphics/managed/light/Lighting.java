@@ -3,7 +3,7 @@ package com.pheiffware.lib.graphics.managed.light;
 import com.pheiffware.lib.geometry.Vec3D;
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.utils.GraphicsUtils;
+import com.pheiffware.lib.utils.GraphicsUtils;
 
 /**
  * Stores information associated with all light sources.  This can be passed to various techniques which support lighting as a parameter.  Also contains machinery to do basic
