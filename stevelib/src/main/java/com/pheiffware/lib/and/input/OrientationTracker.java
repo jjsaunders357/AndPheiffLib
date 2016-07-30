@@ -14,24 +14,6 @@ import com.pheiffware.lib.graphics.Matrix4;
  */
 public class OrientationTracker implements SensorEventListener
 {
-    /**
-     * TODO: Comment
-     *
-     * @param sensorManager
-     * @param listener
-     */
-    public static void registerOrientationListener(SensorManager sensorManager, SensorEventListener listener)
-    {
-        Sensor roto = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        sensorManager.registerListener(listener, roto, SensorManager.SENSOR_DELAY_FASTEST);
-    }
-
-    //TODO: Comment
-    public static void unregisterOrientationListener(SensorManager sensorManager, SensorEventListener listener)
-    {
-        sensorManager.unregisterListener(listener);
-    }
-
     //This tracks whether a sensor event has come in yet.  If not, then calling getCurrentOrientation, will return null.
     private boolean initialSensorStateRead = false;
 

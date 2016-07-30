@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Takes in Android multi-touch events and processes them into Transform2 events. Created by Steve on 3/9/2016.
+ * Takes in Android multi-touch events and processes them into translation, rotation and scale.
+ * <p/>
+ * Created by Steve on 3/9/2016.
  */
 public class TouchAnalyzer
 {
     private static final double squareRoot2 = Math.sqrt(2);
-    //The registered listener
-    private final TouchTransformListener listener;
 
     //Map from pointer ID to position
     private final Map<Integer, Vec2D> pointerPositions = new HashMap<>();
@@ -35,30 +35,49 @@ public class TouchAnalyzer
     private double averageRadiusSquared;
 
     /**
-     * Reports touch transform events in terms of pixels (dp for screen with DPI of 160).
-     *
-     * @param listener listener to receive touchTransform events
+     * Reports touch transform events in terms of pixels.  This is equivalent to reporting in units of dp on a screen with a DPI of 160.
      */
-    public TouchAnalyzer(TouchTransformListener listener)
+    public TouchAnalyzer()
     {
-        this(listener, 160.0, 160.0);
+        this(160.0, 160.0);
     }
 
     /**
-     * Reports touch transform events in terms of dp
+     * Reports touch transform events in terms of dp.  1 dp = 1 pixel on a 160 DPI screen.
      *
-     * @param listener listener to receive touchTransform events
-     * @param xDPI     touchTransform translation events specified in units of dp
-     * @param yDPI     touchTransform translation events specified in units of dp
+     * @param xDPI touchTransform translation events specified in units of dp
+     * @param yDPI touchTransform translation events specified in units of dp
      */
-    public TouchAnalyzer(TouchTransformListener listener, double xDPI, double yDPI)
+    public TouchAnalyzer(double xDPI, double yDPI)
     {
-        this.listener = listener;
         this.xDPI = xDPI;
         this.yDPI = yDPI;
     }
 
-    public void interpretRawEvent(MotionEvent event)
+    /**
+     * Describes the motion of pointers in terms of rotation, translation and scaling.  Also reports the number of pointers which were touching to produce the transform.  All
+     * translations are expressed in terms of units of dp.  1 dp = 1 pixel on a 160 DPI screen.
+     */
+    public static class TouchTransformEvent
+    {
+        public final int numPointers;
+        public final Transform2D transform;
+
+        public TouchTransformEvent(int numPointers, Transform2D transform)
+        {
+            this.numPointers = numPointers;
+            this.transform = transform;
+        }
+    }
+
+    /**
+     * Converts a raw touch event into a TouchTransformEvent or returns null if this does not result in a transformation (adding/removing pointers does not cause a
+     * transformation).
+     *
+     * @param event
+     * @return a TouchTransformEvent or null if this event did not cause a transformation.
+     */
+    public TouchTransformEvent convertRawTouchEvent(MotionEvent event)
     {
         int index;
         int id;
@@ -79,11 +98,16 @@ public class TouchAnalyzer
             case MotionEvent.ACTION_MOVE:
                 Transform2D transform2D = updateStateAndGetTransform(event);
                 scaleTransformToDP(transform2D);
-                fireEvent(pointerPositions.size(), transform2D);
-                break;
+                return new TouchTransformEvent(pointerPositions.size(), transform2D);
         }
+        return null;
     }
 
+    /**
+     * Scales translation to be in units of dp.  1 dp == 1 pixel on a 160 DPI screen.
+     *
+     * @param transform2D
+     */
     private void scaleTransformToDP(Transform2D transform2D)
     {
         transform2D.translation.x = 160 * transform2D.translation.x / xDPI;
@@ -215,13 +239,5 @@ public class TouchAnalyzer
         Vec2D translation = new Vec2D(center.x - oldX, center.y - oldY);
         //The difference between the current state and the last update
         return new Transform2D(translation, weightedRotation, new Vec2D(uniformScale, uniformScale));
-    }
-
-    private void fireEvent(int numPointers, Transform2D transform2D)
-    {
-        if (listener != null)
-        {
-            listener.touchTransformEvent(numPointers, transform2D);
-        }
     }
 }

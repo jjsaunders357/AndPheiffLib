@@ -17,8 +17,6 @@ import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
-import com.pheiffware.lib.and.input.TouchTransformListener;
-import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
@@ -31,7 +29,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup and will send TouchTransform events to GameRenderer.
  */
-public class BaseGameView extends GLSurfaceView implements TouchTransformListener, GLSurfaceView.Renderer
+public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Renderer
 {
     private final FilterQuality filterQuality;
     private final AssetManager assetManager;
@@ -49,7 +47,7 @@ public class BaseGameView extends GLSurfaceView implements TouchTransformListene
         this.forwardTouchEvents = forwardTouchEvents;
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        touchAnalyzer = new TouchAnalyzer(this, metrics.xdpi, metrics.ydpi);
+        touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi);
 
         int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), AndGraphicsUtils.getDeviceGLMajorVersion(context));
         setEGLContextClientVersion(requestedGLMajorVersion);
@@ -64,23 +62,21 @@ public class BaseGameView extends GLSurfaceView implements TouchTransformListene
     {
         if (forwardTouchEvents)
         {
-            touchAnalyzer.interpretRawEvent(event);
+            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
+            if (touchTransformEvent != null)
+            {
+                queueEvent(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        renderer.touchTransformEvent(touchTransformEvent.numPointers, touchTransformEvent.transform);
+                    }
+                });
+            }
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void touchTransformEvent(final int numPointers, final Transform2D transform)
-    {
-        queueEvent(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                renderer.touchTransformEvent(numPointers, transform);
-            }
-        });
     }
 
     @Override
