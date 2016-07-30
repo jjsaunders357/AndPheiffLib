@@ -5,6 +5,7 @@ import com.pheiffware.lib.geometry.Transform2D;
 /**
  * Created by Steve on 3/18/2016.
  */
+//TODO: Remove listener.  Make part of GameRenderer interface.  Redocument method, always happens in rendering thread.
 public interface TouchTransformListener
 {
     /**

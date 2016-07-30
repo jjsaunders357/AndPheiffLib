@@ -29,27 +29,24 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 /**
- * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup and will send TouchTransform events to SimpleGLRenderer.
+ * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup and will send TouchTransform events to GameRenderer.
  */
-public class SimpleGLView extends GLSurfaceView implements TouchTransformListener, GLSurfaceView.Renderer
+public class BaseGameView extends GLSurfaceView implements TouchTransformListener, GLSurfaceView.Renderer
 {
     private final FilterQuality filterQuality;
     private final AssetManager assetManager;
-    private final SimpleGLRenderer renderer;
+    private final GameRenderer renderer;
     private final TouchAnalyzer touchAnalyzer;
-    private final boolean receivesTouchTransformEvents;
+    private final boolean forwardTouchEvents;
     private GLCache glCache;
 
-    public SimpleGLView(Context context, SimpleGLRenderer renderer, FilterQuality filterQuality)
+    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchEvents)
     {
         super(context);
         this.filterQuality = filterQuality;
         this.assetManager = context.getAssets();
         this.renderer = renderer;
-        receivesTouchTransformEvents = renderer.receivesTouchTransformEvents();
-        if (renderer.receivesOrientationEvents())
-        {
-        }
+        this.forwardTouchEvents = forwardTouchEvents;
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         touchAnalyzer = new TouchAnalyzer(this, metrics.xdpi, metrics.ydpi);
@@ -65,7 +62,7 @@ public class SimpleGLView extends GLSurfaceView implements TouchTransformListene
 
     public boolean onTouchEvent(MotionEvent event)
     {
-        if (renderer.receivesTouchTransformEvents())
+        if (forwardTouchEvents)
         {
             touchAnalyzer.interpretRawEvent(event);
             return true;

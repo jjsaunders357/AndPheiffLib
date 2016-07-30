@@ -1,12 +1,11 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.hardware.SensorManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.input.OrientationTracker;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.Transform2D;
@@ -33,21 +32,11 @@ import java.io.IOException;
  * Loads a mesh using the Collada library and displays it on the screen.  Allows the camera to be adjusted using TouchTransform events. Created by Steve on 3/27/2016.
  */
 
-public class HolographicExampleFragment extends SimpleGLFragment
+public class HolographicExampleFragment extends BaseGameFragment
 {
-    private final ExampleRenderer renderer;
-
     public HolographicExampleFragment()
     {
-        this(new ExampleRenderer(), FilterQuality.MEDIUM);
-    }
-
-    //This can only be called internally, who cares?
-    @SuppressLint("ValidFragment")
-    private HolographicExampleFragment(ExampleRenderer renderer, FilterQuality filterQuality)
-    {
-        super(renderer, filterQuality);
-        this.renderer = renderer;
+        super(new ExampleRenderer(), FilterQuality.MEDIUM, true, true);
     }
 
     private static class ExampleRenderer extends Base3DExampleRenderer
@@ -75,6 +64,7 @@ public class HolographicExampleFragment extends SimpleGLFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache);
+            orientationTracker = new OrientationTracker(true);
             GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
 
             PheiffGLUtils.enableAlphaTransparency();
@@ -122,8 +112,8 @@ public class HolographicExampleFragment extends SimpleGLFragment
                 float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
 
                 lighting.calcOnLightPositionsInEyeSpace(orientationMatrix);
-                float[] vals = new float[3];
-                SensorManager.getOrientation(orientationMatrix.m, vals);
+//                float[] vals = new float[3];
+//                SensorManager.getOrientation(orientationMatrix.m, vals);
 //                Log.i("sensor", Math.toDegrees(vals[0]) + " , " + Math.toDegrees(vals[1]) + " , " + Math.toDegrees(vals[2]));
 
                 holoColorTechnique.bind();
@@ -195,49 +185,22 @@ public class HolographicExampleFragment extends SimpleGLFragment
             aspectRatio = width / (float) height;
         }
 
-        public void setOrientationTracker(OrientationTracker orientationTracker)
+        @Override
+        public void onSensorChanged(SensorEvent event)
         {
-            this.orientationTracker = orientationTracker;
-        }
-
-        public OrientationTracker getOrientationTracker()
-        {
-            return orientationTracker;
-        }
-
-        public boolean receivesOrientationEvents()
-        {
-            return false;
+            switch (event.sensor.getType())
+            {
+                case Sensor.TYPE_ROTATION_VECTOR:
+                    orientationTracker.onSensorChanged(event);
+                    break;
+            }
         }
     }
 
     @Override
-    public void onAttach(Context context)
+    public void onSensorChanged(SensorEvent event)
     {
-        super.onAttach(context);
-        SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        renderer.setOrientationTracker(new OrientationTracker(sensorManager, true));
-        //AndUtils.setBrightness(getActivity().getWindow(),0.0f);
+        super.onSensorChanged(event);
     }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        renderer.getOrientationTracker().register();
-    }
-
-    @Override
-    public void onPause()
-    {
-        renderer.getOrientationTracker().unregister();
-        super.onPause();
-    }
-
-    @Override
-    public void onDetach()
-    {
-        renderer.setOrientationTracker(null);
-        super.onDetach();
-    }
+    //AndUtils.setBrightness(getActivity().getWindow(),0.0f);
 }

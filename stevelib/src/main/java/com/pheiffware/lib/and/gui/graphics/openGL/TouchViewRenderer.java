@@ -8,12 +8,12 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 
 /**
- * A basic implementation of the SimpleGLRenderer which provides support for a camera which can be moved by touching the screen. Extending classes can override onDrawFrame(Matrix4
+ * A basic implementation of the GameRenderer which provides support for a camera which can be moved by touching the screen. Extending classes can override onDrawFrame(Matrix4
  * projectionMatrix, Matrix4 viewMatrix) to perform drawing actions using matrices calculated from the camera.
  * <p/>
  * Created by Steve on 4/13/2016.
  */
-public abstract class TouchViewRenderer implements SimpleGLRenderer
+public abstract class TouchViewRenderer implements GameRenderer
 {
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDragToCameraTranslation;

@@ -1,5 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
+import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -71,20 +72,14 @@ public abstract class Base3DExampleRenderer extends TouchViewRenderer
     }
 
     @Override
-    public boolean receivesTouchTransformEvents()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean receivesOrientationEvents()
-    {
-        return false;
-    }
-
-    @Override
     public int maxMajorGLVersion()
     {
         return 3;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event)
+    {
+
     }
 }

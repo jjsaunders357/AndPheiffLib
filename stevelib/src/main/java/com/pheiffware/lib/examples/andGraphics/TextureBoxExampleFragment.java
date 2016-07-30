@@ -3,7 +3,7 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
@@ -29,11 +29,11 @@ import java.io.InputStream;
  * Loads a mesh using the Collada library and displays it on the screen.  Allows the camera to be adjusted using TouchTransform events. Created by Steve on 3/27/2016.
  */
 
-public class TextureBoxExampleFragment extends SimpleGLFragment
+public class TextureBoxExampleFragment extends BaseGameFragment
 {
     public TextureBoxExampleFragment()
     {
-        super(new ExampleRenderer(), FilterQuality.MEDIUM);
+        super(new ExampleRenderer(), FilterQuality.MEDIUM, true, false);
     }
 
     private static class ExampleRenderer extends Base3DExampleRenderer

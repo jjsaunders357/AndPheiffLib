@@ -14,7 +14,23 @@ import com.pheiffware.lib.graphics.Matrix4;
  */
 public class OrientationTracker implements SensorEventListener
 {
-    private final SensorManager sensorManager;
+    /**
+     * TODO: Comment
+     *
+     * @param sensorManager
+     * @param listener
+     */
+    public static void registerOrientationListener(SensorManager sensorManager, SensorEventListener listener)
+    {
+        Sensor roto = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        sensorManager.registerListener(listener, roto, SensorManager.SENSOR_DELAY_FASTEST);
+    }
+
+    //TODO: Comment
+    public static void unregisterOrientationListener(SensorManager sensorManager, SensorEventListener listener)
+    {
+        sensorManager.unregisterListener(listener);
+    }
 
     //This tracks whether a sensor event has come in yet.  If not, then calling getCurrentOrientation, will return null.
     private boolean initialSensorStateRead = false;
@@ -35,26 +51,19 @@ public class OrientationTracker implements SensorEventListener
     private boolean zeroOnFirstReading;
 
 
-    public OrientationTracker(SensorManager sensorManager, boolean zeroOnFirstReading)
+    public OrientationTracker(boolean zeroOnFirstReading)
     {
-        this.sensorManager = sensorManager;
         this.zeroOnFirstReading = zeroOnFirstReading;
     }
 
     @Override
     public void onSensorChanged(SensorEvent event)
     {
-        //TODO: Remove switch (should only get one type of event)
-        switch (event.sensor.getType())
-        {
-            case Sensor.TYPE_ROTATION_VECTOR:
-                lastReadSensorValues[0] = event.values[0];
-                lastReadSensorValues[1] = event.values[1];
-                lastReadSensorValues[2] = event.values[2];
-                lastReadSensorValues[3] = event.values[3];
-                initialSensorStateRead = true;
-                break;
-        }
+        lastReadSensorValues[0] = event.values[0];
+        lastReadSensorValues[1] = event.values[1];
+        lastReadSensorValues[2] = event.values[2];
+        lastReadSensorValues[3] = event.values[3];
+        initialSensorStateRead = true;
     }
 
 
@@ -100,17 +109,6 @@ public class OrientationTracker implements SensorEventListener
     {
         SensorManager.getRotationMatrixFromVector(rawOrientationMatrix.m, lastReadSensorValues);
         setZeroOrientationMatrix(rawOrientationMatrix);
-    }
-
-    public void register()
-    {
-        Sensor roto = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        sensorManager.registerListener(this, roto, SensorManager.SENSOR_DELAY_FASTEST);
-    }
-
-    public void unregister()
-    {
-        sensorManager.unregisterListener(this);
     }
 
 

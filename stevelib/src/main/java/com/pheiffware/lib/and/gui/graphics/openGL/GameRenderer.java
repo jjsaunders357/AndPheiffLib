@@ -1,5 +1,7 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
+import android.hardware.SensorEvent;
+
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.input.TouchTransformListener;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -8,14 +10,15 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 /**
  * Wraps the GLSurfaceView.Renderer concepts.  The GLCache object manages/simplifies many aspects of OpenGL. This triggers TouchTransformListener events, in the rendering thread.
  */
-public interface SimpleGLRenderer extends TouchTransformListener
+public interface GameRenderer extends TouchTransformListener
 {
     /**
-     * Will receive a new GLCache object and an asset manager. All data should be loaded using am. DO NOT RETAIN REFERENCE TO THIS as it could keep the entire view/fragment/activity
-     * surrounding it from being deallocated.  This is especially true when the containing fragment's setRetainInstance(true) method was called.
+     * Will receive a new GLCache object and an asset manager. All data should be loaded using am. DO NOT RETAIN REFERENCE TO THIS as it could keep the entire
+     * view/fragment/activity surrounding it from being deallocated.  This is especially true when the containing fragment's setRetainInstance(true) method was called.
      * <p/>
      * All gl resources should be created/recreated.
-     *  @param al    asset manager, DO NOT RETAIN REFERENCE
+     *
+     * @param al      asset manager, DO NOT RETAIN REFERENCE
      * @param glCache managed opengl object
      */
     void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException;
@@ -45,14 +48,9 @@ public interface SimpleGLRenderer extends TouchTransformListener
     int maxMajorGLVersion();
 
     /**
-     * If this returns true, then the renderer will receive touchTransformEvents.
-     * @return
+     * If the surrounding fragment is initialized to sensor forward events, then this method with be called, in the rendering thread.
+     *
+     * @param event
      */
-    boolean receivesTouchTransformEvents();
-
-    /**
-     * If this returns true, then the renderer will receive orientationChanged events.
-     * @return
-     */
-    boolean receivesOrientationEvents();
+    void onSensorChanged(SensorEvent event);
 }
