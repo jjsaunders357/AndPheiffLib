@@ -3,8 +3,13 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.opengl.GLES20;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.input.OrientationTracker;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
@@ -34,6 +39,9 @@ import java.io.IOException;
 
 public class HolographicExampleFragment extends BaseGameFragment
 {
+    private OrientationTracker orientationTracker;
+    private float startBrightness;
+
     public HolographicExampleFragment()
     {
         super(new ExampleRenderer(), FilterQuality.MEDIUM, true, true);
@@ -161,21 +169,6 @@ public class HolographicExampleFragment extends BaseGameFragment
                 //Scale distance of eye from the screen
                 eyePositionRelativeToScreen[2] += transform.translation.x / 100.0f;
             }
-//            if (numPointers > 2)
-//            {
-//                camera.zoom((float) transform.scale.x);
-//            }
-//            else if (numPointers > 1)
-//            {
-//                camera.roll((float) (180 * transform.rotation / Math.PI));
-//                camera.rotateScreenInputVector((float) transform.translation.x, (float) -transform.translation.y);
-//            }
-//            else
-//            {
-//                float cameraX = (float) (transform.translation.x * screenDragToCameraTranslation);
-//                float cameraZ = (float) (transform.translation.y * screenDragToCameraTranslation);
-//                camera.translateScreen(cameraX, 0, cameraZ);
-//            }
         }
 
         @Override
@@ -198,9 +191,23 @@ public class HolographicExampleFragment extends BaseGameFragment
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        orientationTracker = new OrientationTracker(true);
+        startBrightness = AndUtils.getBrightness(getActivity().getWindow());
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+
+    @Override
     public void onSensorChanged(SensorEvent event)
     {
         super.onSensorChanged(event);
+        orientationTracker.onSensorChanged(event);
+        Matrix4 currentOrientation = orientationTracker.getCurrentOrientation();
+        float[] vals = new float[]{0, 0, 1, 0};
+        float[] result = currentOrientation.transform4DFloatVector(vals);
+        float cosTheta = vals[0] * result[0] + vals[1] * result[1] + vals[2] * result[2];
+        AndUtils.setBrightness(getActivity().getWindow(), Math.min(0.1f / cosTheta, 1.0f));
     }
-    //AndUtils.setBrightness(getActivity().getWindow(),0.0f);
 }

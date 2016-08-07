@@ -65,6 +65,7 @@ public abstract class BaseGameFragment extends LoggedFragment implements SensorE
     {
         super.onResume();
         baseGameView.onResume();
+
         if (forwardRotationSensorEvents)
         {
             Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
@@ -98,16 +99,9 @@ public abstract class BaseGameFragment extends LoggedFragment implements SensorE
     }
 
     @Override
-    public void onSensorChanged(final SensorEvent event)
+    public void onSensorChanged(SensorEvent event)
     {
-        baseGameView.queueEvent(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                renderer.onSensorChanged(event);
-            }
-        });
+        baseGameView.forwardSensorEvent(event);
     }
 
     @Override

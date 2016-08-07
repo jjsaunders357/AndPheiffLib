@@ -6,6 +6,7 @@ package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.hardware.SensorEvent;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -37,6 +38,9 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     private final TouchAnalyzer touchAnalyzer;
     private final boolean forwardTouchEvents;
     private GLCache glCache;
+    //Tracks whether onSurfaceResize has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
+    //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
+    private boolean surfaceInitialized = false;
 
     public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchEvents)
     {
@@ -60,7 +64,7 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     public boolean onTouchEvent(MotionEvent event)
     {
-        if (forwardTouchEvents)
+        if (surfaceInitialized && forwardTouchEvents)
         {
             final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
             if (touchTransformEvent != null)
@@ -102,6 +106,7 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     {
         AndUtils.logLC(this, "SurfaceDestroyed");
         super.surfaceDestroyed(holder);
+        surfaceInitialized = false;
 
         //Deallocate any memory in direct buffers and erase reference to AssetLoader
         glCache.deallocate();
@@ -114,6 +119,7 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     {
         AndUtils.logLC(this, "SurfaceResized");
         renderer.onSurfaceResize(width, height);
+        surfaceInitialized = true;
     }
 
     @Override
@@ -129,5 +135,20 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
             Log.e("Fatal", "Error during surface render", e);
         }
 
+    }
+
+    public void forwardSensorEvent(final SensorEvent event)
+    {
+        if (surfaceInitialized)
+        {
+            queueEvent(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    renderer.onSensorChanged(event);
+                }
+            });
+        }
     }
 }
