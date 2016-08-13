@@ -2,7 +2,7 @@ package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.utils.GraphicsUtils;
+import com.pheiffware.lib.utils.GraphicsUtils;
 
 import java.util.EnumMap;
 import java.util.HashMap;

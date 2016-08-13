@@ -3,7 +3,8 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
@@ -34,11 +35,11 @@ import java.io.IOException;
  * <p/>
  * Created by Steve on 4/25/2016.
  */
-public class ShadowExampleFragment extends SimpleGLFragment
+public class ShadowExampleFragment extends BaseGameFragment
 {
     public ShadowExampleFragment()
     {
-        super(new ShadowExample(), FilterQuality.MEDIUM);
+        super(new ShadowExample(), FilterQuality.MEDIUM, true, false);
     }
 
     private static class ShadowExample extends Base3DExampleRenderer
@@ -54,9 +55,9 @@ public class ShadowExampleFragment extends SimpleGLFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, final GLCache glCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, final GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache);
+            super.onSurfaceCreated(al, glCache, surfaceMetrics);
             try
             {
                 final Technique shadowTechnique = new ShadowTechnique(al);
@@ -133,7 +134,7 @@ public class ShadowExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
+            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new RenderProperty[]{

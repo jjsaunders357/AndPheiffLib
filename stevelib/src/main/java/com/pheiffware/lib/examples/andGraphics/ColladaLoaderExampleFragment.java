@@ -3,7 +3,8 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
@@ -31,11 +32,11 @@ import java.io.IOException;
  * <p/>
  * Created by Steve on 4/25/2016.
  */
-public class ColladaLoaderExampleFragment extends SimpleGLFragment
+public class ColladaLoaderExampleFragment extends BaseGameFragment
 {
     public ColladaLoaderExampleFragment()
     {
-        super(new ColladaGraphicsExample(), FilterQuality.MEDIUM);
+        super(new ColladaGraphicsExample(), FilterQuality.MEDIUM, true, false);
     }
 
     private static class ColladaGraphicsExample extends Base3DExampleRenderer
@@ -47,15 +48,16 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         private Matrix4 multiCubeTranslation = Matrix4.newTranslation(-3, 2, -5);
         private SingleTechniqueGraphicsManager graphicsManager;
         private ColladaGraphicsLoader<Technique> colladaGraphicsLoader;
+
         public ColladaGraphicsExample()
         {
             super(90f, 1.0f, 100.0f, 0.01f);
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, final GLCache glCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, final GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache);
+            super.onSurfaceCreated(al, glCache, surfaceMetrics);
             try
             {
                 final Technique textureTechnique = new TextureMaterialTechnique(al);
@@ -126,7 +128,7 @@ public class ColladaLoaderExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
+            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new RenderProperty[]{

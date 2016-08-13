@@ -1,7 +1,8 @@
 package com.pheiffware.lib.examples.andGraphics;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
@@ -30,11 +31,11 @@ import java.io.IOException;
  * Steve on 3/27/2016.
  */
 
-public class ManagedGraphicsExampleFragment extends SimpleGLFragment
+public class ManagedGraphicsExampleFragment extends BaseGameFragment
 {
     public ManagedGraphicsExampleFragment()
     {
-        super(new ExampleRenderer(), FilterQuality.MEDIUM);
+        super(new ExampleRenderer(), FilterQuality.MEDIUM, true, false);
     }
 
     private static class ExampleRenderer extends Base3DExampleRenderer
@@ -55,9 +56,9 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
 
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache);
+            super.onSurfaceCreated(al, glCache, surfaceMetrics);
             try
             {
                 Technique colorTechnique = new ColorMaterialTechnique(al);
@@ -103,8 +104,8 @@ public class ManagedGraphicsExampleFragment extends SimpleGLFragment
         {
             //Turn 2nd light on and off every 180 degrees
             lighting.setOnState(1, (rotation % 360) < 180);
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
-            alternateLighting.calcLightPositionsInEyeSpace(viewMatrix);
+            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
+            alternateLighting.calcOnLightPositionsInEyeSpace(viewMatrix);
             graphicsManager.resetRender();
             graphicsManager.setDefaultPropertyValues(
                     new RenderProperty[]{

@@ -3,12 +3,10 @@ package com.pheiffware.lib.graphics.managed.techniques;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.Uniform;
 import com.pheiffware.lib.graphics.managed.program.UniformNames;
-import com.pheiffware.lib.graphics.utils.GraphicsUtils;
 
 /**
  * Shades mesh with a constant surface color and one light.  Handles, ambient, diffuse and specular lighting.
@@ -46,24 +44,24 @@ public class ShadowTechnique extends Technique
         projectionViewModelUniform.setValue(projMatrix.m);
 
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
-        viewModelMatrix.set(viewMatrix);
-        viewModelMatrix.multiplyBy(modelMatrix);
-
-        viewModelUniform.setValue(viewModelMatrix.m);
-        normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-        normalUniform.setValue(normalTransform.m);
-
-        float[] ambLightColor = (float[]) getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR);
-        float[] diffMatColor = (float[]) getPropertyValue(RenderProperty.MAT_COLOR);
-        float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
-        GraphicsUtils.vecMultiply(4, ambLightMatColor, ambLightColor, diffMatColor);
-        ambientLightColorUniform.setValue(ambLightMatColor);
-
-        Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        lightEyePosUniform.setValue(lighting.getLightPositionsInEyeSpace());
-        diffLightMaterialUniform.setValue(lighting.calcLightMatColors(diffMatColor));
-        specLightMaterialUniform.setValue(lighting.calcLightMatColors(specMatColor));
-        onStateUniform.setValue(lighting.getOnStates());
-        shininessUniform.setValue(getPropertyValue(RenderProperty.SHININESS));
+//        viewModelMatrix.set(viewMatrix);
+//        viewModelMatrix.multiplyBy(modelMatrix);
+//
+//        viewModelUniform.setValue(viewModelMatrix.m);
+//        normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
+//        normalUniform.setValue(normalTransform.m);
+//
+//        float[] ambLightColor = (float[]) getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR);
+//        float[] diffMatColor = (float[]) getPropertyValue(RenderProperty.MAT_COLOR);
+//        float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
+//        GraphicsUtils.vecMultiply(4, ambLightMatColor, ambLightColor, diffMatColor);
+//        ambientLightColorUniform.setValue(ambLightMatColor);
+//
+//        Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
+//        lightEyePosUniform.setValue(lighting.getLightPositionsInEyeSpace());
+//        diffLightMaterialUniform.setValue(lighting.calcLightMatColors(diffMatColor));
+//        specLightMaterialUniform.setValue(lighting.calcLightMatColors(specMatColor));
+//        onStateUniform.setValue(lighting.getOnStates());
+//        shininessUniform.setValue(getPropertyValue(RenderProperty.SHININESS));
     }
 }

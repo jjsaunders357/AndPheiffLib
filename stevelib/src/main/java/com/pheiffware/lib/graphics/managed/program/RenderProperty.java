@@ -34,6 +34,9 @@ public enum RenderProperty
     //The shininess of the material (exponent used during spectral lighting equations)
     SHININESS,
 
+    //Contains data related to holographic projection
+    HOLO_PROJECTION,
+
     //The position of a light to use to render a depth buffer from
     LIGHT_RENDER_POSITION
 }

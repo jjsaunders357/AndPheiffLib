@@ -3,7 +3,8 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.SimpleGLFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
@@ -27,11 +28,11 @@ import java.io.IOException;
  * Loads a mesh using the Collada library and displays it on the screen.  Allows the camera to be adjusted using TouchTransform events. Created by Steve on 3/27/2016.
  */
 
-public class MeshExampleFragment extends SimpleGLFragment
+public class MeshExampleFragment extends BaseGameFragment
 {
     public MeshExampleFragment()
     {
-        super(new ExampleRenderer(), FilterQuality.MEDIUM);
+        super(new ExampleRenderer(), FilterQuality.MEDIUM, true, false);
     }
 
     private static class ExampleRenderer extends Base3DExampleRenderer
@@ -50,9 +51,9 @@ public class MeshExampleFragment extends SimpleGLFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache);
+            super.onSurfaceCreated(al, glCache, surfaceMetrics);
             colorTechnique = new ColorMaterialTechnique(al);
             ColladaFactory colladaFactory = new ColladaFactory(true);
             try
@@ -89,7 +90,7 @@ public class MeshExampleFragment extends SimpleGLFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.calcLightPositionsInEyeSpace(viewMatrix);
+            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
             colorTechnique.bind();
             colorVertexBuffer.bind(colorTechnique);
             Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 2f, 1f));

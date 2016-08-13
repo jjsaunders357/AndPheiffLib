@@ -11,6 +11,7 @@ public class PheiffGLUtils
 {
     /**
      * Gets the total number of texture units available
+     *
      * @return
      */
     public static int getNumTextureUnits()
@@ -113,5 +114,13 @@ public class PheiffGLUtils
         }
     }
 
+    /**
+     * Sets up opengl to perform standard alpha transparency
+     */
+    public static void enableAlphaTransparency()
+    {
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+    }
 
 }
