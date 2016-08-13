@@ -3,7 +3,6 @@ package com.pheiffware.lib.and.gui.graphics.openGL;
 import android.hardware.SensorEvent;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 
@@ -55,13 +54,4 @@ public interface GameRenderer
      * @param event
      */
     void onSensorChanged(SensorEvent event);
-
-    /**
-     * If the surrounding fragment is initialized to forward touch transform events this is called in the rendering thread whenever a sensor event happens.
-     *
-     * @param numPointers
-     * @param transform
-     */
-    void touchTransformEvent(int numPointers, Transform2D transform);
-
 }

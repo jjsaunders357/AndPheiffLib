@@ -22,7 +22,7 @@ import java.util.Map;
  * <p/>
  * Created by Steve on 4/23/2016.
  */
-public abstract class Base3DExampleRenderer implements GameRenderer
+public abstract class Example3DRenderer implements GameRenderer
 {
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDragToCameraTranslation;
@@ -33,7 +33,7 @@ public abstract class Base3DExampleRenderer implements GameRenderer
     private int logFramePeriod = 300;
     private TouchAnalyzer touchAnalyzer;
 
-    public Base3DExampleRenderer(float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
+    public Example3DRenderer(float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
     {
         this.screenDragToCameraTranslation = screenDragToCameraTranslation;
         camera = new Camera(initialFOV, 1, nearPlane, farPlane, false);
@@ -98,12 +98,13 @@ public abstract class Base3DExampleRenderer implements GameRenderer
         return 3;
     }
 
-    @Override
     public void touchTransformEvent(int numPointers, Transform2D transform)
     {
         if (numPointers > 2)
         {
-            camera.zoom((float) transform.scale.magnitude());
+            //Geometric average of x and y scale factors
+            float scaleFactor = (float) Math.sqrt(transform.scale.x * transform.scale.y);
+            camera.zoom(scaleFactor);
         }
         else if (numPointers > 1)
         {

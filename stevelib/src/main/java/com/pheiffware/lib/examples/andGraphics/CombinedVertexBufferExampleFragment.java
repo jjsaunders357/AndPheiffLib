@@ -11,7 +11,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
-import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -31,10 +30,10 @@ public class CombinedVertexBufferExampleFragment extends BaseGameFragment
     @Override
     public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new BaseGameView(getContext(), new CombinedVertexBufferExampleRenderer(), FilterQuality.MEDIUM, false, false);
+        return new BaseGameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false);
     }
 
-    private static class CombinedVertexBufferExampleRenderer implements GameRenderer
+    private static class Renderer implements GameRenderer
     {
         private Program testProgram;
         private IndexBuffer pb;
@@ -141,12 +140,6 @@ public class CombinedVertexBufferExampleFragment extends BaseGameFragment
 
         @Override
         public void onSensorChanged(SensorEvent event)
-        {
-
-        }
-
-        @Override
-        public void touchTransformEvent(int numPointers, Transform2D transform)
         {
 
         }

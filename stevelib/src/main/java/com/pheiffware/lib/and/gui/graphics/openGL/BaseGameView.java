@@ -1,7 +1,3 @@
-/*
- * Created by Stephen Pheiffer.
- * Do not edit, distribute, modify or use without his permission.
-*/
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import android.content.Context;
@@ -13,14 +9,12 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
-import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
@@ -29,16 +23,14 @@ import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-
 /**
- * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup and will send TouchTransform events to GameRenderer.
+ * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup GameRenderer.
  */
 public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Renderer, SensorEventListener
 {
     private final FilterQuality filterQuality;
     private final AssetManager assetManager;
     private final GameRenderer renderer;
-    private final boolean forwardTouchTransformEvents;
     private final boolean forwardRotationSensorEvents;
     private final SensorManager sensorManager;
 
@@ -46,20 +38,15 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
     //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
-    private final TouchAnalyzer touchAnalyzer;
 
-    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchTransformEvents, boolean forwardRotationSensorEvents)
+    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents)
     {
         super(context);
         this.filterQuality = filterQuality;
         this.assetManager = context.getAssets();
         this.renderer = renderer;
-        this.forwardTouchTransformEvents = forwardTouchTransformEvents;
         this.forwardRotationSensorEvents = forwardRotationSensorEvents;
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi);
 
         int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), AndGraphicsUtils.getDeviceGLMajorVersion(context));
         setEGLContextClientVersion(requestedGLMajorVersion);
@@ -157,16 +144,10 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        return forwardTouchTransformEvent(event);
-    }
-
     public void forwardSensorEvent(final SensorEvent event)
     {
         //TODO: Is it safe to pass SensorEvent objects into another thread or do they need to be copied?
-        if (surfaceInitialized)
+        if (isSurfaceInitialized())
         {
             queueEvent(new Runnable()
             {
@@ -179,34 +160,8 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         }
     }
 
-    /**
-     * Forwards a touch event to the renderer as a touchTransformEvent.
-     *
-     * @param event
-     * @return
-     */
-    protected boolean forwardTouchTransformEvent(final MotionEvent event)
+    public boolean isSurfaceInitialized()
     {
-        if (surfaceInitialized && forwardTouchTransformEvents)
-        {
-            //Must process event in gui thread as the event object itself is modified (its not safe to pass to another thread).
-            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
-
-            if (touchTransformEvent != null)
-            {
-                queueEvent(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        renderer.touchTransformEvent(touchTransformEvent.numPointers, touchTransformEvent.transform);
-                    }
-                });
-            }
-            return true;
-        }
-        return false;
+        return surfaceInitialized;
     }
-
-
 }

@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
-import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.and.gui.graphics.openGL.TouchTransformGameView;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
@@ -42,19 +42,19 @@ import java.io.IOException;
 public class ShadowExampleFragment extends BaseGameFragment
 {
     @Override
-    public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public TouchTransformGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new BaseGameView(getContext(), new ShadowExample(), FilterQuality.MEDIUM, true, false);
+        return new TouchTransformGameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false, true);
     }
 
-    private static class ShadowExample extends Base3DExampleRenderer
+    private static class Renderer extends Example3DRenderer
     {
         private final Lighting lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
         private BaseGraphicsManager<Technique> graphicsManager;
         private ColladaGraphicsLoader<Technique> colladaGraphicsLoader;
 
-        public ShadowExample()
+        public Renderer()
         {
             super(90f, 1.0f, 100.0f, 0.01f);
         }

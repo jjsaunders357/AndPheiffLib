@@ -1,5 +1,6 @@
 package com.pheiffware.lib.and.input;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.pheiffware.lib.geometry.Transform2D;
@@ -239,11 +240,13 @@ public class TouchAnalyzer
      */
     private Vec2D calculateScaleVector(double prevAverageRadiusSquared)
     {
+
         double uniformScale;
         //In theory if 2 pointers could be at the same location then don't calculate scale
         if (averageRadiusSquared != 0 && prevAverageRadiusSquared != 0)
         {
             uniformScale = Math.sqrt(averageRadiusSquared / prevAverageRadiusSquared);
+            Log.i("sensor", prevAverageRadiusSquared + " , " + averageRadiusSquared + " " + uniformScale);
         }
         else
         {

@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
-import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.and.gui.graphics.openGL.TouchTransformGameView;
 import com.pheiffware.lib.and.input.OrientationTracker;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.Transform2D;
@@ -41,9 +41,9 @@ import java.io.IOException;
 public class HolographicExampleFragment extends BaseGameFragment
 {
     @Override
-    public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public TouchTransformGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new BaseGameView(getContext(), new ExampleRenderer(), FilterQuality.MEDIUM, true, true)
+        return new TouchTransformGameView(getContext(), new Renderer(), FilterQuality.MEDIUM, true, true)
         {
             private OrientationTracker orientationTracker = new OrientationTracker(true);
 
@@ -67,7 +67,7 @@ public class HolographicExampleFragment extends BaseGameFragment
         };
     }
 
-    private static class ExampleRenderer extends Base3DExampleRenderer
+    private static class Renderer extends Example3DRenderer
     {
         private static final float SCREEN_ALPHA = 0.3f;
         private OrientationTracker orientationTracker;
@@ -83,7 +83,7 @@ public class HolographicExampleFragment extends BaseGameFragment
         private final float[] eyePositionRelativeToScreen = new float[]{0, 0, 6, 1};
         private float aspectRatio;
 
-        public ExampleRenderer()
+        public Renderer()
         {
             super(90f, 1.0f, 100.0f, 0.01f);
         }
