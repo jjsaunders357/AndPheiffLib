@@ -38,7 +38,7 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     private final TouchAnalyzer touchAnalyzer;
     private final boolean forwardTouchEvents;
     private GLCache glCache;
-    //Tracks whether onSurfaceResize has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
+    //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
     //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
 
@@ -61,28 +61,6 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 
-
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        if (surfaceInitialized && forwardTouchEvents)
-        {
-            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
-            if (touchTransformEvent != null)
-            {
-                queueEvent(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        renderer.touchTransformEvent(touchTransformEvent.numPointers, touchTransformEvent.transform);
-                    }
-                });
-            }
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void onSurfaceCreated(GL10 useless, EGLConfig config)
     {
@@ -94,11 +72,19 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         {
             renderer.onSurfaceCreated(al, glCache);
             PheiffGLUtils.assertNoError();
+            surfaceInitialized = true;
         }
         catch (GraphicsException e)
         {
             Log.e("Failed Surface Creation", "Error during surface creation", e);
         }
+    }
+
+    @Override
+    public void onSurfaceChanged(GL10 gl, int width, int height)
+    {
+        AndUtils.logLC(this, "SurfaceResized");
+        renderer.onSurfaceResize(width, height);
     }
 
     @Override
@@ -114,13 +100,7 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         glCache = null;
     }
 
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height)
-    {
-        AndUtils.logLC(this, "SurfaceResized");
-        renderer.onSurfaceResize(width, height);
-        surfaceInitialized = true;
-    }
+
 
     @Override
     public void onDrawFrame(GL10 gl)
@@ -150,5 +130,26 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
                 }
             });
         }
+    }
+
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        if (surfaceInitialized && forwardTouchEvents)
+        {
+            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
+            if (touchTransformEvent != null)
+            {
+                queueEvent(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        renderer.touchTransformEvent(touchTransformEvent.numPointers, touchTransformEvent.transform);
+                    }
+                });
+            }
+            return true;
+        }
+        return false;
     }
 }
