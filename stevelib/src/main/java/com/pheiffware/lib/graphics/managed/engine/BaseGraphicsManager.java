@@ -186,22 +186,11 @@ public abstract class BaseGraphicsManager<M>
      */
     public void render()
     {
-        sortRenderList(renderItems);
         for (RenderItem<M> renderItem : renderItems)
         {
             MeshRenderHandle<M> meshHandle = renderItem.meshHandle;
             renderItem(meshHandle, meshHandle.material, meshHandle.vertexBuffer, meshHandle.propertyValues, renderItem.overrideProperties, renderItem.overridePropertyValues);
         }
-    }
-
-    /**
-     * Sort the list of items that were submitted for rendering if necessary
-     *
-     * @param renderItems
-     */
-    protected void sortRenderList(List<RenderItem<M>> renderItems)
-    {
-        //Default is do nothing
     }
 
     /**

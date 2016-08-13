@@ -36,32 +36,14 @@ public class ShadowTechnique extends Technique
     @Override
     public void applyPropertiesToUniforms()
     {
-        //The model matrix holds the light's position.  The inverse of this
-        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
-
 
         Matrix4 projMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
-        projectionViewModelUniform.setValue(projMatrix.m);
 
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
-//        viewModelMatrix.set(viewMatrix);
-//        viewModelMatrix.multiplyBy(modelMatrix);
-//
-//        viewModelUniform.setValue(viewModelMatrix.m);
-//        normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-//        normalUniform.setValue(normalTransform.m);
-//
-//        float[] ambLightColor = (float[]) getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR);
-//        float[] diffMatColor = (float[]) getPropertyValue(RenderProperty.MAT_COLOR);
-//        float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
-//        GraphicsUtils.vecMultiply(4, ambLightMatColor, ambLightColor, diffMatColor);
-//        ambientLightColorUniform.setValue(ambLightMatColor);
-//
-//        Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-//        lightEyePosUniform.setValue(lighting.getLightPositionsInEyeSpace());
-//        diffLightMaterialUniform.setValue(lighting.calcLightMatColors(diffMatColor));
-//        specLightMaterialUniform.setValue(lighting.calcLightMatColors(specMatColor));
-//        onStateUniform.setValue(lighting.getOnStates());
-//        shininessUniform.setValue(getPropertyValue(RenderProperty.SHININESS));
+
+        //The model matrix holds the light's position.
+        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
+
+        projectionViewModelUniform.setValue(Matrix4.multiply(projMatrix, viewMatrix, modelMatrix));
     }
 }

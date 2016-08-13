@@ -1,9 +1,5 @@
 package com.pheiffware.lib.graphics.managed;
 
-import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
-import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
-import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
@@ -33,7 +29,7 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
  * <p/>
  * Created by Steve on 4/13/2016.
  */
-public class ShadowTechniqueGraphicsManager extends BaseGraphicsManager<Technique>
+public class ShadowTechniqueGraphicsManager extends SingleTechniqueGraphicsManager
 {
     public ShadowTechniqueGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques)
     {
@@ -41,13 +37,9 @@ public class ShadowTechniqueGraphicsManager extends BaseGraphicsManager<Techniqu
     }
 
     @Override
-    protected void renderItem(MeshRenderHandle<Technique> meshHandle, Technique technique, StaticVertexBuffer vertexBuffer, RenderPropertyValue[] meshPropertyValues, RenderProperty[] overrideProperties, Object[] overridePropertyValues)
+    public void render()
     {
-        technique.bind();
-        vertexBuffer.bind(technique);
-        technique.setProperties(meshPropertyValues);
-        technique.setProperties(overrideProperties, overridePropertyValues);
-        technique.applyProperties();
-        drawTriangles(meshHandle);
+
+        super.render();
     }
 }
