@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.and.input.OrientationTracker;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.Transform2D;
@@ -69,9 +70,9 @@ public class HolographicExampleFragment extends BaseGameFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache);
+            super.onSurfaceCreated(al, glCache, surfaceMetrics);
             orientationTracker = new OrientationTracker(true);
             GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
 

@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
@@ -54,9 +55,9 @@ public class ColladaLoaderExampleFragment extends BaseGameFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, final GLCache glCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, final GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache);
+            super.onSurfaceCreated(al, glCache, surfaceMetrics);
             try
             {
                 final Technique textureTechnique = new TextureMaterialTechnique(al);

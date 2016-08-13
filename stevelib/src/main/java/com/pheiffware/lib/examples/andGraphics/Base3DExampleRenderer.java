@@ -3,9 +3,12 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -25,11 +28,11 @@ public abstract class Base3DExampleRenderer implements GameRenderer
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDragToCameraTranslation;
     private final Camera camera;
-
     private long startFrameTimeStamp;
     private final MapCounterLong<String> nanoTimes = new MapCounterLong<>();
     private int frameCounter;
-    private int logFramePeriod = 100;
+    private int logFramePeriod = 300;
+    private TouchAnalyzer touchAnalyzer;
 
     public Base3DExampleRenderer(float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
     {
@@ -38,8 +41,9 @@ public abstract class Base3DExampleRenderer implements GameRenderer
     }
 
     @Override
-    public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
+    public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
     {
+        touchAnalyzer = new TouchAnalyzer(surfaceMetrics.xdpi, surfaceMetrics.ydpi);
         frameCounter = 0;
         nanoTimes.clear();
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -95,14 +99,7 @@ public abstract class Base3DExampleRenderer implements GameRenderer
         return 3;
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event)
-    {
-
-    }
-
-    @Override
-    public void touchTransformEvent(int numPointers, Transform2D transform)
+    protected void touchTransformEvent(int numPointers, Transform2D transform)
     {
         if (numPointers > 2)
         {
@@ -121,4 +118,19 @@ public abstract class Base3DExampleRenderer implements GameRenderer
         }
     }
 
+    @Override
+    public void onTouchEvent(MotionEvent motionEvent)
+    {
+        final TouchAnalyzer.TouchTransformEvent transEvent = touchAnalyzer.convertRawTouchEvent(motionEvent);
+        if (transEvent != null)
+        {
+            touchTransformEvent(transEvent.numPointers, transEvent.transform);
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event)
+    {
+
+    }
 }

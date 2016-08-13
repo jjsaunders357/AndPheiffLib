@@ -17,7 +17,6 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
-import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
@@ -35,7 +34,6 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     private final FilterQuality filterQuality;
     private final AssetManager assetManager;
     private final GameRenderer renderer;
-    private final TouchAnalyzer touchAnalyzer;
     private final boolean forwardTouchEvents;
     private GLCache glCache;
     //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
@@ -50,8 +48,6 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         this.renderer = renderer;
         this.forwardTouchEvents = forwardTouchEvents;
 
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi);
 
         int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), AndGraphicsUtils.getDeviceGLMajorVersion(context));
         setEGLContextClientVersion(requestedGLMajorVersion);
@@ -70,7 +66,8 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         glCache = new GLCache(AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, al);
         try
         {
-            renderer.onSurfaceCreated(al, glCache);
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            renderer.onSurfaceCreated(al, glCache, new SurfaceMetrics(metrics.xdpi, metrics.ydpi));
             PheiffGLUtils.assertNoError();
             surfaceInitialized = true;
         }
@@ -99,7 +96,6 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         //Destroy any reference to GL/EGL object (not sure if this matters).
         glCache = null;
     }
-
 
 
     @Override
@@ -132,22 +128,18 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         }
     }
 
-    public boolean onTouchEvent(MotionEvent event)
+    public boolean onTouchEvent(final MotionEvent event)
     {
         if (surfaceInitialized && forwardTouchEvents)
         {
-            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
-            if (touchTransformEvent != null)
+            queueEvent(new Runnable()
             {
-                queueEvent(new Runnable()
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
-                    {
-                        renderer.touchTransformEvent(touchTransformEvent.numPointers, touchTransformEvent.transform);
-                    }
-                });
-            }
+                    renderer.onTouchEvent(event);
+                }
+            });
             return true;
         }
         return false;

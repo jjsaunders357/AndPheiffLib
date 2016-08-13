@@ -2,6 +2,7 @@ package com.pheiffware.lib.examples.andGraphics;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
@@ -55,9 +56,9 @@ public class ManagedGraphicsExampleFragment extends BaseGameFragment
 
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache);
+            super.onSurfaceCreated(al, glCache, surfaceMetrics);
             try
             {
                 Technique colorTechnique = new ColorMaterialTechnique(al);
