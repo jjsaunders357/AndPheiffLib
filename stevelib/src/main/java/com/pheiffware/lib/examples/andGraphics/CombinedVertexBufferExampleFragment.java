@@ -2,12 +2,12 @@ package com.pheiffware.lib.examples.andGraphics;
 
 import android.hardware.SensorEvent;
 import android.opengl.GLES20;
-import android.view.MotionEvent;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -134,14 +134,15 @@ public class CombinedVertexBufferExampleFragment extends BaseGameFragment
             projectionMatrix = Matrix4.newProjection(120.0f, width / (float) height, 1, 10, false);
         }
 
+
         @Override
-        public void onTouchEvent(MotionEvent event)
+        public void onSensorChanged(SensorEvent event)
         {
 
         }
 
         @Override
-        public void onSensorChanged(SensorEvent event)
+        public void touchTransformEvent(int numPointers, Transform2D transform)
         {
 
         }

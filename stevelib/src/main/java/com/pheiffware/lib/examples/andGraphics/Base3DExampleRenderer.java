@@ -3,7 +3,6 @@ package com.pheiffware.lib.examples.andGraphics;
 import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
@@ -99,7 +98,8 @@ public abstract class Base3DExampleRenderer implements GameRenderer
         return 3;
     }
 
-    protected void touchTransformEvent(int numPointers, Transform2D transform)
+    @Override
+    public void touchTransformEvent(int numPointers, Transform2D transform)
     {
         if (numPointers > 2)
         {
@@ -115,16 +115,6 @@ public abstract class Base3DExampleRenderer implements GameRenderer
             float cameraX = (float) (transform.translation.x * screenDragToCameraTranslation);
             float cameraZ = (float) (transform.translation.y * screenDragToCameraTranslation);
             camera.translateScreen(cameraX, 0, cameraZ);
-        }
-    }
-
-    @Override
-    public void onTouchEvent(MotionEvent motionEvent)
-    {
-        final TouchAnalyzer.TouchTransformEvent transEvent = touchAnalyzer.convertRawTouchEvent(motionEvent);
-        if (transEvent != null)
-        {
-            touchTransformEvent(transEvent.numPointers, transEvent.transform);
         }
     }
 

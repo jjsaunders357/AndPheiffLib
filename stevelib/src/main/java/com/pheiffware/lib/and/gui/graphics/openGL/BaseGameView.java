@@ -17,6 +17,7 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
+import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
@@ -34,20 +35,23 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     private final FilterQuality filterQuality;
     private final AssetManager assetManager;
     private final GameRenderer renderer;
-    private final boolean forwardTouchEvents;
+    private final boolean forwardTouchTransformEvents;
     private GLCache glCache;
     //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
     //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
+    private final TouchAnalyzer touchAnalyzer;
 
-    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchEvents)
+    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchTransformEvents)
     {
         super(context);
         this.filterQuality = filterQuality;
         this.assetManager = context.getAssets();
         this.renderer = renderer;
-        this.forwardTouchEvents = forwardTouchEvents;
+        this.forwardTouchTransformEvents = forwardTouchTransformEvents;
 
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi);
 
         int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), AndGraphicsUtils.getDeviceGLMajorVersion(context));
         setEGLContextClientVersion(requestedGLMajorVersion);
@@ -113,8 +117,15 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
 
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        return forwardTouchTransformEvent(event);
+    }
+
     public void forwardSensorEvent(final SensorEvent event)
     {
+        //TODO: Is it safe to pass SensorEvent objects into another thread or do they need to be copied?
         if (surfaceInitialized)
         {
             queueEvent(new Runnable()
@@ -128,20 +139,34 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
         }
     }
 
-    public boolean onTouchEvent(final MotionEvent event)
+    /**
+     * Forwards a touch event to the renderer as a touchTransformEvent.
+     *
+     * @param event
+     * @return
+     */
+    protected boolean forwardTouchTransformEvent(final MotionEvent event)
     {
-        if (surfaceInitialized && forwardTouchEvents)
+        if (surfaceInitialized && forwardTouchTransformEvents)
         {
-            queueEvent(new Runnable()
+            //Must process event in gui thread as the event object itself is modified (its not safe to pass to another thread).
+            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
+
+            if (touchTransformEvent != null)
             {
-                @Override
-                public void run()
+                queueEvent(new Runnable()
                 {
-                    renderer.onTouchEvent(event);
-                }
-            });
+                    @Override
+                    public void run()
+                    {
+                        renderer.touchTransformEvent(touchTransformEvent.numPointers, touchTransformEvent.transform);
+                    }
+                });
+            }
             return true;
         }
         return false;
     }
+
+
 }
