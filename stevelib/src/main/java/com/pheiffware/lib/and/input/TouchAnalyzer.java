@@ -16,8 +16,6 @@ import java.util.Map;
  */
 public class TouchAnalyzer
 {
-    private static final double squareRoot2 = Math.sqrt(2);
-
     //Map from pointer ID to position
     private final Map<Integer, Vec2D> pointerPositions = new HashMap<>();
 
@@ -142,6 +140,22 @@ public class TouchAnalyzer
     }
 
     /**
+     * Updates the positions of all pointer based on the state of the event
+     *
+     * @param event
+     */
+    private void updatePointerPositions(MotionEvent event)
+    {
+        for (int i = 0; i < event.getPointerCount(); i++)
+        {
+            int pointerID = event.getPointerId(i);
+            Vec2D position = pointerPositions.get(pointerID);
+            position.x = event.getX(i);
+            position.y = event.getY(i);
+        }
+    }
+
+    /**
      * Updates the averaged "center" of all pointer positions and an average radius squared.
      */
     private void updateCenter()
@@ -159,50 +173,11 @@ public class TouchAnalyzer
     }
 
     /**
-     * Updates the averaged "center" of all pointer positions and an average radius squared.
+     * Updates the angle of all pointers around the center.  Returns the weighted change in angle of all pointers.  Requires updated pointerPositions and center.
      */
-    private void updateRadiusAndAngles()
+    private double updateRadiusAndAngles()
     {
         averageRadiusSquared = 0;
-        if (pointerPositions.size() > 1)
-        {
-            for (int id : pointerPositions.keySet())
-            {
-                Vec2D position = pointerPositions.get(id);
-                //Vector from center to pointer position
-                double centerDiffX = position.x - center.x;
-                double centerDiffY = position.y - center.y;
-                double magnitudeSquared = centerDiffX * centerDiffX + centerDiffY * centerDiffY;
-                averageRadiusSquared += magnitudeSquared;
-                double angle = Math.atan2(centerDiffY, centerDiffX);
-                pointerAngles.put(id, angle);
-            }
-            averageRadiusSquared /= pointerPositions.size();
-        }
-    }
-
-
-    /**
-     * Updates the pointer's center, angles and average radius squared.  Returns composite transform.
-     *
-     * @param event
-     */
-    private Transform2D updateStateAndGetTransform(MotionEvent event)
-    {
-        for (int pointerID : pointerPositions.keySet())
-        {
-            int index = event.findPointerIndex(pointerID);
-            Vec2D position = pointerPositions.get(pointerID);
-            position.x = event.getX(index);
-            position.y = event.getY(index);
-        }
-
-        double oldX = center.x;
-        double oldY = center.y;
-        updateCenter();
-
-        double oldAverageRadiusSquared = averageRadiusSquared;
-        averageRadiusSquared = 0.0;
         double weightedRotation = 0.0;
         if (pointerPositions.size() > 1)
         {
@@ -215,29 +190,65 @@ public class TouchAnalyzer
                 double magnitudeSquared = centerDiffX * centerDiffX + centerDiffY * centerDiffY;
                 averageRadiusSquared += magnitudeSquared;
                 double angle = Math.atan2(centerDiffY, centerDiffX);
-                double oldAngle = pointerAngles.put(id, angle);
-                //Weight of rotation determined by distance of point from center
-                weightedRotation += MathUtils.angleDiff(angle, oldAngle) * magnitudeSquared;
+                Double oldAngle = pointerAngles.put(id, angle);
+                if (oldAngle != null)
+                {
+                    //Weight of rotation determined by distance of point from center
+                    weightedRotation += MathUtils.angleDiff(angle, oldAngle) * magnitudeSquared;
+                }
             }
             averageRadiusSquared /= pointerPositions.size();
             weightedRotation /= averageRadiusSquared;
         }
+        return weightedRotation;
+    }
 
+
+    /**
+     * Updates the pointer's center, angles and average radius squared.  Returns composite transform.
+     *
+     * @param event
+     */
+    private Transform2D updateStateAndGetTransform(MotionEvent event)
+    {
+        //Calculate how the center moved (translation)
+        double prevX = center.x;
+        double prevY = center.y;
+        updatePointerPositions(event);
+        updateCenter();
+        Vec2D translation = new Vec2D(center.x - prevX, center.y - prevY);
+
+        //Remember current radius squared
+        double prevAverageRadiusSquared = averageRadiusSquared;
+
+        //Update radius squared, angles and calc weighted angular change
+        double weightedAngularChange = updateRadiusAndAngles();
+
+        Vec2D scaleVector = calculateScaleVector(prevAverageRadiusSquared);
+
+        //The difference between the current state and the last update
+        return new Transform2D(translation, weightedAngularChange, scaleVector);
+    }
+
+    /**
+     * Calculate the change in scale given the previous average radius squared and current radius squared.  Returns uniform scale vector (x and y always scale by the same
+     * magnitude).
+     *
+     * @param prevAverageRadiusSquared
+     * @return
+     */
+    private Vec2D calculateScaleVector(double prevAverageRadiusSquared)
+    {
         double uniformScale;
         //In theory if 2 pointers could be at the same location then don't calculate scale
-        if (averageRadiusSquared != 0 && oldAverageRadiusSquared != 0)
+        if (averageRadiusSquared != 0 && prevAverageRadiusSquared != 0)
         {
-            uniformScale = Math.sqrt(averageRadiusSquared / oldAverageRadiusSquared);
+            uniformScale = Math.sqrt(averageRadiusSquared / prevAverageRadiusSquared);
         }
         else
         {
             uniformScale = 1;
         }
-        //x and y are both scaled by this amount
-        uniformScale /= squareRoot2;
-
-        Vec2D translation = new Vec2D(center.x - oldX, center.y - oldY);
-        //The difference between the current state and the last update
-        return new Transform2D(translation, weightedRotation, new Vec2D(uniformScale, uniformScale));
+        return new Vec2D(uniformScale, uniformScale);
     }
 }

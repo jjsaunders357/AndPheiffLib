@@ -6,7 +6,7 @@ package com.pheiffware.lib.utils;
 public class MathUtils
 {
     /**
-     * Returns an angular difference between 2 angles.  The result will always be in [-pi,pi]
+     * Returns an angular difference between 2 angles.  The result will always be in interval [-pi,pi)
      *
      * @param angle1
      * @param angle2
