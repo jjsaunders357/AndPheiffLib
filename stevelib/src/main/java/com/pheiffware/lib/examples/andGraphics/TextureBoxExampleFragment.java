@@ -1,9 +1,13 @@
 package com.pheiffware.lib.examples.andGraphics;
 
 import android.opengl.GLES20;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
@@ -32,9 +36,10 @@ import java.io.InputStream;
 
 public class TextureBoxExampleFragment extends BaseGameFragment
 {
-    public TextureBoxExampleFragment()
+    @Override
+    public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        super(new ExampleRenderer(), FilterQuality.MEDIUM, true, false);
+        return new BaseGameView(getContext(), new ExampleRenderer(), FilterQuality.MEDIUM, true, false);
     }
 
     private static class ExampleRenderer extends Base3DExampleRenderer

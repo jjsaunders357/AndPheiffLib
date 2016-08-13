@@ -6,7 +6,10 @@ package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,25 +33,30 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup and will send TouchTransform events to GameRenderer.
  */
-public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Renderer
+public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Renderer, SensorEventListener
 {
     private final FilterQuality filterQuality;
     private final AssetManager assetManager;
     private final GameRenderer renderer;
     private final boolean forwardTouchTransformEvents;
+    private final boolean forwardRotationSensorEvents;
+    private final SensorManager sensorManager;
+
     private GLCache glCache;
     //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
     //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
     private final TouchAnalyzer touchAnalyzer;
 
-    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchTransformEvents)
+    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchTransformEvents, boolean forwardRotationSensorEvents)
     {
         super(context);
         this.filterQuality = filterQuality;
         this.assetManager = context.getAssets();
         this.renderer = renderer;
         this.forwardTouchTransformEvents = forwardTouchTransformEvents;
+        this.forwardRotationSensorEvents = forwardRotationSensorEvents;
+        sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi);
@@ -59,6 +67,17 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
 
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (forwardRotationSensorEvents)
+        {
+            Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
     }
 
     @Override
@@ -89,6 +108,31 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     }
 
     @Override
+    public void onDrawFrame(GL10 gl)
+    {
+        try
+        {
+            renderer.onDrawFrame();
+            PheiffGLUtils.assertNoError();
+        }
+        catch (Exception e)
+        {
+            Log.e("Fatal", "Error during surface render", e);
+        }
+
+    }
+
+    @Override
+    public void onPause()
+    {
+        if (forwardRotationSensorEvents)
+        {
+            sensorManager.unregisterListener(this);
+        }
+        super.onPause();
+    }
+
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
         AndUtils.logLC(this, "SurfaceDestroyed");
@@ -102,18 +146,14 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     }
 
 
-    @Override
-    public void onDrawFrame(GL10 gl)
+    public void onSensorChanged(SensorEvent event)
     {
-        try
-        {
-            renderer.onDrawFrame();
-            PheiffGLUtils.assertNoError();
-        }
-        catch (Exception e)
-        {
-            Log.e("Fatal", "Error during surface render", e);
-        }
+        forwardSensorEvent(event);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy)
+    {
 
     }
 

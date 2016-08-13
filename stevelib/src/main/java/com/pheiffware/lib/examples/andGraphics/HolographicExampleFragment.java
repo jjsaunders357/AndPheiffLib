@@ -5,12 +5,12 @@ import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.and.input.OrientationTracker;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
@@ -40,12 +40,31 @@ import java.io.IOException;
 
 public class HolographicExampleFragment extends BaseGameFragment
 {
-    private OrientationTracker orientationTracker;
-    private float startBrightness;
-
-    public HolographicExampleFragment()
+    @Override
+    public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        super(new ExampleRenderer(), FilterQuality.MEDIUM, true, true);
+        return new BaseGameView(getContext(), new ExampleRenderer(), FilterQuality.MEDIUM, true, true)
+        {
+            private OrientationTracker orientationTracker = new OrientationTracker(true);
+
+            @Override
+            public void onSensorChanged(SensorEvent event)
+            {
+                super.onSensorChanged(event);
+                switch (event.sensor.getType())
+                {
+                    case Sensor.TYPE_ROTATION_VECTOR:
+
+                        orientationTracker.onSensorChanged(event);
+                        Matrix4 currentOrientation = orientationTracker.getCurrentOrientation();
+                        float[] vals = new float[]{0, 0, 1, 0};
+                        float[] result = currentOrientation.transform4DFloatVector(vals);
+                        float cosTheta = vals[0] * result[0] + vals[1] * result[1] + vals[2] * result[2];
+                        AndUtils.setBrightness(getActivity().getWindow(), Math.min(0.1f / cosTheta, 1.0f));
+                        break;
+                }
+            }
+        };
     }
 
     private static class ExampleRenderer extends Base3DExampleRenderer
@@ -191,24 +210,5 @@ public class HolographicExampleFragment extends BaseGameFragment
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        orientationTracker = new OrientationTracker(true);
-        startBrightness = AndUtils.getBrightness(getActivity().getWindow());
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
 
-
-    @Override
-    public void onSensorChanged(SensorEvent event)
-    {
-        super.onSensorChanged(event);
-        orientationTracker.onSensorChanged(event);
-        Matrix4 currentOrientation = orientationTracker.getCurrentOrientation();
-        float[] vals = new float[]{0, 0, 1, 0};
-        float[] result = currentOrientation.transform4DFloatVector(vals);
-        float cosTheta = vals[0] * result[0] + vals[1] * result[1] + vals[2] * result[2];
-        AndUtils.setBrightness(getActivity().getWindow(), Math.min(0.1f / cosTheta, 1.0f));
-    }
 }

@@ -1,7 +1,12 @@
 package com.pheiffware.lib.examples.andGraphics;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
@@ -33,9 +38,10 @@ import java.io.IOException;
 
 public class ManagedGraphicsExampleFragment extends BaseGameFragment
 {
-    public ManagedGraphicsExampleFragment()
+    @Override
+    public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        super(new ExampleRenderer(), FilterQuality.MEDIUM, true, false);
+        return new BaseGameView(getContext(), new ExampleRenderer(), FilterQuality.MEDIUM, true, false);
     }
 
     private static class ExampleRenderer extends Base3DExampleRenderer

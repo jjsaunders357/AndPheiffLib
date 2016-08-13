@@ -2,9 +2,13 @@ package com.pheiffware.lib.examples.andGraphics;
 
 import android.hardware.SensorEvent;
 import android.opengl.GLES20;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.geometry.Transform2D;
@@ -24,9 +28,10 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
  */
 public class CombinedVertexBufferExampleFragment extends BaseGameFragment
 {
-    public CombinedVertexBufferExampleFragment()
+    @Override
+    public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        super(new CombinedVertexBufferExampleRenderer(), FilterQuality.MEDIUM, false, false);
+        return new BaseGameView(getContext(), new CombinedVertexBufferExampleRenderer(), FilterQuality.MEDIUM, false, false);
     }
 
     private static class CombinedVertexBufferExampleRenderer implements GameRenderer
@@ -133,7 +138,6 @@ public class CombinedVertexBufferExampleFragment extends BaseGameFragment
             GLES20.glViewport(0, 0, width, height);
             projectionMatrix = Matrix4.newProjection(120.0f, width / (float) height, 1, 10, false);
         }
-
 
         @Override
         public void onSensorChanged(SensorEvent event)
