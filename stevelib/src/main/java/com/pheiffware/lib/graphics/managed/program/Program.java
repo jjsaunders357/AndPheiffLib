@@ -25,7 +25,7 @@ public class Program
     //Map of all uniforms used by the program
     private final Map<String, Uniform> uniforms = new HashMap<>();
 
-    //Map of all program attributes
+    //Set of all program attributes
     private final EnumSet<VertexAttribute> vertexAttributes = EnumSet.noneOf(VertexAttribute.class);
 
     //Map of all program attribute locations (location is essentially a GL handle to the attribute itself)
@@ -69,7 +69,7 @@ public class Program
         vertexAttributes.add(vertexAttribute);
     }
 
-    public int getAttributeLocation(VertexAttribute vertexAttribute)
+    public final int getAttributeLocation(VertexAttribute vertexAttribute)
     {
         return vertexAttributeLocations.get(vertexAttribute);
     }

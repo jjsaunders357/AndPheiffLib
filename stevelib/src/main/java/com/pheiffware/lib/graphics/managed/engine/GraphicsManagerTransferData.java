@@ -71,9 +71,9 @@ public class GraphicsManagerTransferData<M>
     public void transfer()
     {
         indexBuffer.allocate(indexBufferLength);
-        for (StaticVertexBuffer vertexBuffer1 : vertexBuffers)
+        for (StaticVertexBuffer vertexBuffer : vertexBuffers)
         {
-            vertexBuffer1.allocate(vertexBufferLengths.getCount(vertexBuffer1));
+            vertexBuffer.allocate(vertexBufferLengths.getCount(vertexBuffer));
         }
         int indexWriteOffset = 0;
         MapCounter<StaticVertexBuffer> vertexBufferOffsets = new MapCounter<>();
