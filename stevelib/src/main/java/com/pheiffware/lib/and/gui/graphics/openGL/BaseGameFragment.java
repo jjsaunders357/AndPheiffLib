@@ -29,7 +29,7 @@ public abstract class BaseGameFragment extends LoggedFragment
     public BaseGameView getView()
     {
         //noinspection ConstantConditions
-        return (TouchTransformGameView) super.getView();
+        return (BaseGameView) super.getView();
     }
 
     @Override

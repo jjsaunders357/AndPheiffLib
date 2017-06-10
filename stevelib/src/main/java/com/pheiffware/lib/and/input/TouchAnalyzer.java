@@ -246,7 +246,6 @@ public class TouchAnalyzer
         if (averageRadiusSquared != 0 && prevAverageRadiusSquared != 0)
         {
             uniformScale = Math.sqrt(averageRadiusSquared / prevAverageRadiusSquared);
-            Log.i("sensor", prevAverageRadiusSquared + " , " + averageRadiusSquared + " " + uniformScale);
         }
         else
         {

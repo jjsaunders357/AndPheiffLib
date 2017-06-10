@@ -19,6 +19,7 @@ import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.ColladaGraphicsLoader;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.ShadowTechniqueGraphicsManager;
+import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
@@ -27,7 +28,6 @@ import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.ShadowTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -51,7 +51,7 @@ public class ShadowExampleFragment extends BaseGameFragment
     {
         private final Lighting lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
         private final float[] ambientLightColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
-        private BaseGraphicsManager<Technique> graphicsManager;
+        private SingleTechniqueGraphicsManager graphicsManager;
         private ColladaGraphicsLoader<Technique> colladaGraphicsLoader;
 
         public Renderer()
@@ -65,7 +65,6 @@ public class ShadowExampleFragment extends BaseGameFragment
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
             try
             {
-                final Technique shadowTechnique = new ShadowTechnique(al);
                 final Technique colorTechnique = new ColorMaterialTechnique(al);
                 final Technique textureTechnique = new TextureMaterialTechnique(al);
                 final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
@@ -88,7 +87,7 @@ public class ShadowExampleFragment extends BaseGameFragment
                                 {
                                         colorTechnique,
                                         textureTechnique
-                                });
+                                }, al);
                 colladaGraphicsLoader = new ColladaGraphicsLoader<Technique>(graphicsManager)
                 {
                     @Override

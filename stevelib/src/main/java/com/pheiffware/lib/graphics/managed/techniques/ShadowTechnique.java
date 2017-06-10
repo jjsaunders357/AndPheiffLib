@@ -13,6 +13,12 @@ import com.pheiffware.lib.graphics.managed.program.UniformNames;
  * <p/>
  * Required Properties:
  * <p/>
+ * RenderProperty.PROJECTION_MATRIX - Matrix4
+ * <p/>
+ * RenderProperty.VIEW_MATRIX - Matrix4
+ * <p/>
+ * RenderProperty.MODEL_MATRIX - Matrix4
+ * <p/>
  * RenderProperty.LIGHT_RENDER_POSITION - float[4]
  * <p/>
  * Created by Steve on 4/23/2016.
@@ -36,14 +42,15 @@ public class ShadowTechnique extends Technique
     @Override
     public void applyPropertiesToUniforms()
     {
-
         Matrix4 projMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
 
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
 
         //The model matrix holds the light's position.
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
-
-        projectionViewModelUniform.setValue(Matrix4.multiply(projMatrix, viewMatrix, modelMatrix));
+        projectionViewModelMatrix.set(projMatrix);
+        projectionViewModelMatrix.multiplyBy(viewMatrix);
+        projectionViewModelMatrix.multiplyBy(modelMatrix);
+        projectionViewModelUniform.setValue(projectionViewModelMatrix);
     }
 }

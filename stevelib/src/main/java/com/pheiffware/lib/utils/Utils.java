@@ -4,6 +4,8 @@
 */
 package com.pheiffware.lib.utils;
 
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -18,7 +20,10 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -125,4 +130,31 @@ public class Utils
         return set;
     }
 
+    public static <K, V> Map<K, V> mapFromArrays(K[] keys, V[] values)
+    {
+        if (keys.length != values.length)
+        {
+            throw new RuntimeException("Cannot create map from key and value arrays of different lengths");
+        }
+        Map<K, V> map = new HashMap<>();
+        for (int i = 0; i < keys.length; i++)
+        {
+            map.put(keys[i], values[i]);
+        }
+        return map;
+    }
+
+    public static <K extends Enum<K>, V> EnumMap<K, V> enumMapFromArrays(K[] keys, V[] values, Class<K> keyClass)
+    {
+        if (keys.length != values.length)
+        {
+            throw new RuntimeException("Cannot create map from key and value arrays of different lengths");
+        }
+        EnumMap<K, V> map = new EnumMap<>(keyClass);
+        for (int i = 0; i < keys.length; i++)
+        {
+            map.put(keys[i], values[i]);
+        }
+        return map;
+    }
 }

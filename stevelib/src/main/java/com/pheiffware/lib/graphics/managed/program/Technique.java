@@ -88,6 +88,13 @@ public abstract class Technique
         defaultPropertyValues();
     }
 
+    public void setDefaultPropertyValues(EnumMap<RenderProperty, Object> defaultPropertyValues)
+    {
+        this.defaultPropertyValues.clear();
+        this.defaultPropertyValues.putAll(defaultPropertyValues);
+        defaultPropertyValues();
+    }
+
     /**
      * Set a property value for use later in the applyProperties method.
      *

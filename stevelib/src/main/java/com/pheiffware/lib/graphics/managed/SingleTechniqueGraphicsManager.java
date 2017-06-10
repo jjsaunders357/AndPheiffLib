@@ -1,11 +1,18 @@
 package com.pheiffware.lib.graphics.managed;
 
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
+import com.pheiffware.lib.graphics.managed.engine.ItemRenderer;
 import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
+import com.pheiffware.lib.utils.Utils;
+
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class manages storing data in index/vertex buffers and then conveniently/efficiently rendering that data.
@@ -35,19 +42,53 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
  */
 public class SingleTechniqueGraphicsManager extends BaseGraphicsManager<Technique>
 {
+    private EnumMap<RenderProperty, Object> defaultProperties = new EnumMap<>(RenderProperty.class);
+
     public SingleTechniqueGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques)
     {
         super(vertexBuffers, techniques);
     }
 
+    /**
+     * Sets default values for properties across all techniques.  These values are used for every MeshRenderHandle unless it has specified its own value for the property or the
+     * property is overridden during rendering.
+     *
+     * @param techniqueProperties
+     * @param defaultValues
+     */
+    public void setDefaultPropertyValues(RenderProperty[] techniqueProperties, Object[] defaultValues)
+    {
+        defaultProperties = Utils.enumMapFromArrays(techniqueProperties, defaultValues, RenderProperty.class);
+    }
+
     @Override
-    protected void renderItem(MeshRenderHandle<Technique> meshHandle, Technique technique, StaticVertexBuffer vertexBuffer, RenderPropertyValue[] meshPropertyValues, RenderProperty[] overrideProperties, Object[] overridePropertyValues)
+    public void preRender()
+    {
+        for (Technique technique : getTechniques())
+        {
+            technique.setDefaultPropertyValues(defaultProperties);
+        }
+    }
+
+    @Override
+    public void renderItem(MeshRenderHandle<Technique> meshHandle, Technique technique, StaticVertexBuffer vertexBuffer, RenderPropertyValue[] propertyValues, RenderProperty[] overrideProperties, Object[] overridePropertyValues)
     {
         technique.bind();
         vertexBuffer.bind(technique);
-        technique.setProperties(meshPropertyValues);
+        technique.setProperties(propertyValues);
         technique.setProperties(overrideProperties, overridePropertyValues);
         technique.applyProperties();
         drawTriangles(meshHandle);
+    }
+
+    @Override
+    public void postRender()
+    {
+
+    }
+
+    protected Object getDefaultValue(RenderProperty renderProperty)
+    {
+        return defaultProperties.get(renderProperty);
     }
 }

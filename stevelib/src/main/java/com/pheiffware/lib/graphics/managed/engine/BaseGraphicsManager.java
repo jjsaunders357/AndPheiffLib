@@ -8,6 +8,7 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ import java.util.List;
  * <p/>
  * Created by Steve on 5/15/2016.
  */
-public abstract class BaseGraphicsManager<M>
+public abstract class BaseGraphicsManager<M> implements ItemRenderer<M>
 {
     //Holds the list of items to be rendered for a given render() operation
     private final List<RenderItem<M>> renderItems = new ArrayList<>(1000);
@@ -60,6 +61,7 @@ public abstract class BaseGraphicsManager<M>
 
     //Tracks the current logical object being created
     private ObjectRenderHandle<M> currentObject = null;
+
 
     public BaseGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques)
     {
@@ -119,20 +121,7 @@ public abstract class BaseGraphicsManager<M>
         currentObject = null;
     }
 
-    /**
-     * Sets default values for properties across all techniques.  These values are used for every MeshRenderHandle unless it has specified its own value for the property or the
-     * property is overridden during rendering.
-     *
-     * @param techniqueProperties
-     * @param objects
-     */
-    public void setDefaultPropertyValues(RenderProperty[] techniqueProperties, Object[] objects)
-    {
-        for (Technique technique : techniques)
-        {
-            technique.setDefaultPropertyValues(techniqueProperties, objects);
-        }
-    }
+
 
     /**
      * Should be called once before calling submitRender repeatedly.
@@ -186,24 +175,20 @@ public abstract class BaseGraphicsManager<M>
      */
     public void render()
     {
+        renderPass(this);
+    }
+
+
+    protected void renderPass(ItemRenderer<M> itemRenderer)
+    {
+        itemRenderer.preRender();
         for (RenderItem<M> renderItem : renderItems)
         {
             MeshRenderHandle<M> meshHandle = renderItem.meshHandle;
-            renderItem(meshHandle, meshHandle.material, meshHandle.vertexBuffer, meshHandle.propertyValues, renderItem.overrideProperties, renderItem.overridePropertyValues);
+            itemRenderer.renderItem(meshHandle, meshHandle.material, meshHandle.vertexBuffer, meshHandle.propertyValues, renderItem.overrideProperties, renderItem.overridePropertyValues);
         }
+        itemRenderer.postRender();
     }
-
-    /**
-     * Must be implemented by the extending class to actually render a given mesh
-     *
-     * @param meshHandle
-     * @param material
-     * @param vertexBuffer
-     * @param meshPropertyValues
-     * @param overrideProperties
-     * @param overridePropertyValues
-     */
-    protected abstract void renderItem(MeshRenderHandle<M> meshHandle, M material, StaticVertexBuffer vertexBuffer, RenderPropertyValue[] meshPropertyValues, RenderProperty[] overrideProperties, Object[] overridePropertyValues);
 
     /**
      * Draws the primitives in the index buffer, referenced by the given mesh handle
@@ -215,22 +200,8 @@ public abstract class BaseGraphicsManager<M>
         meshHandle.drawTriangles(indexBuffer);
     }
 
-    /**
-     * Used to hold information about a single submitted item for rendering.
-     *
-     * @param <M>
-     */
-    protected static class RenderItem<M>
+    public Technique[] getTechniques()
     {
-        public final MeshRenderHandle<M> meshHandle;
-        public final RenderProperty[] overrideProperties;
-        public final Object[] overridePropertyValues;
-
-        public RenderItem(MeshRenderHandle<M> meshHandle, RenderProperty[] overrideProperties, Object[] overridePropertyValues)
-        {
-            this.meshHandle = meshHandle;
-            this.overrideProperties = overrideProperties;
-            this.overridePropertyValues = overridePropertyValues;
-        }
+        return techniques;
     }
 }

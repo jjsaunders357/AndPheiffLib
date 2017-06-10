@@ -1,6 +1,15 @@
 package com.pheiffware.lib.graphics.managed;
 
+import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.engine.ItemRenderer;
+import com.pheiffware.lib.graphics.managed.engine.MeshRenderHandle;
+import com.pheiffware.lib.graphics.managed.engine.RenderItem;
+import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
+import com.pheiffware.lib.graphics.managed.techniques.ShadowTechnique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 /**
@@ -31,15 +40,54 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
  */
 public class ShadowTechniqueGraphicsManager extends SingleTechniqueGraphicsManager
 {
-    public ShadowTechniqueGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques)
+    private final ShadowTechnique shadowTechnique;
+
+    public ShadowTechniqueGraphicsManager(StaticVertexBuffer[] vertexBuffers, Technique[] techniques, AssetLoader al) throws GraphicsException
     {
         super(vertexBuffers, techniques);
+        shadowTechnique = new ShadowTechnique(al);
     }
 
     @Override
-    public void render()
+    public void preRender()
     {
+        renderPass(new ItemRenderer<Technique>()
+        {
+            @Override
+            public void preRender()
+            {
+                shadowTechnique.bind();
 
-        super.render();
+                Lighting lighting = (Lighting) getDefaultValue(RenderProperty.LIGHTING);
+                shadowTechnique.setDefaultPropertyValues(
+                        new RenderProperty[] {
+                                RenderProperty.PROJECTION_MATRIX,
+                                RenderProperty.VIEW_MATRIX,
+                                RenderProperty.LIGHT_RENDER_POSITION
+                        },
+                        new Object[]{
+                                getDefaultValue(RenderProperty.PROJECTION_MATRIX),
+                                getDefaultValue(RenderProperty.VIEW_MATRIX),
+                                lighting.getRawLightPositions() //Beginning of array (1st light position)
+                        });
+            }
+
+            @Override
+            public void renderItem(MeshRenderHandle<Technique> meshHandle, Technique technique, StaticVertexBuffer vertexBuffer, RenderPropertyValue[] propertyValues, RenderProperty[] overrideProperties, Object[] overridePropertyValues)
+            {
+                vertexBuffer.bind(technique);
+//                 RenderProperty.MODEL_MATRIX - Matrix4
+//                 RenderProperty.LIGHT_RENDER_POSITION - float[4]
+                shadowTechnique.applyProperties();
+                drawTriangles(meshHandle);
+            }
+
+            @Override
+            public void postRender()
+            {
+
+            }
+        });
+        super.preRender();
     }
 }
