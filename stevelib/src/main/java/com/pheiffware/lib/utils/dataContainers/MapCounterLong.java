@@ -1,6 +1,4 @@
-package com.pheiffware.lib.utils;
-
-import java.util.HashMap;
+package com.pheiffware.lib.utils.dataContainers;
 
 /**
  * Convenience class for the very common case of needing to count values stored at various keys.  Deals with the awkwardness of initial null value for each key, by instead making
@@ -8,10 +6,8 @@ import java.util.HashMap;
  * <p/>
  * Created by Steve on 4/15/2016.
  */
-public class MapCounterLong<K> extends HashMap<K, Long>
+public class MapCounterLong<K> extends MapCounter<K, Long>
 {
-    private final long defaultValue;
-
     public MapCounterLong()
     {
         this(0);
@@ -19,32 +15,22 @@ public class MapCounterLong<K> extends HashMap<K, Long>
 
     public MapCounterLong(long defaultValue)
     {
-        this.defaultValue = defaultValue;
+        super(defaultValue);
     }
 
     public MapCounterLong(int capacity, long defaultValue)
     {
-        super(capacity);
-        this.defaultValue = defaultValue;
-    }
-
-    public final long getCount(K key)
-    {
-        Long count = get(key);
-        if (count == null)
-        {
-            count = defaultValue;
-        }
-        return count;
+        super(capacity, defaultValue);
     }
 
     public final void incCount(K key)
     {
-        put(key, getCount(key) + 1);
+        map.put(key, get(key) + 1);
     }
 
     public final void addCount(K key, long add)
     {
-        put(key, getCount(key) + add);
+        map.put(key, get(key) + add);
     }
+
 }

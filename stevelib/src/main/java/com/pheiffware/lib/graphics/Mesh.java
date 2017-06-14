@@ -1,7 +1,7 @@
 package com.pheiffware.lib.graphics;
 
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.utils.MapCounter;
+import com.pheiffware.lib.utils.dataContainers.MapCounterInt;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -38,7 +38,7 @@ public class Mesh
         //Count index and vertex data list sizes
         int indices = 0;
         int uniqueVerticesCounter = 0;
-        MapCounter<VertexAttribute> vertexDataSizes = new MapCounter<>();
+        MapCounterInt<VertexAttribute> vertexDataSizes = new MapCounterInt<>();
 
         for (Mesh mesh : meshes)
         {
@@ -63,14 +63,14 @@ public class Mesh
         //Copy data from each individual mesh to this mesh.  This requires offsetting references to vertices in the index buffer appropriately.
         indices = 0;
         uniqueVerticesCounter = 0;
-        MapCounter<VertexAttribute> vertexDataOffsets = new MapCounter<>();
+        MapCounterInt<VertexAttribute> vertexDataOffsets = new MapCounterInt<>();
         for (Mesh mesh : meshes)
         {
             copyIndexArray(mesh.vertexIndices, vertexIndices, indices, uniqueVerticesCounter);
             indices += mesh.vertexIndices.length;
             for (VertexAttribute vertexAttribute : mesh.vertexAttributeData.keySet())
             {
-                int offset = vertexDataOffsets.getCount(vertexAttribute);
+                int offset = vertexDataOffsets.get(vertexAttribute);
                 float[] srcVertexData = mesh.vertexAttributeData.get(vertexAttribute);
                 System.arraycopy(
                         srcVertexData, 0,
@@ -97,6 +97,7 @@ public class Mesh
             combinedIndexData[i + destinationOffset] = (short) (srcMeshIndexData[i] + indexOffset);
         }
     }
+
     /**
      * Creates a new mesh by applying the given transform to this mesh's positions/normals.  Original mesh is not affected.
      *

@@ -13,7 +13,7 @@ import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.utils.MapCounterLong;
+import com.pheiffware.lib.utils.dataContainers.MapCounterLong;
 
 import java.util.Map;
 

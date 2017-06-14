@@ -3,7 +3,7 @@ package com.pheiffware.lib.graphics.managed.engine;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
-import com.pheiffware.lib.utils.MapCounter;
+import com.pheiffware.lib.utils.dataContainers.MapCounterInt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class GraphicsManagerTransferData<M>
     private final StaticVertexBuffer[] vertexBuffers;
 
     //Tracks how much has been added for transfer via the vertex buffers
-    private final MapCounter<StaticVertexBuffer> vertexBufferLengths;
+    private final MapCounterInt<StaticVertexBuffer> vertexBufferLengths;
 
     //The number of indices stored in the index buffer
     private int indexBufferLength = 0;
@@ -44,7 +44,7 @@ public class GraphicsManagerTransferData<M>
     {
         this.indexBuffer = indexBuffer;
         this.vertexBuffers = vertexBuffers;
-        vertexBufferLengths = new MapCounter<>();
+        vertexBufferLengths = new MapCounterInt<>();
     }
 
     /**
@@ -73,15 +73,15 @@ public class GraphicsManagerTransferData<M>
         indexBuffer.allocate(indexBufferLength);
         for (StaticVertexBuffer vertexBuffer : vertexBuffers)
         {
-            vertexBuffer.allocate(vertexBufferLengths.getCount(vertexBuffer));
+            vertexBuffer.allocate(vertexBufferLengths.get(vertexBuffer));
         }
         int indexWriteOffset = 0;
-        MapCounter<StaticVertexBuffer> vertexBufferOffsets = new MapCounter<>();
+        MapCounterInt<StaticVertexBuffer> vertexBufferOffsets = new MapCounterInt<>();
         for (int i = 0; i < meshesForTransfer.size(); i++)
         {
             Mesh transferMesh = meshesForTransfer.get(i);
             StaticVertexBuffer vertexBuffer = meshVertexBuffers.get(i);
-            int vertexWriteOffset = vertexBufferOffsets.getCount(vertexBuffer);
+            int vertexWriteOffset = vertexBufferOffsets.get(vertexBuffer);
             indexBuffer.putIndicesWithOffset(transferMesh.getVertexIndices(), indexWriteOffset, (short) vertexWriteOffset);
             vertexBuffer.putVertexAttributes(transferMesh, vertexWriteOffset);
             indexWriteOffset += transferMesh.getNumIndices();
@@ -95,7 +95,6 @@ public class GraphicsManagerTransferData<M>
         meshesForTransfer.clear();
         meshVertexBuffers.clear();
     }
-
 
 
 }
