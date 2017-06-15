@@ -51,12 +51,9 @@ public class MeshVertexBufferManager
      */
     public void packAndTransfer()
     {
-        dynamicBuffer.pack();
-        staticBuffer.pack();
-        indexBuffer.pack();
-        dynamicBuffer.transfer();
-        staticBuffer.transfer();
-        indexBuffer.transfer();
+        dynamicBuffer.packAndTransfer();
+        staticBuffer.packAndTransfer();
+        indexBuffer.packAndTransfer();
     }
 
     /**

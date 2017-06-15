@@ -47,7 +47,6 @@ public enum VertexAttribute
                 {
                     // @formatter:off
                     byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
-                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
                     // @formatter:on
                 }
             },
@@ -57,6 +56,7 @@ public enum VertexAttribute
                 public void put(ByteBuffer byteBuffer, int offset, float[] data)
                 {
                     // @formatter:off
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
                     byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
                     // @formatter:on
                 }
@@ -126,11 +126,11 @@ public enum VertexAttribute
     public void putDataInBuffer(ByteBuffer byteBuffer, int vertexStride, float[] data)
     {
         int position = byteBuffer.position();
-        for (int i = 0; i < data.length; i += byteSize)
+        for (int i = 0; i < data.length; i += numBaseTypeElements)
         {
+            byteBuffer.position(position);
             put(byteBuffer, i, data);
             position += vertexStride;
-            byteBuffer.position(position);
         }
     }
 

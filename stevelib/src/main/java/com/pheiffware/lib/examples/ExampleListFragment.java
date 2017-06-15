@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffRecyclerViewAdapter;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffViewHolder;
+import com.pheiffware.lib.examples.andGraphics.BasicNewBufferExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.ColladaLoaderExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.HolographicExampleFragment;
@@ -52,6 +53,7 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
     {
         examples = new ArrayList<>(20);
 
+        examples.add(new LibExampleData("NewBuffer1", BasicNewBufferExampleFragment.class));
         examples.add(new LibExampleData("Shadows", ShadowExampleFragment.class));
         examples.add(new LibExampleData("Holographic", HolographicExampleFragment.class));
         examples.add(new LibExampleData("Collada Managed Graphics", ColladaLoaderExampleFragment.class));

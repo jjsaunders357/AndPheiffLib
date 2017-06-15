@@ -28,12 +28,6 @@ public abstract class AttributeVertexBuffer extends VertexBuffer
         return dataPacker.addMesh(mesh, vertexAttributes);
     }
 
-    public void pack(ByteBuffer byteBuffer)
-    {
-        allocateSoftwareBuffer(dataPacker.calcRequiredSpace());
-        dataPacker.pack(byteBuffer);
-    }
-
     public void bind(Program program, VertexAttributeHandle handle)
     {
         bind();
@@ -54,4 +48,16 @@ public abstract class AttributeVertexBuffer extends VertexBuffer
             }
         }
     }
+
+    @Override
+    protected int calcPackedSize()
+    {
+        return dataPacker.calcRequiredSpace();
+    }
+
+    protected void pack(ByteBuffer byteBuffer)
+    {
+        dataPacker.pack(byteBuffer);
+    }
+
 }

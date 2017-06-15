@@ -38,13 +38,20 @@ public abstract class VertexBuffer
         byteBuffer.order(ByteOrder.nativeOrder());
     }
 
-    void pack()
+    /**
+     * Pack all meshes into buffer and then transfer.
+     */
+    public void packAndTransfer()
     {
+        allocateSoftwareBuffer(calcPackedSize());
         pack(byteBuffer);
+        transfer();
     }
 
-
-    public void transfer()
+    /**
+     * Transfer data from byteBuffer to openGL.
+     */
+    protected void transfer()
     {
         bind();
 
@@ -60,7 +67,6 @@ public abstract class VertexBuffer
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
     }
 
-
     /**
      * Destroys this buffer resource with openGL
      */
@@ -73,7 +79,7 @@ public abstract class VertexBuffer
     /**
      * Make sure the byte buffer is deallocated if it hasn't been already.
      */
-    void deallocateSoftwareBuffer()
+    protected void deallocateSoftwareBuffer()
     {
         if (byteBuffer != null)
         {
@@ -82,6 +88,7 @@ public abstract class VertexBuffer
         }
     }
 
+
     /**
      * Perform GL bind operation.
      */
@@ -89,6 +96,14 @@ public abstract class VertexBuffer
     {
         bind(glHandle);
     }
+
+
+    /**
+     * Calculate the required packed memory.
+     *
+     * @return number of bytes required to hold packed data
+     */
+    protected abstract int calcPackedSize();
 
     /**
      * Perform appropriate pack operation as related to meshes.

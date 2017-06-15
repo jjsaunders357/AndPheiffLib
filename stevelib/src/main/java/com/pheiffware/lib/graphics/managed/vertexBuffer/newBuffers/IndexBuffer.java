@@ -39,12 +39,6 @@ public class IndexBuffer extends VertexBuffer
         return dataPacker.addMesh(mesh);
     }
 
-    public void pack(ByteBuffer byteBuffer)
-    {
-        allocateSoftwareBuffer(dataPacker.calcRequiredSpace());
-        dataPacker.pack(byteBuffer);
-    }
-
     public final void drawTriangles(VertexIndexHandle handle)
     {
         draw(handle, GLES20.GL_TRIANGLES);
@@ -54,6 +48,17 @@ public class IndexBuffer extends VertexBuffer
     {
         bind();
         GLES20.glDrawElements(primitiveType, handle.numVertices, GLES20.GL_UNSIGNED_SHORT, handle.byteOffset);
+    }
+
+    @Override
+    protected int calcPackedSize()
+    {
+        return dataPacker.calcRequiredSpace();
+    }
+
+    protected void pack(ByteBuffer byteBuffer)
+    {
+        dataPacker.pack(byteBuffer);
     }
 
     @Override
@@ -71,7 +76,6 @@ public class IndexBuffer extends VertexBuffer
         }
         super.transfer();
     }
-
 
     @Override
     protected void transferData(int bytesToTransfer, ByteBuffer byteBuffer)

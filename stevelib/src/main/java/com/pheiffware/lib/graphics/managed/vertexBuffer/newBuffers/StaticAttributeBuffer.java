@@ -38,7 +38,7 @@ public class StaticAttributeBuffer extends AttributeVertexBuffer
     }
 
     @Override
-    public void transfer()
+    protected void transfer()
     {
         if (isTransferred)
         {
@@ -46,7 +46,6 @@ public class StaticAttributeBuffer extends AttributeVertexBuffer
         }
         super.transfer();
     }
-
 
     @Override
     protected void transferData(int bytesToTransfer, ByteBuffer byteBuffer)
