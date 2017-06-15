@@ -25,4 +25,21 @@ public class MathUtils
         }
         return diff;
     }
+
+    /**
+     * For a given position find the next even block boundary.
+     * Example: position = 13, blockSize = 8 : returns 16
+     * <p>
+     * Example: position = 8, blockSize = 8 : returns 8
+     *
+     * @param position  the position
+     * @param blockSize the block size to use for finding the boundary
+     * @return current position or next closest position at even block boundary
+     */
+    public static int calcNextEvenBoundary(int position, int blockSize)
+    {
+        int mod = position % blockSize;
+        return position + ((blockSize - mod) % blockSize);
+    }
+
 }

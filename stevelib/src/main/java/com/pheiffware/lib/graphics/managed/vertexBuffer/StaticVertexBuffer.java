@@ -86,6 +86,7 @@ public class StaticVertexBuffer extends BaseBuffer
             }
         }
     }
+
     /**
      * For a given vertexAttribute put an array of floats in the appropriate buffer location, starting at the given vertex offset. Note, this is very inefficient, but is fine for one
      * time setup.

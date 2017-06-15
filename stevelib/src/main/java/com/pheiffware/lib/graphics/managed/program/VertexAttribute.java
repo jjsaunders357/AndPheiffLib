@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,10 +16,51 @@ import java.util.Map;
  */
 public enum VertexAttribute
 {
-    POSITION("vertexPosition", GLES20.GL_FLOAT, 4, 1),
-    NORMAL("vertexNormal", GLES20.GL_FLOAT, 3, 1),
-    TEXCOORD("vertexTexCoord", GLES20.GL_FLOAT, 2, 1),
-    COLOR("vertexColor", GLES20.GL_FLOAT, 4, 1);
+    //Custom put method added to make this not quite as horribly inefficient.
+    POSITION("vertexPosition", GLES20.GL_FLOAT, 4, 1)
+            {
+                @Override
+                public void put(ByteBuffer byteBuffer, int offset, float[] data)
+                {
+                    // @formatter:off
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    // @formatter:on
+                }
+            },
+    NORMAL("vertexNormal", GLES20.GL_FLOAT, 3, 1)
+            {
+                @Override
+                public void put(ByteBuffer byteBuffer, int offset, float[] data)
+                {
+                    // @formatter:off
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    byteBuffer.putFloat(data[offset]);offset++;
+                    // @formatter:on
+                }
+            },
+
+    TEXCOORD("vertexTexCoord", GLES20.GL_FLOAT, 2, 1)
+            {
+                @Override
+                public void put(ByteBuffer byteBuffer, int offset, float[] data)
+                {
+                    // @formatter:off
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    // @formatter:on
+                }
+            },
+    COLOR("vertexColor", GLES20.GL_FLOAT, 4, 1)
+            {
+                @Override
+                public void put(ByteBuffer byteBuffer, int offset, float[] data)
+                {
+                    // @formatter:off
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    // @formatter:on
+                }
+            };
 
     private static final Map<String, VertexAttribute> nameLookup;
 
@@ -59,6 +101,39 @@ public enum VertexAttribute
         byteSize = PheiffGLUtils.getGLBaseTypeByteSize(baseType) * numBaseTypeElements;
     }
 
+    /**
+     * Transfer one attribute worth of data from the given attribute data array to the given byteBuffer.
+     *
+     * @param byteBuffer buffer to transfer into
+     * @param offset     offset into array where attribute data is located
+     * @param data       attribute data array
+     */
+    public void put(ByteBuffer byteBuffer, int offset, float[] data)
+    {
+        for (int i = 0; i < numBaseTypeElements; i++)
+        {
+            byteBuffer.putFloat(data[i]);
+        }
+    }
+
+    /**
+     * Transfers the contents of an entire array of attribute data into the given vertex buffer
+     *
+     * @param byteBuffer   the buffer to transfer into
+     * @param vertexStride attribute data will likely be interlaced with other attribute data and must be spaced apart in buffer following the given vertexStride
+     * @param data         attribute data array
+     */
+    public void putDataInBuffer(ByteBuffer byteBuffer, int vertexStride, float[] data)
+    {
+        int position = byteBuffer.position();
+        for (int i = 0; i < data.length; i += byteSize)
+        {
+            put(byteBuffer, i, data);
+            position += vertexStride;
+            byteBuffer.position(position);
+        }
+    }
+
     public final String getName()
     {
         return name;
@@ -88,6 +163,7 @@ public enum VertexAttribute
     {
         return byteSize;
     }
+
     @Override
     public String toString()
     {
@@ -101,4 +177,6 @@ public enum VertexAttribute
         builder.append(byteSize);
         return builder.toString();
     }
+
+
 }

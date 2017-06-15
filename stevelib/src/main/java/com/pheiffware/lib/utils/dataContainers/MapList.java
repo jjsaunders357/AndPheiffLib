@@ -112,6 +112,11 @@ public abstract class MapList<K, V>
         return map.values();
     }
 
+    public void clear()
+    {
+        map.clear();
+    }
+
     /**
      * Implementing classes override this to define how to construct a new empty list object.
      *

@@ -171,4 +171,8 @@ public class Program
         GLES20.glUniform1f(getUniform(uniformName).location, value);
     }
 
+    public EnumSet<VertexAttribute> getAttributes()
+    {
+        return vertexAttributes;
+    }
 }

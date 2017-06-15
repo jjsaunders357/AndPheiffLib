@@ -5,6 +5,7 @@ import com.pheiffware.lib.utils.dataContainers.MapCounterInt;
 
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
 
 /**
@@ -151,6 +152,16 @@ public class Mesh
     public final int getNumVertices()
     {
         return numVertices;
+    }
+
+    /**
+     * Get a set of the attributes contained in this mesh.
+     *
+     * @return
+     */
+    public final EnumSet<VertexAttribute> getAttributes()
+    {
+        return EnumSet.copyOf(vertexAttributeData.keySet());
     }
 
     public final float[] getAttributeData(VertexAttribute vertexAttribute)
