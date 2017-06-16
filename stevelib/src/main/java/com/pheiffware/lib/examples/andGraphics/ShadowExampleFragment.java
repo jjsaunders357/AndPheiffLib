@@ -20,7 +20,6 @@ import com.pheiffware.lib.graphics.managed.ColladaGraphicsLoader;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.ShadowTechniqueGraphicsManager;
 import com.pheiffware.lib.graphics.managed.SingleTechniqueGraphicsManager;
-import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
@@ -67,8 +66,8 @@ public class ShadowExampleFragment extends BaseGameFragment
             {
                 final Technique colorTechnique = new ColorMaterialTechnique(al);
                 final Technique textureTechnique = new TextureMaterialTechnique(al);
-                final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
-                final StaticVertexBuffer textureBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
+                final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL});
+                final StaticVertexBuffer textureBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
 
                 ColladaFactory colladaFactory = new ColladaFactory(true);
 

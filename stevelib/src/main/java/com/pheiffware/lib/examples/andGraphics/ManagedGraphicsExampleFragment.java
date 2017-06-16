@@ -76,7 +76,7 @@ public class ManagedGraphicsExampleFragment extends BaseGameFragment
                 ColladaObject3D sphere = collada.objects.get("Sphere");
                 ColladaObject3D cube = collada.objects.get("Cube");
 
-                StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
+                StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL});
 
                 graphicsManager = new SingleTechniqueGraphicsManager(new StaticVertexBuffer[]{colorBuffer}, new Technique[]{colorTechnique});
                 monkeyMesh = graphicsManager.addTransferMesh(monkey.getMesh(0), colorBuffer, colorTechnique,

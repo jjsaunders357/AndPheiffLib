@@ -107,7 +107,7 @@ public class Mesh
      */
     public Mesh newTransformedMesh(Matrix4 transformMatrix)
     {
-        float[] positionData = getPositionData();
+        float[] positionData = getPosition4Data();
         float[] normalData = getNormalData();
         Matrix3 normalTransform = transformMatrix.newNormalTransformMatrix3();
         if (positionData != null)
@@ -119,7 +119,7 @@ public class Mesh
             normalData = normalTransform.newTransformedVectors(normalData);
         }
         EnumMap<VertexAttribute, float[]> transformedVertexData = new EnumMap<>(vertexAttributeData);
-        transformedVertexData.put(VertexAttribute.POSITION, positionData);
+        transformedVertexData.put(VertexAttribute.POSITION4, positionData);
         transformedVertexData.put(VertexAttribute.NORMAL, normalData);
         return new Mesh(numVertices, transformedVertexData, vertexIndices);
     }
@@ -174,9 +174,9 @@ public class Mesh
         return vertexAttributeData.containsKey(vertexAttribute);
     }
 
-    public final float[] getPositionData()
+    public final float[] getPosition4Data()
     {
-        return vertexAttributeData.get(VertexAttribute.POSITION);
+        return vertexAttributeData.get(VertexAttribute.POSITION4);
     }
 
     public final float[] getNormalData()

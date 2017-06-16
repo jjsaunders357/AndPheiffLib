@@ -1,7 +1,7 @@
 //Transform and apply view to vertices
 uniform mat4 transformViewMatrix;
 
-attribute vec4 vertexPosition;
+attribute vec4 vertexPosition4;
 attribute vec4 vertexNormal;
 attribute vec4 vertexColor;
 
@@ -12,5 +12,5 @@ void main()
 {
 	varyingColor = vertexColor;
 	varyingNormal = vertexNormal;
-	gl_Position = transformViewMatrix * vertexPosition;
+	gl_Position = transformViewMatrix * vertexPosition4;
 }

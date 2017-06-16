@@ -5,7 +5,7 @@ uniform mat4 projectionMatrix;
 //Transforms normals to eye space
 uniform mat3 normalMatrix;
 
-attribute vec4 vertexPosition;
+attribute vec4 vertexPosition4;
 attribute vec3 vertexNormal;
 attribute vec2 vertexTexCoord;
 varying vec4 positionEyeSpace;
@@ -17,6 +17,6 @@ void main()
 	texCoord = vertexTexCoord;
 	//TODO: Decide on normalization policy
 	normalEyeSpace = normalize(normalMatrix * vertexNormal);
-	positionEyeSpace = viewModelMatrix * vertexPosition;
+	positionEyeSpace = viewModelMatrix * vertexPosition4;
 	gl_Position = projectionMatrix * positionEyeSpace;
 }

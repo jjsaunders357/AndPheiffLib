@@ -47,14 +47,14 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
                     0, 1, 2, 3, 4, 5
             };
             EnumMap<VertexAttribute, float[]> data = new EnumMap<>(VertexAttribute.class);
-            data.put(VertexAttribute.POSITION, new float[]
+            data.put(VertexAttribute.POSITION4, new float[]
                     {
-                            -dim, -dim, -1.1f, 1,
-                            -dim, dim, -1.1f, 1,
-                            dim, dim, -1.1f, 1,
-                            -dim, -dim, -1.1f, 1,
-                            dim, dim, -1.1f, 1,
-                            dim, -dim, -1.1f, 1,
+                            -dim, -dim, 0f, 1,
+                            -dim, dim, 0f, 1,
+                            dim, dim, 0f, 1,
+                            -dim, -dim, 0f, 1,
+                            dim, dim, 0f, 1,
+                            dim, -dim, 0f, 1,
                     });
             data.put(VertexAttribute.COLOR, new float[]
                     {
@@ -82,7 +82,7 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         private IndexBuffer indexBuffer;
         private StaticAttributeBuffer staticBuffer;
         private float globalTestColor = 0.0f;
-        private Matrix4 projectionMatrix;
+        private Matrix4 ortho2DMatrix;
         private Texture faceTexture;
         private VertexIndexHandle indexHandle;
         private VertexAttributeHandle staticAttributeHandle;
@@ -102,7 +102,7 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            testProgram = new Program(al, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+            testProgram = new Program(al, "shaders/2d/texture_color_pos4_2d_vert.glsl", "shaders/2d/texture_color_pos4_2d_frag.glsl");
             faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             indexBuffer = new IndexBuffer();
@@ -122,7 +122,11 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             GLES20.glUseProgram(testProgram.getHandle());
-            testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix.m);
+
+            //Scale down everything drawn by a factor of 5.
+            Matrix4 scale = Matrix4.newScale(0.2f, 0.2f, 1f);
+            Matrix4 projectionViewModelMatrix = Matrix4.multiply(ortho2DMatrix, scale);
+            testProgram.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
             faceTexture.manualBind(0);
             testProgram.setUniformSampler("texture", 0);
             testProgram.bind();
@@ -139,7 +143,7 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         public void onSurfaceResize(int width, int height)
         {
             GLES20.glViewport(0, 0, width, height);
-            projectionMatrix = Matrix4.newProjection(120.0f, width / (float) height, 1, 10, false);
+            ortho2DMatrix = Matrix4.newOrtho2D(width / (float) height);
         }
 
         @Override

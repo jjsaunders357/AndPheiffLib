@@ -83,7 +83,7 @@ public class TextureBoxExampleFragment extends BaseGameFragment
                 indexBuffer.putIndices(mesh.getVertexIndices());
                 indexBuffer.transfer();
 
-                vertexBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
+                vertexBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
                 vertexBuffer.allocate(mesh.getNumVertices());
                 vertexBuffer.putVertexAttributes(mesh, 0);
                 vertexBuffer.transfer();

@@ -57,7 +57,7 @@ public class CombinedVertexBufferExampleFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            testProgram = new Program(al, "shaders/vert_mtc.glsl", "shaders/frag_mtc.glsl");
+            testProgram = new Program(al, "shaders/test/test_vert_mtc.glsl", "shaders/test/test_frag_mtc.glsl");
             faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             pb = new IndexBuffer(false);
@@ -66,7 +66,7 @@ public class CombinedVertexBufferExampleFragment extends BaseGameFragment
             float x = 1f, y = 1f, z = 1.1f;
             //@formatter:off
             cb = new CombinedVertexBuffer(new VertexAttribute[] {
-                    VertexAttribute.POSITION,
+                    VertexAttribute.POSITION4,
                     VertexAttribute.TEXCOORD
             },new VertexAttribute[] {
                     VertexAttribute.COLOR

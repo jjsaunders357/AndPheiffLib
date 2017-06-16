@@ -17,7 +17,7 @@ import java.util.Map;
 public enum VertexAttribute
 {
     //Custom put method added to make this not quite as horribly inefficient.
-    POSITION("vertexPosition", GLES20.GL_FLOAT, 4, 1)
+    POSITION4("vertexPosition4", GLES20.GL_FLOAT, 4, 1)
             {
                 @Override
                 public void put(ByteBuffer byteBuffer, int offset, float[] data)
@@ -25,6 +25,17 @@ public enum VertexAttribute
                     // @formatter:off
                     byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
                     byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    // @formatter:on
+                }
+            },
+    POSITION3("vertexPosition3", GLES20.GL_FLOAT, 3, 1)
+            {
+                @Override
+                public void put(ByteBuffer byteBuffer, int offset, float[] data)
+                {
+                    // @formatter:off
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    byteBuffer.putFloat(data[offset]);offset++;
                     // @formatter:on
                 }
             },

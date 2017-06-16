@@ -10,11 +10,11 @@ import java.util.Map;
 
 /**
  * Does the ugly job of untangling the ridiculous Collada input meshes vertex index data.  The test cases demonstrate this better though examples than I can explain here.
- *
- * This also homogenizes the position data, if the flag is set (adds 4th coordinate with value 1 to POSITION).
- *
+ * <p>
+ * This also homogenizes the position data, if the flag is set (adds 4th coordinate with value 1 to position) this results in a mesh of POSITION4 as opposed to POSITION3.
+ * <p>
  * This produces a Mesh object with a map from Attributes to corresponding data.
- *
+ * <p>
  * The result is a single unified list of indices, each of which, references data in the various arrays stored in the data map.
  * * Created by Steve on 2/15/2016.
  */
@@ -24,7 +24,6 @@ class ColladaMeshNormalizer
     private static final Map<String, VertexAttribute> colladaNameToAttribute = new HashMap<>();
 
     {
-        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_POSITION, VertexAttribute.POSITION);
         colladaNameToAttribute.put(Collada.COLLADA_VERTEX_NORMAL, VertexAttribute.NORMAL);
         colladaNameToAttribute.put(Collada.COLLADA_VERTEX_TEXCOORD, VertexAttribute.TEXCOORD);
         colladaNameToAttribute.put(Collada.COLLADA_VERTEX_COLOR, VertexAttribute.COLOR);
@@ -38,7 +37,7 @@ class ColladaMeshNormalizer
 
     //The number of unique vertices.  Each array in vertex data is this length
     private short numUniqueVertices;
-    //Data for each unique vertex.  A map from names like POSITION, NORMAL, TEXCOORD, etc to actual arrays holding vertex data.  The same vertex may be referenced multiple times in the vertexIndices array.
+    //Data for each unique vertex.  A map from names like POSITION4, NORMAL, TEXCOORD, etc to actual arrays holding vertex data.  The same vertex may be referenced multiple times in the vertexIndices array.
     private final Map<String, float[]> vertexData = new HashMap<>();
     //Indices to the data itself.  These are grouped together to form triangle primitives
     private short[] vertexDataIndices;
@@ -114,7 +113,23 @@ class ColladaMeshNormalizer
         EnumMap<VertexAttribute, float[]> attributeData = new EnumMap<>(VertexAttribute.class);
         for (Map.Entry<String, float[]> entry : vertexData.entrySet())
         {
-            VertexAttribute vertexAttribute = colladaNameToAttribute.get(entry.getKey());
+            String colladaName = entry.getKey();
+            VertexAttribute vertexAttribute;
+            if (colladaName.equals(Collada.COLLADA_VERTEX_POSITION))
+            {
+                if (homogenizePositions)
+                {
+                    vertexAttribute = VertexAttribute.POSITION4;
+                }
+                else
+                {
+                    vertexAttribute = VertexAttribute.POSITION4;
+                }
+            }
+            else
+            {
+                vertexAttribute = colladaNameToAttribute.get(colladaName);
+            }
             attributeData.put(vertexAttribute, entry.getValue());
         }
         return new Mesh(numUniqueVertices, attributeData, vertexDataIndices);

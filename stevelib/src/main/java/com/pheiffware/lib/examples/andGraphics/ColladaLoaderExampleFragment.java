@@ -67,8 +67,8 @@ public class ColladaLoaderExampleFragment extends BaseGameFragment
             {
                 final Technique textureTechnique = new TextureMaterialTechnique(al);
                 final Technique colorTechnique = new ColorMaterialTechnique(al);
-                final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
-                final StaticVertexBuffer textureBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
+                final StaticVertexBuffer colorBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL});
+                final StaticVertexBuffer textureBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL, VertexAttribute.TEXCOORD});
 
                 ColladaFactory colladaFactory = new ColladaFactory(true);
 

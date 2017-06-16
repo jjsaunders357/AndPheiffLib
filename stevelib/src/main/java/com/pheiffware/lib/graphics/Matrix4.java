@@ -84,7 +84,7 @@ public class Matrix4
      * Creates a projection matrix. You generally want to set flipVertical to true when using this to render to a texture as texture coordinates are backward.
      *
      * @param fieldOfViewY The field of view in the y direction (in degrees)
-     * @param aspect       ratio of width to height
+     * @param aspect       ratio of width/height
      * @param near         distance to near view plane
      * @param far          distance to far view plane
      * @param flipVertical flip vertical when rendering
@@ -97,6 +97,20 @@ public class Matrix4
         return matrix;
     }
 
+    /**
+     * Creates a matrix appropriate for scaling 2D points to Normalized device coordinates (x and y in range [-1,1].
+     * Details:
+     * It is assumed when working in 2D that the x-coordinates, of visible points, will be in the range [-1,1].
+     * For a given aspect ratio (width/height), y-coordinates, of visible points, will be in the range [-1/aspectRatio,1/aspectRatio].
+     * Therefore, to convert y-coordinates to the normalized range of [-1,1], we need to scale y by aspectRatio.
+     *
+     * @param aspect ratio of width/height
+     * @return the scaling matrix
+     */
+    public static Matrix4 newOrtho2D(float aspect)
+    {
+        return newScale(1f, aspect, 1f);
+    }
 
     /**
      * Creates an empty matrix

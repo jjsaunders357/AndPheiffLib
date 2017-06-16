@@ -117,7 +117,7 @@ public class HolographicExampleFragment extends BaseGameFragment
                 indexBuffer.putIndices(mesh.getVertexIndices());
                 indexBuffer.transfer();
 
-                colorVertexBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION, VertexAttribute.NORMAL});
+                colorVertexBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL});
                 colorVertexBuffer.allocate(mesh.getNumVertices());
                 colorVertexBuffer.putVertexAttributes(mesh, 0);
                 colorVertexBuffer.transfer();

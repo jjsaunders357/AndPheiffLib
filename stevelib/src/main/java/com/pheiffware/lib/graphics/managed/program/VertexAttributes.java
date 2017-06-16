@@ -4,7 +4,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 
 /**
- * Describes the collective group of vertex attributes used for one type of mesh.  For example: POSITION, NORMAL, TEXTCOORD.
+ * Describes the collective group of vertex attributes used for one type of mesh.  For example: POSITION4, NORMAL, TEXTCOORD.
  * This calculates various things such as vertex size, offsets of each attribute, etc.
  * Created by Steve on 6/14/2017.
  */
