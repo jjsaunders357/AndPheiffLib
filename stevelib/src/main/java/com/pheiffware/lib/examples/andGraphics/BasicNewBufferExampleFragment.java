@@ -40,21 +40,21 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
 
     private static class Renderer implements GameRenderer
     {
-        private static Mesh createQuad()
+        private static Mesh createQuad(float x, float y, float size)
         {
-            float dim = 1.0f;
+            size /= 2;
             short[] vertexIndices = new short[]{
                     0, 1, 2, 3, 4, 5
             };
             EnumMap<VertexAttribute, float[]> data = new EnumMap<>(VertexAttribute.class);
             data.put(VertexAttribute.POSITION4, new float[]
                     {
-                            -dim, -dim, 0f, 1,
-                            -dim, dim, 0f, 1,
-                            dim, dim, 0f, 1,
-                            -dim, -dim, 0f, 1,
-                            dim, dim, 0f, 1,
-                            dim, -dim, 0f, 1,
+                            -size + x, -size + y, 0f, 1,
+                            -size + x, size + y, 0f, 1,
+                            size + x, size + y, 0f, 1,
+                            -size + x, -size + y, 0f, 1,
+                            size + x, size + y, 0f, 1,
+                            size + x, -size + y, 0f, 1,
                     });
             data.put(VertexAttribute.COLOR, new float[]
                     {
@@ -78,14 +78,17 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
             return new Mesh(6, data, vertexIndices);
         }
 
-        private Program testProgram;
+
+        private Program program;
         private IndexBuffer indexBuffer;
         private StaticAttributeBuffer staticBuffer;
         private float globalTestColor = 0.0f;
         private Matrix4 ortho2DMatrix;
         private Texture faceTexture;
-        private VertexIndexHandle indexHandle;
-        private VertexAttributeHandle staticAttributeHandle;
+        private VertexIndexHandle indexHandle1;
+        private VertexAttributeHandle staticAttributeHandle1;
+        private VertexIndexHandle indexHandle2;
+        private VertexAttributeHandle staticAttributeHandle2;
 
         @Override
         public int maxMajorGLVersion()
@@ -102,16 +105,22 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            testProgram = new Program(al, "shaders/2d/texture_color_pos4_2d_vert.glsl", "shaders/2d/texture_color_pos4_2d_frag.glsl");
+            program = new Program(al, "shaders/2d/texture_color_pos4_2d_vert.glsl", "shaders/2d/texture_color_pos4_2d_frag.glsl");
             faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             indexBuffer = new IndexBuffer();
             staticBuffer = new StaticAttributeBuffer();
-            Mesh mesh = createQuad();
-            indexHandle = indexBuffer.addMesh(mesh);
-            staticAttributeHandle = staticBuffer.addMesh(mesh);
+            Mesh mesh1 = createQuad(0, 0, 1);
+            Mesh mesh2 = createQuad(2, 2, 1);
+            indexHandle1 = indexBuffer.addMesh(mesh1);
+            staticAttributeHandle1 = staticBuffer.addMesh(mesh1);
+            indexHandle2 = indexBuffer.addMesh(mesh2);
+            staticAttributeHandle2 = staticBuffer.addMesh(mesh2);
             indexBuffer.packAndTransfer();
             staticBuffer.packAndTransfer();
+            //TODO: Deal with same mesh entered twice or ban it.
+            //TODO: Make color dynamic
+            //TODO: Test multiple meshes simultaneously
         }
 
         /* (non-Javadoc)
@@ -121,17 +130,19 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         public void onDrawFrame()
         {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-            GLES20.glUseProgram(testProgram.getHandle());
+            GLES20.glUseProgram(program.getHandle());
 
             //Scale down everything drawn by a factor of 5.
             Matrix4 scale = Matrix4.newScale(0.2f, 0.2f, 1f);
             Matrix4 projectionViewModelMatrix = Matrix4.multiply(ortho2DMatrix, scale);
-            testProgram.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
+            program.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
             faceTexture.manualBind(0);
-            testProgram.setUniformSampler("texture", 0);
-            testProgram.bind();
-            staticBuffer.bind(testProgram, staticAttributeHandle);
-            indexBuffer.drawTriangles(indexHandle);
+            program.setUniformSampler("texture", 0);
+            program.bind();
+            staticBuffer.bind(program, staticAttributeHandle1);
+            indexBuffer.drawTriangles(indexHandle1);
+            staticBuffer.bind(program, staticAttributeHandle2);
+            indexBuffer.drawTriangles(indexHandle2);
             globalTestColor += 0.01;
         }
 

@@ -3,7 +3,6 @@ package com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
-import com.pheiffware.lib.utils.MathUtils;
 import com.pheiffware.lib.utils.dataContainers.MapLinkedList;
 
 import java.nio.ByteBuffer;
@@ -79,9 +78,6 @@ class MeshVertexDataPacker
         {
             VertexAttributes vertexAttributes = new VertexAttributes(entry.getKey());
 
-            //All meshes, of the same type, are stored in the buffer at an even vertex-size boundary.
-            size = MathUtils.calcNextEvenBoundary(size, vertexAttributes.getVertexByteSize());
-
             List<Mesh> meshList = entry.getValue();
             for (Mesh mesh : meshList)
             {
@@ -115,45 +111,35 @@ class MeshVertexDataPacker
      */
     private void putAllMeshesOfType(ByteBuffer byteBuffer, VertexAttributes vertexAttributes, List<Mesh> meshList)
     {
-        int vertexByteSize = vertexAttributes.getVertexByteSize();
-
-        //OpenGL requires us to align vertex data to an even vertex-size boundary.
-        int startByteOffset = MathUtils.calcNextEvenBoundary(byteBuffer.position(), vertexByteSize);
-        byteBuffer.position(startByteOffset);
-
         for (Mesh mesh : meshList)
         {
-            int vertexOffset = putMesh(byteBuffer, mesh, vertexAttributes);
+            int byteOffset = byteBuffer.position();
+            putMesh(byteBuffer, mesh, vertexAttributes);
             VertexAttributeHandle handle = meshToHandleMap.get(mesh);
-            handle.setup(vertexOffset, vertexAttributes);
+            handle.setup(byteOffset, vertexAttributes);
         }
     }
 
 
     /**
-     * Puts the given vertex attributes of a mesh into the buffer and returns the vertex index where it is stored.
-     * All data is put at the buffer's current position, which must be at an even vertex-size boundary!
-     * This index is given to openGL during the rendering process.
-     * Given attribute data will be packed into vertex buffer
+     * Packs the given vertex attributes of a mesh into the buffer.
      *
      * @param byteBuffer       the byte buffer to put the data in.
      * @param mesh             the mesh to store
      * @param vertexAttributes the set of vertex attributes of the mesh to store
-     * @return the vertex "index" where the data is stored.  When binding to this buffer, this is the effective number of vertices, into the buffer, to start rendering.
      */
-    private int putMesh(ByteBuffer byteBuffer, Mesh mesh, VertexAttributes vertexAttributes)
+    private void putMesh(ByteBuffer byteBuffer, Mesh mesh, VertexAttributes vertexAttributes)
     {
         int vertexByteSize = vertexAttributes.getVertexByteSize();
         int startByteOffset = byteBuffer.position();
 
         for (VertexAttribute vertexAttribute : vertexAttributes.getAttributes())
         {
-            //Start putting data in the array at the given byteOffset AND the given attributes offset within a vertice
+            //Start putting data in the array at the given byteOffset AND the given attributes offset within a vertex
             byteBuffer.position(startByteOffset + vertexAttributes.getAttributeByteOffset(vertexAttribute));
             float[] data = mesh.getAttributeData(vertexAttribute);
             vertexAttribute.putDataInBuffer(byteBuffer, vertexByteSize, data);
         }
-        return startByteOffset / vertexByteSize;
     }
 }
 
