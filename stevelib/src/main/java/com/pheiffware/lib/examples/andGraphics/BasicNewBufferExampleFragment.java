@@ -23,8 +23,7 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.StaticAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexAttributeHandle;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexIndexHandle;
-
-import java.util.EnumMap;
+import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 
 /**
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.
@@ -40,45 +39,6 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
 
     private static class Renderer implements GameRenderer
     {
-        private static Mesh createQuad(float x, float y, float size)
-        {
-            size /= 2;
-            short[] vertexIndices = new short[]{
-                    0, 1, 2, 3, 4, 5
-            };
-            EnumMap<VertexAttribute, float[]> data = new EnumMap<>(VertexAttribute.class);
-            data.put(VertexAttribute.POSITION4, new float[]
-                    {
-                            -size + x, -size + y, 0f, 1,
-                            -size + x, size + y, 0f, 1,
-                            size + x, size + y, 0f, 1,
-                            -size + x, -size + y, 0f, 1,
-                            size + x, size + y, 0f, 1,
-                            size + x, -size + y, 0f, 1,
-                    });
-            data.put(VertexAttribute.COLOR, new float[]
-                    {
-                            1f, 0f, 0f, 1f,
-                            1f, 1f, 0f, 1f,
-                            0f, 1f, 1f, 1f,
-                            1f, 0f, 1f, 1f,
-                            0f, 1f, 1f, 1f,
-                            0f, 0f, 1f, 1f,
-                    });
-            data.put(VertexAttribute.TEXCOORD, new float[]
-                    {
-                            0f, 1f,
-                            0f, 0f,
-                            1f, 0f,
-                            0f, 1f,
-                            1f, 0f,
-                            1f, 1f,
-                    });
-
-            return new Mesh(6, data, vertexIndices);
-        }
-
-
         private Program program;
         private IndexBuffer indexBuffer;
         private StaticAttributeBuffer staticBuffer;
@@ -110,14 +70,16 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
 
             indexBuffer = new IndexBuffer();
             staticBuffer = new StaticAttributeBuffer();
-            Mesh mesh1 = createQuad(0, 0, 1);
-            Mesh mesh2 = createQuad(2, 2, 1);
+            Mesh mesh1 = MeshGenUtils.genSingleQuadMesh(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
+            Mesh mesh2 = MeshGenUtils.genSingleQuadMesh(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
+            Mesh mesh3 = MeshGenUtils.genSingleQuadMesh(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
             indexHandle1 = indexBuffer.addMesh(mesh1);
             staticAttributeHandle1 = staticBuffer.addMesh(mesh1);
             indexHandle2 = indexBuffer.addMesh(mesh2);
             staticAttributeHandle2 = staticBuffer.addMesh(mesh2);
             indexBuffer.packAndTransfer();
             staticBuffer.packAndTransfer();
+            //TODO: Consider whether whole mesh needs to be passed as parameter
             //TODO: Deal with same mesh entered twice or ban it.
             //TODO: Make color dynamic
             //TODO: Test multiple meshes simultaneously
