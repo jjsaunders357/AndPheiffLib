@@ -85,4 +85,9 @@ public class IndexBuffer extends VertexBuffer
         isTransferred = true;
     }
 
+    protected ByteBuffer editBuffer(int byteOffset)
+    {
+        throw new UnsupportedOperationException("Illegal to edit an index buffer!");
+    }
+
 }

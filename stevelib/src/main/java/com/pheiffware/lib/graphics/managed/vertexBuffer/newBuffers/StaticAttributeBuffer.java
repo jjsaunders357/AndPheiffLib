@@ -54,4 +54,9 @@ public class StaticAttributeBuffer extends AttributeVertexBuffer
         deallocateSoftwareBuffer();
         isTransferred = true;
     }
+
+    protected ByteBuffer editBuffer(int byteOffset)
+    {
+        throw new UnsupportedOperationException("Illegal to edit a static buffer!");
+    }
 }

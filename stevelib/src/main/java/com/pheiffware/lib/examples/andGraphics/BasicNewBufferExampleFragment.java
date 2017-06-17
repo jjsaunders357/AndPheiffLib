@@ -19,11 +19,15 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.DynamicAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.IndexBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.StaticAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexAttributeHandle;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexIndexHandle;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
+
+import java.nio.ByteBuffer;
+import java.util.EnumSet;
 
 /**
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.
@@ -42,13 +46,16 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         private Program program;
         private IndexBuffer indexBuffer;
         private StaticAttributeBuffer staticBuffer;
+        private DynamicAttributeBuffer dynamicBuffer;
         private float globalTestColor = 0.0f;
         private Matrix4 ortho2DMatrix;
         private Texture faceTexture;
         private VertexIndexHandle indexHandle1;
         private VertexAttributeHandle staticAttributeHandle1;
+        private VertexAttributeHandle dynamicAttributeHandle1;
         private VertexIndexHandle indexHandle2;
         private VertexAttributeHandle staticAttributeHandle2;
+        private VertexAttributeHandle dynamicAttributeHandle2;
 
         @Override
         public int maxMajorGLVersion()
@@ -70,18 +77,20 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
 
             indexBuffer = new IndexBuffer();
             staticBuffer = new StaticAttributeBuffer();
+            dynamicBuffer = new DynamicAttributeBuffer();
             Mesh mesh1 = MeshGenUtils.genSingleQuadMesh(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
             Mesh mesh2 = MeshGenUtils.genSingleQuadMesh(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
-            Mesh mesh3 = MeshGenUtils.genSingleQuadMesh(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
             indexHandle1 = indexBuffer.addMesh(mesh1);
-            staticAttributeHandle1 = staticBuffer.addMesh(mesh1);
+            staticAttributeHandle1 = staticBuffer.addMesh(mesh1, EnumSet.of(VertexAttribute.POSITION4, VertexAttribute.TEXCOORD));
+            dynamicAttributeHandle1 = dynamicBuffer.addMesh(mesh1, EnumSet.of(VertexAttribute.COLOR));
+
             indexHandle2 = indexBuffer.addMesh(mesh2);
-            staticAttributeHandle2 = staticBuffer.addMesh(mesh2);
+            staticAttributeHandle2 = staticBuffer.addMesh(mesh2, EnumSet.of(VertexAttribute.POSITION4, VertexAttribute.TEXCOORD));
+            dynamicAttributeHandle2 = dynamicBuffer.addMesh(mesh2, EnumSet.of(VertexAttribute.COLOR));
             indexBuffer.packAndTransfer();
             staticBuffer.packAndTransfer();
-            //TODO: Consider whether whole mesh needs to be passed as parameter
+            dynamicBuffer.packAndTransfer();
             //TODO: Deal with same mesh entered twice or ban it.
-            //TODO: Make color dynamic
             //TODO: Test multiple meshes simultaneously
         }
 
@@ -92,18 +101,38 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         public void onDrawFrame()
         {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-            GLES20.glUseProgram(program.getHandle());
 
+            ByteBuffer byteBuffer = dynamicBuffer.edit(dynamicAttributeHandle1);
+            for (int i = 0; i < 4; i++)
+            {
+                byteBuffer.putFloat(1f);
+                byteBuffer.putFloat(0f);
+                byteBuffer.putFloat(globalTestColor);
+                byteBuffer.putFloat(1f);
+            }
+            byteBuffer = dynamicBuffer.edit(dynamicAttributeHandle2);
+            for (int i = 0; i < 4; i++)
+            {
+                byteBuffer.putFloat(0f);
+                byteBuffer.putFloat(1f);
+                byteBuffer.putFloat(globalTestColor);
+                byteBuffer.putFloat(1f);
+            }
+            dynamicBuffer.transfer();
+
+            program.bind();
             //Scale down everything drawn by a factor of 5.
             Matrix4 scale = Matrix4.newScale(0.2f, 0.2f, 1f);
             Matrix4 projectionViewModelMatrix = Matrix4.multiply(ortho2DMatrix, scale);
+
             program.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
             faceTexture.manualBind(0);
             program.setUniformSampler("texture", 0);
-            program.bind();
             staticBuffer.bind(program, staticAttributeHandle1);
+            dynamicBuffer.bind(program, dynamicAttributeHandle1);
             indexBuffer.drawTriangles(indexHandle1);
             staticBuffer.bind(program, staticAttributeHandle2);
+            dynamicBuffer.bind(program, dynamicAttributeHandle2);
             indexBuffer.drawTriangles(indexHandle2);
             globalTestColor += 0.01;
         }

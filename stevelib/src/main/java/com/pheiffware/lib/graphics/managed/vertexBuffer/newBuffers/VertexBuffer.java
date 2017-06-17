@@ -97,6 +97,20 @@ public abstract class VertexBuffer
         bind(glHandle);
     }
 
+    /**
+     * Provides access to the byte buffer backing this vertex buffer for editing.  This shouldn't be used on a buffer,
+     * which is not dynamically editable as it cannot be transferred again.
+     *
+     * @param byteOffset set the buffer to point to given byte offset
+     * @param limit      the limit to set on the buffer
+     * @return the buffer, set to given position
+     */
+    protected ByteBuffer editBuffer(int byteOffset, int limit)
+    {
+        byteBuffer.position(byteOffset);
+        byteBuffer.limit(limit);
+        return byteBuffer;
+    }
 
     /**
      * Calculate the required packed memory.

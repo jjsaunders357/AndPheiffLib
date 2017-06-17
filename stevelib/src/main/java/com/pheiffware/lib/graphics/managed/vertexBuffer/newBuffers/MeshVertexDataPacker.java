@@ -42,6 +42,8 @@ class MeshVertexDataPacker
 
     /**
      * Adds mesh to list which should be packed.  Returns a handle to data which is invalid until pack() is called.
+     * <p>
+     * NOTE: Adding the same mesh twice is illegal!
      *
      * @param mesh the mesh to add to the vertex buffer.  All vertex attributes will be stored.
      * @return a handle to use for binding to a program/technique for rendering
@@ -53,6 +55,8 @@ class MeshVertexDataPacker
 
     /**
      * Adds specified vertex attributes of a mesh to list which should be packed.  Returns a handle to data which is invalid until pack() is called.
+     * <p>
+     * NOTE: Adding the same mesh twice is illegal!
      *
      * @param mesh             the mesh to add to the vertex buffer
      * @param vertexAttributes the set of vertex attributes, from the mesh, to be stored.
@@ -116,7 +120,7 @@ class MeshVertexDataPacker
             int byteOffset = byteBuffer.position();
             putMesh(byteBuffer, mesh, vertexAttributes);
             VertexAttributeHandle handle = meshToHandleMap.get(mesh);
-            handle.setup(byteOffset, vertexAttributes);
+            handle.setup(byteOffset, mesh.getNumVertices(), vertexAttributes);
         }
     }
 

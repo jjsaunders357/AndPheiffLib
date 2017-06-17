@@ -8,14 +8,19 @@ import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
 
 public class VertexAttributeHandle
 {
-    //The vertex attributes associated with this handle
-    VertexAttributes vertexAttributes;
     //Byte location in the vertex buffer where packed data associated with this handle starts
     int byteOffset;
 
-    void setup(int byteOffset, VertexAttributes vertexAttributes)
+    //The upper limit of the data (used to set buffer limit when editting)
+    int byteLimit;
+
+    //The vertex attributes associated with this handle
+    VertexAttributes vertexAttributes;
+
+    void setup(int byteOffset, int numVertices, VertexAttributes vertexAttributes)
     {
-        this.vertexAttributes = vertexAttributes;
         this.byteOffset = byteOffset;
+        this.byteLimit = byteOffset + numVertices * vertexAttributes.getVertexByteSize();
+        this.vertexAttributes = vertexAttributes;
     }
 }
