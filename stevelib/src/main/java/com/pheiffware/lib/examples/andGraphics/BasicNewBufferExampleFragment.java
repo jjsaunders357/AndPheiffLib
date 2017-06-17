@@ -102,19 +102,20 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-            ByteBuffer byteBuffer = dynamicBuffer.edit(dynamicAttributeHandle1);
-            for (int i = 0; i < 4; i++)
-            {
-                byteBuffer.putFloat(1f);
-                byteBuffer.putFloat(0f);
-                byteBuffer.putFloat(globalTestColor);
-                byteBuffer.putFloat(1f);
-            }
+            ByteBuffer byteBuffer;
             byteBuffer = dynamicBuffer.edit(dynamicAttributeHandle2);
             for (int i = 0; i < 4; i++)
             {
                 byteBuffer.putFloat(0f);
                 byteBuffer.putFloat(1f);
+                byteBuffer.putFloat(globalTestColor);
+                byteBuffer.putFloat(1f);
+            }
+            byteBuffer = dynamicBuffer.edit(dynamicAttributeHandle1);
+            for (int i = 0; i < 4; i++)
+            {
+                byteBuffer.putFloat(1f);
+                byteBuffer.putFloat(0f);
                 byteBuffer.putFloat(globalTestColor);
                 byteBuffer.putFloat(1f);
             }

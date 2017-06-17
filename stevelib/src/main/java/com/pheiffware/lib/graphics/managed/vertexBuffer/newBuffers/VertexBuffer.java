@@ -49,17 +49,27 @@ public abstract class VertexBuffer
     }
 
     /**
-     * Transfer data from byteBuffer to openGL.
+     * Transfer all data from byteBuffer to openGL.
      */
     protected void transfer()
     {
-        bind();
+        transfer(byteBuffer.capacity());
+    }
 
-        // Transfer data from client memory to the buffer.
-        int transferSize = byteBuffer.position();
+    /**
+     * Transfer data from byteBuffer to openGL.
+     *
+     * @param transferSize
+     */
+    protected void transfer(int transferSize)
+    {
+        bind();
 
         // Reset position to 0 for this transfer and future puts
         byteBuffer.position(0);
+
+        //Reset limit to capacity
+        byteBuffer.limit(byteBuffer.capacity());
 
         transferData(transferSize, byteBuffer);
 
