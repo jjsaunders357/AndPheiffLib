@@ -43,7 +43,8 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
 
     private static class Renderer implements GameRenderer
     {
-        private Program program;
+        private Program programTextureColor;
+        private Program programColor;
         private IndexBuffer indexBuffer;
         private StaticAttributeBuffer staticBuffer;
         private DynamicAttributeBuffer dynamicBuffer;
@@ -56,6 +57,8 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
         private VertexIndexHandle indexHandle2;
         private VertexAttributeHandle staticAttributeHandle2;
         private VertexAttributeHandle dynamicAttributeHandle2;
+        private VertexIndexHandle indexHandle3;
+        private VertexAttributeHandle staticAttributeHandle3;
 
         @Override
         public int maxMajorGLVersion()
@@ -72,7 +75,8 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            program = new Program(al, "shaders/2d/texture_color_pos4_2d_vert.glsl", "shaders/2d/texture_color_pos4_2d_frag.glsl");
+            programTextureColor = new Program(al, "shaders/2d/texture_color_pos4_2d_vert.glsl", "shaders/2d/texture_color_pos4_2d_frag.glsl");
+            programColor = new Program(al, "shaders/2d/color_pos4_2d_vert.glsl", "shaders/2d/color_pos4_2d_frag.glsl");
             faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
             indexBuffer = new IndexBuffer();
@@ -80,6 +84,7 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
             dynamicBuffer = new DynamicAttributeBuffer();
             Mesh mesh1 = MeshGenUtils.genSingleQuadMesh(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
             Mesh mesh2 = MeshGenUtils.genSingleQuadMesh(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
+            Mesh mesh3 = MeshGenUtils.genSingleQuadMesh(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
             indexHandle1 = indexBuffer.addMesh(mesh1);
             staticAttributeHandle1 = staticBuffer.addMesh(mesh1, EnumSet.of(VertexAttribute.POSITION4, VertexAttribute.TEXCOORD));
             dynamicAttributeHandle1 = dynamicBuffer.addMesh(mesh1, EnumSet.of(VertexAttribute.COLOR));
@@ -87,11 +92,14 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
             indexHandle2 = indexBuffer.addMesh(mesh2);
             staticAttributeHandle2 = staticBuffer.addMesh(mesh2, EnumSet.of(VertexAttribute.POSITION4, VertexAttribute.TEXCOORD));
             dynamicAttributeHandle2 = dynamicBuffer.addMesh(mesh2, EnumSet.of(VertexAttribute.COLOR));
+
+            //3rd mesh will be considered a different "type" as it has 3 attributes instead of 2 in its attribute set
+            indexHandle3 = indexBuffer.addMesh(mesh3);
+            staticAttributeHandle3 = staticBuffer.addMesh(mesh3, EnumSet.of(VertexAttribute.POSITION4, VertexAttribute.TEXCOORD, VertexAttribute.COLOR));
+
             indexBuffer.packAndTransfer();
             staticBuffer.packAndTransfer();
             dynamicBuffer.packAndTransfer();
-            //TODO: Deal with same mesh entered twice or ban it.
-            //TODO: Test multiple meshes simultaneously
         }
 
         /* (non-Javadoc)
@@ -121,20 +129,27 @@ public class BasicNewBufferExampleFragment extends BaseGameFragment
             }
             dynamicBuffer.transfer();
 
-            program.bind();
             //Scale down everything drawn by a factor of 5.
             Matrix4 scale = Matrix4.newScale(0.2f, 0.2f, 1f);
             Matrix4 projectionViewModelMatrix = Matrix4.multiply(ortho2DMatrix, scale);
 
-            program.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
-            faceTexture.manualBind(0);
-            program.setUniformSampler("texture", 0);
-            staticBuffer.bind(program, staticAttributeHandle1);
-            dynamicBuffer.bind(program, dynamicAttributeHandle1);
+            //Will ignore the texture vertex attribute in mesh
+            programColor.bind();
+            programColor.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
+            staticBuffer.bind(programColor, staticAttributeHandle1);
+            dynamicBuffer.bind(programColor, dynamicAttributeHandle1);
             indexBuffer.drawTriangles(indexHandle1);
-            staticBuffer.bind(program, staticAttributeHandle2);
-            dynamicBuffer.bind(program, dynamicAttributeHandle2);
+
+            programTextureColor.bind();
+            programTextureColor.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
+            faceTexture.manualBind(0);
+            programTextureColor.setUniformSampler("texture", 0);
+
+            staticBuffer.bind(programTextureColor, staticAttributeHandle2);
+            dynamicBuffer.bind(programTextureColor, dynamicAttributeHandle2);
             indexBuffer.drawTriangles(indexHandle2);
+            staticBuffer.bind(programTextureColor, staticAttributeHandle3);
+            indexBuffer.drawTriangles(indexHandle3);
             globalTestColor += 0.01;
         }
 
