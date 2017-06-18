@@ -33,7 +33,7 @@ import java.util.EnumSet;
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.
  * Created by Steve on 3/27/2016.
  */
-public class BasicNewBufferExampleFragment extends BaseGameFragment
+public class BasicVertexBuffersExampleFragment extends BaseGameFragment
 {
     @Override
     public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
