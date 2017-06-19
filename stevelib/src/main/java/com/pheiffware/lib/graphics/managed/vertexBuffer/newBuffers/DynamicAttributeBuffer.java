@@ -19,9 +19,9 @@ import java.nio.ByteBuffer;
  * <p/>
  * ...
  * <p/>
- * buffer.transfer(gl);
+ * buffer.transfer();
  * <p/>
- * buffer.bind(gl);
+ * buffer.bind();
  * Created by Steve on 6/14/2017.
  */
 
@@ -39,14 +39,9 @@ public class DynamicAttributeBuffer extends AttributeVertexBuffer
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, bytesToTransfer, byteBuffer, GLES20.GL_DYNAMIC_DRAW);
     }
 
-    @Override
-    public void transfer()
-    {
-        super.transfer();
-    }
-
     public ByteBuffer edit(VertexAttributeHandle handle)
     {
         return editBuffer(handle.byteOffset, handle.byteLimit);
     }
+
 }

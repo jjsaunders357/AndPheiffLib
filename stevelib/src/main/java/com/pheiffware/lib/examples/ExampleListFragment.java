@@ -13,11 +13,12 @@ import android.widget.TextView;
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffRecyclerViewAdapter;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffViewHolder;
-import com.pheiffware.lib.examples.andGraphics.BasicVertexBuffersExampleFragment;
+import com.pheiffware.lib.examples.andGraphics.BasicVertexBuffersExample1Fragment;
 import com.pheiffware.lib.examples.andGraphics.ColladaLoaderExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.HolographicExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.ManagedGraphicsExampleFragment;
+import com.pheiffware.lib.examples.andGraphics.ManagedVertexBuffersExample2Fragment;
 import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.ShadowExampleFragment;
@@ -53,7 +54,8 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
     {
         examples = new ArrayList<>(20);
 
-        examples.add(new LibExampleData("Basic Vertex Buffers", BasicVertexBuffersExampleFragment.class));
+        examples.add(new LibExampleData("Raw Vertex Buffers", BasicVertexBuffersExample1Fragment.class));
+        examples.add(new LibExampleData("Managed Vertex Buffers", ManagedVertexBuffersExample2Fragment.class));
         examples.add(new LibExampleData("Shadows", ShadowExampleFragment.class));
         examples.add(new LibExampleData("Holographic", HolographicExampleFragment.class));
         examples.add(new LibExampleData("Collada Managed Graphics", ColladaLoaderExampleFragment.class));

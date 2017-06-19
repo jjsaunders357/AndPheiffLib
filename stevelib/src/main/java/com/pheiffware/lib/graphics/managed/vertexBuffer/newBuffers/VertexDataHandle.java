@@ -6,14 +6,14 @@ package com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers;
 
 public class VertexDataHandle
 {
-    final VertexAttributeHandle dHandle;
-    final VertexAttributeHandle sHandle;
     final VertexIndexHandle iHandle;
+    final VertexAttributeHandle sHandle;
+    final VertexAttributeHandle dHandle;
 
-    VertexDataHandle(VertexAttributeHandle dHandle, VertexAttributeHandle sHandle, VertexIndexHandle iHandle)
+    public VertexDataHandle(VertexIndexHandle iHandle, VertexAttributeHandle sHandle, VertexAttributeHandle dHandle)
     {
-        this.dHandle = dHandle;
-        this.sHandle = sHandle;
         this.iHandle = iHandle;
+        this.sHandle = sHandle;
+        this.dHandle = dHandle;
     }
 }

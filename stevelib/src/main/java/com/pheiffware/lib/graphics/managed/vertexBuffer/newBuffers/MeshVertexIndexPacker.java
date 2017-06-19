@@ -17,7 +17,7 @@ import java.util.List;
  * x.addMesh()
  * ...
  * x.addMesh()
- * x.pack()
+ * x.packBuffer()
  * <p>
  * x.wrapBuffer(otherVertexBuffer)
  * ...
@@ -25,19 +25,19 @@ import java.util.List;
  * Created by Steve on 6/14/2017.
  */
 
-class MeshVertexIndexPacker
+public class MeshVertexIndexPacker
 {
     //For each mesh, keep track of the handle given to the user of the class.  This handle must be setup when the meshes are packed so that data can be accessed.
     private final List<Mesh> meshes = new LinkedList<>();
     private final List<VertexIndexHandle> meshHandles = new LinkedList<>();
 
     /**
-     * Adds mesh to list which should be packed.  Returns a handle to data which is invalid until pack() is called.
+     * Adds mesh to list which should be packed.  Returns a handle to data which is invalid until packBuffer() is called.
      *
      * @param mesh the mesh to add to the vertex buffer.
      * @return a handle to use for binding to a program/technique for rendering
      */
-    VertexIndexHandle addMesh(Mesh mesh)
+    public final VertexIndexHandle addMesh(Mesh mesh)
     {
         VertexIndexHandle meshHandle = new VertexIndexHandle();
         meshes.add(mesh);
@@ -46,26 +46,16 @@ class MeshVertexIndexPacker
     }
 
     /**
-     * Calculate the total size of the buffer required to hold all mesh data vertex indices, in bytes.
-     *
-     * @return
-     */
-    int calcRequiredSpace()
-    {
-        int numVertices = 0;
-        for (Mesh mesh : meshes)
-        {
-            numVertices += mesh.getNumVertices();
-        }
-        return numVertices * 2;
-    }
-
-    /**
+     * Allocates the given vertex buffer, then packs all data into the buffer.
      * All meshHandles are updated to contain references to the corresponding packed data.
      * All internal references to mesh data are destroyed and class is prepared to wrap another mesh.
      */
-    void pack(ByteBuffer byteBuffer)
+    public final void packBuffer(IndexBuffer indexBuffer)
     {
+        int spaceRequired = calcRequiredSpace();
+        indexBuffer.allocateSoftwareBuffer(spaceRequired);
+        ByteBuffer byteBuffer = indexBuffer.editBuffer(0, spaceRequired);
+
         Iterator<Mesh> meshI = meshes.iterator();
         Iterator<VertexIndexHandle> meshH = meshHandles.iterator();
         while (meshI.hasNext())
@@ -79,6 +69,22 @@ class MeshVertexIndexPacker
         meshes.clear();
         meshHandles.clear();
     }
+
+    /**
+     * Calculate the total size of the buffer required to hold all mesh data vertex indices, in bytes.
+     *
+     * @return
+     */
+    private int calcRequiredSpace()
+    {
+        int numVertices = 0;
+        for (Mesh mesh : meshes)
+        {
+            numVertices += mesh.getNumVertices();
+        }
+        return numVertices * 2;
+    }
+
 
     /**
      * Puts vertex indices of mesh into the given ByteBuffer at its current position.

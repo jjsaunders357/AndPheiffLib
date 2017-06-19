@@ -32,26 +32,16 @@ public abstract class VertexBuffer
      *
      * @param byteSize
      */
-    final void allocateSoftwareBuffer(int byteSize)
+    public final void allocateSoftwareBuffer(int byteSize)
     {
         byteBuffer = ByteBuffer.allocateDirect(byteSize);
         byteBuffer.order(ByteOrder.nativeOrder());
     }
 
     /**
-     * Pack all meshes into buffer and then transfer.
-     */
-    public void packAndTransfer()
-    {
-        allocateSoftwareBuffer(calcPackedSize());
-        pack(byteBuffer);
-        transfer();
-    }
-
-    /**
      * Transfer all data from byteBuffer to openGL.
      */
-    protected void transfer()
+    public void transfer()
     {
         transfer(byteBuffer.capacity());
     }
@@ -87,6 +77,20 @@ public abstract class VertexBuffer
     }
 
     /**
+     * Provides access to the byte buffer backing this vertex buffer for editing.
+     *
+     * @param byteOffset set the buffer to point to given byte offset
+     * @param limit      the limit to set on the buffer
+     * @return the buffer, set to given position
+     */
+    public ByteBuffer editBuffer(int byteOffset, int limit)
+    {
+        byteBuffer.position(byteOffset);
+        byteBuffer.limit(limit);
+        return byteBuffer;
+    }
+
+    /**
      * Make sure the byte buffer is deallocated if it hasn't been already.
      */
     protected void deallocateSoftwareBuffer()
@@ -102,39 +106,11 @@ public abstract class VertexBuffer
     /**
      * Perform GL bind operation.
      */
-    protected void bind()
+    public void bind()
     {
         bind(glHandle);
     }
 
-    /**
-     * Provides access to the byte buffer backing this vertex buffer for editing.  This shouldn't be used on a buffer,
-     * which is not dynamically editable as it cannot be transferred again.
-     *
-     * @param byteOffset set the buffer to point to given byte offset
-     * @param limit      the limit to set on the buffer
-     * @return the buffer, set to given position
-     */
-    protected ByteBuffer editBuffer(int byteOffset, int limit)
-    {
-        byteBuffer.position(byteOffset);
-        byteBuffer.limit(limit);
-        return byteBuffer;
-    }
-
-    /**
-     * Calculate the required packed memory.
-     *
-     * @return number of bytes required to hold packed data
-     */
-    protected abstract int calcPackedSize();
-
-    /**
-     * Perform appropriate pack operation as related to meshes.
-     *
-     * @param byteBuffer buffer to pack data into
-     */
-    protected abstract void pack(ByteBuffer byteBuffer);
 
     /**
      * Implementing class should perform the appropriate openGL bind operation.

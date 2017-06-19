@@ -2,8 +2,6 @@ package com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.graphics.Mesh;
-
 import java.nio.ByteBuffer;
 
 /**
@@ -19,11 +17,11 @@ import java.nio.ByteBuffer;
  * <p/>
  * ...
  * <p/>
- * buffer.transfer(gl);
+ * buffer.transfer();
  * <p/>
  * Per frame (or update period):
  * <p/>
- * buffer.bind(gl);
+ * buffer.bind();
  * <p/>
  * YOU CANNOT put more data in once transfer is called!
  * Created by Steve on 6/14/2017.
@@ -31,41 +29,7 @@ import java.nio.ByteBuffer;
 
 public class IndexBuffer extends VertexBuffer
 {
-    private final MeshVertexIndexPacker dataPacker = new MeshVertexIndexPacker();
     private boolean isTransferred;
-
-    public VertexIndexHandle addMesh(Mesh mesh)
-    {
-        return dataPacker.addMesh(mesh);
-    }
-
-    public final void drawTriangles(VertexIndexHandle handle)
-    {
-        draw(handle, GLES20.GL_TRIANGLES);
-    }
-
-    public final void draw(VertexIndexHandle handle, int primitiveType)
-    {
-        bind();
-        GLES20.glDrawElements(primitiveType, handle.numVertices, GLES20.GL_UNSIGNED_SHORT, handle.byteOffset);
-    }
-
-    @Override
-    protected int calcPackedSize()
-    {
-        return dataPacker.calcRequiredSpace();
-    }
-
-    protected void pack(ByteBuffer byteBuffer)
-    {
-        dataPacker.pack(byteBuffer);
-    }
-
-    @Override
-    protected void bind(int glHandle)
-    {
-        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, glHandle);
-    }
 
     @Override
     public void transfer()
@@ -77,6 +41,28 @@ public class IndexBuffer extends VertexBuffer
         super.transfer();
     }
 
+    public final void drawTriangles(VertexIndexHandle handle)
+    {
+        draw(handle, GLES20.GL_TRIANGLES);
+    }
+
+    public final void draw(VertexIndexHandle handle, int primitiveType)
+    {
+        draw(handle.byteOffset, handle.numVertices, primitiveType);
+    }
+
+    public final void draw(int byteOffset, int numVertices, int primitiveType)
+    {
+        bind();
+        GLES20.glDrawElements(primitiveType, numVertices, GLES20.GL_UNSIGNED_SHORT, byteOffset);
+    }
+
+    @Override
+    protected void bind(int glHandle)
+    {
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, glHandle);
+    }
+
     @Override
     protected void transferData(int bytesToTransfer, ByteBuffer byteBuffer)
     {
@@ -84,10 +70,4 @@ public class IndexBuffer extends VertexBuffer
         deallocateSoftwareBuffer();
         isTransferred = true;
     }
-
-    protected ByteBuffer editBuffer(int byteOffset)
-    {
-        throw new UnsupportedOperationException("Illegal to edit an index buffer!");
-    }
-
 }
