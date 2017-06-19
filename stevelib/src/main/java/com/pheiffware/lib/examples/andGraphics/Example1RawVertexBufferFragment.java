@@ -67,7 +67,7 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            programTextureColor = new Program(al, "shaders/2d/texture_color_pos4_2d_vert.glsl", "shaders/2d/texture_color_pos4_2d_frag.glsl");
+            programTextureColor = new Program(al, "shaders/2d/color_texture_pos4_2d_vert.glsl", "shaders/2d/color_texture_pos4_2d_frag.glsl");
             faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
 
 
@@ -142,10 +142,10 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
             programTextureColor.bind();
             programTextureColor.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
             faceTexture.manualBind(0);
-            programTextureColor.setUniformSampler("texture", 0);
+            programTextureColor.setUniformSampler("materialColorSampler", 0);
 
-            staticBuffer.drawSetup(programTextureColor, staticVertexAttributes, 0);
-            dynamicBuffer.drawSetup(programTextureColor, dynamicVertexAttributes, 0);
+            staticBuffer.bindToProgram(programTextureColor, staticVertexAttributes, 0);
+            dynamicBuffer.bindToProgram(programTextureColor, dynamicVertexAttributes, 0);
             indexBuffer.draw(GLES20.GL_TRIANGLES, 6, 0);
             globalTestColor += 0.01;
         }

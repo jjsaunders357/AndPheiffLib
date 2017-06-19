@@ -18,9 +18,9 @@ public abstract class AttributeVertexBuffer extends VertexBuffer
      * @param program program to use (assumed to bound already)
      * @param handle  the handle to vertex data
      */
-    public final void drawSetup(Program program, VertexAttributeHandle handle)
+    public final void bindToProgram(Program program, VertexAttributeHandle handle)
     {
-        drawSetup(program, handle.vertexAttributes, handle.byteOffset);
+        bindToProgram(program, handle.vertexAttributes, handle.byteOffset);
     }
 
     /**
@@ -31,7 +31,7 @@ public abstract class AttributeVertexBuffer extends VertexBuffer
      * @param vertexAttributes a description of the vertex data packed in the buffer at this point
      * @param byteOffset       the offset in the buffer where the data is located
      */
-    public final void drawSetup(Program program, VertexAttributes vertexAttributes, int byteOffset)
+    public final void bindToProgram(Program program, VertexAttributes vertexAttributes, int byteOffset)
     {
         bind();
         for (VertexAttribute vertexAttribute : program.getAttributes())

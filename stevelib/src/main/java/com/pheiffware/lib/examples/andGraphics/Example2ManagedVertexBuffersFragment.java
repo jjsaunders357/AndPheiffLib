@@ -16,11 +16,14 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshHandle;
+import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshDataManager;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
+import com.pheiffware.lib.graphics.managed.techniques.Color2DTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.ColorTexture2DTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.MeshVertexBufferManager;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexDataHandle;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 
 import java.nio.ByteBuffer;
@@ -40,16 +43,16 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
 
     private static class Renderer implements GameRenderer
     {
-        private Program programTextureColor;
-        private Program programColor;
-        private MeshVertexBufferManager manager;
+        private MeshDataManager manager;
 
         private float globalTestColor = 0.0f;
         private Matrix4 ortho2DMatrix;
         private Texture faceTexture;
-        private VertexDataHandle handle1;
-        private VertexDataHandle handle2;
-        private VertexDataHandle handle3;
+        private MeshHandle handle1;
+        private MeshHandle handle2;
+        private MeshHandle handle3;
+        private Color2DTechnique color2DTechnique;
+        private ColorTexture2DTechnique colorTexture2DTechnique;
 
         @Override
         public int maxMajorGLVersion()
@@ -66,16 +69,26 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            programTextureColor = new Program(al, "shaders/2d/texture_color_pos4_2d_vert.glsl", "shaders/2d/texture_color_pos4_2d_frag.glsl");
-            programColor = new Program(al, "shaders/2d/color_pos4_2d_vert.glsl", "shaders/2d/color_pos4_2d_frag.glsl");
+            color2DTechnique = new Color2DTechnique(al);
+            colorTexture2DTechnique = new ColorTexture2DTechnique(al);
             faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-            manager = new MeshVertexBufferManager();
+            manager = new MeshDataManager();
             Mesh mesh1 = MeshGenUtils.genSingleQuadMesh(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
             Mesh mesh2 = MeshGenUtils.genSingleQuadMesh(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
             Mesh mesh3 = MeshGenUtils.genSingleQuadMesh(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
-            handle1 = manager.addMesh(mesh1, EnumSet.of(VertexAttribute.COLOR));
-            handle2 = manager.addMesh(mesh2, EnumSet.of(VertexAttribute.COLOR));
-            handle3 = manager.addStaticMesh(mesh3);
+            handle1 = manager.addMesh(
+                    mesh1,
+                    EnumSet.of(VertexAttribute.COLOR),
+                    color2DTechnique);
+            handle2 = manager.addMesh(
+                    mesh2,
+                    EnumSet.of(VertexAttribute.COLOR),
+                    colorTexture2DTechnique,
+                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture)});
+            handle3 = manager.addStaticMesh(
+                    mesh3,
+                    colorTexture2DTechnique,
+                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture)});
             manager.packAndTransfer();
         }
 
@@ -107,22 +120,19 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
             manager.transferDynamicData();
 
             //Scale down everything drawn by a factor of 5.
-            Matrix4 scale = Matrix4.newScale(0.2f, 0.2f, 1f);
-            Matrix4 projectionViewModelMatrix = Matrix4.multiply(ortho2DMatrix, scale);
+            Matrix4 view = Matrix4.newScale(0.2f, 0.2f, 1f);
 
-            //Will ignore the texture vertex attribute in mesh
-            programColor.bind();
-            programColor.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
-            manager.drawTriangles(programColor, handle1);
+            color2DTechnique.bind();
+            color2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
+            color2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, view);
+            manager.drawTriangles(handle1);
 
-            programTextureColor.bind();
-            programTextureColor.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
-            faceTexture.manualBind(0);
-            programTextureColor.setUniformSampler("texture", 0);
+            colorTexture2DTechnique.bind();
+            colorTexture2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
+            colorTexture2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, view);
 
-            manager.drawTriangles(programTextureColor, handle2);
-
-            manager.drawTriangles(programTextureColor, handle3);
+            manager.drawTriangles(handle2);
+            manager.drawTriangles(handle3);
             globalTestColor += 0.01;
         }
 
