@@ -97,7 +97,7 @@ public class MeshVertexBufferManager
         {
             dynamicBuffer.drawSetup(program, vertexDataHandle.dHandle);
         }
-        indexBuffer.draw(vertexDataHandle.iHandle, primitiveType);
+        indexBuffer.draw(primitiveType, vertexDataHandle.iHandle);
 
     }
 

@@ -77,13 +77,21 @@ public abstract class VertexBuffer
     }
 
     /**
+     * Provides access to the entire byte buffer backing this vertex buffer for editing.
+     */
+    public final ByteBuffer editBuffer()
+    {
+        return editBuffer(0, byteBuffer.capacity());
+    }
+
+    /**
      * Provides access to the byte buffer backing this vertex buffer for editing.
      *
      * @param byteOffset set the buffer to point to given byte offset
      * @param limit      the limit to set on the buffer
      * @return the buffer, set to given position
      */
-    public ByteBuffer editBuffer(int byteOffset, int limit)
+    public final ByteBuffer editBuffer(int byteOffset, int limit)
     {
         byteBuffer.position(byteOffset);
         byteBuffer.limit(limit);
@@ -126,4 +134,5 @@ public abstract class VertexBuffer
      * @param byteBuffer      buffer to transfer data from
      */
     protected abstract void transferData(int bytesToTransfer, ByteBuffer byteBuffer);
+
 }

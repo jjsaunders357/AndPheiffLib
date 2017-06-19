@@ -52,7 +52,7 @@ public class MeshGenUtils
 
     }
 
-    private static float[] genSingleQuadTexData()
+    public static float[] genSingleQuadTexData()
     {
         return new float[]
                 {
@@ -63,16 +63,20 @@ public class MeshGenUtils
                 };
     }
 
-    public static Mesh genSingleQuadMesh(float x, float y, float size, VertexAttribute positionType, float[] color)
+    public static short[] genSingleQuadIndexData()
     {
-        short[] vertexIndices = new short[]{
+        return new short[]{
                 0, 1, 2, 0, 2, 3
         };
+    }
+
+    public static Mesh genSingleQuadMesh(float x, float y, float size, VertexAttribute positionType, float[] color)
+    {
         EnumMap<VertexAttribute, float[]> data = new EnumMap<>(VertexAttribute.class);
         data.put(positionType, genSingleQuadPositionData(x, y, size, positionType));
         data.put(VertexAttribute.COLOR, genSingleQuadColorData(color));
         data.put(VertexAttribute.TEXCOORD, genSingleQuadTexData());
-        return new Mesh(6, data, vertexIndices);
+        return new Mesh(6, data, genSingleQuadIndexData());
     }
 
 }

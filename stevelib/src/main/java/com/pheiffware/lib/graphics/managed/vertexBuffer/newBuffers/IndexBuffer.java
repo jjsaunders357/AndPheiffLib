@@ -41,17 +41,35 @@ public class IndexBuffer extends VertexBuffer
         super.transfer();
     }
 
+    /**
+     * Draws triangles, referenced by the given handle, using the currently bound vertex attributes/program.
+     *
+     * @param handle handle to the index data
+     */
     public final void drawTriangles(VertexIndexHandle handle)
     {
-        draw(handle, GLES20.GL_TRIANGLES);
+        draw(GLES20.GL_TRIANGLES, handle);
     }
 
-    public final void draw(VertexIndexHandle handle, int primitiveType)
+    /**
+     * Draws the given primitive type , referenced by the given handle, using the currently bound vertex attributes/program.
+     *
+     * @param primitiveType the type of primite (example: GL_TRIANGLES)
+     * @param handle        handle to the index data
+     */
+    public final void draw(int primitiveType, VertexIndexHandle handle)
     {
-        draw(handle.byteOffset, handle.numVertices, primitiveType);
+        draw(primitiveType, handle.numVertices, handle.byteOffset);
     }
 
-    public final void draw(int byteOffset, int numVertices, int primitiveType)
+    /**
+     * Draws the given primitive type using the currently bound vertex attributes/program.
+     *
+     * @param primitiveType the type of primite (example: GL_TRIANGLES)
+     * @param numVertices   the number of vertices to render
+     * @param byteOffset    offset to where the data begins in the buffer
+     */
+    public final void draw(int primitiveType, int numVertices, int byteOffset)
     {
         bind();
         GLES20.glDrawElements(primitiveType, numVertices, GLES20.GL_UNSIGNED_SHORT, byteOffset);
