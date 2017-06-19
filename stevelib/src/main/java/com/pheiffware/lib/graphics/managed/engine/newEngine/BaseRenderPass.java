@@ -19,6 +19,12 @@ public abstract class BaseRenderPass
     {
     }
 
-    protected abstract void renderObject(MeshHandle[] meshHandles);
+    protected void renderObject(MeshHandle[] meshHandles)
+    {
+        for (MeshHandle meshHandle : meshHandles)
+        {
+            meshHandle.drawTriangles();
+        }
+    }
 
 }

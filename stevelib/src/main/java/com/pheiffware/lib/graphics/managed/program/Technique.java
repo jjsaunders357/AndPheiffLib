@@ -188,4 +188,9 @@ public abstract class Technique
     {
         handle.bindToProgram(program);
     }
+
+    public Program getProgram()
+    {
+        return program;
+    }
 }

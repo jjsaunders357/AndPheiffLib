@@ -64,7 +64,7 @@ public class MeshVertexIndexPacker
             VertexIndexHandle meshHandle = meshH.next();
             int byteOffset = byteBuffer.position();
             putMesh(byteBuffer, mesh);
-            meshHandle.setup(mesh.getNumVertices(), byteOffset, indexBuffer);
+            meshHandle.setup(mesh.getNumIndices(), byteOffset, indexBuffer);
         }
         meshes.clear();
         meshHandles.clear();
@@ -77,12 +77,12 @@ public class MeshVertexIndexPacker
      */
     private int calcRequiredSpace()
     {
-        int numVertices = 0;
+        int numIndices = 0;
         for (Mesh mesh : meshes)
         {
-            numVertices += mesh.getNumVertices();
+            numIndices += mesh.getNumIndices();
         }
-        return numVertices * 2;
+        return numIndices * 2;
     }
 
 
@@ -94,7 +94,7 @@ public class MeshVertexIndexPacker
      */
     private void putMesh(ByteBuffer byteBuffer, Mesh mesh)
     {
-        for (int i = 0; i < mesh.getNumVertices(); i++)
+        for (int i = 0; i < mesh.getNumIndices(); i++)
         {
             byteBuffer.putShort(mesh.getVertexIndices()[i]);
         }

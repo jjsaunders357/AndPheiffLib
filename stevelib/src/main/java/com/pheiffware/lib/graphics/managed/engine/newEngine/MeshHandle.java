@@ -1,11 +1,13 @@
 package com.pheiffware.lib.graphics.managed.engine.newEngine;
 
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexAttributeHandle;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexIndexHandle;
 
 import java.nio.ByteBuffer;
+import java.util.EnumMap;
 
 /**
  * Created by Steve on 6/14/2017.
@@ -17,7 +19,7 @@ public class MeshHandle
     final VertexAttributeHandle sHandle;
     final VertexAttributeHandle dHandle;
     final Technique technique;
-    final RenderPropertyValue[] renderProperties;
+    final EnumMap<RenderProperty, Object> renderProperties = new EnumMap(RenderProperty.class);
 
     public MeshHandle(VertexIndexHandle iHandle, VertexAttributeHandle sHandle, VertexAttributeHandle dHandle, Technique technique, RenderPropertyValue[] renderProperties)
     {
@@ -25,24 +27,17 @@ public class MeshHandle
         this.sHandle = sHandle;
         this.dHandle = dHandle;
         this.technique = technique;
-        this.renderProperties = renderProperties;
+        for (RenderPropertyValue renderPropertyValue : renderProperties)
+        {
+            this.renderProperties.put(renderPropertyValue.property, renderPropertyValue.value);
+        }
     }
 
     public final void drawTriangles()
     {
-        drawTriangles(technique);
-    }
-
-    public final void drawTriangles(RenderPropertyValue[] renderProperties)
-    {
-        drawTriangles(technique, renderProperties);
-    }
-
-    public final void drawTriangles(Technique technique)
-    {
+        technique.bind();
         technique.setProperties(renderProperties);
         technique.applyProperties();
-
         if (sHandle != null)
         {
             technique.bindToVertexBuffer(sHandle);
@@ -54,18 +49,24 @@ public class MeshHandle
         iHandle.drawTriangles();
     }
 
-    public final void drawTriangles(Technique technique, RenderPropertyValue[] renderProperties)
+    public final void drawTriangles(RenderPropertyValue[] overrideRenderProperties)
     {
-        technique.setProperties(renderProperties);
-        technique.setProperties(renderProperties);
-        technique.applyProperties();
+        drawTriangles(technique, overrideRenderProperties);
+    }
+
+    public final void drawTriangles(Technique overrideTechnique, RenderPropertyValue[] overrideRenderProperties)
+    {
+        overrideTechnique.bind();
+        overrideTechnique.setProperties(this.renderProperties);
+        overrideTechnique.setProperties(overrideRenderProperties);
+        overrideTechnique.applyProperties();
         if (sHandle != null)
         {
-            technique.bindToVertexBuffer(sHandle);
+            overrideTechnique.bindToVertexBuffer(sHandle);
         }
         if (dHandle != null)
         {
-            technique.bindToVertexBuffer(dHandle);
+            overrideTechnique.bindToVertexBuffer(dHandle);
         }
         iHandle.drawTriangles();
     }
@@ -73,5 +74,10 @@ public class MeshHandle
     public ByteBuffer edit()
     {
         return dHandle.edit();
+    }
+
+    public void setProperty(RenderProperty renderProperty, Object value)
+    {
+        renderProperties.put(renderProperty, value);
     }
 }

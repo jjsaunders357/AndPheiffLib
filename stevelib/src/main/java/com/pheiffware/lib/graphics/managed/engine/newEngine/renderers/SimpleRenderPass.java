@@ -12,9 +12,9 @@ public class SimpleRenderPass extends BaseRenderPass
     @Override
     protected void renderObject(MeshHandle[] meshHandles)
     {
-        for(MeshHandle meshHandle:meshHandles)
+        for (MeshHandle meshHandle : meshHandles)
         {
-
+            meshHandle.drawTriangles();
         }
     }
 }

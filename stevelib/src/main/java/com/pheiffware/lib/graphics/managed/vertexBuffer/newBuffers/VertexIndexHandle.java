@@ -8,13 +8,13 @@ import android.opengl.GLES20;
 
 public class VertexIndexHandle
 {
-    private int numVertices;
+    private int numIndices;
     private int byteOffset;
     private IndexBuffer indexBuffer;
 
-    public void setup(int numVertices, int byteOffset, IndexBuffer indexBuffer)
+    public void setup(int numIndices, int byteOffset, IndexBuffer indexBuffer)
     {
-        this.numVertices = numVertices;
+        this.numIndices = numIndices;
         this.byteOffset = byteOffset;
         this.indexBuffer = indexBuffer;
     }
@@ -35,6 +35,6 @@ public class VertexIndexHandle
      */
     public final void draw(int primitiveType)
     {
-        indexBuffer.draw(primitiveType, numVertices, byteOffset);
+        indexBuffer.draw(primitiveType, numIndices, byteOffset);
     }
 }

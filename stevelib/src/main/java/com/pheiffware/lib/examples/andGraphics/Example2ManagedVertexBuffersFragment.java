@@ -121,18 +121,13 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
 
             //Scale down everything drawn by a factor of 5.
             Matrix4 view = Matrix4.newScale(0.2f, 0.2f, 1f);
-
-            color2DTechnique.bind();
-            color2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
-            color2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, view);
-            handle1.drawTriangles();
-
-            colorTexture2DTechnique.bind();
-            colorTexture2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
-            colorTexture2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, view);
-
-            handle2.drawTriangles();
-            handle3.drawTriangles();
+            RenderPropertyValue[] propertyValues = {
+                    new RenderPropertyValue(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix),
+                    new RenderPropertyValue(RenderProperty.VIEW_MATRIX, view)
+            };
+            handle1.drawTriangles(propertyValues);
+            handle2.drawTriangles(propertyValues);
+            handle3.drawTriangles(propertyValues);
             globalTestColor += 0.01;
         }
 

@@ -1,6 +1,9 @@
 package com.pheiffware.lib.graphics.managed.engine.newEngine;
 
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 
 /**
@@ -10,6 +13,14 @@ import java.util.List;
 public abstract class Renderer
 {
     private final List<ObjectHandle> renderList = new ArrayList<>(1000);
+
+    //Properties which will should set once for every technique which supports them (such as the perspective matrix)
+    private final EnumMap<RenderProperty, Object> constantRenderProperties = new EnumMap<>(RenderProperty.class);
+
+    public final void setRenderProperty(RenderProperty renderProperty, Object value)
+    {
+        constantRenderProperties.put(renderProperty, value);
+    }
 
     public final void add(ObjectHandle objectHandle)
     {
@@ -25,6 +36,7 @@ public abstract class Renderer
     {
         renderImplement();
         renderList.clear();
+        constantRenderProperties.clear();
     }
 
     protected void renderPass(BaseRenderPass renderPass)

@@ -11,6 +11,6 @@ public class SimpleRenderer extends Renderer
     @Override
     protected void renderImplement()
     {
-
+        renderPass(new SimpleRenderPass());
     }
 }
