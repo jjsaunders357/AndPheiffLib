@@ -93,8 +93,8 @@ public class TextureMaterialTechnique extends Technique
 
         ambientLightColorUniform.setValue(getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR));
         Texture texture = (Texture) getPropertyValue(RenderProperty.MAT_COLOR_TEXTURE);
-        texture.autoBind();
-        matSamplerUniform.setValue(texture.getBoundTextureUnitIndex());
+
+        matSamplerUniform.setValue(texture.autoBind());
         float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
