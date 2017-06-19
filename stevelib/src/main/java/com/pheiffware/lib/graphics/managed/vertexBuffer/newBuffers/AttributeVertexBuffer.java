@@ -13,18 +13,8 @@ import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
 public abstract class AttributeVertexBuffer extends VertexBuffer
 {
     /**
-     * Binds the attributes of the buffer, specified in vertexAttributes to the given program.  Any attribute not used by the program is ignored.
-     *
-     * @param program program to use (assumed to bound already)
-     * @param handle  the handle to vertex data
-     */
-    public final void bindToProgram(Program program, VertexAttributeHandle handle)
-    {
-        bindToProgram(program, handle.vertexAttributes, handle.byteOffset);
-    }
-
-    /**
-     * Binds the attributes of the buffer, specified in vertexAttributes to the given program.  Any attribute not used by the program is ignored.
+     * Binds the attributes of the buffer, specified in vertexAttributes to the given program (assumed to already be bound).
+     * Any attribute not used by the program is ignored.
      * ASSUMES ALL ATTRIBUTES PACKED IN ORDER DICTATED BY VertexAttribute Enum!!!s
      *
      * @param program          program to use (assumed to bound already)

@@ -16,8 +16,8 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshDataManager;
+import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
@@ -101,7 +101,7 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             ByteBuffer byteBuffer;
-            byteBuffer = manager.edit(handle2);
+            byteBuffer = handle2.edit();
             for (int i = 0; i < 4; i++)
             {
                 byteBuffer.putFloat(0f);
@@ -109,7 +109,7 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
                 byteBuffer.putFloat(globalTestColor);
                 byteBuffer.putFloat(1f);
             }
-            byteBuffer = manager.edit(handle1);
+            byteBuffer = handle1.edit();
             for (int i = 0; i < 4; i++)
             {
                 byteBuffer.putFloat(1f);
@@ -125,14 +125,14 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
             color2DTechnique.bind();
             color2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
             color2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, view);
-            manager.drawTriangles(handle1);
+            handle1.drawTriangles();
 
             colorTexture2DTechnique.bind();
             colorTexture2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
             colorTexture2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, view);
 
-            manager.drawTriangles(handle2);
-            manager.drawTriangles(handle3);
+            handle2.drawTriangles();
+            handle3.drawTriangles();
             globalTestColor += 0.01;
         }
 

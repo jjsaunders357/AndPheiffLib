@@ -1,7 +1,5 @@
 package com.pheiffware.lib.graphics.managed.engine.newEngine;
 
-import android.opengl.GLES20;
-
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
@@ -53,8 +51,15 @@ public class MeshDataManager
             EnumSet<VertexAttribute> staticAttributes = EnumSet.copyOf(mesh.getAttributes());
             staticAttributes.removeAll(dynamicAttributes);
 
-            sHandle = staticPacker.addMesh(mesh, staticAttributes);
             dHandle = dynamicPacker.addMesh(mesh, dynamicAttributes);
+            if (staticAttributes.size() > 0)
+            {
+                sHandle = staticPacker.addMesh(mesh, staticAttributes);
+            }
+            else
+            {
+                sHandle = null;
+            }
         }
         else
         {
@@ -98,54 +103,6 @@ public class MeshDataManager
         indexBuffer.transfer();
         staticBuffer.transfer();
         dynamicBuffer.transfer();
-    }
-
-    public final void drawTriangles(MeshHandle vertexDataHandle)
-    {
-        draw(vertexDataHandle, vertexDataHandle.technique, GLES20.GL_TRIANGLES);
-    }
-
-    public final void drawTriangles(MeshHandle vertexDataHandle, RenderPropertyValue[] renderProperties)
-    {
-        draw(vertexDataHandle, vertexDataHandle.technique, renderProperties, GLES20.GL_TRIANGLES);
-    }
-
-    public final void draw(MeshHandle vertexDataHandle, Technique technique, int primitiveType)
-    {
-        technique.setProperties(vertexDataHandle.renderProperties);
-        technique.applyProperties();
-
-        technique.bindToVertexBuffer(staticBuffer, vertexDataHandle.sHandle);
-        if (vertexDataHandle.dHandle != null)
-        {
-            technique.bindToVertexBuffer(dynamicBuffer, vertexDataHandle.dHandle);
-        }
-        indexBuffer.draw(primitiveType, vertexDataHandle.iHandle);
-    }
-
-    public final void draw(MeshHandle vertexDataHandle, Technique technique, RenderPropertyValue[] renderProperties, int primitiveType)
-    {
-        technique.setProperties(vertexDataHandle.renderProperties);
-        technique.setProperties(renderProperties);
-        technique.applyProperties();
-        technique.bindToVertexBuffer(staticBuffer, vertexDataHandle.sHandle);
-        if (vertexDataHandle.dHandle != null)
-        {
-            technique.bindToVertexBuffer(dynamicBuffer, vertexDataHandle.dHandle);
-        }
-        indexBuffer.draw(primitiveType, vertexDataHandle.iHandle);
-    }
-
-    /**
-     * Edit the dynamic portion of the given handle.
-     *
-     * @param handle handle to data to edit
-     * @return buffer with position and limit set appropriately to perform edit.
-     */
-
-    public ByteBuffer edit(MeshHandle handle)
-    {
-        return dynamicBuffer.edit(handle.dHandle);
     }
 
     /**

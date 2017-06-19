@@ -71,7 +71,7 @@ public class MeshVertexDataPacker
         for (Map.Entry<EnumSet<VertexAttribute>, List<Mesh>> entry : meshTypeLists.entrySet())
         {
             VertexAttributes vertexAttributes = new VertexAttributes(entry.getKey());
-            putAllMeshesOfType(byteBuffer, vertexAttributes, entry.getValue());
+            putAllMeshesOfType(vertexBuffer, byteBuffer, vertexAttributes, entry.getValue());
         }
         meshTypeLists.clear();
         meshToHandleMap.clear();
@@ -102,18 +102,19 @@ public class MeshVertexDataPacker
     /**
      * Put all meshes of the given "Type" in the buffer at its current position.
      *
+     * @param vertexBuffer     the vertex buffer containing the data
      * @param byteBuffer       the byte buffer to put the data in.
      * @param vertexAttributes the type of the meshes
      * @param meshList         the list of meshes, of this type, to transfer
      */
-    private void putAllMeshesOfType(ByteBuffer byteBuffer, VertexAttributes vertexAttributes, List<Mesh> meshList)
+    private void putAllMeshesOfType(AttributeVertexBuffer vertexBuffer, ByteBuffer byteBuffer, VertexAttributes vertexAttributes, List<Mesh> meshList)
     {
         for (Mesh mesh : meshList)
         {
             int byteOffset = byteBuffer.position();
             putMesh(byteBuffer, mesh, vertexAttributes);
             VertexAttributeHandle handle = meshToHandleMap.get(mesh);
-            handle.setup(byteOffset, mesh.getNumVertices(), vertexAttributes);
+            handle.setup(byteOffset, mesh.getNumVertices(), vertexAttributes, vertexBuffer);
         }
     }
 

@@ -38,10 +38,4 @@ public class DynamicAttributeBuffer extends AttributeVertexBuffer
     {
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, bytesToTransfer, byteBuffer, GLES20.GL_DYNAMIC_DRAW);
     }
-
-    public ByteBuffer edit(VertexAttributeHandle handle)
-    {
-        return editBuffer(handle.byteOffset, handle.byteLimit);
-    }
-
 }

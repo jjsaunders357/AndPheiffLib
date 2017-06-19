@@ -64,7 +64,7 @@ public class MeshVertexIndexPacker
             VertexIndexHandle meshHandle = meshH.next();
             int byteOffset = byteBuffer.position();
             putMesh(byteBuffer, mesh);
-            meshHandle.setup(mesh.getNumVertices(), byteOffset);
+            meshHandle.setup(mesh.getNumVertices(), byteOffset, indexBuffer);
         }
         meshes.clear();
         meshHandles.clear();
