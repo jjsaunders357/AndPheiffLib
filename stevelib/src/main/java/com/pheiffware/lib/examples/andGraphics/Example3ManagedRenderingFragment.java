@@ -1,5 +1,6 @@
 package com.pheiffware.lib.examples.andGraphics;
 
+import android.opengl.GLES20;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -8,21 +9,23 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.and.gui.graphics.openGL.TouchTransformGameView;
-import com.pheiffware.lib.geometry.collada.Collada;
-import com.pheiffware.lib.geometry.collada.ColladaFactory;
-import com.pheiffware.lib.geometry.collada.ColladaObject3D;
+import com.pheiffware.lib.geometry.collada.ColladaMaterial;
+import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.engine.newEngine.ColladaLoader;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.ObjectHandle;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.ObjectManager;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.renderers.SimpleRenderer;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
+import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -39,15 +42,74 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         return new TouchTransformGameView(getContext(), new Example3ManagedRenderingFragment.Renderer(), FilterQuality.MEDIUM, false, true);
     }
 
+    static class ExampleColladaLoader extends ColladaLoader
+    {
+        private final Technique colorTechnique;
+        private final Technique textureTechnique;
+
+        public ExampleColladaLoader(ObjectManager objectManager,
+                                    GLCache glCache,
+                                    AssetLoader al,
+                                    String imageDirectory,
+                                    boolean homogenizePositions,
+                                    ColladaMaterial defaultColladaMaterial,
+                                    Technique colorTechnique,
+                                    Technique textureTechnique) throws GraphicsException
+        {
+            super(objectManager, glCache, al, imageDirectory, homogenizePositions, defaultColladaMaterial);
+            this.colorTechnique = colorTechnique;
+            this.textureTechnique = textureTechnique;
+        }
+
+        @Override
+        protected void addMesh(Mesh mesh, ColladaMaterial material, Matrix4 initialMatrix, String name)
+        {
+            Technique technique;
+            RenderPropertyValue[] renderProperties;
+
+            if (material.imageFileName == null)
+            {
+                technique = colorTechnique;
+                renderProperties = new RenderPropertyValue[]
+                        {
+                                new RenderPropertyValue(RenderProperty.MODEL_MATRIX, initialMatrix),
+                                new RenderPropertyValue(RenderProperty.MAT_COLOR, material.diffuseColor.comps),
+                                new RenderPropertyValue(RenderProperty.SPEC_MAT_COLOR, material.specularColor.comps),
+                                new RenderPropertyValue(RenderProperty.SHININESS, material.shininess)
+                        };
+            }
+            else
+            {
+                technique = textureTechnique;
+                renderProperties = new RenderPropertyValue[]
+                        {
+                                new RenderPropertyValue(RenderProperty.MODEL_MATRIX, initialMatrix),
+                                new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, glCache.getTexture(getTexturePath(material.imageFileName))),
+                                new RenderPropertyValue(RenderProperty.SPEC_MAT_COLOR, material.specularColor.comps),
+                                new RenderPropertyValue(RenderProperty.SHININESS, material.shininess)
+                        };
+            }
+
+            objectManager.addStaticMesh(mesh, technique, renderProperties);
+        }
+
+
+        @Override
+        protected void loadTexture(String imageFileName) throws GraphicsException
+        {
+            glCache.createImageTexture(imageFileName, imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+        }
+    }
 
     private static class Renderer extends Example3DRenderer
     {
         private Lighting lighting;
-        private ColorMaterialTechnique colorTechnique;
         private ObjectManager manager;
         private ObjectHandle monkeyHandle;
         private float rotation = 0;
         private SimpleRenderer simpleRenderer;
+        private ColorMaterialTechnique colorTechnique;
+        private TextureMaterialTechnique textureTechnique;
 
         public Renderer()
         {
@@ -64,35 +126,36 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
-            lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             colorTechnique = new ColorMaterialTechnique(al);
-            ColladaFactory colladaFactory = new ColladaFactory(true);
+            textureTechnique = new TextureMaterialTechnique(al);
+            lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            simpleRenderer = new SimpleRenderer();
+            manager = new ObjectManager();
+            ColladaMaterial defaultMaterial = new ColladaMaterial(
+                    "default",
+                    null,
+                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f),
+                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f),
+                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f), 1.0f);
+            ExampleColladaLoader loader = new ExampleColladaLoader(
+                    manager,
+                    glCache,
+                    al,
+                    "images", //Where images are located
+                    true, //Homogenize coordinates
+                    defaultMaterial,
+                    colorTechnique,
+                    textureTechnique);
             try
             {
-                Collada collada = colladaFactory.loadCollada(al, "meshes/test_render.dae");
+                loader.loadCollada("meshes/test_render.dae");
 
-                //Lookup object from loaded file by "name" (what user named it in editing tool)
-                ColladaObject3D monkey = collada.objects.get("Monkey");
-
-                //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
-                Mesh monkeyMesh = monkey.getMesh(0);
-
-                manager = new ObjectManager();
-                monkeyHandle = manager.startObject();
-                manager.addStaticMesh(monkeyMesh, colorTechnique, new RenderPropertyValue[]
-                        {
-                                new RenderPropertyValue(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f}),
-                                new RenderPropertyValue(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f}),
-                                new RenderPropertyValue(RenderProperty.SHININESS, 30.0f)
-                        });
-                manager.endObject();
-                manager.packAndTransfer();
-                simpleRenderer = new SimpleRenderer();
             }
-            catch (IOException | XMLParseException e)
+            catch (XMLParseException | IOException e)
             {
-                throw new GraphicsException(e);
+                throw new RuntimeException("Failure", e);
             }
+            monkeyHandle = loader.getHandle("Monkey");
         }
 
         @Override
