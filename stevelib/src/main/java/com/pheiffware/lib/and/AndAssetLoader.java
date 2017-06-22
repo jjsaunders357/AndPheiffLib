@@ -45,8 +45,8 @@ public class AndAssetLoader extends AssetLoader
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
         bitmap.recycle();
-        filterQuality.applyToBoundTexture(generateMipMaps);
-        TextureUtils.setBoundTextureWrapParameters(sWrapMode, tWrapMode);
+        filterQuality.applyToBoundTexture2D(generateMipMaps);
+        TextureUtils.setBoundTextureWrapParameters2D(sWrapMode, tWrapMode);
         return textureHandle;
     }
 

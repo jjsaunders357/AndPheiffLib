@@ -38,5 +38,8 @@ public enum RenderProperty
     HOLO_PROJECTION,
 
     //The position of a light to use to render a depth buffer from
-    LIGHT_RENDER_POSITION
+    LIGHT_RENDER_POSITION,
+
+    //This is the texture containing depth
+    DEPTH_TEXTURE
 }

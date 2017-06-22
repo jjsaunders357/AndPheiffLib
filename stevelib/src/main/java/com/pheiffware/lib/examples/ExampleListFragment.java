@@ -18,6 +18,7 @@ import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragme
 import com.pheiffware.lib.examples.andGraphics.Example1RawVertexBufferFragment;
 import com.pheiffware.lib.examples.andGraphics.Example2ManagedVertexBuffersFragment;
 import com.pheiffware.lib.examples.andGraphics.Example3ManagedRenderingFragment;
+import com.pheiffware.lib.examples.andGraphics.Example4CubeFrameFragment;
 import com.pheiffware.lib.examples.andGraphics.HolographicExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.ManagedGraphicsExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
@@ -55,9 +56,10 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
     {
         examples = new ArrayList<>(20);
 
-        examples.add(new LibExampleData("Raw Vertex Buffers", Example1RawVertexBufferFragment.class));
-        examples.add(new LibExampleData("Managed Vertex Buffers", Example2ManagedVertexBuffersFragment.class));
+        examples.add(new LibExampleData("Cube-Frame", Example4CubeFrameFragment.class));
         examples.add(new LibExampleData("Managed Render", Example3ManagedRenderingFragment.class));
+        examples.add(new LibExampleData("Managed Vertex Buffers", Example2ManagedVertexBuffersFragment.class));
+        examples.add(new LibExampleData("Raw Vertex Buffers", Example1RawVertexBufferFragment.class));
 
         examples.add(new LibExampleData("Shadows", ShadowExampleFragment.class));
         examples.add(new LibExampleData("Holographic", HolographicExampleFragment.class));

@@ -24,7 +24,7 @@ public class UniformNames
     public static final String LIGHT_POS_EYE_UNIFORM = "lightPositionEyeSpace";
     public static final String LIGHT_POS_UNIFORM = "lightPosition";
     public static final String ON_STATE_UNIFORM = "onState";
-    public static final String MATERIAL_SAMPLER_UNIFORM = "materialColorSampler";
+
     public static final String SHININESS_UNIFORM = "shininess";
 
     public static final String EYE_POSITION_UNIFORM = "eyePosition";
@@ -32,4 +32,7 @@ public class UniformNames
     public static final String ZFAR_UNIFORM = "zFar";
     public static final String ASPECT_RATIO_UNIFORM = "aspectRatio";
     public static final String SCREEN_COLOR_UNIFORM = "screenColor";
+
+    public static final String MATERIAL_SAMPLER_UNIFORM = "materialColorSampler";
+    public static final String DEPTH_SAMPLER_UNIFORM = "depthSampler";
 }

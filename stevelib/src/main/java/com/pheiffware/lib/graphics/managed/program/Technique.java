@@ -47,7 +47,7 @@ public abstract class Technique
     public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, RenderProperty[] properties) throws GraphicsException
     {
         Collections.addAll(this.properties, properties);
-        this.program = (new Program(al, vertexShaderAsset, fragmentShaderAsset));
+        this.program = new Program(al, vertexShaderAsset, fragmentShaderAsset);
     }
 
     /**

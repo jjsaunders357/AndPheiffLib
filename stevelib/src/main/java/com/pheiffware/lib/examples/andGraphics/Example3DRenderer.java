@@ -32,6 +32,8 @@ public abstract class Example3DRenderer implements GameRenderer
     private int frameCounter;
     private int logFramePeriod = 300;
     private TouchAnalyzer touchAnalyzer;
+    private int renderWidth;
+    private int renderHeight;
 
     public Example3DRenderer(float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
     {
@@ -55,10 +57,11 @@ public abstract class Example3DRenderer implements GameRenderer
     @Override
     public void onSurfaceResize(int width, int height)
     {
-        GLES20.glViewport(0, 0, width, height);
+        this.renderWidth = width;
+        this.renderHeight = height;
+        setViewPortToFullWindow();
         camera.setAspect(width / (float) height);
     }
-
 
     @Override
     public void onDrawFrame() throws GraphicsException
@@ -73,6 +76,14 @@ public abstract class Example3DRenderer implements GameRenderer
     }
 
     protected abstract void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException;
+
+    /**
+     * Sets the viewport to the full window being shown.  Useful if viewport is changing due to switching frame buffers and you want to get back to the original.
+     */
+    protected void setViewPortToFullWindow()
+    {
+        GLES20.glViewport(0, 0, renderWidth, renderHeight);
+    }
 
     private void logAverages()
     {

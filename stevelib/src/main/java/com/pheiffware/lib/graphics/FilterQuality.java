@@ -5,23 +5,29 @@ import android.opengl.GLES20;
 /**
  * Created by Steve on 2/13/2016.
  */
-public enum FilterQuality {
+public enum FilterQuality
+{
     LOW // No mip-mapping, use "nearest" filter for everything
             {
                 @Override
-                public void applyToBoundTexture(boolean generateMipMaps) {
+                public void applyToBoundTexture2D(boolean generateMipMaps)
+                {
                     GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
                 }
             },
     MEDIUM // Allow mip-mapping, use "nearest" filter for everything
             {
                 @Override
-                public void applyToBoundTexture(boolean generateMipMaps) {
+                public void applyToBoundTexture2D(boolean generateMipMaps)
+                {
                     GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-                    if (generateMipMaps) {
+                    if (generateMipMaps)
+                    {
                         GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
                         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST_MIPMAP_NEAREST);
-                    } else {
+                    }
+                    else
+                    {
                         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
                     }
 
@@ -30,16 +36,32 @@ public enum FilterQuality {
     HIGH // Allow mip-mapping, use linear filter for everything
             {
                 @Override
-                public void applyToBoundTexture(boolean generateMipMaps) {
+                public void applyToBoundTexture2D(boolean generateMipMaps)
+                {
                     GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-                    if (generateMipMaps) {
+                    if (generateMipMaps)
+                    {
                         GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
                         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);
-                    } else {
+                    }
+                    else
+                    {
                         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
                     }
                 }
+
+                public void applyToBoundTextureCube()
+                {
+                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+                }
             };
 
-    public abstract void applyToBoundTexture(boolean generateMipMaps);
+    public abstract void applyToBoundTexture2D(boolean generateMipMaps);
+
+    public void applyToBoundTextureCube()
+    {
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+    }
 }

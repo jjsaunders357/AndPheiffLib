@@ -35,6 +35,11 @@ public class MeshHandle
 
     public final void drawTriangles()
     {
+        drawTriangles(technique);
+    }
+
+    public final void drawTriangles(Technique technique)
+    {
         technique.bind();
         technique.setProperties(renderProperties);
         technique.applyProperties();
@@ -49,24 +54,24 @@ public class MeshHandle
         iHandle.drawTriangles();
     }
 
-    public final void drawTriangles(RenderPropertyValue[] overrideRenderProperties)
+    public final void drawTriangles(RenderPropertyValue[] renderProperties)
     {
-        drawTriangles(technique, overrideRenderProperties);
+        drawTriangles(technique, renderProperties);
     }
 
-    public final void drawTriangles(Technique overrideTechnique, RenderPropertyValue[] overrideRenderProperties)
+    public final void drawTriangles(Technique technique, RenderPropertyValue[] renderProperties)
     {
-        overrideTechnique.bind();
-        overrideTechnique.setProperties(this.renderProperties);
-        overrideTechnique.setProperties(overrideRenderProperties);
-        overrideTechnique.applyProperties();
+        technique.bind();
+        technique.setProperties(this.renderProperties);
+        technique.setProperties(renderProperties);
+        technique.applyProperties();
         if (sHandle != null)
         {
-            overrideTechnique.bindToVertexBuffer(sHandle);
+            technique.bindToVertexBuffer(sHandle);
         }
         if (dHandle != null)
         {
-            overrideTechnique.bindToVertexBuffer(dHandle);
+            technique.bindToVertexBuffer(dHandle);
         }
         iHandle.drawTriangles();
     }

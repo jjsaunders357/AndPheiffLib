@@ -78,8 +78,8 @@ public class ColorMaterialTechnique extends Technique
     @Override
     public void applyPropertiesToUniforms()
     {
-        Matrix4 projMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
-        projectionUniform.setValue(projMatrix.m);
+        Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
+        projectionUniform.setValue(projectionMatrix.m);
 
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);

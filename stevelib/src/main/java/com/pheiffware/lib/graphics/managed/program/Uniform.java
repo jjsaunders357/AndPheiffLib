@@ -1,6 +1,7 @@
 package com.pheiffware.lib.graphics.managed.program;
 
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 /**
  * Holds stats for one uniform of a program
@@ -211,6 +212,9 @@ public abstract class Uniform
                     }
                 };
             case GLES20.GL_SAMPLER_2D:
+            case GLES20.GL_SAMPLER_CUBE:
+            case GLES30.GL_SAMPLER_2D_SHADOW:
+            case GLES30.GL_SAMPLER_CUBE_SHADOW:
                 return new Uniform(programHandle, name, uniformType, arraySize)
                 {
                     @Override
@@ -219,8 +223,6 @@ public abstract class Uniform
                         GLES20.glUniform1i(location, (int) value);
                     }
                 };
-            case GLES20.GL_SAMPLER_CUBE:
-                throw new RuntimeException("Sampler Cube Uniforms not handled yet.");
             default:
                 throw new RuntimeException("Cannot get size of unsupported opengl uniform type: " + uniformType);
         }

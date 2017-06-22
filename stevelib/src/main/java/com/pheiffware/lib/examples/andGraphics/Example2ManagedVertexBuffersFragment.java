@@ -73,9 +73,9 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
             colorTexture2DTechnique = new ColorTexture2DTechnique(al);
             faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
             manager = new MeshDataManager();
-            Mesh mesh1 = MeshGenUtils.genSingleQuadMesh(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
-            Mesh mesh2 = MeshGenUtils.genSingleQuadMesh(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
-            Mesh mesh3 = MeshGenUtils.genSingleQuadMesh(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
+            Mesh mesh1 = MeshGenUtils.genSingleQuadMeshTexColor(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
+            Mesh mesh2 = MeshGenUtils.genSingleQuadMeshTexColor(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
+            Mesh mesh3 = MeshGenUtils.genSingleQuadMeshTexColor(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
             handle1 = manager.addMesh(
                     mesh1,
                     EnumSet.of(VertexAttribute.COLOR),

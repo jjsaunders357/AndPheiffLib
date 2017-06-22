@@ -1,13 +1,13 @@
 package com.pheiffware.lib.graphics.managed;
 
-import android.opengl.GLES20;
-
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
+import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
@@ -62,7 +62,7 @@ public class GLCache
      */
     public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
     {
-        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode), textureBinder);
+        Texture texture = new Texture2D(al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode), textureBinder);
         textures.put(name, texture);
         return texture;
     }
@@ -127,7 +127,7 @@ public class GLCache
      */
     public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode), textureBinder);
+        Texture texture = new Texture2D(TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode), textureBinder);
         textures.put(name, texture);
         return texture;
     }
@@ -144,7 +144,15 @@ public class GLCache
      */
     public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        Texture texture = new Texture(GLES20.GL_TEXTURE_2D, TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode), textureBinder);
+        Texture texture = new Texture2D(TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode), textureBinder);
+        textures.put(name, texture);
+        return texture;
+    }
+
+    public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality)
+    {
+        //TODO: Page 258
+        TextureCubeMap texture = new TextureCubeMap(TextureUtils.genCubeTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality), textureBinder);
         textures.put(name, texture);
         return texture;
     }
@@ -178,6 +186,13 @@ public class GLCache
     {
         return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
     }
+
+    public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight)
+    {
+        return createCubeDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality);
+
+    }
+
 
     public void deallocate()
     {

@@ -39,6 +39,11 @@ public abstract class ColladaLoader
 
     public final void loadCollada(String assetPath) throws XMLParseException, IOException, GraphicsException
     {
+        loadCollada(assetPath, "main");
+    }
+
+    public final void loadCollada(String assetPath, String defaultGroupID) throws XMLParseException, IOException, GraphicsException
+    {
         Collada collada = colladaFactory.loadCollada(al, assetPath);
         for (String imageFileName : collada.imageFileNames)
         {
@@ -51,20 +56,18 @@ public abstract class ColladaLoader
         }
         for (ColladaObject3D object3D : collada.anonymousObjects)
         {
-            addObject(null, object3D);
+            addObject(null, defaultGroupID, object3D);
         }
         for (Map.Entry<String, ColladaObject3D> entry : collada.objects.entrySet())
         {
-            addObject(entry.getKey(), entry.getValue());
+            addObject(entry.getKey(), defaultGroupID, entry.getValue());
         }
-        objectManager.packAndTransfer();
     }
 
-
-    protected void addObject(String name, ColladaObject3D object3D)
+    protected void addObject(String name, String defaultGroupID, ColladaObject3D object3D)
     {
         Matrix4 initialMatrix = object3D.getInitialMatrix();
-        ObjectHandle objectHandle = objectManager.startObject();
+        ObjectHandle objectHandle = objectManager.startObject(getGroupID(name, object3D, defaultGroupID));
         if (name != null)
         {
             objectHandleMap.put(name, objectHandle);
@@ -78,9 +81,15 @@ public abstract class ColladaLoader
         objectManager.endObject();
     }
 
+
     protected String getTexturePath(String imageFileName)
     {
         return imageDirectory + "/" + imageFileName;
+    }
+
+    protected String getGroupID(String objectName, ColladaObject3D object3D, String defaultGroupID)
+    {
+        return defaultGroupID;
     }
 
     protected abstract void addMesh(Mesh mesh, ColladaMaterial material, Matrix4 initialMatrix, String name);

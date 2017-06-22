@@ -28,10 +28,10 @@ public class MeshGenUtils
         {
             return new float[]
                     {
-                            -size + x, -size + y, 0f, 1,
-                            -size + x, size + y, 0f, 1,
-                            size + x, size + y, 0f, 1,
-                            size + x, -size + y, 0f, 1,
+                            -size + x, -size + y, -1f, 1,
+                            -size + x, size + y, -1f, 1,
+                            size + x, size + y, -1f, 1,
+                            size + x, -size + y, -1f, 1,
                     };
         }
         else
@@ -66,15 +66,23 @@ public class MeshGenUtils
     public static short[] genSingleQuadIndexData()
     {
         return new short[]{
-                0, 1, 2, 0, 2, 3
+                2, 1, 0, 3, 2, 0
         };
     }
 
-    public static Mesh genSingleQuadMesh(float x, float y, float size, VertexAttribute positionType, float[] color)
+    public static Mesh genSingleQuadMeshTexColor(float x, float y, float size, VertexAttribute positionType, float[] color)
     {
         EnumMap<VertexAttribute, float[]> data = new EnumMap<>(VertexAttribute.class);
         data.put(positionType, genSingleQuadPositionData(x, y, size, positionType));
         data.put(VertexAttribute.COLOR, genSingleQuadColorData(color));
+        data.put(VertexAttribute.TEXCOORD, genSingleQuadTexData());
+        return new Mesh(6, data, genSingleQuadIndexData());
+    }
+
+    public static Mesh genSingleQuadMeshTexOnly(float x, float y, float size, VertexAttribute positionType)
+    {
+        EnumMap<VertexAttribute, float[]> data = new EnumMap<>(VertexAttribute.class);
+        data.put(positionType, genSingleQuadPositionData(x, y, size, positionType));
         data.put(VertexAttribute.TEXCOORD, genSingleQuadTexData());
         return new Mesh(6, data, genSingleQuadIndexData());
     }

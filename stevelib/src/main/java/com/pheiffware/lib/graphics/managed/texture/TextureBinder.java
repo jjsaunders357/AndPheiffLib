@@ -16,7 +16,7 @@ public class TextureBinder
 
     public TextureBinder(int numTextureUnits, TextureBindingStrategy textureBindingStrategy)
     {
-        Texture nullTexture = new Texture(0, 0, null);
+        Texture nullTexture = new Texture2D(0, null);
         boundTextures = new Texture[numTextureUnits];
         for (int i = 0; i < boundTextures.length; i++)
         {

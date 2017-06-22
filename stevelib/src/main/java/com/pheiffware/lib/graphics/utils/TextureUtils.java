@@ -5,6 +5,7 @@
 package com.pheiffware.lib.graphics.utils;
 
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.pheiffware.lib.graphics.FilterQuality;
 
@@ -49,8 +50,8 @@ public class TextureUtils
         {
             GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, pixelWidth, pixelHeight, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, null);
         }
-        filterQuality.applyToBoundTexture(false);
-        setBoundTextureWrapParameters(sWrapMode, tWrapMode);
+        filterQuality.applyToBoundTexture2D(false);
+        setBoundTextureWrapParameters2D(sWrapMode, tWrapMode);
         return textureHandle;
     }
 
@@ -66,13 +67,37 @@ public class TextureUtils
      */
     public static int genTextureForDepthRendering(int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
     {
-        //TODO: Could be replaced by a renderbuffer.  This supports multi-sampling.  After multi-sample, blit to a texture is required.  (opengl 3.0 only).
         int textureHandle = genTexture();
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
                 GLES20.GL_UNSIGNED_SHORT, null);
-        filterQuality.applyToBoundTexture(false);
-        setBoundTextureWrapParameters(sWrapMode, tWrapMode);
+        filterQuality.applyToBoundTexture2D(false);
+        setBoundTextureWrapParameters2D(sWrapMode, tWrapMode);
+        return textureHandle;
+    }
+
+    public static int genCubeTextureForDepthRendering(int pixelWidth, int pixelHeight, FilterQuality filterQuality)
+    {
+        int textureHandle = genTexture();
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureHandle);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
+                GLES20.GL_UNSIGNED_SHORT, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
+                GLES20.GL_UNSIGNED_SHORT, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
+                GLES20.GL_UNSIGNED_SHORT, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
+                GLES20.GL_UNSIGNED_SHORT, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
+                GLES20.GL_UNSIGNED_SHORT, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
+                GLES20.GL_UNSIGNED_SHORT, null);
+
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_COMPARE_MODE, GLES30.GL_COMPARE_REF_TO_TEXTURE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_COMPARE_FUNC, GLES30.GL_LEQUAL);
+        filterQuality.applyToBoundTextureCube();
+        //TODO: Page 419
+        //float texture (samplerCubeShadow sampler, vec4 P [, float bias] )
         return textureHandle;
     }
 
@@ -82,7 +107,7 @@ public class TextureUtils
      * @param sWrapMode typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @param tWrapMode typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      */
-    public static void setBoundTextureWrapParameters(int sWrapMode, int tWrapMode)
+    public static void setBoundTextureWrapParameters2D(int sWrapMode, int tWrapMode)
     {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrapMode);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrapMode);
@@ -90,9 +115,10 @@ public class TextureUtils
 
     /**
      * Binds a the given texture handle to a sampler index.
+     *
      * @param textureHandle
      * @param samplerIndex
-     * @param textureType the type of the texture such as GL_TEXTURE_2D
+     * @param textureType   the type of the texture such as GL_TEXTURE_2D
      */
     public static void bindTextureToSampler(int textureHandle, int samplerIndex, int textureType)
     {
@@ -105,4 +131,5 @@ public class TextureUtils
     {
         bindTextureToSampler(textureHandle, samplerIndex, GLES20.GL_TEXTURE_2D);
     }
+
 }
