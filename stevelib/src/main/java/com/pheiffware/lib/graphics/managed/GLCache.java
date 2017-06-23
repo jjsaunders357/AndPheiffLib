@@ -1,5 +1,9 @@
 package com.pheiffware.lib.graphics.managed;
 
+import android.graphics.Bitmap;
+import android.opengl.GLES20;
+import android.opengl.GLUtils;
+
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -9,8 +13,8 @@ import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,16 +59,29 @@ public class GLCache
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
      * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrap, int tWrap) throws GraphicsException
     {
-        Texture texture = new Texture2D(al.loadGLTextureFromImage(imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode), textureBinder);
-        textures.put(name, texture);
-        return texture;
+        try
+        {
+            Bitmap bitmap = al.loadBitmap(imageAssetPath);
+            Texture2D texture = new Texture2D(textureBinder, bitmap.getWidth(), bitmap.getHeight());
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+            bitmap.recycle();
+            filterQuality.applyToBoundTexture2D(generateMipMaps);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
+            textures.put(name, texture);
+            return texture;
+        }
+        catch (IOException e)
+        {
+            throw new GraphicsException(e);
+        }
     }
 
     /**
@@ -73,14 +90,14 @@ public class GLCache
      * @param name            a name for retrieval later
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, int sWrap, int tWrap) throws GraphicsException
     {
-        return createImageTexture(name, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createImageTexture(name, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrap, tWrap);
     }
 
     /**
@@ -89,14 +106,14 @@ public class GLCache
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
      * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrap, int tWrap) throws GraphicsException
     {
-        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, filterQuality, sWrapMode, tWrapMode);
+        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, filterQuality, sWrap, tWrap);
     }
 
     /**
@@ -104,14 +121,14 @@ public class GLCache
      *
      * @param imageAssetPath  image path
      * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      * @throws GraphicsException
      */
-    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrapMode, int tWrapMode) throws GraphicsException
+    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrap, int tWrap) throws GraphicsException
     {
-        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrap, tWrap);
     }
 
     /**
@@ -121,13 +138,24 @@ public class GLCache
      * @param pixelHeight   height
      * @param alpha         should there be an alpha channel?
      * @param filterQuality HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
+    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrap, int tWrap)
     {
-        Texture texture = new Texture2D(TextureUtils.genTextureForColorRendering(pixelWidth, pixelHeight, alpha, filterQuality, sWrapMode, tWrapMode), textureBinder);
+        Texture texture = new Texture2D(textureBinder, pixelWidth, pixelHeight);
+        if (alpha)
+        {
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, pixelWidth, pixelHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+        }
+        else
+        {
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, pixelWidth, pixelHeight, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, null);
+        }
+        filterQuality.applyToBoundTexture2D(false);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
         textures.put(name, texture);
         return texture;
     }
@@ -138,13 +166,17 @@ public class GLCache
      * @param pixelWidth    width
      * @param pixelHeight   height
      * @param filterQuality HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
+    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrap, int tWrap)
     {
-        Texture texture = new Texture2D(TextureUtils.genTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality, sWrapMode, tWrapMode), textureBinder);
+        Texture texture = new Texture2D(textureBinder, pixelWidth, pixelHeight);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT, GLES20.GL_UNSIGNED_SHORT, null);
+        filterQuality.applyToBoundTexture2D(false);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
         textures.put(name, texture);
         return texture;
     }
@@ -155,13 +187,13 @@ public class GLCache
      * @param pixelWidth  width
      * @param pixelHeight height
      * @param alpha       should there be an alpha channel?
-     * @param sWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, int sWrapMode, int tWrapMode)
+    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, int sWrap, int tWrap)
     {
-        return createColorRenderTexture(name, pixelWidth, pixelHeight, alpha, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createColorRenderTexture(name, pixelWidth, pixelHeight, alpha, defaultFilterQuality, sWrap, tWrap);
     }
 
     /**
@@ -169,27 +201,26 @@ public class GLCache
      *
      * @param pixelWidth  width
      * @param pixelHeight height
-     * @param sWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode   typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param sWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
+     * @param tWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
      * @return GL handle to texture
      */
-    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrapMode, int tWrapMode)
+    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrap, int tWrap)
     {
-        return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
+        return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrap, tWrap);
     }
 
     public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality)
     {
         //TODO: Page 258
-        TextureCubeMap texture = new TextureCubeMap(TextureUtils.genCubeTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality), textureBinder);
-        textures.put(name, texture);
-        return texture;
+        //TODO: Mipmap building
+        return null;
     }
 
     public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight)
     {
-        return createCubeDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality);
 
+        return null;
     }
 
 

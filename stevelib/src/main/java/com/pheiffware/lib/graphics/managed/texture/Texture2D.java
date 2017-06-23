@@ -8,10 +8,12 @@ import android.opengl.GLES20;
 
 public class Texture2D extends Texture
 {
-    public Texture2D(int handle, TextureBinder textureBinder)
+    public Texture2D(TextureBinder textureBinder, int width, int height)
     {
-        super(GLES20.GL_TEXTURE_2D, handle, textureBinder);
+        super(GLES20.GL_TEXTURE_2D, textureBinder);
     }
+
+
 
     @Override
     public void attach(int attachmentPoint)

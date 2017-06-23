@@ -2,13 +2,8 @@ package com.pheiffware.lib.and;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.opengl.GLES20;
-import android.opengl.GLUtils;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,53 +22,10 @@ public class AndAssetLoader extends AssetLoader
         this.assetManager = assetManager;
     }
 
-    /**
-     * Loads a bitmap into a texture.
-     *
-     * @param bitmap          bitmap to load into text
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    private int genTextureFromImage(Bitmap bitmap, boolean generateMipMaps,
-                                    FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
+    @Override
+    public Bitmap loadBitmap(String assetPath) throws IOException
     {
-        int textureHandle = TextureUtils.genTexture();
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-        bitmap.recycle();
-        filterQuality.applyToBoundTexture2D(generateMipMaps);
-        TextureUtils.setBoundTextureWrapParameters2D(sWrapMode, tWrapMode);
-        return textureHandle;
-    }
-
-    /**
-     * Loads an image into a newly created texture.
-     *
-     * @param assetPath       image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    public int loadGLTextureFromImage(String assetPath, boolean generateMipMaps,
-                                      FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException
-    {
-        Bitmap bitmap;
-        try
-        {
-            bitmap = AndUtils.loadBitmapAsset(assetManager, assetPath);
-            return genTextureFromImage(bitmap, generateMipMaps, filterQuality, sWrapMode, tWrapMode);
-        }
-        catch (IOException exception)
-        {
-            throw new GraphicsException(exception);
-        }
+        return AndUtils.loadBitmapAsset(assetManager, assetPath);
     }
 
     @Override

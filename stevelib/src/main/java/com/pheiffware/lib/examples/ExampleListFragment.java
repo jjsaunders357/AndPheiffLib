@@ -23,7 +23,6 @@ import com.pheiffware.lib.examples.andGraphics.HolographicExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.ManagedGraphicsExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
-import com.pheiffware.lib.examples.andGraphics.ShadowExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.TextureBoxExampleFragment;
 import com.pheiffware.lib.examples.physics.TestPhysicsExampleFragment;
 
@@ -61,7 +60,6 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
         examples.add(new LibExampleData("Managed Vertex Buffers", Example2ManagedVertexBuffersFragment.class));
         examples.add(new LibExampleData("Raw Vertex Buffers", Example1RawVertexBufferFragment.class));
 
-        examples.add(new LibExampleData("Shadows", ShadowExampleFragment.class));
         examples.add(new LibExampleData("Holographic", HolographicExampleFragment.class));
         examples.add(new LibExampleData("Collada Managed Graphics", ColladaLoaderExampleFragment.class));
         examples.add(new LibExampleData("Managed Graphics", ManagedGraphicsExampleFragment.class));

@@ -16,7 +16,14 @@ public class TextureBinder
 
     public TextureBinder(int numTextureUnits, TextureBindingStrategy textureBindingStrategy)
     {
-        Texture nullTexture = new Texture2D(0, null);
+        Texture nullTexture = new Texture(0, null)
+        {
+            @Override
+            public void attach(int attachmentPoint)
+            {
+                throw new UnsupportedOperationException("Cannot attache nullTexture");
+            }
+        };
         boundTextures = new Texture[numTextureUnits];
         for (int i = 0; i < boundTextures.length; i++)
         {

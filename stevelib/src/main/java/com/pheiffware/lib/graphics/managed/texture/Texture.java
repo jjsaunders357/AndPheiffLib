@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed.texture;
 
+import android.opengl.GLES20;
+
 import com.pheiffware.lib.graphics.managed.frameBuffer.RenderTarget;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
@@ -12,7 +14,7 @@ import com.pheiffware.lib.graphics.utils.TextureUtils;
 public abstract class Texture implements RenderTarget
 {
     //The type of the texture such as GL_TEXTURE_2D
-    final int type;
+    private final int type;
 
     //The openGL handle to this texture
     final int handle;
@@ -21,7 +23,7 @@ public abstract class Texture implements RenderTarget
     int attachmentLevel = 0;
 
     //Reference back to the central texture manager.  This is what actually assigns textures to texture units.
-    final TextureBinder textureBinder;
+    private final TextureBinder textureBinder;
 
     //The texture unit this texture is bound to or -1 if currently unbound.  This could be held by the texture manager, but this is easier/more efficient than keeping a HashMap there.
     int boundTextureUnitIndex = -1;
@@ -29,16 +31,12 @@ public abstract class Texture implements RenderTarget
     //A priority associated with this texture, in terms of desirability to keep it bound to a texture unit.  This could be held by the texture manager, but this is easier/more efficient than keeping a HashMap there.
     double texturePriority = 0;
 
-    public Texture(int type, int handle, TextureBinder textureBinder)
+    public Texture(int type, TextureBinder textureBinder)
     {
+        this.handle = TextureUtils.genTexture();
         this.type = type;
-        this.handle = handle;
         this.textureBinder = textureBinder;
-    }
-
-    public final int getHandle()
-    {
-        return handle;
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, handle);
     }
 
     /**

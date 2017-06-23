@@ -1,7 +1,6 @@
 package com.pheiffware.lib;
 
-import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.GraphicsException;
+import android.graphics.Bitmap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,20 +14,8 @@ import java.io.InputStream;
  */
 public abstract class AssetLoader
 {
-    /**
-     * Loads an image into a newly created texture.
-     *
-     * @param assetPath       image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    public abstract int loadGLTextureFromImage(String assetPath, boolean generateMipMaps,
-                                               FilterQuality filterQuality, int sWrapMode, int tWrapMode) throws GraphicsException;
 
+    public abstract Bitmap loadBitmap(String assetPath) throws IOException;
 
     /**
      * Load the contents of the given assetPath as a String.

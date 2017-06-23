@@ -50,18 +50,7 @@ public enum FilterQuality
                     }
                 }
 
-                public void applyToBoundTextureCube()
-                {
-                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-                }
             };
 
     public abstract void applyToBoundTexture2D(boolean generateMipMaps);
-
-    public void applyToBoundTextureCube()
-    {
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-    }
 }
