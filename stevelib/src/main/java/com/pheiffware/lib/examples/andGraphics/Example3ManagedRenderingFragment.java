@@ -1,6 +1,5 @@
 package com.pheiffware.lib.examples.andGraphics;
 
-import android.opengl.GLES20;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -97,7 +96,7 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         @Override
         protected void loadTexture(String imageFileName) throws GraphicsException
         {
-            glCache.createImageTexture(imageFileName, imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            glCache.buildImageTex(imageFileName, imageFileName).build();
         }
     }
 

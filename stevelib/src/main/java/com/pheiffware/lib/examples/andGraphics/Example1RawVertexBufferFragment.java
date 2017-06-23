@@ -68,8 +68,7 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
             programTextureColor = new Program(al, "shaders/2d/color_texture_pos4_2d_vert.glsl", "shaders/2d/color_texture_pos4_2d_frag.glsl");
-            faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-
+            faceTexture = glCache.buildImageTex("face", "images/face.png").build();
 
             indexBuffer = new IndexBuffer();
             staticBuffer = new StaticAttributeBuffer();

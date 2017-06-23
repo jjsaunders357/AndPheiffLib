@@ -63,7 +63,8 @@ public class RenderToTextureExampleFragment extends BaseGameFragment
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
             testProgram = new Program(al, "shaders/test/test_vert_mtc.glsl", "shaders/test/test_frag_mtc.glsl");
-            faceTexture = glCache.createImageTexture("images/face.png", true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            faceTexture = glCache.buildImageTex("face","images/face.png").build();
+
 
             //Creates color texture render target, without alpha channel
             colorRenderTexture = glCache.createColorRenderTexture("colorRender1", 512, 512, false, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);

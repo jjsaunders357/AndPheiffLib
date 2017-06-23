@@ -6,8 +6,9 @@ import com.pheiffware.lib.graphics.managed.frameBuffer.RenderTarget;
 import com.pheiffware.lib.graphics.utils.TextureUtils;
 
 /**
- * Wraps a GL texture handle.  This allows conveniences for binding textures to texture units. The texture unit to bind to can be chosen automatically or manually, BUT CALLS TO
- * BOTH METHODS CANNOT BE MIXED.
+ * Wraps a GL texture handle.  When after construction, the texture will be bound.
+ * <p>
+ * Allows binding to samplers to be managed automatically.
  * <p/>
  * Created by Steve on 2/13/2016.
  */

@@ -1,9 +1,10 @@
-package com.pheiffware.lib.graphics.managed.texture;
+package com.pheiffware.lib.graphics.managed.texture.textureBuilders;
 
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
 
 /**
  * Created by Steve on 6/22/2017.
@@ -13,12 +14,11 @@ public abstract class TextureBuilder<T>
 {
     protected final TextureBinder textureBinder;
     protected FilterQuality filterQuality;
+    protected boolean generateMipMaps;
+
     protected int sWrap = GLES20.GL_CLAMP_TO_EDGE;
     protected int tWrap = GLES20.GL_CLAMP_TO_EDGE;
-    protected boolean colorRenderUseAlpha = false;
-    protected boolean generateMipMaps = true;
-    protected Integer width;
-    protected Integer height;
+    protected boolean hasAlpha = false;
 
     public TextureBuilder(TextureBinder textureBinder, FilterQuality defaultFilterQuality, boolean defaultGenerateMipMaps)
     {
@@ -47,27 +47,15 @@ public abstract class TextureBuilder<T>
         return this;
     }
 
-    public TextureBuilder setColorRenderUseAlpha(boolean colorRenderUseAlpha)
+    public TextureBuilder setHasAlpha(boolean hasAlpha)
     {
-        this.colorRenderUseAlpha = colorRenderUseAlpha;
+        this.hasAlpha = hasAlpha;
         return this;
     }
 
     public TextureBuilder setGenerateMipMaps(boolean generateMipMaps)
     {
         this.generateMipMaps = generateMipMaps;
-        return this;
-    }
-
-    public TextureBuilder setWidth(Integer width)
-    {
-        this.width = width;
-        return this;
-    }
-
-    public TextureBuilder setHeight(Integer height)
-    {
-        this.height = height;
         return this;
     }
 }

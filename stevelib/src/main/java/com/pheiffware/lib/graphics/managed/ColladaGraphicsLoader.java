@@ -38,7 +38,7 @@ public abstract class ColladaGraphicsLoader<M>
             if (material.imageFileName != null && glCache.getTexture(material.imageFileName) == null)
             {
                 String assetPath = imageAssetDirectory + "/" + material.imageFileName;
-                glCache.createImageTexture(material.imageFileName, assetPath, true, defaultWrapMode, defaultWrapMode);
+                glCache.buildImageTex(material.imageFileName, assetPath).setsWrap(defaultWrapMode).settWrap(defaultWrapMode).build();
             }
         }
     }

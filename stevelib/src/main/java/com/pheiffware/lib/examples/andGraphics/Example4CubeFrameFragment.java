@@ -108,7 +108,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         @Override
         protected void loadTexture(String imageFileName) throws GraphicsException
         {
-            glCache.createImageTexture(imageFileName, imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            glCache.buildImageTex(imageFileName, imageFileName).build();
         }
     }
 
@@ -149,7 +149,8 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
 
-            faceTexture = glCache.createImageTexture("images/face.png", true, FilterQuality.MEDIUM, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            faceTexture = glCache.buildImageTex("face", "images/face.png").build();
+
             frameBuffer = new FrameBuffer();
             colorTechnique = new ColorMaterialTechnique(al);
 
@@ -159,7 +160,8 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             depthTechnique = new DepthTechnique(al);
             depthAsColorTechnique = new DepthAsColorTechnique(al);
             depthTexture = glCache.createDepthRenderTexture("depth", 512, 512, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
-            depthColorTexture = glCache.createColorRenderTexture("depthColor", 512, 512, false, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            depthColorTexture = glCache.buildColorRenderTex(512, 512).build();
+
             //cubeTexture = glCache.createCubeDepthRenderTexture("shadow", 512, 512);
             lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();

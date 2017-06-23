@@ -70,7 +70,7 @@ public class TextureBoxExampleFragment extends BaseGameFragment
 
                 //Lookup material from loaded file by "name" (what user named it in editing tool)
                 ColladaMaterial brownBrickMaterial = collada.materialsByName.get("brown_brick");
-                texture = glCache.createImageTexture("images/" + brownBrickMaterial.imageFileName, true, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+                texture = glCache.buildImageTex("brick", "images/" + brownBrickMaterial.imageFileName).build();
 
                 //Lookup object from loaded file by "name" (what user named it in editing tool)
                 ColladaObject3D brickCube = collada.objects.get("brown");

@@ -1,20 +1,18 @@
 package com.pheiffware.lib.graphics.managed;
 
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
-import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
+import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ColorRenderTextureBuilder;
+import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ImageTextureBuilder;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,84 +49,39 @@ public class GLCache
         textureBinder = new TextureBinder(PheiffGLUtils.getNumTextureUnits(), new MostRecentTextureBindingStrategy(PheiffGLUtils.getNumTextureUnits()));
     }
 
+    //TODO: Remove name and just don't load if already present.  Provide an override option.
 
     /**
-     * Loads an image into a newly created texture.
+     * Creates a builder for a 2D texture containing an image.
      *
-     * @param name            a name for retrieval later
-     * @param imageAssetPath  image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
+     * @param name           the name of the texture, which can be used to avoid loading more than once
+     * @param imageAssetPath the location of the image to load
+     * @return a builder to create the texture
      */
-    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrap, int tWrap) throws GraphicsException
+    public ImageTextureBuilder buildImageTex(final String name, String imageAssetPath)
     {
-        try
-        {
-            Bitmap bitmap = al.loadBitmap(imageAssetPath);
-            Texture2D texture = new Texture2D(textureBinder, bitmap.getWidth(), bitmap.getHeight());
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-            bitmap.recycle();
-            filterQuality.applyToBoundTexture2D(generateMipMaps);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
-            textures.put(name, texture);
-            return texture;
-        }
-        catch (IOException e)
-        {
-            throw new GraphicsException(e);
-        }
+        return new ImageTextureBuilder(textureBinder, defaultFilterQuality, true, al, imageAssetPath,
+                new TextureRegister()
+                {
+                    @Override
+                    public void register(Texture texture)
+                    {
+                        textures.put(name, texture);
+                    }
+                }
+        );
     }
 
     /**
-     * Loads an image into a newly created texture. Filter quality defaulted.
+     * Creates a builder for a 2D texture used for color rendering.
      *
-     * @param name            a name for retrieval later
-     * @param imageAssetPath  image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
+     * @param width  width, in pixels, of texture
+     * @param height height, in pixels, of texture
+     * @return a builder to create the texture
      */
-    public Texture createImageTexture(String name, String imageAssetPath, boolean generateMipMaps, int sWrap, int tWrap) throws GraphicsException
+    public ColorRenderTextureBuilder buildColorRenderTex(int width, int height)
     {
-        return createImageTexture(name, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrap, tWrap);
-    }
-
-    /**
-     * Loads an image into a newly created texture.
-     *
-     * @param imageAssetPath  image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param filterQuality   HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, FilterQuality filterQuality, int sWrap, int tWrap) throws GraphicsException
-    {
-        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, filterQuality, sWrap, tWrap);
-    }
-
-    /**
-     * Loads an image into a newly created texture. Filter quality defaulted.
-     *
-     * @param imageAssetPath  image path
-     * @param generateMipMaps Set to true if it makes sense to try to use mip-maps for this texture. This may be ignored based on given filter quality.
-     * @param sWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap           typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     * @throws GraphicsException
-     */
-    public Texture createImageTexture(String imageAssetPath, boolean generateMipMaps, int sWrap, int tWrap) throws GraphicsException
-    {
-        return createImageTexture(imageAssetPath, imageAssetPath, generateMipMaps, defaultFilterQuality, sWrap, tWrap);
+        return new ColorRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
     }
 
     /**
@@ -241,5 +194,10 @@ public class GLCache
     public Texture getTexture(String name)
     {
         return textures.get(name);
+    }
+
+    public interface TextureRegister
+    {
+        void register(Texture texture);
     }
 }
