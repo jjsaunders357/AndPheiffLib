@@ -126,10 +126,4 @@ public class TextureUtils
         GLES20.glActiveTexture(samplerHandle);
         GLES20.glBindTexture(textureType, textureHandle);
     }
-
-    public static void bindTexture2DToSampler(int textureHandle, int samplerIndex)
-    {
-        bindTextureToSampler(textureHandle, samplerIndex, GLES20.GL_TEXTURE_2D);
-    }
-
 }

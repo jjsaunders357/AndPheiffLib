@@ -149,15 +149,6 @@ public class GLCache
         return texture;
     }
 
-    public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality)
-    {
-        //TODO: Page 258
-        TextureCubeMap texture = new TextureCubeMap(TextureUtils.genCubeTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality), textureBinder);
-        textures.put(name, texture);
-        return texture;
-    }
-
-
     /**
      * Generates a texture which can have colors rendered onto it. Filter quality defaulted.
      *
@@ -185,6 +176,14 @@ public class GLCache
     public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrapMode, int tWrapMode)
     {
         return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrapMode, tWrapMode);
+    }
+
+    public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality)
+    {
+        //TODO: Page 258
+        TextureCubeMap texture = new TextureCubeMap(TextureUtils.genCubeTextureForDepthRendering(pixelWidth, pixelHeight, filterQuality), textureBinder);
+        textures.put(name, texture);
+        return texture;
     }
 
     public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight)

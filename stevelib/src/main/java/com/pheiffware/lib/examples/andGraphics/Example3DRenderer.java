@@ -59,7 +59,9 @@ public abstract class Example3DRenderer implements GameRenderer
     {
         this.renderWidth = width;
         this.renderHeight = height;
-        setViewPortToFullWindow();
+        //For renderers which never change from the main FrameBuffer, this keeps the viewport working
+        //Any renderer which does change frame buffer will be changing the viewport manually before rendering anyway and will not be affected by this
+        GLES20.glViewport(0, 0, renderWidth, renderHeight);
         camera.setAspect(width / (float) height);
     }
 
@@ -76,14 +78,6 @@ public abstract class Example3DRenderer implements GameRenderer
     }
 
     protected abstract void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException;
-
-    /**
-     * Sets the viewport to the full window being shown.  Useful if viewport is changing due to switching frame buffers and you want to get back to the original.
-     */
-    protected void setViewPortToFullWindow()
-    {
-        GLES20.glViewport(0, 0, renderWidth, renderHeight);
-    }
 
     private void logAverages()
     {
@@ -134,5 +128,15 @@ public abstract class Example3DRenderer implements GameRenderer
     public void onSensorChanged(SensorEvent event)
     {
 
+    }
+
+    public int getRenderWidth()
+    {
+        return renderWidth;
+    }
+
+    public int getRenderHeight()
+    {
+        return renderHeight;
     }
 }

@@ -68,25 +68,6 @@ public class PheiffGLUtils
         return frameBufferHandles[0];
     }
 
-    /**
-     * Make a given frameBuffer and texture render targets active. Example of setup for rendering to viewport: PheiffGLUtils.bindFrameBuffer(0, -1, -1);
-     * <p/>
-     * Example of setup for rendering to a texture: PheiffGLUtils.bindFrameBuffer(frameBufferHandle, colorRenderTextureHandle, depthRenderTextureHandle);
-     *
-     * @param frameBufferHandle        GL handle to a frame buffer object to use OR 0 for the main framebuffer (viewport)
-     * @param colorRenderTextureHandle GL handle to the texture where colors should be rendered or -1 to not use this feature
-     * @param depthRenderTextureHandle GL handle to the texture where depth information should be rendered  or -1 to not use this feature
-     */
-    public static void bindFrameBuffer(int frameBufferHandle, int colorRenderTextureHandle, int depthRenderTextureHandle)
-    {
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBufferHandle);
-        if (frameBufferHandle != 0)
-        {
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, colorRenderTextureHandle, 0);
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_TEXTURE_2D, depthRenderTextureHandle, 0);
-        }
-    }
-
     public static void assertFrameBufferStatus() throws GraphicsException
     {
         int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
@@ -111,6 +92,8 @@ public class PheiffGLUtils
                 throw new GraphicsException("Operation illegal in current state");
             case GLES20.GL_INVALID_FRAMEBUFFER_OPERATION:
                 throw new GraphicsException("Framebuffer  object  is  not  complete");
+            default:
+                throw new GraphicsException("Unknown exception");
         }
     }
 

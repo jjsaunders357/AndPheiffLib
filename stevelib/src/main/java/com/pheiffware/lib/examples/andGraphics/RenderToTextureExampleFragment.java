@@ -109,7 +109,7 @@ public class RenderToTextureExampleFragment extends BaseGameFragment
         public void onDrawFrame() throws GraphicsException
         {
             //Set to render to texture.
-            frameBuffer.bind();
+            frameBuffer.bind(0, 0, 512, 512);
             frameBuffer.attachColor(0, colorRenderTexture);
             frameBuffer.attachDepth(null);
 
@@ -132,9 +132,8 @@ public class RenderToTextureExampleFragment extends BaseGameFragment
             cb.transferDynamic();
             cb.bind(testProgram);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
-            PheiffGLUtils.bindFrameBuffer(0, -1, -1);
 
-            GLES20.glViewport(0, 0, viewWidth, viewHeight);
+            FrameBuffer.main.bind(0, 0, viewWidth, viewHeight);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             testProgram.bind();
             testProgram.setUniformMatrix4("transformViewMatrix", projectionMatrix.m);

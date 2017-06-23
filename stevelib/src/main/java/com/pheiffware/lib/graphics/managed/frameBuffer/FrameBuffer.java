@@ -15,11 +15,14 @@ public class FrameBuffer
     public static final RenderTarget NULL_RENDER_TARGET = new RenderTarget()
     {
         @Override
-        public void attach(FrameBuffer frameBuffer, int attachmentPoint)
+        public void attach(int attachmentPoint)
         {
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, attachmentPoint, GLES20.GL_TEXTURE_2D, 0, 0);
         }
     };
+
+    //Reference to the main frame buffer
+    public static final FrameBuffer main = new FrameBuffer(0);
 
     //openGL handle to frame buffer object
     private final int handle;
@@ -29,7 +32,7 @@ public class FrameBuffer
         this(PheiffGLUtils.createFrameBuffer());
     }
 
-    public FrameBuffer(int handle)
+    private FrameBuffer(int handle)
     {
         this.handle = handle;
     }
@@ -37,9 +40,10 @@ public class FrameBuffer
     /**
      * Make the frame buffer active.  This must happen before attaching.
      */
-    public final void bind()
+    public final void bind(int viewX, int viewY, int viewWidth, int viewHeight)
     {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, handle);
+        GLES20.glViewport(viewX, viewY, viewWidth, viewHeight);
     }
 
     /**
@@ -54,7 +58,7 @@ public class FrameBuffer
         {
             renderTarget = NULL_RENDER_TARGET;
         }
-        renderTarget.attach(this, GLES20.GL_COLOR_ATTACHMENT0 + colorAttachmentIndex);
+        renderTarget.attach(GLES20.GL_COLOR_ATTACHMENT0 + colorAttachmentIndex);
     }
 
     /**
@@ -68,11 +72,12 @@ public class FrameBuffer
         {
             renderTarget = NULL_RENDER_TARGET;
         }
-        renderTarget.attach(this, GLES20.GL_DEPTH_ATTACHMENT);
+        renderTarget.attach(GLES20.GL_DEPTH_ATTACHMENT);
     }
 
     /**
      * Attach a stencil render target.
+     *
      * @param renderTarget
      */
     public final void attachStencil(RenderTarget renderTarget)
@@ -81,6 +86,6 @@ public class FrameBuffer
         {
             renderTarget = NULL_RENDER_TARGET;
         }
-        renderTarget.attach(this, GLES20.GL_STENCIL_ATTACHMENT);
+        renderTarget.attach(GLES20.GL_STENCIL_ATTACHMENT);
     }
 }

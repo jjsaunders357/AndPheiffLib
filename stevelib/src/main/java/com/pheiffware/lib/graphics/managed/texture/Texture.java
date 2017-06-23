@@ -14,8 +14,11 @@ public abstract class Texture implements RenderTarget
     //The type of the texture such as GL_TEXTURE_2D
     final int type;
 
-    //The openGL handler to this texture
+    //The openGL handle to this texture
     final int handle;
+
+    //When attaching this to a FrameBuffer, use this mip-level as the attachment point
+    int attachmentLevel = 0;
 
     //Reference back to the central texture manager.  This is what actually assigns textures to texture units.
     final TextureBinder textureBinder;
@@ -25,9 +28,6 @@ public abstract class Texture implements RenderTarget
 
     //A priority associated with this texture, in terms of desirability to keep it bound to a texture unit.  This could be held by the texture manager, but this is easier/more efficient than keeping a HashMap there.
     double texturePriority = 0;
-
-    //When attaching this to a FrameBuffer, use this mip-level as the attachment point
-    int attachmentLevel = 0;
 
     public Texture(int type, int handle, TextureBinder textureBinder)
     {
@@ -58,12 +58,6 @@ public abstract class Texture implements RenderTarget
     public final void manualBind(int textureUnitIndex)
     {
         TextureUtils.bindTextureToSampler(handle, textureUnitIndex, type);
-    }
-
-
-    public final int getBoundTextureUnitIndex()
-    {
-        return boundTextureUnitIndex;
     }
 
     public void setAttachmentLevel(int attachmentLevel)

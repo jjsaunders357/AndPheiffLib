@@ -36,7 +36,6 @@ import com.pheiffware.lib.graphics.managed.techniques.Texture2DTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
-import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -227,10 +226,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             texture2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
             texture2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, Matrix4.newIdentity());
             //Remove bindings to frame buffers
-            PheiffGLUtils.bindFrameBuffer(0, -1, -1);
-
-            //TODO: Make frame buffers remember and put this back glGet(GL_VIEWPORT)
-            setViewPortToFullWindow();
+            FrameBuffer.main.bind(0, 0, getRenderWidth(), getRenderHeight());
 
 //            simpleRenderer.add(manager.getGroupObjects("main"));
             simpleRenderer.add(manager.getObjects());
@@ -263,10 +259,10 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             //Set to render depth to cube face
             //cubeTexture.setAttachFace(cubeFace);
 
-            frameBuffer.bind();
+            //TODO: Make dims based on texture dims, which should be accessibly quantities
+            frameBuffer.bind(0, 0, 512, 512);
             frameBuffer.attachColor(0, depthColorTexture);
             frameBuffer.attachDepth(depthTexture);
-            GLES20.glViewport(0, 0, 512, 512);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             depthAsColorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
             depthAsColorTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
@@ -274,5 +270,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             techniqueRenderer.add(manager.getGroupObjects("main"));
             techniqueRenderer.render();
         }
+
+
     }
 }
