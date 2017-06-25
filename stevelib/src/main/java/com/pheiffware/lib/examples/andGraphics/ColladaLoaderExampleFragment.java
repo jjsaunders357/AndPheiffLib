@@ -113,7 +113,7 @@ public class ColladaLoaderExampleFragment extends BaseGameFragment
                         else
                         {
                             renderPropertyValues = new RenderPropertyValue[]{
-                                    new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, glCache.getTexture(colladaMaterial.imageFileName)),
+                                    new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, glCache.getTexture("images/" + colladaMaterial.imageFileName)),
                                     new RenderPropertyValue(RenderProperty.SHININESS, colladaMaterial.shininess),
                                     new RenderPropertyValue(RenderProperty.SPEC_MAT_COLOR, colladaMaterial.specularColor.comps)};
 

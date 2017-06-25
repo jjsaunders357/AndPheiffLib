@@ -1,15 +1,12 @@
 package com.pheiffware.lib.graphics.managed;
 
-import android.opengl.GLES20;
-
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
-import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
-import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ColorRenderTextureBuilder;
+import com.pheiffware.lib.graphics.managed.texture.textureBuilders.DepthRenderTextureBuilder;
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ImageTextureBuilder;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
@@ -30,11 +27,12 @@ import java.util.Map;
  */
 public class GLCache
 {
-    private final Map<String, Texture> textures = new HashMap<>();
+    //Remembered texture images, used to avoid loading the same image twice
+    private final Map<String, Texture2D> textures = new HashMap<>();
     private final FilterQuality defaultFilterQuality;
-    private final int deviceGLVersion;
     private final TextureBinder textureBinder;
     private AssetLoader al;
+    private final int deviceGLVersion;
 
     public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality, AssetLoader al)
     {
@@ -49,27 +47,37 @@ public class GLCache
         textureBinder = new TextureBinder(PheiffGLUtils.getNumTextureUnits(), new MostRecentTextureBindingStrategy(PheiffGLUtils.getNumTextureUnits()));
     }
 
-    //TODO: Remove name and just don't load if already present.  Provide an override option.
+    /**
+     * Allows retrieval of already loaded/cached textures.
+     *
+     * @param ID
+     * @return
+     */
+    public Texture2D getTexture(String ID)
+    {
+        return textures.get(ID);
+    }
+
+    /**
+     * Allows storing of textures, by ID, for retrieval later
+     *
+     * @param ID
+     * @param texture
+     */
+    public void putTexture(String ID, Texture2D texture)
+    {
+        textures.put(ID, texture);
+    }
 
     /**
      * Creates a builder for a 2D texture containing an image.
      *
-     * @param name           the name of the texture, which can be used to avoid loading more than once
      * @param imageAssetPath the location of the image to load
      * @return a builder to create the texture
      */
-    public ImageTextureBuilder buildImageTex(final String name, String imageAssetPath)
+    public ImageTextureBuilder buildImageTex(String imageAssetPath)
     {
-        return new ImageTextureBuilder(textureBinder, defaultFilterQuality, true, al, imageAssetPath,
-                new TextureRegister()
-                {
-                    @Override
-                    public void register(Texture texture)
-                    {
-                        textures.put(name, texture);
-                    }
-                }
-        );
+        return new ImageTextureBuilder(textureBinder, defaultFilterQuality, true, al, imageAssetPath);
     }
 
     /**
@@ -85,95 +93,15 @@ public class GLCache
     }
 
     /**
-     * Generates a texture which can have colors rendered onto it.
+     * Creates a builder for a 2D texture used for depth rendering.
      *
-     * @param pixelWidth    width
-     * @param pixelHeight   height
-     * @param alpha         should there be an alpha channel?
-     * @param filterQuality HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
+     * @param width  width, in pixels, of texture
+     * @param height height, in pixels, of texture
+     * @return a builder to create the texture
      */
-    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrap, int tWrap)
+    public DepthRenderTextureBuilder buildDepthTex(int width, int height)
     {
-        Texture texture = new Texture2D(textureBinder, pixelWidth, pixelHeight);
-        if (alpha)
-        {
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, pixelWidth, pixelHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-        }
-        else
-        {
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, pixelWidth, pixelHeight, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, null);
-        }
-        filterQuality.applyToBoundTexture2D(false);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
-        textures.put(name, texture);
-        return texture;
-    }
-
-    /**
-     * Generates a texture which can have depth rendered onto it.
-     *
-     * @param pixelWidth    width
-     * @param pixelHeight   height
-     * @param filterQuality HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap         typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     */
-    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrap, int tWrap)
-    {
-        Texture texture = new Texture2D(textureBinder, pixelWidth, pixelHeight);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT, GLES20.GL_UNSIGNED_SHORT, null);
-        filterQuality.applyToBoundTexture2D(false);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
-        textures.put(name, texture);
-        return texture;
-    }
-
-    /**
-     * Generates a texture which can have colors rendered onto it. Filter quality defaulted.
-     *
-     * @param pixelWidth  width
-     * @param pixelHeight height
-     * @param alpha       should there be an alpha channel?
-     * @param sWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     */
-    public Texture createColorRenderTexture(String name, int pixelWidth, int pixelHeight, boolean alpha, int sWrap, int tWrap)
-    {
-        return createColorRenderTexture(name, pixelWidth, pixelHeight, alpha, defaultFilterQuality, sWrap, tWrap);
-    }
-
-    /**
-     * Generates a texture which can have depth rendered onto it. Filter quality defaulted.
-     *
-     * @param pixelWidth  width
-     * @param pixelHeight height
-     * @param sWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrap       typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     */
-    public Texture createDepthRenderTexture(String name, int pixelWidth, int pixelHeight, int sWrap, int tWrap)
-    {
-        return createDepthRenderTexture(name, pixelWidth, pixelHeight, defaultFilterQuality, sWrap, tWrap);
-    }
-
-    public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight, FilterQuality filterQuality)
-    {
-        //TODO: Page 258
-        //TODO: Mipmap building
-        return null;
-    }
-
-    public TextureCubeMap createCubeDepthRenderTexture(String name, int pixelWidth, int pixelHeight)
-    {
-
-        return null;
+        return new DepthRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
     }
 
 
@@ -185,19 +113,4 @@ public class GLCache
         //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }
 
-    /**
-     * Retrieve a named texture.
-     *
-     * @param name
-     * @return
-     */
-    public Texture getTexture(String name)
-    {
-        return textures.get(name);
-    }
-
-    public interface TextureRegister
-    {
-        void register(Texture texture);
-    }
 }

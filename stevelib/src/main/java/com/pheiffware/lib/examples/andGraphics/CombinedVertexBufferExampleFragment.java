@@ -58,7 +58,7 @@ public class CombinedVertexBufferExampleFragment extends BaseGameFragment
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
             testProgram = new Program(al, "shaders/test/test_vert_mtc.glsl", "shaders/test/test_frag_mtc.glsl");
-            faceTexture = glCache.buildImageTex("face","images/face.png").build();
+            faceTexture = glCache.buildImageTex("images/face.png").build();
 
             pb = new IndexBuffer(false);
             pb.allocate(2000);

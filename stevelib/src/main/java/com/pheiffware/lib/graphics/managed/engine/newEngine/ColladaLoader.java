@@ -9,6 +9,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -51,7 +52,8 @@ public abstract class ColladaLoader
             //If not already loaded
             if (glCache.getTexture(imageFileName) == null)
             {
-                loadTexture(imageFileName);
+                Texture2D texture = loadTexture2D(imageFileName);
+                glCache.putTexture(imageFileName, texture);
             }
         }
         for (ColladaObject3D object3D : collada.anonymousObjects)
@@ -94,7 +96,7 @@ public abstract class ColladaLoader
 
     protected abstract void addMesh(Mesh mesh, ColladaMaterial material, Matrix4 initialMatrix, String name);
 
-    protected abstract void loadTexture(String imageFileName) throws GraphicsException;
+    protected abstract Texture2D loadTexture2D(String imageFileName) throws GraphicsException;
 
     public ObjectHandle getHandle(String name)
     {

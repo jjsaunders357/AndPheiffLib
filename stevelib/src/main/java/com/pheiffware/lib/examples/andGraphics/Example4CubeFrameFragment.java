@@ -35,6 +35,7 @@ import com.pheiffware.lib.graphics.managed.techniques.DepthTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.Texture2DTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -106,9 +107,9 @@ public class Example4CubeFrameFragment extends BaseGameFragment
 
 
         @Override
-        protected void loadTexture(String imageFileName) throws GraphicsException
+        protected Texture2D loadTexture2D(String imagePath) throws GraphicsException
         {
-            glCache.buildImageTex(imageFileName, imageFileName).build();
+            return glCache.buildImageTex(imagePath).build();
         }
     }
 
@@ -149,7 +150,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
 
-            faceTexture = glCache.buildImageTex("face", "images/face.png").build();
+            faceTexture = glCache.buildImageTex("images/face.png").build();
 
             frameBuffer = new FrameBuffer();
             colorTechnique = new ColorMaterialTechnique(al);
@@ -159,7 +160,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             colorTexture2DTechnique = new ColorTexture2DTechnique(al);
             depthTechnique = new DepthTechnique(al);
             depthAsColorTechnique = new DepthAsColorTechnique(al);
-            depthTexture = glCache.createDepthRenderTexture("depth", 512, 512, GLES20.GL_CLAMP_TO_EDGE, GLES20.GL_CLAMP_TO_EDGE);
+            depthTexture = glCache.buildDepthTex(512, 512).build();
             depthColorTexture = glCache.buildColorRenderTex(512, 512).build();
 
             //cubeTexture = glCache.createCubeDepthRenderTexture("shadow", 512, 512);

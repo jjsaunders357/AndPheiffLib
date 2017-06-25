@@ -71,7 +71,7 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
 
             color2DTechnique = new Color2DTechnique(al);
             colorTexture2DTechnique = new ColorTexture2DTechnique(al);
-            faceTexture = glCache.buildImageTex("face", "images/face.png").build();
+            faceTexture = glCache.buildImageTex("images/face.png").build();
 
             manager = new MeshDataManager();
             Mesh mesh1 = MeshGenUtils.genSingleQuadMeshTexColor(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});

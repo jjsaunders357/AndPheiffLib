@@ -7,7 +7,6 @@ import android.opengl.GLUtils;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
 
@@ -21,14 +20,12 @@ public class ImageTextureBuilder extends TextureBuilder<Texture2D>
 {
     private final AssetLoader assetLoader;
     private final String imageAssetPath;
-    private final GLCache.TextureRegister textureRegister;
 
-    public ImageTextureBuilder(TextureBinder textureBinder, FilterQuality defaultFilterQuality, boolean defaultGenerateMipMaps, AssetLoader assetLoader, String imageAssetPath, GLCache.TextureRegister textureRegister)
+    public ImageTextureBuilder(TextureBinder textureBinder, FilterQuality defaultFilterQuality, boolean defaultGenerateMipMaps, AssetLoader assetLoader, String imageAssetPath)
     {
         super(textureBinder, defaultFilterQuality, defaultGenerateMipMaps);
         this.imageAssetPath = imageAssetPath;
         this.assetLoader = assetLoader;
-        this.textureRegister = textureRegister;
     }
 
     @Override
@@ -45,8 +42,6 @@ public class ImageTextureBuilder extends TextureBuilder<Texture2D>
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
 
-            //Register this texture with its name
-            textureRegister.register(texture);
             return texture;
         }
         catch (IOException exception)

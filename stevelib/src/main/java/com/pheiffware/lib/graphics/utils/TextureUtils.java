@@ -26,56 +26,6 @@ public class TextureUtils
         return textureHandles[0];
     }
 
-    /**
-     * Generates a texture which can have colors rendered onto it.
-     *
-     * @param pixelWidth    width
-     * @param pixelHeight   height
-     * @param alpha         should there be an alpha channel?
-     * @param filterQuality HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     */
-    public static int genTextureForColorRendering(int pixelWidth, int pixelHeight, boolean alpha, FilterQuality filterQuality, int sWrapMode,
-                                                  int tWrapMode)
-    {
-        int textureHandle = genTexture();
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
-        if (alpha)
-        {
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, pixelWidth, pixelHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-        }
-        else
-        {
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, pixelWidth, pixelHeight, 0, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, null);
-        }
-        filterQuality.applyToBoundTexture2D(false);
-        setBoundTextureWrapParameters2D(sWrapMode, tWrapMode);
-        return textureHandle;
-    }
-
-    /**
-     * Generates a texture which can have depth rendered onto it.
-     *
-     * @param pixelWidth    width
-     * @param pixelHeight   height
-     * @param filterQuality HIGH/MEDIUM/LOW (look up my definition)
-     * @param sWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode     typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @return GL handle to texture
-     */
-    public static int genTextureForDepthRendering(int pixelWidth, int pixelHeight, FilterQuality filterQuality, int sWrapMode, int tWrapMode)
-    {
-        int textureHandle = genTexture();
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        filterQuality.applyToBoundTexture2D(false);
-        setBoundTextureWrapParameters2D(sWrapMode, tWrapMode);
-        return textureHandle;
-    }
-
     public static int genCubeTextureForDepthRendering(int pixelWidth, int pixelHeight, FilterQuality filterQuality)
     {
         int textureHandle = genTexture();
@@ -99,18 +49,6 @@ public class TextureUtils
         //TODO: Page 419
         //float texture (samplerCubeShadow sampler, vec4 P [, float bias] )
         return textureHandle;
-    }
-
-    /**
-     * Sets wrap mode for the currently bound texture
-     *
-     * @param sWrapMode typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     * @param tWrapMode typically: GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT
-     */
-    public static void setBoundTextureWrapParameters2D(int sWrapMode, int tWrapMode)
-    {
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrapMode);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrapMode);
     }
 
     /**

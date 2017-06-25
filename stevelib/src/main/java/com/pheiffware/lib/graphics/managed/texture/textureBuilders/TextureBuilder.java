@@ -29,31 +29,31 @@ public abstract class TextureBuilder<T>
 
     public abstract T build() throws GraphicsException;
 
-    public TextureBuilder setFilterQuality(FilterQuality filterQuality)
+    public TextureBuilder<T> setFilterQuality(FilterQuality filterQuality)
     {
         this.filterQuality = filterQuality;
         return this;
     }
 
-    public TextureBuilder setsWrap(int sWrap)
+    public TextureBuilder<T> setsWrap(int sWrap)
     {
         this.sWrap = sWrap;
         return this;
     }
 
-    public TextureBuilder settWrap(int tWrap)
+    public TextureBuilder<T> settWrap(int tWrap)
     {
         this.tWrap = tWrap;
         return this;
     }
 
-    public TextureBuilder setHasAlpha(boolean hasAlpha)
+    public TextureBuilder<T> setHasAlpha(boolean hasAlpha)
     {
         this.hasAlpha = hasAlpha;
         return this;
     }
 
-    public TextureBuilder setGenerateMipMaps(boolean generateMipMaps)
+    public TextureBuilder<T> setGenerateMipMaps(boolean generateMipMaps)
     {
         this.generateMipMaps = generateMipMaps;
         return this;

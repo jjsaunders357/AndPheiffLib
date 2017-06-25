@@ -16,13 +16,6 @@ public class DepthRenderTextureBuilder extends TextureBuilder<Texture2D>
     private final int width;
     private final int height;
 
-    public DepthRenderTextureBuilder(TextureBinder textureBinder, FilterQuality defaultFilterQuality, int width, int height)
-    {
-        super(textureBinder, defaultFilterQuality, false);
-        this.width = width;
-        this.height = height;
-    }
-
     @Override
     public Texture2D build() throws GraphicsException
     {
@@ -34,5 +27,12 @@ public class DepthRenderTextureBuilder extends TextureBuilder<Texture2D>
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
         return texture;
+    }
+
+    public DepthRenderTextureBuilder(TextureBinder textureBinder, FilterQuality defaultFilterQuality, int width, int height)
+    {
+        super(textureBinder, defaultFilterQuality, false);
+        this.width = width;
+        this.height = height;
     }
 }

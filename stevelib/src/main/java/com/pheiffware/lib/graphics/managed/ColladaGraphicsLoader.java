@@ -8,6 +8,7 @@ import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.engine.BaseGraphicsManager;
 import com.pheiffware.lib.graphics.managed.engine.ObjectRenderHandle;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
+import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 
 import java.util.ArrayList;
@@ -35,10 +36,15 @@ public abstract class ColladaGraphicsLoader<M>
     {
         for (ColladaMaterial material : collada.materialsByName.values())
         {
-            if (material.imageFileName != null && glCache.getTexture(material.imageFileName) == null)
+            if (material.imageFileName != null)
             {
-                String assetPath = imageAssetDirectory + "/" + material.imageFileName;
-                glCache.buildImageTex(material.imageFileName, assetPath).setsWrap(defaultWrapMode).settWrap(defaultWrapMode).build();
+                String imagePath = imageAssetDirectory + "/" + material.imageFileName;
+                Texture2D texture = glCache.getTexture(imagePath);
+                if (texture == null)
+                {
+                    texture = glCache.buildImageTex(imagePath).setsWrap(defaultWrapMode).settWrap(defaultWrapMode).build();
+                    glCache.putTexture(imagePath, texture);
+                }
             }
         }
     }

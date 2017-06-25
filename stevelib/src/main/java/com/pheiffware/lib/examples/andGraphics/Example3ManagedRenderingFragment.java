@@ -25,6 +25,7 @@ import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
+import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -94,9 +95,9 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
 
 
         @Override
-        protected void loadTexture(String imageFileName) throws GraphicsException
+        protected Texture2D loadTexture2D(String imagePath) throws GraphicsException
         {
-            glCache.buildImageTex(imageFileName, imageFileName).build();
+            return glCache.buildImageTex(imagePath).build();
         }
     }
 
