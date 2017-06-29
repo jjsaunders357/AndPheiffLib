@@ -36,7 +36,9 @@ import com.pheiffware.lib.graphics.managed.techniques.Texture2DTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
+import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -123,9 +125,9 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         private ColorMaterialTechnique colorTechnique;
         private TextureMaterialTechnique textureTechnique;
         private FrameBuffer frameBuffer;
-        //private TextureCubeMap cubeTexture;
+        private TextureCubeMap cubeColorTexture;
         private Texture depthTexture;
-        private Texture depthColorTexture;
+        //private Texture depthColorTexture;
         private DepthTechnique depthTechnique;
         private Texture2DTechnique texture2DTechnique;
         private TechniqueRenderer techniqueRenderer;
@@ -149,11 +151,10 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
-
             faceTexture = glCache.buildImageTex("images/face.png").build();
-
             frameBuffer = new FrameBuffer();
             colorTechnique = new ColorMaterialTechnique(al);
+
 
             textureTechnique = new TextureMaterialTechnique(al);
             texture2DTechnique = new Texture2DTechnique(al);
@@ -161,9 +162,8 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             depthTechnique = new DepthTechnique(al);
             depthAsColorTechnique = new DepthAsColorTechnique(al);
             depthTexture = glCache.buildDepthTex(512, 512).build();
-            depthColorTexture = glCache.buildColorRenderTex(512, 512).build();
-
-            //cubeTexture = glCache.createCubeDepthRenderTexture("shadow", 512, 512);
+            //depthColorTexture = glCache.buildColorRenderTex(512, 512).build();
+            cubeColorTexture = glCache.buildCubeColorTex(512, 512).build();
             lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();
             techniqueRenderer = new TechniqueRenderer(depthAsColorTechnique);
@@ -191,7 +191,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
                         MeshGenUtils.genSingleQuadMeshTexOnly(-0.8f, -0.6f, 0.2f, VertexAttribute.POSITION4),
                         texture2DTechnique,
                         new RenderPropertyValue[]{
-                                new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, depthColorTexture)
+                                new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, cubeColorTexture)
                         });
                 manager.endObject();
                 manager.packAndTransfer();
@@ -210,7 +210,6 @@ public class Example4CubeFrameFragment extends BaseGameFragment
 
             //Extract eye position from current view
             float[] position = new float[]{-viewMatrix.m[12], -viewMatrix.m[13], -viewMatrix.m[14]};
-            //GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 
             renderViewToTexture(position);
 
@@ -247,7 +246,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             ortho2DMatrix = Matrix4.newOrtho2D(width / (float) height);
         }
 
-        private void renderViewToTexture(float[] renderPosition)
+        private void renderViewToTexture(float[] renderPosition) throws GraphicsException
         {
             //A camera at the render position
             Camera lightCamera = new Camera(90, 1, 0.1f, 100, false);
@@ -260,18 +259,20 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             //camera.rotate(); - no need to rotated for this plane
 
             //Set to render depth to cube face
-            //cubeTexture.setAttachFace(cubeFace);
+            int cubeFace = GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+            cubeColorTexture.setAttachFace(cubeFace);
 
             //TODO: Make dims based on texture dims, which should be accessibly quantities
             frameBuffer.bind(0, 0, 512, 512);
-            frameBuffer.attachColor(0, depthColorTexture);
             frameBuffer.attachDepth(depthTexture);
+            frameBuffer.attachColor(0, cubeColorTexture);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             depthAsColorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
             depthAsColorTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
 
             techniqueRenderer.add(manager.getGroupObjects("main"));
             techniqueRenderer.render();
+
         }
 
 

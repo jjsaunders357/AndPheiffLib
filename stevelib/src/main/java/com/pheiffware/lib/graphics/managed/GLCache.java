@@ -6,6 +6,8 @@ import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrat
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ColorRenderTextureBuilder;
+import com.pheiffware.lib.graphics.managed.texture.textureBuilders.CubeColorRenderTextureBuilder;
+import com.pheiffware.lib.graphics.managed.texture.textureBuilders.CubeDepthRenderTextureBuilder;
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.DepthRenderTextureBuilder;
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ImageTextureBuilder;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
@@ -102,6 +104,16 @@ public class GLCache
     public DepthRenderTextureBuilder buildDepthTex(int width, int height)
     {
         return new DepthRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
+    }
+
+    public CubeColorRenderTextureBuilder buildCubeColorTex(int width, int height)
+    {
+        return new CubeColorRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
+    }
+
+    public CubeDepthRenderTextureBuilder buildCubeDepthTex(int width, int height)
+    {
+        return new CubeDepthRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
     }
 
 

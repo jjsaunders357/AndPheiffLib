@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed.texture;
 
+import android.opengl.GLES20;
+
 /**
  * Manages automated/manual managed binding of textures.  Automated binding allows a texture unit to be chosen automatically, for a given texture.  If the texture is already bound
  * no work is done.
@@ -16,7 +18,7 @@ public class TextureBinder
 
     public TextureBinder(int numTextureUnits, TextureBindingStrategy textureBindingStrategy)
     {
-        Texture nullTexture = new Texture(0, null)
+        Texture nullTexture = new Texture(GLES20.GL_TEXTURE_2D, null)
         {
             @Override
             public void attach(int attachmentPoint)

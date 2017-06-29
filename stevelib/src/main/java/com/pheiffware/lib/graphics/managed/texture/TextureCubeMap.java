@@ -8,10 +8,11 @@ import android.opengl.GLES20;
 
 public class TextureCubeMap extends Texture
 {
-    //Face of the texture to attach for rendering (example: GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z)
-    private int attachFace;
     private final int width;
     private final int height;
+
+    //Face of the texture to attach for rendering (example: GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z)
+    private int attachFace;
 
     public TextureCubeMap(TextureBinder textureBinder, int width, int height)
     {
@@ -34,5 +35,15 @@ public class TextureCubeMap extends Texture
     public void setAttachFace(int attachFace)
     {
         this.attachFace = attachFace;
+    }
+
+    public int getWidth()
+    {
+        return width;
+    }
+
+    public int getHeight()
+    {
+        return height;
     }
 }

@@ -45,9 +45,7 @@ public class CubeDepthRenderTextureBuilder extends TextureBuilder<TextureCubeMap
 
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_COMPARE_MODE, GLES30.GL_COMPARE_REF_TO_TEXTURE);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_COMPARE_FUNC, GLES30.GL_LEQUAL);
-        filterQuality.applyToBoundTexture2D(generateMipMaps);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, sWrap);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, tWrap);
+        filterQuality.applyToBoundTexture2D(false);
         return texture;
 
     }

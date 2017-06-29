@@ -1,6 +1,7 @@
 package com.pheiffware.lib.graphics.managed.texture.textureBuilders;
 
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -23,36 +24,38 @@ public class CubeColorRenderTextureBuilder extends TextureBuilder<TextureCubeMap
         this.height = height;
     }
 
-
     @Override
     public TextureCubeMap build() throws GraphicsException
     {
         TextureCubeMap texture = new TextureCubeMap(textureBinder, width, height);
-        int internalFormat;
+        int format;
         if (hasAlpha)
         {
-            internalFormat = GLES20.GL_RGBA;
+            format = GLES20.GL_RGBA;
         }
         else
         {
-            internalFormat = GLES20.GL_RGB;
+            format = GLES20.GL_RGB;
         }
 
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, internalFormat, width, height, 0, internalFormat,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, internalFormat, width, height, 0, internalFormat,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internalFormat, width, height, 0, internalFormat,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internalFormat, width, height, 0, internalFormat,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internalFormat, width, height, 0, internalFormat,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internalFormat, width, height, 0, internalFormat,
-                GLES20.GL_UNSIGNED_SHORT, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, null);
 
-        filterQuality.applyToBoundTexture2D(generateMipMaps);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_WRAP_R, GLES20.GL_CLAMP_TO_EDGE);
+
+        filterQuality.applyToBoundTexture2D(false);
         return texture;
-
     }
 }

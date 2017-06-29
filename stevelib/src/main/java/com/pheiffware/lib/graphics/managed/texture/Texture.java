@@ -37,7 +37,7 @@ public abstract class Texture implements RenderTarget
         this.handle = TextureUtils.genTexture();
         this.type = type;
         this.textureBinder = textureBinder;
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, handle);
+        GLES20.glBindTexture(type, handle);
     }
 
     /**
