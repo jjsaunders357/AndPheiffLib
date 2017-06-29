@@ -41,5 +41,8 @@ public enum RenderProperty
     LIGHT_RENDER_POSITION,
 
     //This is the texture containing depth
-    DEPTH_TEXTURE
+    DEPTH_TEXTURE,
+
+    //This is the cube texture containing depth
+    CUBE_DEPTH_TEXTURE
 }

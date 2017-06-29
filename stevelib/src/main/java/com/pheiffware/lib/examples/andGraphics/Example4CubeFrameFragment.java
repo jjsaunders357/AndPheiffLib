@@ -10,7 +10,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.and.gui.graphics.openGL.TouchTransformGameView;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
-import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -18,27 +17,18 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.ColladaLoader;
-import com.pheiffware.lib.graphics.managed.engine.newEngine.ObjectHandle;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.ObjectManager;
+import com.pheiffware.lib.graphics.managed.engine.newEngine.renderers.CubeDepthRenderer;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.renderers.SimpleRenderer;
-import com.pheiffware.lib.graphics.managed.engine.newEngine.renderers.TechniqueRenderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.ColorTexture2DTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.DepthAsColorTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.DepthTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.Texture2DTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.ColorShadowMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
-import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
-import com.pheiffware.lib.graphics.utils.MeshGenUtils;
-import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -119,22 +109,13 @@ public class Example4CubeFrameFragment extends BaseGameFragment
     {
         private Lighting lighting;
         private ObjectManager manager;
-        private ObjectHandle monkeyHandle;
-        private float rotation = 0;
-        private SimpleRenderer simpleRenderer;
-        private ColorMaterialTechnique colorTechnique;
+        //private ColorMaterialTechnique colorTechnique;
+        private ColorShadowMaterialTechnique colorShadowTechnique;
+
         private TextureMaterialTechnique textureTechnique;
-        private FrameBuffer frameBuffer;
-        private TextureCubeMap cubeColorTexture;
-        private Texture depthTexture;
-        //private Texture depthColorTexture;
-        private DepthTechnique depthTechnique;
-        private Texture2DTechnique texture2DTechnique;
-        private TechniqueRenderer techniqueRenderer;
-        private DepthAsColorTechnique depthAsColorTechnique;
-        private Matrix4 ortho2DMatrix;
-        private Texture faceTexture;
-        private ColorTexture2DTechnique colorTexture2DTechnique;
+        private TextureCubeMap cubeDepthTexture;
+        private SimpleRenderer simpleRenderer;
+        private CubeDepthRenderer cubeRenderer;
 
         public Renderer()
         {
@@ -151,22 +132,14 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
-            faceTexture = glCache.buildImageTex("images/face.png").build();
-            frameBuffer = new FrameBuffer();
-            colorTechnique = new ColorMaterialTechnique(al);
-
-
+            colorShadowTechnique = new ColorShadowMaterialTechnique(al);
             textureTechnique = new TextureMaterialTechnique(al);
-            texture2DTechnique = new Texture2DTechnique(al);
-            colorTexture2DTechnique = new ColorTexture2DTechnique(al);
-            depthTechnique = new DepthTechnique(al);
-            depthAsColorTechnique = new DepthAsColorTechnique(al);
-            depthTexture = glCache.buildDepthTex(512, 512).build();
-            //depthColorTexture = glCache.buildColorRenderTex(512, 512).build();
-            cubeColorTexture = glCache.buildCubeColorTex(512, 512).build();
-            lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+
+            cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
+            lighting = new Lighting(new float[]{-1.5f, 1, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();
-            techniqueRenderer = new TechniqueRenderer(depthAsColorTechnique);
+            cubeRenderer = new CubeDepthRenderer(al, cubeDepthTexture);
+
             manager = new ObjectManager();
             ColladaMaterial defaultMaterial = new ColladaMaterial(
                     "default",
@@ -181,19 +154,11 @@ public class Example4CubeFrameFragment extends BaseGameFragment
                     "images", //Where images are located
                     true, //Homogenize coordinates
                     defaultMaterial,
-                    colorTechnique,
+                    colorShadowTechnique,
                     textureTechnique);
             try
             {
                 loader.loadCollada("meshes/shadows.dae");
-                manager.startObject("display");
-                manager.addStaticMesh(
-                        MeshGenUtils.genSingleQuadMeshTexOnly(-0.8f, -0.6f, 0.2f, VertexAttribute.POSITION4),
-                        texture2DTechnique,
-                        new RenderPropertyValue[]{
-                                new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, cubeColorTexture)
-                        });
-                manager.endObject();
                 manager.packAndTransfer();
             }
             catch (XMLParseException | IOException e)
@@ -206,75 +171,32 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
             //Render to texture 1st
-            float[] lightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
+            float[] absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
 
             //Extract eye position from current view
             float[] position = new float[]{-viewMatrix.m[12], -viewMatrix.m[13], -viewMatrix.m[14]};
 
-            renderViewToTexture(position);
+            cubeRenderer.setRenderPosition(absoluteLightPosition);
+            cubeRenderer.add(manager.getGroupObjects("main"));
+            cubeRenderer.render();
 
             lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
-            Matrix4 monkeyTranslation = Matrix4.newTranslation(0, 0, -4);
-            //Matrix4 modelMatrix = Matrix4.multiply(monkeyTranslation, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 1f, 1f));
-            //Increase rotation for next frame
-            rotation++;
 
-            //monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
+            colorShadowTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
+            colorShadowTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
+            colorShadowTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            colorShadowTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+            colorShadowTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
 
-            colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
-            colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
-            colorTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-            colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
-            texture2DTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, ortho2DMatrix);
-            texture2DTechnique.setProperty(RenderProperty.VIEW_MATRIX, Matrix4.newIdentity());
             //Remove bindings to frame buffers
             FrameBuffer.main.bind(0, 0, getRenderWidth(), getRenderHeight());
 
-//            simpleRenderer.add(manager.getGroupObjects("main"));
-            simpleRenderer.add(manager.getObjects());
-            simpleRenderer.render();
-
-
-//            simpleRenderer.add(manager.getGroupObjects("display"));
-//            simpleRenderer.render();
-        }
-
-        @Override
-        public void onSurfaceResize(int width, int height)
-        {
-            super.onSurfaceResize(width, height);
-            ortho2DMatrix = Matrix4.newOrtho2D(width / (float) height);
-        }
-
-        private void renderViewToTexture(float[] renderPosition) throws GraphicsException
-        {
-            //A camera at the render position
-            Camera lightCamera = new Camera(90, 1, 0.1f, 100, false);
-            lightCamera.setPosition(renderPosition[0], renderPosition[1], renderPosition[2]);
-
-            //All calculations are done in absolute space without any transformations.
-            //This prevents recalculation of lighting when objects are static.
-
-
-            //camera.rotate(); - no need to rotated for this plane
-
-            //Set to render depth to cube face
-            int cubeFace = GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-            cubeColorTexture.setAttachFace(cubeFace);
-
-            //TODO: Make dims based on texture dims, which should be accessibly quantities
-            frameBuffer.bind(0, 0, 512, 512);
-            frameBuffer.attachDepth(depthTexture);
-            frameBuffer.attachColor(0, cubeColorTexture);
+            GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+            GLES20.glClearDepthf(1);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-            depthAsColorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
-            depthAsColorTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
 
-            techniqueRenderer.add(manager.getGroupObjects("main"));
-            techniqueRenderer.render();
-
+            simpleRenderer.add(manager.getGroupObjects("main"));
+            simpleRenderer.render();
         }
-
-
     }
 }

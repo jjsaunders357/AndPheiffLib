@@ -54,6 +54,16 @@ public class Camera
     }
 
     /**
+     * Resets position to 0,0,0
+     * Reset orientation back to looking down z-axis with positive y axis straight up.
+     */
+    public void reset()
+    {
+        cameraMatrix.setIdentity();
+    }
+
+
+    /**
      * Change the lens characteristics of the camera such as FOV
      *
      * @param FOV          field of view
@@ -289,5 +299,4 @@ public class Camera
     {
         return flipVertical;
     }
-
 }

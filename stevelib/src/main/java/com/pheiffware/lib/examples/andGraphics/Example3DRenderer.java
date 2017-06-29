@@ -47,11 +47,9 @@ public abstract class Example3DRenderer implements GameRenderer
         touchAnalyzer = new TouchAnalyzer(surfaceMetrics.xdpi, surfaceMetrics.ydpi);
         frameCounter = 0;
         nanoTimes.clear();
-        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glCullFace(GLES20.GL_BACK);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
-        GLES20.glClearDepthf(1);
     }
 
     @Override
@@ -68,6 +66,8 @@ public abstract class Example3DRenderer implements GameRenderer
     @Override
     public void onDrawFrame() throws GraphicsException
     {
+        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+        GLES20.glClearDepthf(1);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         startFrameTimeStamp = System.nanoTime();
         onDrawFrame(camera.getProjectionMatrix(), camera.getViewMatrix());

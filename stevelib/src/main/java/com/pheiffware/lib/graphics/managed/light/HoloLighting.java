@@ -37,7 +37,7 @@ public class HoloLighting extends Lighting
         else
         {
             //Otherwise, use the raw light position (no transform)
-            System.arraycopy(getRawLightPositions(), lightIndex * 4, getLightPositionsInEyeSpace(), lightIndex * 4, 4);
+            System.arraycopy(getPositions(), lightIndex * 4, getLightPositionsInEyeSpace(), lightIndex * 4, 4);
         }
     }
 }

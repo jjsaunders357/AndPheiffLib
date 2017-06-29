@@ -55,7 +55,6 @@ public class CubeColorRenderTextureBuilder extends TextureBuilder<TextureCubeMap
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_WRAP_R, GLES20.GL_CLAMP_TO_EDGE);
 
-        filterQuality.applyToBoundTexture2D(false);
         return texture;
     }
 }
