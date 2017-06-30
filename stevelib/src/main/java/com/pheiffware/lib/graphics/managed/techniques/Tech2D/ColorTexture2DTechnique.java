@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.techniques;
+package com.pheiffware.lib.graphics.managed.techniques.Tech2D;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -25,14 +25,14 @@ import com.pheiffware.lib.graphics.managed.texture.Texture;
  * Created by Steve on 6/19/2017.
  */
 
-public class Texture2DTechnique extends Technique
+public class ColorTexture2DTechnique extends Technique
 {
     private final Uniform projectionViewModelUniform;
     private final Uniform matSamplerUniform;
 
-    public Texture2DTechnique(AssetLoader al) throws GraphicsException
+    public ColorTexture2DTechnique(AssetLoader al) throws GraphicsException
     {
-        super(al, "shaders/2d/vert_texture_pos4_2d.glsl", "shaders/2d/frag_texture_pos4_2d.glsl", new RenderProperty[]{RenderProperty.PROJECTION_MATRIX, RenderProperty.VIEW_MATRIX});
+        super(al, "shaders/2d/color_texture_pos4_2d_vert.glsl", "shaders/2d/color_texture_pos4_2d_frag.glsl", new RenderProperty[]{RenderProperty.PROJECTION_MATRIX, RenderProperty.VIEW_MATRIX});
         projectionViewModelUniform = getUniform(UniformNames.PROJECTION_VIEW_MODEL_MATRIX_UNIFORM);
         matSamplerUniform = getUniform(UniformNames.MATERIAL_SAMPLER_UNIFORM);
     }

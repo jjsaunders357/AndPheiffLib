@@ -45,9 +45,12 @@ public class ProgramUtils
     {
         try
         {
-
             String code = al.loadAssetAsString(vertexShaderAssetPath);
             return ProgramUtils.createShader(GLES20.GL_VERTEX_SHADER, code);
+        }
+        catch (GraphicsException e)
+        {
+            throw new GraphicsException("Could not compile shader \"" + vertexShaderAssetPath + "\":\n " + e.getMessage());
         }
         catch (IOException e)
         {
@@ -69,6 +72,10 @@ public class ProgramUtils
         {
             String code = al.loadAssetAsString(fragmentShaderAssetPath);
             return ProgramUtils.createShader(GLES20.GL_FRAGMENT_SHADER, code);
+        }
+        catch (GraphicsException e)
+        {
+            throw new GraphicsException("Could not compile shader \"" + fragmentShaderAssetPath + "\":\n " + e.getMessage());
         }
         catch (IOException e)
         {

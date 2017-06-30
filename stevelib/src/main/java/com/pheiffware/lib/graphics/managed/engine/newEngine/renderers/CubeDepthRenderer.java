@@ -8,7 +8,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.engine.newEngine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.techniques.DepthTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.DepthDistanceSquaredTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 
 /**
@@ -19,20 +19,22 @@ public class CubeDepthRenderer extends Renderer
 {
     private final FrameBuffer frameBuffer;
     //TODO: Make programs/techniques unique (put them in cache, so same program/shader loaded more than once, ends up being cached).
-    private final DepthTechnique depthTechnique;
+    private final DepthDistanceSquaredTechnique depthDistanceSquaredTechnique;
     private final TextureCubeMap cubeDepthTexture;
     private final TechniqueRenderPass depthRenderPass;
     private final Camera lightCamera = new Camera(90, 1, 0.1f, 100, false);
+    private final float maximumLightDistance;
 
     private float[] renderPosition;
 
 
-    public CubeDepthRenderer(AssetLoader al, TextureCubeMap cubeDepthTexture) throws GraphicsException
+    public CubeDepthRenderer(AssetLoader al, TextureCubeMap cubeDepthTexture, float maximumLightDistance) throws GraphicsException
     {
         frameBuffer = new FrameBuffer();
-        depthTechnique = new DepthTechnique(al);
-        depthRenderPass = new TechniqueRenderPass(depthTechnique);
+        depthDistanceSquaredTechnique = new DepthDistanceSquaredTechnique(al);
+        depthRenderPass = new TechniqueRenderPass(depthDistanceSquaredTechnique);
         this.cubeDepthTexture = cubeDepthTexture;
+        this.maximumLightDistance = maximumLightDistance;
     }
 
     @Override
@@ -79,14 +81,14 @@ public class CubeDepthRenderer extends Renderer
     private void renderFace()
     {
         frameBuffer.attachDepth(cubeDepthTexture);
+        GLES20.glClearDepthf(1.0f);
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
 
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        GLES20.glClearDepthf(1);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        depthDistanceSquaredTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
+        depthDistanceSquaredTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
+        depthDistanceSquaredTechnique.setProperty(RenderProperty.MAXIMUM_LIGHT_DISTANCE, maximumLightDistance);
 
-        depthTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
-        depthTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
-
+        //TODO: Test rendering a large shape which covers entire face.
         renderPass(depthRenderPass);
     }
 

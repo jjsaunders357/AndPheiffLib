@@ -1,4 +1,6 @@
 #version 300 es
+//Transforms vertices to model space
+uniform mat4 modelMatrix;
 //Transforms vertices to eye space
 uniform mat4 viewModelMatrix;
 //Projects vertices in eye space
@@ -20,7 +22,7 @@ out vec3 normalEyeSpace;
 
 void main()
 {
-    absPosition=vertexPosition4.xyz;
+    absPosition=(modelMatrix*vertexPosition4).xyz;
 	normalEyeSpace = normalize(normalMatrix * vertexNormal);
 	positionEyeSpace = viewModelMatrix * vertexPosition4;
 	gl_Position = projectionMatrix * positionEyeSpace;

@@ -107,9 +107,9 @@ public class Example4CubeFrameFragment extends BaseGameFragment
 
     private static class Renderer extends Example3DRenderer
     {
+        private final float maximumLightDistance = 25.0f;
         private Lighting lighting;
         private ObjectManager manager;
-        //private ColorMaterialTechnique colorTechnique;
         private ColorShadowMaterialTechnique colorShadowTechnique;
 
         private TextureMaterialTechnique textureTechnique;
@@ -136,9 +136,16 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             textureTechnique = new TextureMaterialTechnique(al);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
-            lighting = new Lighting(new float[]{-1.5f, 1, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            lighting = new Lighting(new float[]{0, 0, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+
+            //Left Cube: -2,0,-2
+            //Right Cube: 0,0,0
+            //Screen: -3,-3,-7
+
+
+            lighting.setMaximumDistance(0, maximumLightDistance);
             simpleRenderer = new SimpleRenderer();
-            cubeRenderer = new CubeDepthRenderer(al, cubeDepthTexture);
+            cubeRenderer = new CubeDepthRenderer(al, cubeDepthTexture, maximumLightDistance);
 
             manager = new ObjectManager();
             ColladaMaterial defaultMaterial = new ColladaMaterial(
@@ -173,9 +180,6 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             //Render to texture 1st
             float[] absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
 
-            //Extract eye position from current view
-            float[] position = new float[]{-viewMatrix.m[12], -viewMatrix.m[13], -viewMatrix.m[14]};
-
             cubeRenderer.setRenderPosition(absoluteLightPosition);
             cubeRenderer.add(manager.getGroupObjects("main"));
             cubeRenderer.render();
@@ -187,6 +191,8 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             colorShadowTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             colorShadowTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorShadowTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
+            colorShadowTechnique.setProperty(RenderProperty.MAXIMUM_LIGHT_DISTANCE, maximumLightDistance);
+
 
             //Remove bindings to frame buffers
             FrameBuffer.main.bind(0, 0, getRenderWidth(), getRenderHeight());

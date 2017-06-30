@@ -40,6 +40,7 @@ import com.pheiffware.lib.utils.GraphicsUtils;
 public class ColorShadowMaterialTechnique extends Technique
 {
     private final Uniform projectionUniform;
+    private final Uniform modelUniform;
     private final Uniform viewModelUniform;
     private final Uniform normalUniform;
     private final Uniform ambientLightColorUniform;
@@ -50,6 +51,7 @@ public class ColorShadowMaterialTechnique extends Technique
     private final Uniform onStateUniform;
     private final Uniform shininessUniform;
     private final Uniform cubeDepthUniform;
+    private final Uniform maximumDistanceSquaredUniform;
 
     //Used internally to compute values to apply to uniforms
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
@@ -58,7 +60,7 @@ public class ColorShadowMaterialTechnique extends Technique
 
     public ColorShadowMaterialTechnique(AssetLoader al) throws GraphicsException
     {
-        super(al, "shaders/vert_mncl_shadow.glsl", "shaders/frag_mncl_shadow.glsl", new RenderProperty[]{
+        super(al, "shaders/vert_mncl_cube_shadow.glsl", "shaders/frag_mncl_cube_shadow.glsl", new RenderProperty[]{
                 RenderProperty.PROJECTION_MATRIX,
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX,
@@ -71,6 +73,7 @@ public class ColorShadowMaterialTechnique extends Technique
         });
         projectionUniform = getUniform(UniformNames.PROJECTION_MATRIX_UNIFORM);
         viewModelUniform = getUniform(UniformNames.VIEW_MODEL_MATRIX_UNIFORM);
+        modelUniform = getUniform(UniformNames.MODEL_MATRIX_UNIFORM);
         normalUniform = getUniform(UniformNames.NORMAL_MATRIX_UNIFORM);
         ambientLightColorUniform = getUniform(UniformNames.AMBIENT_LIGHTMAT_COLOR_UNIFORM);
         diffLightMaterialUniform = getUniform(UniformNames.DIFF_LIGHTMAT_COLOR_UNIFORM);
@@ -80,7 +83,7 @@ public class ColorShadowMaterialTechnique extends Technique
         onStateUniform = getUniform(UniformNames.ON_STATE_UNIFORM);
         shininessUniform = getUniform(UniformNames.SHININESS_UNIFORM);
         cubeDepthUniform = getUniform(UniformNames.DEPTH_CUBE_SAMPLER_UNIFORM);
-
+        maximumDistanceSquaredUniform = getUniform(UniformNames.MAXIMUM_LIGHT_DISTANCE_SQUARED_UNIFORM);
     }
 
 
@@ -88,14 +91,17 @@ public class ColorShadowMaterialTechnique extends Technique
     public void applyPropertiesToUniforms()
     {
         Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
-        projectionUniform.setValue(projectionMatrix.m);
-
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
+        float maximumLightDistance = (float) getPropertyValue(RenderProperty.MAXIMUM_LIGHT_DISTANCE);
+
         viewModelMatrix.set(viewMatrix);
         viewModelMatrix.multiplyBy(modelMatrix);
 
+        modelUniform.setValue(modelMatrix.m);
         viewModelUniform.setValue(viewModelMatrix.m);
+        projectionUniform.setValue(projectionMatrix.m);
+
         normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
         normalUniform.setValue(normalTransform.m);
 
@@ -115,5 +121,7 @@ public class ColorShadowMaterialTechnique extends Technique
 
         Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);
         cubeDepthUniform.setValue(cubeDepthTexture.autoBind());
+
+        maximumDistanceSquaredUniform.setValue(maximumLightDistance * maximumLightDistance);
     }
 }

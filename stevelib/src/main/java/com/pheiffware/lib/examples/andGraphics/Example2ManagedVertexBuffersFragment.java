@@ -21,8 +21,8 @@ import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.techniques.Color2DTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.ColorTexture2DTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.Tech2D.Color2DTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.Tech2D.ColorTexture2DTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 

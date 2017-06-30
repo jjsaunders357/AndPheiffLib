@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.techniques;
+package com.pheiffware.lib.graphics.managed.techniques.Tech2D;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;

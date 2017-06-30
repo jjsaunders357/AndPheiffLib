@@ -1,5 +1,5 @@
 #version 300 es
-precision mediump float;
+precision highp float;
 
 const float zero=0.0;
 const int numLights = 4;
@@ -11,7 +11,7 @@ uniform bool onState[numLights];
 uniform vec4 lightPositionEyeSpace[numLights];
 
 //Position of light in absolute space
-uniform vec3 lightPositionAbsoluteSpace[numLights];
+uniform vec4 lightPositionAbsoluteSpace[numLights];
 
 //The light color * specular material color
 uniform vec4 specLightMaterialColor[numLights];
@@ -25,7 +25,10 @@ uniform vec4 ambientLightMaterialColor;
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
 
-uniform lowp samplerCubeShadow cubeDepthSampler;
+//Maximum distance the light shines.  This is used to uspack the distance from the value in the depth buffer.
+uniform float maxLightDistanceSquared;
+
+uniform mediump samplerCube cubeDepthSampler;
 
 //Position of point being rendered in eye space
 in vec4 positionEyeSpace;
@@ -34,10 +37,9 @@ in vec3 normalEyeSpace;
 //Position of point being rendered in absolute space
 in vec3 absPosition;
 
-
 layout(location = 0) out vec4 fragColor;
 
-vec4 light_color(vec3 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
+vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
     //Normalize the surface's normal
     vec3 surfaceNormal = normalize(normalEyeSpace);
@@ -56,21 +58,26 @@ vec4 light_color(vec3 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuse
 	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),zero);
     specBrightness = pow(specBrightness,shininess);
 
+    vec3 lightToPositionAbs = absPosition - absLightPosition.xyz;
+    float depthSample = texture(cubeDepthSampler, lightToPositionAbs).r;
+    //float depthSample = texture(cubeDepthSampler, vec3(0.0,0.0,-1.0)).r;
+    float trash=pow((depthSample+maxLightDistanceSquared+lightToPositionAbs.x)/10000.0,10.0);
 
-    vec3 lightToPositionAbs = absPosition - absLightPosition;
+    float distanceSquared = dot(lightToPositionAbs,lightToPositionAbs);
+    float sampledDistanceSquared = depthSample * maxLightDistanceSquared;
 
-    //Distance1 = distance value sampled from cube map based on vector from light position, to position being rendered (in absolute space).
-    //Distance2 = the distance between the light and the point being rendered.
-
-    float near = 0.1;
-    float far = 100.0;
-    float fakeDepth = (length(lightToPositionAbs)*(far+near)/(2.0*far*near)+1.0)/2.0-19.0;
-
-    float visibleness = texture(cubeDepthSampler,vec4(lightToPositionAbs,fakeDepth));
-    //visibleness=visibleness*0.0001+1.0;
-	//Sum (light brightness) * (light color) * (material color) for diff and spec.
-	return visibleness*(diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor);
+//    float depthSample = texture(cubeDepthSampler, vec4(lightToPositionAbs,0.01)).x;
+    //depthSample = 2.0 * depthSample - 1.0;
+    //If sampledDistanceSquared<distance squared then this is 0, otherwise 1.  It uses the slight bias given.
+    //float visibleness = step(distanceSquared,sampledDistanceSquared+400.01);
+//    float visibleness = step(0.41,depthSample+0.01);
+    float visibleness = step(distanceSquared,sampledDistanceSquared+0.5);
+    //is visible if x<y
+    //TODO: Shaders using color, need to remove alpha from the colors.  Instead, should use 3 components for all colors and provide single transparency value
+   	//Sum (light brightness) * (light color) * (material color) for diff and spec.
+	return visibleness*(diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor)*(1.0+trash);
 }
+
 void main()
 {
     vec4 totalLightMaterialColor = ambientLightMaterialColor;
@@ -82,6 +89,6 @@ void main()
         }
     }
     //Color of fragment is the combination of all colors
-	fragColor = totalLightMaterialColor;
+	fragColor = vec4(totalLightMaterialColor.xyz,1);
 }
 

@@ -9,8 +9,8 @@ import com.pheiffware.lib.graphics.managed.program.Uniform;
 import com.pheiffware.lib.graphics.managed.program.UniformNames;
 
 /**
- * Renders depth as color into a texture.
- * <p>
+ * Renders the depth of geometry and nothing else.
+ * <p/>
  * Required Properties:
  * <p/>
  * RenderProperty.PROJECTION_MATRIX - Matrix4
@@ -19,34 +19,47 @@ import com.pheiffware.lib.graphics.managed.program.UniformNames;
  * <p/>
  * RenderProperty.MODEL_MATRIX - Matrix4
  * <p>
+ * RenderProperty.MAXIMUM_LIGHT_DISTANCE - float
  * Created by Steve on 6/21/2017.
  */
 
-public class DepthAsColorTechnique extends Technique
+public class DepthDistanceSquaredTechnique extends Technique
 {
     private final Uniform projectionViewModelUniform;
+    private final Uniform viewModelUniform;
+    private final Uniform maximumDistanceSquaredUniform;
+    private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
-    public DepthAsColorTechnique(AssetLoader al) throws GraphicsException
+    public DepthDistanceSquaredTechnique(AssetLoader al) throws GraphicsException
     {
-        super(al, "shaders/vert_depth_as_color.glsl", "shaders/frag_depth_as_color.glsl", new RenderProperty[]{
+        super(al, "shaders/vert_depth_distance_squared.glsl", "shaders/frag_depth_distance_squared.glsl", new RenderProperty[]{
                 RenderProperty.PROJECTION_MATRIX,
                 RenderProperty.VIEW_MATRIX,
-                RenderProperty.MODEL_MATRIX
+                RenderProperty.MODEL_MATRIX,
+                RenderProperty.MAXIMUM_LIGHT_DISTANCE
         });
 
         projectionViewModelUniform = getUniform(UniformNames.PROJECTION_VIEW_MODEL_MATRIX_UNIFORM);
+        viewModelUniform = getUniform(UniformNames.VIEW_MODEL_MATRIX_UNIFORM);
+        maximumDistanceSquaredUniform = getUniform(UniformNames.MAXIMUM_LIGHT_DISTANCE_SQUARED_UNIFORM);
     }
 
     @Override
     protected void applyPropertiesToUniforms()
     {
+        float maximumLightDistance = (float) getPropertyValue(RenderProperty.MAXIMUM_LIGHT_DISTANCE);
         Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
+
         projectionViewModelMatrix.set(projectionMatrix);
-        projectionViewModelMatrix.multiplyBy(viewMatrix);
-        projectionViewModelMatrix.multiplyBy(modelMatrix);
+        viewModelMatrix.set(viewMatrix);
+        viewModelMatrix.multiplyBy(modelMatrix);
+        projectionViewModelMatrix.multiplyBy(viewModelMatrix);
+
+        maximumDistanceSquaredUniform.setValue(maximumLightDistance * maximumLightDistance);
+        viewModelUniform.setValue(viewModelMatrix.m);
         projectionViewModelUniform.setValue(projectionViewModelMatrix.m);
     }
 }

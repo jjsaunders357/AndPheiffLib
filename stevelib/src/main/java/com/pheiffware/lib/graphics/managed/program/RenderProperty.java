@@ -44,5 +44,8 @@ public enum RenderProperty
     DEPTH_TEXTURE,
 
     //This is the cube texture containing depth
-    CUBE_DEPTH_TEXTURE
+    CUBE_DEPTH_TEXTURE,
+
+    //The maximum distance from light allowed in the depth distance squared technique
+    MAXIMUM_LIGHT_DISTANCE
 }

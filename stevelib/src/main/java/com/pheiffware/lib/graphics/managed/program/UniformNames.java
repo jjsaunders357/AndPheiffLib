@@ -10,8 +10,9 @@ public class UniformNames
     public static final String PROJECTION_VIEW_MODEL_MATRIX_UNIFORM = "projectionViewModelMatrix";
     public static final String PROJECTION_MATRIX_UNIFORM = "projectionMatrix";
     public static final String VIEW_MODEL_MATRIX_UNIFORM = "viewModelMatrix";
-    public static final String NORMAL_MATRIX_UNIFORM = "normalMatrix";
+    public static final String VIEW_MATRIX_UNIFORM = "viewMatrix";
     public static final String MODEL_MATRIX_UNIFORM = "modelMatrix";
+    public static final String NORMAL_MATRIX_UNIFORM = "normalMatrix";
 
     public static final String AMBIENT_LIGHT_COLOR_UNIFORM = "ambientLightColor";
 
@@ -38,4 +39,5 @@ public class UniformNames
     public static final String MATERIAL_SAMPLER_UNIFORM = "materialColorSampler";
     public static final String DEPTH_SAMPLER_UNIFORM = "depthSampler";
     public static final String DEPTH_CUBE_SAMPLER_UNIFORM = "cubeDepthSampler";
+    public static final String MAXIMUM_LIGHT_DISTANCE_SQUARED_UNIFORM = "maxLightDistanceSquared";
 }

@@ -31,6 +31,9 @@ public class Lighting
     //Calculation buffer used to hold result of transforming light positions to eye-space
     private final float[] lightPositionsInEyeSpace;
 
+    //The maximum distance the given light shines.
+    private final float[] maxDistances;
+
     /**
      * Creates a Lighting object representing the set of lights to use for rendering.  Each light's position and color is encoded as a 4 element block in the corresponding array.
      * Any additional lights supported by the implementation will be turned off.
@@ -43,9 +46,10 @@ public class Lighting
     {
         this.positions = new float[numLightsSupported * 4];
         this.colors = new float[numLightsSupported * 4];
-        this.lightMatColors = new float[numLightsSupported * 4];
-        this.lightPositionsInEyeSpace = new float[numLightsSupported * 4];
+        lightMatColors = new float[numLightsSupported * 4];
+        lightPositionsInEyeSpace = new float[numLightsSupported * 4];
         onStates = new int[numLightsSupported];
+        maxDistances = new float[numLightsSupported];
         System.arraycopy(positions, 0, this.positions, 0, positions.length);
         System.arraycopy(colors, 0, this.colors, 0, colors.length);
 
@@ -143,6 +147,17 @@ public class Lighting
     public final void setOnState(int lightIndex, int on)
     {
         onStates[lightIndex] = on;
+    }
+
+    /**
+     * Sets the maximum distance of the given light.
+     *
+     * @param lightIndex
+     * @param maxDistance
+     */
+    public final void setMaximumDistance(int lightIndex, float maxDistance)
+    {
+        maxDistances[lightIndex] = maxDistance;
     }
 
     /**
