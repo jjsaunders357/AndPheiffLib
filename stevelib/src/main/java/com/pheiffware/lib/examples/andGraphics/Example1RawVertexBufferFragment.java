@@ -18,7 +18,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeGroup;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.DynamicAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;

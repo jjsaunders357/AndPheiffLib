@@ -4,7 +4,6 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 
 /**
  * Created by Steve on 6/14/2017.

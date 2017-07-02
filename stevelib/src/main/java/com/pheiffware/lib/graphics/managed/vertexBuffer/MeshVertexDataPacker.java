@@ -2,7 +2,6 @@ package com.pheiffware.lib.graphics.managed.vertexBuffer;
 
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 import com.pheiffware.lib.utils.dataContainers.MapLinkedList;
 
 import java.nio.ByteBuffer;

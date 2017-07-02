@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.managed.vertexBuffer;
 
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 
 import java.nio.ByteBuffer;
 

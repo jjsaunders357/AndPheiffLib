@@ -1,4 +1,6 @@
-package com.pheiffware.lib.graphics.managed.program;
+package com.pheiffware.lib.graphics.managed.vertexBuffer;
+
+import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -11,7 +13,7 @@ import java.util.EnumSet;
 
 public class VertexAttributeGroup
 {
-    //The vertexAttributes being managed by this buffer.  EnumSet maintains attribute order based on natural Enum ordering
+    //The vertexAttributes being managed by a buffer.  EnumSet maintains attribute order based on natural Enum ordering
     private final EnumSet<VertexAttribute> vertexAttributes;
 
     //TODO: Must be an even multiple of machine word size.  Check OpenGL ES spec.
