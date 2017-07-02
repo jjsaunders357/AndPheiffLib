@@ -77,15 +77,21 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
             Mesh mesh1 = MeshGenUtils.genSingleQuadMeshTexColor(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
             Mesh mesh2 = MeshGenUtils.genSingleQuadMeshTexColor(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
             Mesh mesh3 = MeshGenUtils.genSingleQuadMeshTexColor(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
+
+            //Mesh 1 - No texture, dynamic modulated color, red to purple
             handle1 = manager.addMesh(
                     mesh1,
                     EnumSet.of(VertexAttribute.COLOR),
                     color2DTechnique);
+
+            //Mesh 2 - Texture, dynamic modulated color - green to cyan
             handle2 = manager.addMesh(
                     mesh2,
                     EnumSet.of(VertexAttribute.COLOR),
                     colorTexture2DTechnique,
                     new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture)});
+
+            //Mesh 2 - Texture, static modulated color - constant blue
             handle3 = manager.addStaticMesh(
                     mesh3,
                     colorTexture2DTechnique,

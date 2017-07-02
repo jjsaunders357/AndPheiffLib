@@ -11,7 +11,7 @@ uniform bool onState[numLights];
 uniform vec4 lightPositionEyeSpace[numLights];
 
 //Position of light in absolute space
-uniform vec4 lightPositionAbsoluteSpace[numLights];
+uniform vec4 lightPosition[numLights];
 
 //The light color * specular material color
 uniform vec4 specLightMaterialColor[numLights];
@@ -85,7 +85,7 @@ void main()
     {
         if(onState[i])
         {
-            totalLightMaterialColor += light_color(lightPositionAbsoluteSpace[i],lightPositionEyeSpace[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
+            totalLightMaterialColor += light_color(lightPosition[i],lightPositionEyeSpace[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
         }
     }
     //Color of fragment is the combination of all colors

@@ -16,6 +16,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
@@ -41,6 +42,8 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
 
     private static class Renderer implements GameRenderer
     {
+        private static final int samplerToUse = 0;
+
         private Program programTextureColor;
         private IndexBuffer indexBuffer;
         private StaticAttributeBuffer staticBuffer;
@@ -139,9 +142,10 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
             Matrix4 projectionViewModelMatrix = Matrix4.multiply(ortho2DMatrix, scale);
 
             programTextureColor.bind();
-            programTextureColor.setUniformMatrix4("projectionViewModelMatrix", projectionViewModelMatrix.m);
-            faceTexture.manualBind(0);
-            programTextureColor.setUniformSampler("materialColorSampler", 0);
+            programTextureColor.setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
+            faceTexture.manualBind(samplerToUse);
+
+            programTextureColor.setUniformValue(UniformName.MATERIAL_SAMPLER, samplerToUse);
 
             staticBuffer.bindToProgram(programTextureColor, staticVertexAttributeGroup, 0);
             dynamicBuffer.bindToProgram(programTextureColor, dynamicVertexAttributeGroup, 0);

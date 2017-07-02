@@ -6,11 +6,8 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.ProgramUtils;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Wraps the concept of an opengl program into a convenient object.
@@ -23,7 +20,7 @@ public class Program
     private final int handle;
 
     //Map of all uniforms used by the program
-    private final Map<String, Uniform> uniforms = new HashMap<>();
+    private final EnumMap<UniformName, Uniform> uniforms = new EnumMap(UniformName.class);
 
     //Set of all program attributes
     private final EnumSet<VertexAttribute> vertexAttributes = EnumSet.noneOf(VertexAttribute.class);
@@ -46,7 +43,8 @@ public class Program
         for (int i = 0; i < numActiveUniforms; i++)
         {
             Uniform uniform = Uniform.createUniform(handle, i);
-            uniforms.put(uniform.name, uniform);
+            UniformName name = UniformName.lookupByName(uniform.name);
+            uniforms.put(name, uniform);
         }
 
         int[] numAttributesArray = new int[1];
@@ -74,36 +72,9 @@ public class Program
         return vertexAttributeLocations.get(vertexAttribute);
     }
 
-    public final Uniform getUniform(String uniformName)
+    public final void setUniformValue(UniformName name, Object value)
     {
-        return uniforms.get(uniformName);
-    }
-
-    public final void setUniformValues(String[] uniformNames, Object[] uniformValues)
-    {
-        for (int i = 0; i < uniformNames.length; i++)
-        {
-            setUniformValue(uniformNames[i], uniformValues[i]);
-        }
-    }
-
-    public final void setUniformValue(String uniformName, Object value)
-    {
-        getUniform(uniformName).setValue(value);
-    }
-
-    public final void setUniformValueIfExists(String uniformName, Object uniformValue)
-    {
-        Uniform uniform = getUniform(uniformName);
-        if (uniform != null)
-        {
-            uniform.setValue(uniformValue);
-        }
-    }
-
-    public final Collection<String> getUniformNames()
-    {
-        return uniforms.keySet();
+        uniforms.get(name).setValue(value);
     }
 
     @Override
@@ -132,43 +103,6 @@ public class Program
     public final int getHandle()
     {
         return handle;
-    }
-
-
-    public final void setUniformMatrix4(String uniformName, float[] matrix)
-    {
-        setUniformMatrix4(uniformName, matrix, false);
-    }
-
-    public final void setUniformMatrix4(String uniformName, float[] matrix, boolean transpose)
-    {
-        GLES20.glUniformMatrix4fv(getUniform(uniformName).location, 1, transpose, matrix, 0);
-    }
-
-    public final void setUniformMatrix3(String uniformName, float[] matrix, boolean transpose)
-    {
-        GLES20.glUniformMatrix3fv(getUniform(uniformName).location, 1, transpose, matrix, 0);
-    }
-
-
-    public final void setUniformSampler(String uniformName, int samplerIndex)
-    {
-        GLES20.glUniform1i(getUniform(uniformName).location, samplerIndex);
-    }
-
-    public final void setUniformVec3(String uniformName, float[] floats)
-    {
-        GLES20.glUniform3fv(getUniform(uniformName).location, 1, floats, 0);
-    }
-
-    public final void setUniformVec4(String uniformName, float[] floats)
-    {
-        GLES20.glUniform4fv(getUniform(uniformName).location, 1, floats, 0);
-    }
-
-    public final void setUniformFloat(String uniformName, float value)
-    {
-        GLES20.glUniform1f(getUniform(uniformName).location, value);
     }
 
     public EnumSet<VertexAttribute> getAttributes()

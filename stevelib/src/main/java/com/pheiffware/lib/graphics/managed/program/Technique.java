@@ -49,6 +49,11 @@ public abstract class Technique
         this.program = new Program(al, vertexShaderAsset, fragmentShaderAsset);
     }
 
+    protected final void setUniformValue(UniformName name, Object value)
+    {
+        program.setUniformValue(name, value);
+    }
+
     /**
      * Applies properties to the underlying program shaders.  Reset default property values for future renders.
      */
@@ -152,17 +157,6 @@ public abstract class Technique
     protected final Object getPropertyValue(RenderProperty property)
     {
         return propertyValues.get(property);
-    }
-
-    /**
-     * Get a uniform of the underlying program.  This should be called in the constructor to extract uniforms for setting later.
-     *
-     * @param uniformName
-     * @return
-     */
-    protected Uniform getUniform(String uniformName)
-    {
-        return program.getUniform(uniformName);
     }
 
     /**

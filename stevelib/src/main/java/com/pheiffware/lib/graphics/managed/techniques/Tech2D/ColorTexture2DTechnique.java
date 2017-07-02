@@ -5,8 +5,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.program.Uniform;
-import com.pheiffware.lib.graphics.managed.program.UniformNames;
+import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 
 /**
@@ -14,36 +13,25 @@ import com.pheiffware.lib.graphics.managed.texture.Texture;
  * Project matrix scales y values properly to match aspect ratio.
  * View matrix does the rest.
  * <p>
- * Required Properties:
- * <p/>
- * RenderProperty.PROJECTION_MATRIX - Matrix4
- * <p/>
- * RenderProperty.VIEW_MATRIX - Matrix4
- * <p>
- * RenderProperty.MAT_COLOR_TEXTURE - Texture
- * <p>
  * Created by Steve on 6/19/2017.
  */
 
 public class ColorTexture2DTechnique extends Technique
 {
-    private final Uniform projectionViewModelUniform;
-    private final Uniform matSamplerUniform;
+    private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
     public ColorTexture2DTechnique(AssetLoader al) throws GraphicsException
     {
         super(al, "shaders/2d/vert_2d_color_texture_pos4.glsl", "shaders/2d/frag_2d_color_texture_pos4.glsl", new RenderProperty[]{RenderProperty.PROJECTION_MATRIX, RenderProperty.VIEW_MATRIX});
-        projectionViewModelUniform = getUniform(UniformNames.PROJECTION_VIEW_MODEL_MATRIX_UNIFORM);
-        matSamplerUniform = getUniform(UniformNames.MATERIAL_SAMPLER_UNIFORM);
     }
 
     @Override
     protected void applyPropertiesToUniforms()
     {
-        Matrix4 projMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
-        Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
-        projectionViewModelUniform.setValue(Matrix4.multiply(projMatrix, viewMatrix).m);
+        projectionViewModelMatrix.set((Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX));
+        projectionViewModelMatrix.multiplyBy((Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX));
         Texture texture = (Texture) getPropertyValue(RenderProperty.MAT_COLOR_TEXTURE);
-        matSamplerUniform.setValue(texture.autoBind());
+        setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
+        setUniformValue(UniformName.MATERIAL_SAMPLER, texture.autoBind());
     }
 }

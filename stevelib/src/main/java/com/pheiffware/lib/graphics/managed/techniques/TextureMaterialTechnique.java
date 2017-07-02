@@ -7,50 +7,18 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.program.Uniform;
-import com.pheiffware.lib.graphics.managed.program.UniformNames;
+import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 
 /**
- * Shades mesh with a constant surface color and one light.  Handles, ambient, diffuse and specular lighting.
- * <p/>
- * Required Properties:
- * <p/>
- * RenderProperty.PROJECTION_MATRIX - Matrix4
- * <p/>
- * RenderProperty.VIEW_MATRIX - Matrix4
- * <p/>
- * RenderProperty.MODEL_MATRIX - Matrix4
- * <p/>
- * RenderProperty.AMBIENT_LIGHT_COLOR - float[4]
- * <p/>
- * RenderProperty.LIGHTING - Lighting
- * <p/>
- * RenderProperty.MAT_COLOR_TEXTURE - float[4]
- * <p/>
- * RenderProperty.SPEC_MAT_COLOR - float[4]
- * <p/>
- * RenderProperty.SHININESS - float
- * <p/>
+ * Shades mesh with a textured color and with given lights' settings.  Handles, ambient, diffuse and specular lighting.
  * Created by Steve on 4/23/2016.
  */
 public class TextureMaterialTechnique extends Technique
 {
-    private final Uniform projectionUniform;
-    private final Uniform viewModelUniform;
-    private final Uniform normalUniform;
-    private final Uniform ambientLightColorUniform;
-    private final Uniform lightColorUniform;
-    private final Uniform specLightMaterialUniform;
-    private final Uniform lightEyePosUniform;
-    private final Uniform onStateUniform;
-    private final Uniform shininessUniform;
-    private final Uniform matSamplerUniform;
-
     //Used internally to compute values to apply to uniforms
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
     private final Matrix3 normalTransform = Matrix3.newIdentity();
-    private final float[] lightMatColor = new float[4];
 
     public TextureMaterialTechnique(AssetLoader al) throws GraphicsException
     {
@@ -64,44 +32,36 @@ public class TextureMaterialTechnique extends Technique
                 RenderProperty.SPEC_MAT_COLOR,
                 RenderProperty.SHININESS
         });
-        projectionUniform = getUniform(UniformNames.PROJECTION_MATRIX_UNIFORM);
-        viewModelUniform = getUniform(UniformNames.VIEW_MODEL_MATRIX_UNIFORM);
-        normalUniform = getUniform(UniformNames.NORMAL_MATRIX_UNIFORM);
-        ambientLightColorUniform = getUniform(UniformNames.AMBIENT_LIGHT_COLOR_UNIFORM);
-        lightColorUniform = getUniform(UniformNames.LIGHT_COLOR_UNIFORM);
-        specLightMaterialUniform = getUniform(UniformNames.SPEC_LIGHTMAT_COLOR_UNIFORM);
-        lightEyePosUniform = getUniform(UniformNames.LIGHT_POS_EYE_UNIFORM);
-        onStateUniform = getUniform(UniformNames.ON_STATE_UNIFORM);
-        shininessUniform = getUniform(UniformNames.SHININESS_UNIFORM);
-        matSamplerUniform = getUniform(UniformNames.MATERIAL_SAMPLER_UNIFORM);
     }
 
     @Override
     public void applyPropertiesToUniforms()
     {
-        Matrix4 projMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
-        projectionUniform.setValue(projMatrix.m);
+        Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
+        setUniformValue(UniformName.PROJECTION_MATRIX, projectionMatrix.m);
 
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
         viewModelMatrix.set(viewMatrix);
         viewModelMatrix.multiplyBy(modelMatrix);
 
-        viewModelUniform.setValue(viewModelMatrix.m);
+        setUniformValue(UniformName.VIEW_MODEL_MATRIX, viewModelMatrix.m);
         normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
-        normalUniform.setValue(normalTransform.m);
+        setUniformValue(UniformName.NORMAL_MATRIX, normalTransform.m);
 
-        ambientLightColorUniform.setValue(getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR));
+        setUniformValue(UniformName.AMBIENT_LIGHT_COLOR, getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR));
+
         Texture texture = (Texture) getPropertyValue(RenderProperty.MAT_COLOR_TEXTURE);
-        matSamplerUniform.setValue(texture.autoBind());
+        setUniformValue(UniformName.MATERIAL_SAMPLER, texture.autoBind());
 
         float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        lightEyePosUniform.setValue(lighting.getLightPositionsInEyeSpace());
-        lightColorUniform.setValue(lighting.getColors());
-        specLightMaterialUniform.setValue(lighting.calcLightMatColors(specMatColor));
-        onStateUniform.setValue(lighting.getOnStates());
-        shininessUniform.setValue(getPropertyValue(RenderProperty.SHININESS));
+        setUniformValue(UniformName.LIGHT_POS_EYE, lighting.getLightPositionsInEyeSpace());
+        setUniformValue(UniformName.LIGHT_COLOR, lighting.getColors());
+        setUniformValue(UniformName.SPEC_LIGHTMAT_COLOR, lighting.calcLightMatColors(specMatColor));
+        setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
+        setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
     }
+
 }

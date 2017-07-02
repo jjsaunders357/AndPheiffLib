@@ -8,7 +8,7 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.techniques.DepthDistanceSquaredTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.DepthCubeTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 
 /**
@@ -19,7 +19,7 @@ public class CubeDepthRenderer extends Renderer
 {
     private final FrameBuffer frameBuffer;
     //TODO: Make programs/techniques unique (put them in cache, so same program/shader loaded more than once, ends up being cached).
-    private final DepthDistanceSquaredTechnique depthDistanceSquaredTechnique;
+    private final DepthCubeTechnique depthCubeTechnique;
     private final TextureCubeMap cubeDepthTexture;
     private final TechniqueRenderPass depthRenderPass;
     private final Camera lightCamera = new Camera(90, 1, 0.1f, 100, false);
@@ -31,8 +31,8 @@ public class CubeDepthRenderer extends Renderer
     public CubeDepthRenderer(AssetLoader al, TextureCubeMap cubeDepthTexture, float maximumLightDistance) throws GraphicsException
     {
         frameBuffer = new FrameBuffer();
-        depthDistanceSquaredTechnique = new DepthDistanceSquaredTechnique(al);
-        depthRenderPass = new TechniqueRenderPass(depthDistanceSquaredTechnique);
+        depthCubeTechnique = new DepthCubeTechnique(al);
+        depthRenderPass = new TechniqueRenderPass(depthCubeTechnique);
         this.cubeDepthTexture = cubeDepthTexture;
         this.maximumLightDistance = maximumLightDistance;
     }
@@ -84,9 +84,9 @@ public class CubeDepthRenderer extends Renderer
         GLES20.glClearDepthf(1.0f);
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
 
-        depthDistanceSquaredTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
-        depthDistanceSquaredTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
-        depthDistanceSquaredTechnique.setProperty(RenderProperty.MAXIMUM_LIGHT_DISTANCE, maximumLightDistance);
+        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
+        depthCubeTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
+        depthCubeTechnique.setProperty(RenderProperty.MAXIMUM_LIGHT_DISTANCE, maximumLightDistance);
 
         //TODO: Test rendering a large shape which covers entire face.
         renderPass(depthRenderPass);

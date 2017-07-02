@@ -5,37 +5,24 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.program.Uniform;
-import com.pheiffware.lib.graphics.managed.program.UniformNames;
+import com.pheiffware.lib.graphics.managed.program.UniformName;
 
 /**
  * Renders the depth of geometry and nothing else.
- * <p/>
- * Required Properties:
- * <p/>
- * RenderProperty.PROJECTION_MATRIX - Matrix4
- * <p/>
- * RenderProperty.VIEW_MATRIX - Matrix4
- * <p/>
- * RenderProperty.MODEL_MATRIX - Matrix4
- * <p>
  * Created by Steve on 6/21/2017.
  */
 
-public class DepthTechnique extends Technique
+public class DepthSpotTechnique extends Technique
 {
-    private final Uniform projectionViewModelUniform;
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
-    public DepthTechnique(AssetLoader al) throws GraphicsException
+    public DepthSpotTechnique(AssetLoader al) throws GraphicsException
     {
         super(al, "shaders/vert_depth.glsl", "shaders/frag_depth.glsl", new RenderProperty[]{
                 RenderProperty.PROJECTION_MATRIX,
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX
         });
-
-        projectionViewModelUniform = getUniform(UniformNames.PROJECTION_VIEW_MODEL_MATRIX_UNIFORM);
     }
 
     @Override
@@ -47,6 +34,6 @@ public class DepthTechnique extends Technique
         projectionViewModelMatrix.set(projectionMatrix);
         projectionViewModelMatrix.multiplyBy(viewMatrix);
         projectionViewModelMatrix.multiplyBy(modelMatrix);
-        projectionViewModelUniform.setValue(projectionViewModelMatrix.m);
+        setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
     }
 }
