@@ -106,10 +106,13 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         private Lighting lighting;
         private ObjectManager manager;
         private ObjectHandle monkeyHandle;
-        private float rotation = 0;
+        private ObjectHandle cubeHandle;
+        private float rotationRate = 1f;
         private SimpleRenderer simpleRenderer;
         private ColorMaterialTechnique colorTechnique;
         private TextureMaterialTechnique textureTechnique;
+        private Matrix4 cubeTransform = Matrix4.newTranslation(-2, 2, -4);
+        private Matrix4 monkeyTransform = Matrix4.newTranslation(0, 0, -4);
 
         public Renderer()
         {
@@ -150,6 +153,7 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
             try
             {
                 loader.loadCollada("meshes/test_render.dae");
+                loader.loadCollada("meshes/cubes.dae");
                 manager.packAndTransfer();
 
             }
@@ -158,6 +162,7 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
                 throw new RuntimeException("Failure", e);
             }
             monkeyHandle = loader.getHandle("Monkey");
+            cubeHandle = loader.getHandle("multi");
         }
 
         @Override
@@ -165,19 +170,23 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         {
             lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
 
-            Matrix4 monkeyTranslation = Matrix4.newTranslation(0, 0, -4);
-            Matrix4 modelMatrix = Matrix4.multiply(monkeyTranslation, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(1f, 1f, 1f));
-            //Increase rotation for next frame
-            rotation++;
+            monkeyTransform.rotateBy(rotationRate, 1, 1, 0);
+            cubeTransform.rotateBy(rotationRate, 1, 1, 0);
 
-            monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
+            monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
+            cubeHandle.setProperty(RenderProperty.MODEL_MATRIX, cubeTransform);
 
             colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
             colorTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+            textureTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
+            textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
+            textureTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+            textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
 
             simpleRenderer.add(monkeyHandle);
+            simpleRenderer.add(cubeHandle);
             simpleRenderer.render();
         }
     }

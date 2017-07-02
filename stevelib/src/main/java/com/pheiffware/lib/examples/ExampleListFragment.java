@@ -13,17 +13,11 @@ import android.widget.TextView;
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffRecyclerViewAdapter;
 import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffViewHolder;
-import com.pheiffware.lib.examples.andGraphics.ColladaLoaderExampleFragment;
-import com.pheiffware.lib.examples.andGraphics.CombinedVertexBufferExampleFragment;
 import com.pheiffware.lib.examples.andGraphics.Example1RawVertexBufferFragment;
 import com.pheiffware.lib.examples.andGraphics.Example2ManagedVertexBuffersFragment;
 import com.pheiffware.lib.examples.andGraphics.Example3ManagedRenderingFragment;
 import com.pheiffware.lib.examples.andGraphics.Example4CubeFrameFragment;
 import com.pheiffware.lib.examples.andGraphics.HolographicExampleFragment;
-import com.pheiffware.lib.examples.andGraphics.ManagedGraphicsExampleFragment;
-import com.pheiffware.lib.examples.andGraphics.MeshExampleFragment;
-import com.pheiffware.lib.examples.andGraphics.RenderToTextureExampleFragment;
-import com.pheiffware.lib.examples.andGraphics.TextureBoxExampleFragment;
 import com.pheiffware.lib.examples.physics.TestPhysicsExampleFragment;
 
 import java.util.ArrayList;
@@ -59,14 +53,7 @@ public class ExampleListFragment extends Fragment implements View.OnClickListene
         examples.add(new LibExampleData("Managed Render", Example3ManagedRenderingFragment.class));
         examples.add(new LibExampleData("Managed Vertex Buffers", Example2ManagedVertexBuffersFragment.class));
         examples.add(new LibExampleData("Raw Vertex Buffers", Example1RawVertexBufferFragment.class));
-
         examples.add(new LibExampleData("Holographic", HolographicExampleFragment.class));
-        examples.add(new LibExampleData("Collada Managed Graphics", ColladaLoaderExampleFragment.class));
-        examples.add(new LibExampleData("Managed Graphics", ManagedGraphicsExampleFragment.class));
-        examples.add(new LibExampleData("Texture Box", TextureBoxExampleFragment.class));
-        examples.add(new LibExampleData("Collada Mesh", MeshExampleFragment.class));
-        examples.add(new LibExampleData("GL Render to Texture", RenderToTextureExampleFragment.class));
-        examples.add(new LibExampleData("GL Combined Buffer", CombinedVertexBufferExampleFragment.class));
         examples.add(new LibExampleData("Physics", TestPhysicsExampleFragment.class));
     }
 
