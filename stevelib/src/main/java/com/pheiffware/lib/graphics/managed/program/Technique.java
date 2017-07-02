@@ -19,23 +19,16 @@ import java.util.EnumSet;
  * <p/>
  * 1. Its possible to quickly set a property once and then overwrite it again before rendering.  This is fast/cheap.
  * <p/>
- * 2. If a property is set a reference to the value is retained and will be used in future calls to applyProperties().  Property value objects should not be changed after being
- * set.
- * <p/>
- * Default property values:
- * <p/>
- * Default values can be set for properties.  These values are returned from getPropertyValue() even if the property was not explicitly set.  Even if the property is set, it will
- * be reset to the default value after applyProperties() is called.
+ * 2. If a property is set a reference to the value is retained and will be used in future calls to applyProperties().  Property value objects should not be changed after applyProperties() is called, unless changed.
+ * <p>
  * <p/>
  * Created by Steve on 4/17/2016.
  */
 public abstract class Technique
 {
+    //TODO: Possibly remove this
     //The set of properties which apply to this technique
     private final EnumSet<RenderProperty> properties = EnumSet.noneOf(RenderProperty.class);
-
-    //Default properties which should be used every time unless explicitly overridden in a particular property batch.
-    private final EnumMap<RenderProperty, Object> defaultPropertyValues = new EnumMap<>(RenderProperty.class);
 
     //Values of properties cached here for use in applyProperties()
     private final EnumMap<RenderProperty, Object> propertyValues = new EnumMap<>(RenderProperty.class);
@@ -60,45 +53,12 @@ public abstract class Technique
     public void applyProperties()
     {
         applyPropertiesToUniforms();
-        defaultPropertyValues();
-    }
-
-    private void defaultPropertyValues()
-    {
-        for (RenderProperty property : defaultPropertyValues.keySet())
-        {
-            setProperty(property, defaultPropertyValues.get(property));
-        }
     }
 
     /**
      * Should apply all properties to uniforms as appropriate for the technique.
      */
     protected abstract void applyPropertiesToUniforms();
-
-    /**
-     * Sets default values for various properties.  These are used every time applyProperties() is called, unless property value explicitly set since the last call to
-     * applyProperties()
-     *
-     * @param properties
-     * @param defaultValues
-     */
-    public final void setDefaultPropertyValues(RenderProperty[] properties, Object[] defaultValues)
-    {
-        defaultPropertyValues.clear();
-        for (int i = 0; i < properties.length; i++)
-        {
-            defaultPropertyValues.put(properties[i], defaultValues[i]);
-        }
-        defaultPropertyValues();
-    }
-
-    public void setDefaultPropertyValues(EnumMap<RenderProperty, Object> defaultPropertyValues)
-    {
-        this.defaultPropertyValues.clear();
-        this.defaultPropertyValues.putAll(defaultPropertyValues);
-        defaultPropertyValues();
-    }
 
     /**
      * Set a property value for use later in the applyProperties method.
@@ -131,20 +91,6 @@ public abstract class Technique
         for (RenderPropertyValue renderPropertyValue : renderPropertyValues)
         {
             this.propertyValues.put(renderPropertyValue.property, renderPropertyValue.value);
-        }
-    }
-
-    /**
-     * Convenience method to set multiple properties at once.
-     *
-     * @param properties
-     * @param propertyValues
-     */
-    public void setProperties(RenderProperty[] properties, Object[] propertyValues)
-    {
-        for (int i = 0; i < properties.length; i++)
-        {
-            this.propertyValues.put(properties[i], propertyValues[i]);
         }
     }
 
