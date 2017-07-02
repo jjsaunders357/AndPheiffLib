@@ -1,11 +1,11 @@
-package com.pheiffware.lib.graphics.managed.engine.newEngine.renderers;
+package com.pheiffware.lib.graphics.managed.engine.renderers;
 
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.engine.newEngine.Renderer;
+import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.techniques.DepthDistanceSquaredTechnique;

@@ -1,10 +1,10 @@
-package com.pheiffware.lib.graphics.managed.engine.newEngine;
+package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexAttributeHandle;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexIndexHandle;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexIndexHandle;
 
 import java.nio.ByteBuffer;
 import java.util.EnumMap;

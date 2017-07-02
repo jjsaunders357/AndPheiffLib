@@ -2,8 +2,7 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexAttributeHandle;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -172,16 +171,6 @@ public abstract class Technique
     public void bind()
     {
         program.bind();
-    }
-
-    /**
-     * Binds the given buffer and sets up all attributes, relevant to this technique.
-     *
-     * @param staticVertexBuffer
-     */
-    public void bindBuffer(StaticVertexBuffer staticVertexBuffer)
-    {
-        staticVertexBuffer.bind(program);
     }
 
     public final void bindToVertexBuffer(VertexAttributeHandle handle)

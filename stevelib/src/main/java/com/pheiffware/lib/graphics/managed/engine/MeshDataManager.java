@@ -1,18 +1,17 @@
-package com.pheiffware.lib.graphics.managed.engine.newEngine;
+package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.DynamicAttributeBuffer;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.MeshVertexDataPacker;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.MeshVertexIndexPacker;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.StaticAttributeBuffer;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexAttributeHandle;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.newBuffers.VertexIndexHandle;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.DynamicAttributeBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.MeshVertexDataPacker;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.MeshVertexIndexPacker;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticAttributeBuffer;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
+import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexIndexHandle;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
 /**

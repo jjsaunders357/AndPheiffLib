@@ -26,31 +26,6 @@ public class TextureUtils
         return textureHandles[0];
     }
 
-    public static int genCubeTextureForDepthRendering(int pixelWidth, int pixelHeight, FilterQuality filterQuality)
-    {
-        int textureHandle = genTexture();
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_CUBE_MAP, textureHandle);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
-                GLES20.GL_UNSIGNED_SHORT, null);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GLES20.GL_DEPTH_COMPONENT, pixelWidth, pixelHeight, 0, GLES20.GL_DEPTH_COMPONENT,
-                GLES20.GL_UNSIGNED_SHORT, null);
-
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_COMPARE_MODE, GLES30.GL_COMPARE_REF_TO_TEXTURE);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_COMPARE_FUNC, GLES30.GL_LEQUAL);
-        filterQuality.applyToBoundTexture2D(false);
-        //TODO: Page 419
-        //float texture (samplerCubeShadow sampler, vec4 P [, float bias] )
-        return textureHandle;
-    }
-
     /**
      * Binds a the given texture handle to a sampler index.
      *

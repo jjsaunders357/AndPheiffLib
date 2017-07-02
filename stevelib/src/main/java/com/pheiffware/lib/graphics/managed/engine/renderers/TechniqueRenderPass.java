@@ -1,7 +1,7 @@
-package com.pheiffware.lib.graphics.managed.engine.newEngine.renderers;
+package com.pheiffware.lib.graphics.managed.engine.renderers;
 
-import com.pheiffware.lib.graphics.managed.engine.newEngine.BaseRenderPass;
-import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshHandle;
+import com.pheiffware.lib.graphics.managed.engine.BaseRenderPass;
+import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 
 /**

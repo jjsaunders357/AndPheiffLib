@@ -1,8 +1,7 @@
-package com.pheiffware.lib.graphics.managed.engine.newEngine.renderers;
+package com.pheiffware.lib.graphics.managed.engine.renderers;
 
-import com.pheiffware.lib.graphics.managed.engine.newEngine.Renderer;
+import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.techniques.DepthTechnique;
 
 /**
  * Created by Steve on 6/21/2017.

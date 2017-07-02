@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.engine.newEngine;
+package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
