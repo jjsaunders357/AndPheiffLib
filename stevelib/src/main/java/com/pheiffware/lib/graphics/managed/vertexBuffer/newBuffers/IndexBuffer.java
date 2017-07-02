@@ -67,4 +67,14 @@ public class IndexBuffer extends VertexBuffer
         deallocateSoftwareBuffer();
         isTransferred = true;
     }
+
+    /**
+     * Allocate enough space to hold the given number of indices.
+     *
+     * @param numIndices
+     */
+    public void allocateIndices(int numIndices)
+    {
+        allocateSoftwareBuffer(numIndices * 2);
+    }
 }

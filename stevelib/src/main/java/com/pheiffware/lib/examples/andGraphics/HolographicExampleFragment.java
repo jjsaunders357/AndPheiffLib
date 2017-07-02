@@ -13,7 +13,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.and.gui.graphics.openGL.TouchTransformGameView;
 import com.pheiffware.lib.and.input.OrientationTracker;
-import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
@@ -23,12 +22,12 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshDataManager;
+import com.pheiffware.lib.graphics.managed.engine.newEngine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.light.HoloLighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.techniques.HoloColorMaterialTechnique;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
-import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticVertexBuffer;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -75,13 +74,15 @@ public class HolographicExampleFragment extends BaseGameFragment
         private float rotation = 0;
 
         private HoloColorMaterialTechnique holoColorTechnique;
-        private IndexBuffer indexBuffer;
-        private Matrix4 translationMatrix;
-        private StaticVertexBuffer colorVertexBuffer;
+        private MeshDataManager manager;
 
         //Represents the position of the eye relative to surface of the direct center of the screen
         private final float[] eyePositionRelativeToScreen = new float[]{0, 0, 6, 1};
         private float aspectRatio;
+        private MeshHandle monkeyHandle;
+        private MeshHandle monkeyHandle2;
+        private MeshHandle monkeyHandle3;
+        private Matrix4 transform3;
 
         public Renderer()
         {
@@ -108,19 +109,33 @@ public class HolographicExampleFragment extends BaseGameFragment
                 //From a given object get all meshes which should be rendered with the given material (in this case there is only one mesh which uses the single material defined in the file).
                 Mesh mesh = monkey.getMesh(0);
 
-                //Extract the translation aspect of the transform
-                DecomposedTransform3D decomposedTransform = monkey.getInitialMatrix().decompose();
-                translationMatrix = decomposedTransform.getTranslation();
+                manager = new MeshDataManager();
+                monkeyHandle = manager.addStaticMesh(
+                        mesh,
+                        holoColorTechnique,
+                        new RenderPropertyValue[]
+                                {
+                                        new RenderPropertyValue(RenderProperty.MAT_COLOR, new float[]{0f, 1f, 1f, 1f}),
+                                        new RenderPropertyValue(RenderProperty.SPEC_MAT_COLOR, new float[]{1f, 1f, 1f, 1f}),
+                                        new RenderPropertyValue(RenderProperty.SHININESS, 100f)
+                                });
+                monkeyHandle2 = monkeyHandle.copy();
+                monkeyHandle3 = monkeyHandle.copy();
+                manager.packAndTransfer();
 
-                indexBuffer = new IndexBuffer(false);
-                indexBuffer.allocate(mesh.getNumIndices());
-                indexBuffer.putIndices(mesh.getVertexIndices());
-                indexBuffer.transfer();
+                Matrix4 transform = Matrix4.newTranslation(0.3f, 0.3f, 0.2f);
+                transform.scaleBy(0.2f, 0.2f, 0.2f);
+                monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, transform);
 
-                colorVertexBuffer = new StaticVertexBuffer(new VertexAttribute[]{VertexAttribute.POSITION4, VertexAttribute.NORMAL});
-                colorVertexBuffer.allocate(mesh.getNumVertices());
-                colorVertexBuffer.putVertexAttributes(mesh, 0);
-                colorVertexBuffer.transfer();
+                transform = Matrix4.newTranslation(-0.3f, -0.3f, 0.2f);
+                transform.scaleBy(0.2f, 0.2f, 0.2f);
+                monkeyHandle2.setProperty(RenderProperty.MODEL_MATRIX, transform);
+
+                transform3 = Matrix4.newTranslation(0.3f, -0.3f, 0.2f);
+
+                //TODO:Flipping on z-axis produces lighting artifacts.  Check why?
+                transform3.scaleBy(0.2f, 0.2f, 0.2f);
+                monkeyHandle3.setProperty(RenderProperty.MODEL_MATRIX, transform3);
             }
             catch (IOException | XMLParseException e)
             {
@@ -140,43 +155,35 @@ public class HolographicExampleFragment extends BaseGameFragment
                 float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
 
                 lighting.calcOnLightPositionsInEyeSpace(orientationMatrix);
-//                float[] vals = new float[3];
-//                SensorManager.getOrientation(orientationMatrix.m, vals);
-//                Log.i("sensor", Math.toDegrees(vals[0]) + " , " + Math.toDegrees(vals[1]) + " , " + Math.toDegrees(vals[2]));
-
-                holoColorTechnique.bind();
-                colorVertexBuffer.bind(holoColorTechnique);
-                translationMatrix = Matrix4.newTranslation(0.3f, 0.3f, 0.2f);
-                Matrix4 modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
-
-                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
+                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 0.1f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, SCREEN_ALPHA}));
                 holoColorTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-
                 holoColorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
-
                 holoColorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SHININESS, 30.0f);
-                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 0.1f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, SCREEN_ALPHA}));
-                holoColorTechnique.applyProperties();
 
-                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
+                monkeyHandle.drawTriangles();
+                monkeyHandle2.drawTriangles();
 
-                translationMatrix = Matrix4.newTranslation(-0.3f, 0.0f, -0.3f);
-                modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
-
-                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
-                holoColorTechnique.applyProperties();
-
-                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
-
-                translationMatrix = Matrix4.newTranslation(0.0f, -0.2f, -0.1f);
-                modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
-
-                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
-                holoColorTechnique.applyProperties();
-
-                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
+                transform3.rotateBy(1, 0, 0, 1);
+                monkeyHandle3.setProperty(RenderProperty.MODEL_MATRIX, transform3);
+                monkeyHandle3.drawTriangles();
+//
+//                translationMatrix = Matrix4.newTranslation(-0.3f, 0.0f, -0.3f);
+//                modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
+//
+//                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
+//                holoColorTechnique.applyProperties();
+//
+//                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
+//
+//                translationMatrix = Matrix4.newTranslation(0.0f, -0.2f, -0.1f);
+//                modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
+//
+//                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
+//                holoColorTechnique.applyProperties();
+//
+//                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
                 //rotation++;
             }
         }

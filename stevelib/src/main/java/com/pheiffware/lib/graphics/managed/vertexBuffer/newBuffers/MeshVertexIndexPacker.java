@@ -96,7 +96,7 @@ public class MeshVertexIndexPacker
     {
         for (int i = 0; i < mesh.getNumIndices(); i++)
         {
-            byteBuffer.putShort(mesh.getVertexIndices()[i]);
+            byteBuffer.putShort(mesh.getIndices()[i]);
         }
     }
 }

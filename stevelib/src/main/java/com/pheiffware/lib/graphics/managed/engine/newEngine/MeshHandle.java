@@ -15,11 +15,11 @@ import java.util.EnumMap;
 
 public class MeshHandle
 {
-    final VertexIndexHandle iHandle;
-    final VertexAttributeHandle sHandle;
-    final VertexAttributeHandle dHandle;
-    final Technique technique;
-    final EnumMap<RenderProperty, Object> renderProperties = new EnumMap(RenderProperty.class);
+    private final VertexIndexHandle iHandle;
+    private final VertexAttributeHandle sHandle;
+    private final VertexAttributeHandle dHandle;
+    private final Technique technique;
+    private final EnumMap<RenderProperty, Object> renderProperties;
 
     public MeshHandle(VertexIndexHandle iHandle, VertexAttributeHandle sHandle, VertexAttributeHandle dHandle, Technique technique, RenderPropertyValue[] renderProperties)
     {
@@ -27,10 +27,20 @@ public class MeshHandle
         this.sHandle = sHandle;
         this.dHandle = dHandle;
         this.technique = technique;
+        this.renderProperties = new EnumMap<>(RenderProperty.class);
         for (RenderPropertyValue renderPropertyValue : renderProperties)
         {
             this.renderProperties.put(renderPropertyValue.property, renderPropertyValue.value);
         }
+    }
+
+    public MeshHandle(VertexIndexHandle iHandle, VertexAttributeHandle sHandle, VertexAttributeHandle dHandle, Technique technique, EnumMap<RenderProperty, Object> renderProperties)
+    {
+        this.iHandle = iHandle;
+        this.sHandle = sHandle;
+        this.dHandle = dHandle;
+        this.technique = technique;
+        this.renderProperties = new EnumMap<>(renderProperties);
     }
 
     public final void drawTriangles()
@@ -84,5 +94,10 @@ public class MeshHandle
     public void setProperty(RenderProperty renderProperty, Object value)
     {
         renderProperties.put(renderProperty, value);
+    }
+
+    public MeshHandle copy()
+    {
+        return new MeshHandle(iHandle, sHandle, dHandle, technique, renderProperties);
     }
 }

@@ -88,12 +88,12 @@ public class TestCollada
         assertEquals("local_mat2_id", geo1.localMaterialIDs.get(1));
 
         Mesh mesh1 = geo1.meshes.get(0);
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getVertexIndices());
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getIndices());
         assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.getPosition4Data(), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.getTexCoordData(), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.getNormalData(), 0);
         Mesh mesh2 = geo1.meshes.get(1);
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 2}, mesh2.getVertexIndices());
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 2}, mesh2.getIndices());
         assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1}, mesh2.getPosition4Data(), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1}, mesh2.getTexCoordData(), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2}, mesh2.getNormalData(), 0);
@@ -189,7 +189,7 @@ public class TestCollada
         assertEquals("local_mat1_id", geo1.localMaterialIDs.get(0));
 
         Mesh mesh1 = geo1.meshes.get(0);
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getVertexIndices());
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh1.getIndices());
         assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh1.getPosition4Data(), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh1.getTexCoordData(), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh1.getNormalData(), 0);
@@ -281,7 +281,7 @@ public class TestCollada
         ColladaMesh colladaMesh = new ColladaMesh(inputs, interleavedIndices, vertexCount);
         ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, true);
         Mesh mesh = colladaMeshNormalizer.generateMesh();
-        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.getVertexIndices());
+        assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.getIndices());
         assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh.getAttributeData(VertexAttribute.POSITION4), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.getAttributeData(VertexAttribute.TEXCOORD), 0);
         assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.getAttributeData(VertexAttribute.NORMAL), 0);

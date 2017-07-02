@@ -189,7 +189,7 @@ public class Mesh
         return vertexAttributeData.get(VertexAttribute.TEXCOORD);
     }
 
-    public final short[] getVertexIndices()
+    public final short[] getIndices()
     {
         return vertexIndices;
     }
