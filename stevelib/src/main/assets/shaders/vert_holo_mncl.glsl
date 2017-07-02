@@ -1,3 +1,4 @@
+#version 300 es
 precision mediump float;
 //Transforms vertices within screen space
 uniform mat4 modelMatrix;
@@ -19,10 +20,10 @@ uniform float aspectRatio;
 
 //Position of the vertex in screen space.  0,0,0 represents the center of the surface of the screen.  -z goes into the screen, +z projects out from the screen.
 //A length of 1 corresponds to 1/2 the width of the screen.
-attribute vec4 vertexPosition4;
-attribute vec3 vertexNormal;
-varying vec4 position;
-varying vec3 normal;
+in vec4 vertexPosition4;
+in vec3 vertexNormal;
+out vec4 position;
+out vec3 normal;
 void main()
 {
 	normal = normalize(normalMatrix * vertexNormal);

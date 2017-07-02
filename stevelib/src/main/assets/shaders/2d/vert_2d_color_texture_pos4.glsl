@@ -1,3 +1,4 @@
+#version 300 es
 /*
 2 dimensional vertex shader.
 All x values are interpreteted following the convention that -1 is the left of the screen and +1 is the right of the screen.
@@ -9,15 +10,15 @@ z values are used for deciding what appears in front of what.
 //to project them in 2D, which is a simple scale along the y-axis as described above.
 uniform mat4 projectionViewModelMatrix;
 
-attribute vec4 vertexPosition4;
-attribute vec4 vertexColor;
-attribute vec2 vertexTexCoord;
-varying vec2 varyingTexCoord;
-varying vec4 varyingColor;
+in vec4 vertexPosition4;
+in vec4 vertexColor;
+in vec2 vertexTexCoord;
+out vec2 texCoord;
+out vec4 color;
 
 void main()
 {
-	varyingColor.rgba = vertexColor.rgba;
-	varyingTexCoord = vertexTexCoord;
+	color.rgba = vertexColor.rgba;
+	texCoord = vertexTexCoord;
 	gl_Position = projectionViewModelMatrix * vertexPosition4;
 }

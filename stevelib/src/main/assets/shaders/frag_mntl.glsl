@@ -1,3 +1,4 @@
+#version 300 es
 precision mediump float;
 
 const float zero=0.0;
@@ -25,9 +26,11 @@ uniform float shininess;
 uniform sampler2D materialColorSampler;
 
 //Position of point being rendered in eye space
-varying vec4 positionEyeSpace;
-varying vec3 normalEyeSpace;
-varying vec2 texCoord                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;
+in vec4 positionEyeSpace;
+in vec3 normalEyeSpace;
+in vec2 texCoord                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;
+
+layout(location = 0) out vec4 fragColor;
 
 vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
@@ -54,7 +57,7 @@ vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4
 void main()
 {
     //Base color of material
-    vec4 baseMaterialColor = texture2D(materialColorSampler,texCoord);
+    vec4 baseMaterialColor = texture(materialColorSampler,texCoord);
 
     //Calc ambient color
     vec4 ambientLightMaterialColor = baseMaterialColor * ambientLightColor;
@@ -69,5 +72,5 @@ void main()
             totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor,specLightMaterialColor[i]);
         }
     }
-    gl_FragColor = totalLightMaterialColor;
+    fragColor = totalLightMaterialColor;
 }

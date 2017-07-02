@@ -1,3 +1,4 @@
+#version 300 es
 precision mediump float;
 
 const float ZERO=0.0;
@@ -26,14 +27,16 @@ uniform float shininess;
 uniform vec4 eyePosition;
 
 //Position/normal of point being rendered in screen space
-varying vec4 position;
-varying vec3 normal;
+in vec4 position;
+in vec3 normal;
 
 //Color of the screen's surface.  Anything with a z position < 0, has this blended in.
 uniform vec4 screenColor;
 
 //Near visible plane, relative to eye.  In other words, minimum distance from eye, in z direction, towards screen, which is visible.
 uniform float zNear;
+
+layout(location = 0) out vec4 fragColor;
 
 vec4 light_color(vec4 lightPosition,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
@@ -78,6 +81,6 @@ void main()
     {
         totalLightMaterialColor = blendScreen(totalLightMaterialColor);
     }
-	gl_FragColor = totalLightMaterialColor;
+	fragColor = totalLightMaterialColor;
 }
 

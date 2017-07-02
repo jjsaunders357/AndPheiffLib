@@ -1,3 +1,4 @@
+#version 300 es
 precision mediump float;
 
 const float zero=0.0;
@@ -22,9 +23,10 @@ uniform vec4 ambientLightMaterialColor;
 uniform float shininess;
 
 //Position of point being rendered in eye space
-varying vec4 positionEyeSpace;
-varying vec3 normalEyeSpace;
+in vec4 positionEyeSpace;
+in vec3 normalEyeSpace;
 
+layout(location = 0) out vec4 fragColor;
 
 vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
@@ -59,6 +61,6 @@ void main()
         }
     }
     //Color of fragment is the combination of all colors
-	gl_FragColor = totalLightMaterialColor;
+	fragColor = totalLightMaterialColor;
 }
 
