@@ -67,7 +67,7 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            programTextureColor = new Program(al, "shaders/2d/color_texture_pos4_2d_vert.glsl", "shaders/2d/color_texture_pos4_2d_frag.glsl");
+            programTextureColor = new Program(al, "shaders/2d/vert_2d_color_texture_pos4.glsl", "shaders/2d/frag_2d_color_texture_pos4.glsl");
             faceTexture = glCache.buildImageTex("images/face.png").build();
 
             indexBuffer = new IndexBuffer();

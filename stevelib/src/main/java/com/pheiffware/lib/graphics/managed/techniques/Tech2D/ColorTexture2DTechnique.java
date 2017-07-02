@@ -32,7 +32,7 @@ public class ColorTexture2DTechnique extends Technique
 
     public ColorTexture2DTechnique(AssetLoader al) throws GraphicsException
     {
-        super(al, "shaders/2d/color_texture_pos4_2d_vert.glsl", "shaders/2d/color_texture_pos4_2d_frag.glsl", new RenderProperty[]{RenderProperty.PROJECTION_MATRIX, RenderProperty.VIEW_MATRIX});
+        super(al, "shaders/2d/vert_2d_color_texture_pos4.glsl", "shaders/2d/frag_2d_color_texture_pos4.glsl", new RenderProperty[]{RenderProperty.PROJECTION_MATRIX, RenderProperty.VIEW_MATRIX});
         projectionViewModelUniform = getUniform(UniformNames.PROJECTION_VIEW_MODEL_MATRIX_UNIFORM);
         matSamplerUniform = getUniform(UniformNames.MATERIAL_SAMPLER_UNIFORM);
     }
