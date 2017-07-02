@@ -17,7 +17,7 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
+import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.DynamicAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;
@@ -48,8 +48,8 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
         private float globalTestColor = 0.0f;
         private Matrix4 ortho2DMatrix;
         private Texture faceTexture;
-        private VertexAttributes staticVertexAttributes;
-        private VertexAttributes dynamicVertexAttributes;
+        private VertexAttributeGroup staticVertexAttributeGroup;
+        private VertexAttributeGroup dynamicVertexAttributeGroup;
 
 
         @Override
@@ -96,7 +96,7 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
                 byteBuffer.putFloat(textureData[i * 2 + 0]);
                 byteBuffer.putFloat(textureData[i * 2 + 1]);
             }
-            staticVertexAttributes = new VertexAttributes(EnumSet.of(VertexAttribute.POSITION4, VertexAttribute.TEXCOORD));
+            staticVertexAttributeGroup = new VertexAttributeGroup(EnumSet.of(VertexAttribute.POSITION4, VertexAttribute.TEXCOORD));
 
             float[] colorData = MeshGenUtils.genSingleQuadColorData(new float[]{1, 0, 0, 1});
             dynamicBuffer.allocateSoftwareBuffer(4 * 4 * 4);
@@ -108,7 +108,7 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
                 byteBuffer.putFloat(colorData[i * 4 + 2]);
                 byteBuffer.putFloat(colorData[i * 4 + 3]);
             }
-            dynamicVertexAttributes = new VertexAttributes(EnumSet.of(VertexAttribute.COLOR));
+            dynamicVertexAttributeGroup = new VertexAttributeGroup(EnumSet.of(VertexAttribute.COLOR));
             indexBuffer.transfer();
             staticBuffer.transfer();
             dynamicBuffer.transfer();
@@ -143,8 +143,8 @@ public class Example1RawVertexBufferFragment extends BaseGameFragment
             faceTexture.manualBind(0);
             programTextureColor.setUniformSampler("materialColorSampler", 0);
 
-            staticBuffer.bindToProgram(programTextureColor, staticVertexAttributes, 0);
-            dynamicBuffer.bindToProgram(programTextureColor, dynamicVertexAttributes, 0);
+            staticBuffer.bindToProgram(programTextureColor, staticVertexAttributeGroup, 0);
+            dynamicBuffer.bindToProgram(programTextureColor, dynamicVertexAttributeGroup, 0);
             indexBuffer.draw(GLES20.GL_TRIANGLES, 6, 0);
             globalTestColor += 0.01;
         }

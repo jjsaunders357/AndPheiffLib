@@ -9,7 +9,7 @@ import java.util.EnumSet;
  * Created by Steve on 6/14/2017.
  */
 
-public class VertexAttributes
+public class VertexAttributeGroup
 {
     //The vertexAttributes being managed by this buffer.  EnumSet maintains attribute order based on natural Enum ordering
     private final EnumSet<VertexAttribute> vertexAttributes;
@@ -21,7 +21,7 @@ public class VertexAttributes
     //Maps standard vertexAttributes to their corresponding byte offsets within each vertex data block
     private EnumMap<VertexAttribute, Integer> attributeVertexByteOffset = new EnumMap<>(VertexAttribute.class);
 
-    public VertexAttributes(EnumSet<VertexAttribute> vertexAttributes)
+    public VertexAttributeGroup(EnumSet<VertexAttribute> vertexAttributes)
     {
         this.vertexAttributes = vertexAttributes;
         int attributeByteOffset = 0;

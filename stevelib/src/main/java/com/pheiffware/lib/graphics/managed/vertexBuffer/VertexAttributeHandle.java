@@ -1,7 +1,7 @@
 package com.pheiffware.lib.graphics.managed.vertexBuffer;
 
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
+import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 
 import java.nio.ByteBuffer;
 
@@ -18,22 +18,22 @@ public class VertexAttributeHandle
     private int byteLimit;
 
     //The vertex attributes associated with this handle
-    private VertexAttributes vertexAttributes;
+    private VertexAttributeGroup vertexAttributeGroup;
 
     //The buffer containing the data
     private AttributeVertexBuffer vertexBuffer;
 
-    void setup(int byteOffset, int numVertices, VertexAttributes vertexAttributes, AttributeVertexBuffer vertexBuffer)
+    void setup(int byteOffset, int numVertices, VertexAttributeGroup vertexAttributeGroup, AttributeVertexBuffer vertexBuffer)
     {
         this.byteOffset = byteOffset;
-        this.byteLimit = byteOffset + numVertices * vertexAttributes.getVertexByteSize();
-        this.vertexAttributes = vertexAttributes;
+        this.byteLimit = byteOffset + numVertices * vertexAttributeGroup.getVertexByteSize();
+        this.vertexAttributeGroup = vertexAttributeGroup;
         this.vertexBuffer = vertexBuffer;
     }
 
     public final void bindToProgram(Program program)
     {
-        vertexBuffer.bindToProgram(program, vertexAttributes, byteOffset);
+        vertexBuffer.bindToProgram(program, vertexAttributeGroup, byteOffset);
     }
 
     public final ByteBuffer edit()

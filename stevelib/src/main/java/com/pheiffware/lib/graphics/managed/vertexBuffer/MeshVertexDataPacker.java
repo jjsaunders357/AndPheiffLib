@@ -2,7 +2,7 @@ package com.pheiffware.lib.graphics.managed.vertexBuffer;
 
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
+import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 import com.pheiffware.lib.utils.dataContainers.MapLinkedList;
 
 import java.nio.ByteBuffer;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class MeshVertexDataPacker
 {
-    //For each "Type" of mesh encountered, store a corresponding list of meshes of that type. Type is determined by the set of VertexAttributes it contains.
+    //For each "Type" of mesh encountered, store a corresponding list of meshes of that type. Type is determined by the set of VertexAttributeGroup it contains.
     private final MapLinkedList<EnumSet<VertexAttribute>, Mesh> meshTypeLists = new MapLinkedList<>();
 
     //For each mesh, keep track of the handle given to the user of the class.  This handle must be setup when the meshes are packed so that data can be accessed.
@@ -70,8 +70,8 @@ public class MeshVertexDataPacker
         ByteBuffer byteBuffer = vertexBuffer.editBuffer(0, spaceRequired);
         for (Map.Entry<EnumSet<VertexAttribute>, List<Mesh>> entry : meshTypeLists.entrySet())
         {
-            VertexAttributes vertexAttributes = new VertexAttributes(entry.getKey());
-            putAllMeshesOfType(vertexBuffer, byteBuffer, vertexAttributes, entry.getValue());
+            VertexAttributeGroup vertexAttributeGroup = new VertexAttributeGroup(entry.getKey());
+            putAllMeshesOfType(vertexBuffer, byteBuffer, vertexAttributeGroup, entry.getValue());
         }
         meshTypeLists.clear();
         meshToHandleMap.clear();
@@ -87,12 +87,12 @@ public class MeshVertexDataPacker
         int size = 0;
         for (Map.Entry<EnumSet<VertexAttribute>, List<Mesh>> entry : meshTypeLists.entrySet())
         {
-            VertexAttributes vertexAttributes = new VertexAttributes(entry.getKey());
+            VertexAttributeGroup vertexAttributeGroup = new VertexAttributeGroup(entry.getKey());
 
             List<Mesh> meshList = entry.getValue();
             for (Mesh mesh : meshList)
             {
-                size += mesh.getNumVertices() * vertexAttributes.getVertexByteSize();
+                size += mesh.getNumVertices() * vertexAttributeGroup.getVertexByteSize();
             }
         }
         return size;
@@ -104,17 +104,17 @@ public class MeshVertexDataPacker
      *
      * @param vertexBuffer     the vertex buffer containing the data
      * @param byteBuffer       the byte buffer to put the data in.
-     * @param vertexAttributes the type of the meshes
+     * @param vertexAttributeGroup the type of the meshes
      * @param meshList         the list of meshes, of this type, to transfer
      */
-    private void putAllMeshesOfType(AttributeVertexBuffer vertexBuffer, ByteBuffer byteBuffer, VertexAttributes vertexAttributes, List<Mesh> meshList)
+    private void putAllMeshesOfType(AttributeVertexBuffer vertexBuffer, ByteBuffer byteBuffer, VertexAttributeGroup vertexAttributeGroup, List<Mesh> meshList)
     {
         for (Mesh mesh : meshList)
         {
             int byteOffset = byteBuffer.position();
-            putMesh(byteBuffer, mesh, vertexAttributes);
+            putMesh(byteBuffer, mesh, vertexAttributeGroup);
             VertexAttributeHandle handle = meshToHandleMap.get(mesh);
-            handle.setup(byteOffset, mesh.getNumVertices(), vertexAttributes, vertexBuffer);
+            handle.setup(byteOffset, mesh.getNumVertices(), vertexAttributeGroup, vertexBuffer);
         }
     }
 
@@ -124,17 +124,17 @@ public class MeshVertexDataPacker
      *
      * @param byteBuffer       the byte buffer to put the data in.
      * @param mesh             the mesh to store
-     * @param vertexAttributes the set of vertex attributes of the mesh to store
+     * @param vertexAttributeGroup the set of vertex attributes of the mesh to store
      */
-    private void putMesh(ByteBuffer byteBuffer, Mesh mesh, VertexAttributes vertexAttributes)
+    private void putMesh(ByteBuffer byteBuffer, Mesh mesh, VertexAttributeGroup vertexAttributeGroup)
     {
-        int vertexByteSize = vertexAttributes.getVertexByteSize();
+        int vertexByteSize = vertexAttributeGroup.getVertexByteSize();
         int startByteOffset = byteBuffer.position();
 
-        for (VertexAttribute vertexAttribute : vertexAttributes.getAttributes())
+        for (VertexAttribute vertexAttribute : vertexAttributeGroup.getAttributes())
         {
             //Start putting data in the array at the given byteOffset AND the given attributes offset within a vertex
-            byteBuffer.position(startByteOffset + vertexAttributes.getAttributeByteOffset(vertexAttribute));
+            byteBuffer.position(startByteOffset + vertexAttributeGroup.getAttributeByteOffset(vertexAttribute));
             float[] data = mesh.getAttributeData(vertexAttribute);
             vertexAttribute.putDataInBuffer(byteBuffer, vertexByteSize, data);
         }

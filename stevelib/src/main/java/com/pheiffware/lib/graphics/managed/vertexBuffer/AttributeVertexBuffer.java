@@ -4,7 +4,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
+import com.pheiffware.lib.graphics.managed.program.VertexAttributeGroup;
 
 /**
  * Created by Steve on 6/14/2017.
@@ -13,20 +13,20 @@ import com.pheiffware.lib.graphics.managed.program.VertexAttributes;
 public abstract class AttributeVertexBuffer extends VertexBuffer
 {
     /**
-     * Binds the attributes of the buffer, specified in vertexAttributes to the given program (assumed to already be bound).
+     * Binds the attributes of the buffer, specified in vertexAttributeGroup to the given program (assumed to already be bound).
      * Any attribute not used by the program is ignored.
      * ASSUMES ALL ATTRIBUTES PACKED IN ORDER DICTATED BY VertexAttribute Enum!!!s
      *
      * @param program          program to use (assumed to bound already)
-     * @param vertexAttributes a description of the vertex data packed in the buffer at this point
+     * @param vertexAttributeGroup a description of the vertex data packed in the buffer at this point
      * @param byteOffset       the offset in the buffer where the data is located
      */
-    public final void bindToProgram(Program program, VertexAttributes vertexAttributes, int byteOffset)
+    public final void bindToProgram(Program program, VertexAttributeGroup vertexAttributeGroup, int byteOffset)
     {
         bind();
         for (VertexAttribute vertexAttribute : program.getAttributes())
         {
-            if (vertexAttributes.contains(vertexAttribute))
+            if (vertexAttributeGroup.contains(vertexAttribute))
             {
                 int location = program.getAttributeLocation(vertexAttribute);
                 GLES20.glEnableVertexAttribArray(location);
@@ -35,8 +35,8 @@ public abstract class AttributeVertexBuffer extends VertexBuffer
                         vertexAttribute.getNumBaseTypeElements(),
                         vertexAttribute.getBaseType(),
                         false,
-                        vertexAttributes.getVertexByteSize(),
-                        byteOffset + vertexAttributes.getAttributeByteOffset(vertexAttribute));
+                        vertexAttributeGroup.getVertexByteSize(),
+                        byteOffset + vertexAttributeGroup.getAttributeByteOffset(vertexAttribute));
             }
         }
     }
