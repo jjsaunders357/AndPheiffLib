@@ -5,8 +5,8 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.utils.GraphicsUtils;
 
@@ -14,7 +14,7 @@ import com.pheiffware.lib.utils.GraphicsUtils;
  * Shades mesh with a constant surface color and given lights' settings.  Handles, ambient, diffuse and specular lighting.
  * Created by Steve on 4/23/2016.
  */
-public class ColorMaterialTechnique extends Technique
+public class ColorMaterialTechnique extends ProgramTechnique
 {
     //Used internally to compute values to apply to uniforms
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
@@ -37,10 +37,9 @@ public class ColorMaterialTechnique extends Technique
 
 
     @Override
-    public void applyPropertiesToUniforms()
+    public void applyInstanceProperties()
     {
         Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
-
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
         viewModelMatrix.set(viewMatrix);

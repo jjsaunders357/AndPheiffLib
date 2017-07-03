@@ -5,8 +5,8 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.utils.GraphicsUtils;
 
@@ -17,7 +17,7 @@ import com.pheiffware.lib.utils.GraphicsUtils;
  * Shades mesh with a constant surface color and multiple lights light.  Handles, ambient, diffuse and specular lighting.
  * Created by Steve on 4/23/2016.
  */
-public class HoloColorMaterialTechnique extends Technique
+public class HoloColorMaterialTechnique extends ProgramTechnique
 {
     //Used internally to compute values to apply to uniforms
     private final Matrix3 normalTransform = Matrix3.newIdentity();
@@ -39,10 +39,12 @@ public class HoloColorMaterialTechnique extends Technique
 
 
     @Override
-    public void applyPropertiesToUniforms()
+    public void applyInstanceProperties()
     {
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
         setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
+
+        //TODO: Normal transform should be based on eye position as well as model.
         normalTransform.setNormalTransformFromMatrix4Fast(modelMatrix);
         setUniformValue(UniformName.NORMAL_MATRIX, normalTransform.m);
 

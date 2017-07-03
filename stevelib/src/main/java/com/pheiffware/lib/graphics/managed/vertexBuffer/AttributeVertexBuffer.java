@@ -16,9 +16,9 @@ public abstract class AttributeVertexBuffer extends VertexBuffer
      * Any attribute not used by the program is ignored.
      * ASSUMES ALL ATTRIBUTES PACKED IN ORDER DICTATED BY VertexAttribute Enum!!!s
      *
-     * @param program          program to use (assumed to bound already)
+     * @param program              program to use (assumed to bound already)
      * @param vertexAttributeGroup a description of the vertex data packed in the buffer at this point
-     * @param byteOffset       the offset in the buffer where the data is located
+     * @param byteOffset           the offset in the buffer where the data is located
      */
     public final void bindToProgram(Program program, VertexAttributeGroup vertexAttributeGroup, int byteOffset)
     {

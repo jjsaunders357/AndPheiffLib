@@ -3,8 +3,8 @@ package com.pheiffware.lib.graphics.managed.techniques.Tech2D;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 
@@ -15,7 +15,7 @@ import com.pheiffware.lib.graphics.managed.texture.Texture;
  * Created by Steve on 6/19/2017.
  */
 
-public class Texture2DTechnique extends Technique
+public class Texture2DTechnique extends ProgramTechnique
 {
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
@@ -25,7 +25,7 @@ public class Texture2DTechnique extends Technique
     }
 
     @Override
-    protected void applyPropertiesToUniforms()
+    public void applyInstanceProperties()
     {
         projectionViewModelMatrix.set((Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX));
         projectionViewModelMatrix.multiplyBy((Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX));

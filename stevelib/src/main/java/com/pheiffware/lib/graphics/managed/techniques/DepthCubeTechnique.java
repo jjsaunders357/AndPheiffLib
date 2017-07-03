@@ -3,8 +3,8 @@ package com.pheiffware.lib.graphics.managed.techniques;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 
 /**
@@ -13,7 +13,7 @@ import com.pheiffware.lib.graphics.managed.program.UniformName;
  * Created by Steve on 6/21/2017.
  */
 
-public class DepthCubeTechnique extends Technique
+public class DepthCubeTechnique extends ProgramTechnique
 {
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
@@ -29,7 +29,7 @@ public class DepthCubeTechnique extends Technique
     }
 
     @Override
-    protected void applyPropertiesToUniforms()
+    public void applyInstanceProperties()
     {
         float maximumLightDistance = (float) getPropertyValue(RenderProperty.MAXIMUM_LIGHT_DISTANCE);
         Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);

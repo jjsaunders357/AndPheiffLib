@@ -52,7 +52,7 @@ public class MeshHandle
     {
         technique.bind();
         technique.setProperties(renderProperties);
-        technique.applyProperties();
+        technique.applyInstanceProperties();
         if (sHandle != null)
         {
             technique.bindToVertexBuffer(sHandle);
@@ -74,7 +74,7 @@ public class MeshHandle
         technique.bind();
         technique.setProperties(this.renderProperties);
         technique.setProperties(renderProperties);
-        technique.applyProperties();
+        technique.applyInstanceProperties();
         if (sHandle != null)
         {
             technique.bindToVertexBuffer(sHandle);

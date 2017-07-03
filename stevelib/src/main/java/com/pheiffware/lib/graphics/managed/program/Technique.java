@@ -1,125 +1,96 @@
 package com.pheiffware.lib.graphics.managed.program;
 
-import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
-import java.util.Collections;
 import java.util.EnumMap;
-import java.util.EnumSet;
 
 /**
- * Provides high-level property interface to a shader program.  Example:
- * <p/>
+ * A technique wraps an OpenGL Program or programs providing a high-level property interface to a shader program.
+ * For example,
  * Rather than computing and setting VIEW_MODEL_MATRIX_UNIFORM, NORMAL_MATRIX_UNIFORM and LIGHT_POS_EYE_UNIFORM
- * <p/>
- * Instead set properties: MODEL_MATRIX and VIEW_MATRIX, from which these uniforms can be calculated and set.  Uniforms are actually set by calling the applyProperties() method.
- * <p/>
- * Setting properties is lightweight and reference only.  This has 2 implications:
- * <p/>
- * 1. Its possible to quickly set a property once and then overwrite it again before rendering.  This is fast/cheap.
- * <p/>
- * 2. If a property is set a reference to the value is retained and will be used in future calls to applyProperties().  Property value objects should not be changed after applyProperties() is called, unless changed.
+ * Instead set render properties: MODEL_MATRIX and VIEW_MATRIX, from which these uniforms can be calculated and set.
  * <p>
- * <p/>
- * Created by Steve on 4/17/2016.
+ * Also, a technique may contain multiple programs, one of which is selected based on certain render property settings.
+ * <p>
+ * Techniques can be bound to vertex buffer for rendering.
+ * <p>
+ * RenderProperty-s come in two flavors: instance-properties and constant-properties.
+ * <p>
+ * Constant-properties represent things which will NOT change over large batches of primitives.  These include lighting conditions, projection/view matrices, etc.
+ * Instance-properties represent things which will change often, possibly for every mesh.
+ * <p>
+ * Once all properties, of a type are set, they must be "applied".  Applying properties will perform some combination of math/logic and ultimate result in some uniform values being set.
+ * <p>
+ * <p>
+ * Example usage:
+ * <p>
+ * Once, per frame/batch:
+ * technique.setProperty(property1,value1);
+ * ...
+ * technique.setProperty(propertyN,valueN);
+ * technique.applyConstantProperties();
+ * <p>
+ * Once, per mesh:
+ * technique.setProperty(property1,value1);
+ * ...
+ * technique.setProperty(propertyN,valueN);
+ * technique.applyInstanceProperties();
+ * <p>
+ * technique.bind();
+ * technique.bindToVertexBuffer(...);
+ * <p>
+ * NOTE: All constant properties must be set AND applied, before any instance properties are set/applied.
+ * Setting constant properties may perform calculations/setup state in order to make instance setting most efficient.
+ * <p>
+ * Created by Steve on 7/2/2017.
  */
-public abstract class Technique
+
+//TODO: ALL PROPERTIES ARE CURRENT INSTANCE PROPERTIES.  IMPROVE THIS!
+public interface Technique
 {
-    //TODO: Possibly remove this
-    //The set of properties which apply to this technique
-    private final EnumSet<RenderProperty> properties = EnumSet.noneOf(RenderProperty.class);
-
-    //Values of properties cached here for use in applyProperties()
-    private final EnumMap<RenderProperty, Object> propertyValues = new EnumMap<>(RenderProperty.class);
-
-    //Program being wrapped
-    private final Program program;
-
-    public Technique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, RenderProperty[] properties) throws GraphicsException
-    {
-        Collections.addAll(this.properties, properties);
-        this.program = new Program(al, vertexShaderAsset, fragmentShaderAsset);
-    }
-
-    protected final void setUniformValue(UniformName name, Object value)
-    {
-        program.setUniformValue(name, value);
-    }
-
     /**
-     * Applies properties to the underlying program shaders.  Reset default property values for future renders.
-     */
-    public void applyProperties()
-    {
-        applyPropertiesToUniforms();
-    }
-
-    /**
-     * Should apply all properties to uniforms as appropriate for the technique.
-     */
-    protected abstract void applyPropertiesToUniforms();
-
-    /**
-     * Set a property value for use later in the applyProperties method.
+     * Set an individual rendering property.
      *
-     * @param property
-     * @param propertyValue
+     * @param property      property to set
+     * @param propertyValue value to set it to
      */
-    public final void setProperty(RenderProperty property, Object propertyValue)
-    {
-        propertyValues.put(property, propertyValue);
-    }
+    void setProperty(RenderProperty property, Object propertyValue);
 
     /**
-     * Convenience method to set multiple properties at once.
+     * Set a group of rendering properties
      *
-     * @param propertyValues
+     * @param propertyValues map of property values
      */
-    public void setProperties(EnumMap<RenderProperty, Object> propertyValues)
-    {
-        this.propertyValues.putAll(propertyValues);
-    }
+    void setProperties(EnumMap<RenderProperty, Object> propertyValues);
 
     /**
-     * Convenience method to set multiple properties at once.
+     * Set a group of rendering properties
      *
-     * @param renderPropertyValues
+     * @param renderPropertyValues array of name/value pair render properies
      */
-    public void setProperties(RenderPropertyValue[] renderPropertyValues)
-    {
-        for (RenderPropertyValue renderPropertyValue : renderPropertyValues)
-        {
-            this.propertyValues.put(renderPropertyValue.property, renderPropertyValue.value);
-        }
-    }
+    void setProperties(RenderPropertyValue[] renderPropertyValues);
 
     /**
-     * Get a property value as last set.
+     * Applies all constant properties which have been set.
+     */
+    void applyConstantProperties();
+
+    /**
+     * Applies all instance properties, already set, to uniforms.
+     */
+    void applyInstanceProperties();
+
+    /**
+     * Make the technique active (bind a backing program).
+     */
+    void bind();
+
+    //TODO: Should not bind vertex buffer. This should be done manually.
+
+    /**
+     * Attach the given buffer to this technique/program.
      *
-     * @param property
-     * @return
+     * @param handle buffer's handle
      */
-    protected final Object getPropertyValue(RenderProperty property)
-    {
-        return propertyValues.get(property);
-    }
-
-    /**
-     * Binds the underlying program.
-     */
-    public void bind()
-    {
-        program.bind();
-    }
-
-    public final void bindToVertexBuffer(VertexAttributeHandle handle)
-    {
-        handle.bindToProgram(program);
-    }
-
-    public Program getProgram()
-    {
-        return program;
-    }
+    void bindToVertexBuffer(VertexAttributeHandle handle);
 }

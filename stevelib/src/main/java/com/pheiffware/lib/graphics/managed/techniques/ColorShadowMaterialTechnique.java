@@ -5,8 +5,8 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.utils.GraphicsUtils;
@@ -17,7 +17,7 @@ import com.pheiffware.lib.utils.GraphicsUtils;
  * Omni-directional shadows - diffuse/specular light, is blocked based on given cube depth map.
  * Created by Steve on 4/23/2016.
  */
-public class ColorShadowMaterialTechnique extends Technique
+public class ColorShadowMaterialTechnique extends ProgramTechnique
 {
     //Used internally to compute values to apply to uniforms
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
@@ -40,7 +40,7 @@ public class ColorShadowMaterialTechnique extends Technique
     }
 
     @Override
-    public void applyPropertiesToUniforms()
+    public void applyInstanceProperties()
     {
         Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);

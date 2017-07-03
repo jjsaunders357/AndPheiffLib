@@ -5,8 +5,8 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 
@@ -14,7 +14,7 @@ import com.pheiffware.lib.graphics.managed.texture.Texture;
  * Shades mesh with a textured color and with given lights' settings.  Handles, ambient, diffuse and specular lighting.
  * Created by Steve on 4/23/2016.
  */
-public class TextureMaterialTechnique extends Technique
+public class TextureMaterialTechnique extends ProgramTechnique
 {
     //Used internally to compute values to apply to uniforms
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
@@ -35,7 +35,7 @@ public class TextureMaterialTechnique extends Technique
     }
 
     @Override
-    public void applyPropertiesToUniforms()
+    public void applyInstanceProperties()
     {
         Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
         setUniformValue(UniformName.PROJECTION_MATRIX, projectionMatrix.m);
