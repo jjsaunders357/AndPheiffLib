@@ -27,10 +27,10 @@ public abstract class Example3DRenderer implements GameRenderer
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDragToCameraTranslation;
     private final Camera camera;
-    private long startFrameTimeStamp;
+    private long profileStartTime;
     private final MapCounterLong<String> nanoTimes = new MapCounterLong<>();
     private int frameCounter;
-    private int logFramePeriod = 300;
+    private int logFramePeriod = 120;
     private TouchAnalyzer touchAnalyzer;
     private int renderWidth;
     private int renderHeight;
@@ -69,7 +69,7 @@ public abstract class Example3DRenderer implements GameRenderer
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         GLES20.glClearDepthf(1);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        startFrameTimeStamp = System.nanoTime();
+        profileStartTime = System.nanoTime();
         onDrawFrame(camera.getProjectionMatrix(), camera.getViewMatrix());
         GLES20.glFinish();
         frameCounter++;
@@ -81,20 +81,22 @@ public abstract class Example3DRenderer implements GameRenderer
 
     private void logAverages()
     {
-        if (frameCounter % logFramePeriod == 0)
+        if (frameCounter == logFramePeriod - 1)
         {
             for (Map.Entry<String, Long> entry : nanoTimes.entrySet())
             {
                 Log.i("profile", entry.getKey() + ": " + (0.000000001 * entry.getValue() / frameCounter));
             }
+            frameCounter = 0;
+            nanoTimes.clear();
         }
     }
 
     protected final void addFrameProfilePoint(String key)
     {
         long endTime = System.nanoTime();
-        nanoTimes.addCount(key, endTime - startFrameTimeStamp);
-        startFrameTimeStamp = System.nanoTime();
+        nanoTimes.addCount(key, endTime - profileStartTime);
+        profileStartTime = System.nanoTime();
     }
 
     @Override

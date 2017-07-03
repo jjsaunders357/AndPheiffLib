@@ -13,10 +13,10 @@ import java.util.EnumSet;
 
 public class VertexAttributeGroup
 {
+
     //The vertexAttributes being managed by a buffer.  EnumSet maintains attribute order based on natural Enum ordering
     private final EnumSet<VertexAttribute> vertexAttributes;
 
-    //TODO: Must be an even multiple of machine word size.  Check OpenGL ES spec.
     //Total size of each vertex in this buffer
     private int vertexByteSize;
 
@@ -31,19 +31,17 @@ public class VertexAttributeGroup
         {
             setAttributeByteOffset(vertexAttribute, attributeByteOffset);
             attributeByteOffset += vertexAttribute.getByteSize();
+            attributeByteOffset = nextMachineBoundary(attributeByteOffset);
         }
-        vertexByteSize = roundVertexSizeToMachineWord(attributeByteOffset);
+        vertexByteSize = attributeByteOffset;
     }
 
-    /**
-     * Given a vertex size, round to the nearest machine word size.
-     *
-     * @param vertexByteSize
-     * @return
-     */
-    private int roundVertexSizeToMachineWord(int vertexByteSize)
+    private int nextMachineBoundary(int attributeByteOffset)
     {
-        return vertexByteSize;
+        return attributeByteOffset;
+//    In tests this didn't appear to have any affect on performance.  Might matter if geometry vs. fill limited.
+//    private static final int evenWordBoundary = 4;
+//        return MathUtils.calcNextEvenBoundary(attributeByteOffset, evenWordBoundary);
     }
 
     private void setAttributeByteOffset(VertexAttribute vertexAttribute, int byteOffset)
