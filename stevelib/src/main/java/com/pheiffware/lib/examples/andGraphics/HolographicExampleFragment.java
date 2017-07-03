@@ -133,8 +133,8 @@ public class HolographicExampleFragment extends BaseGameFragment
 
                 transform3 = Matrix4.newTranslation(0.3f, -0.3f, 0.2f);
 
-                //TODO:Flipping on z-axis produces lighting artifacts.  Check why?
-                transform3.scaleBy(0.2f, 0.2f, 0.2f);
+                //Flipping z, but must also flip another axis, or cull-face will get us (this is equivalent to rotating).
+                transform3.scaleBy(0.2f, -0.2f, -0.2f);
                 monkeyHandle3.setProperty(RenderProperty.MODEL_MATRIX, transform3);
             }
             catch (IOException | XMLParseException e)

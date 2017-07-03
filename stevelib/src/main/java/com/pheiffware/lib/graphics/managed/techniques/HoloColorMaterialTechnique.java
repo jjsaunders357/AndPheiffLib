@@ -34,9 +34,7 @@ public class HoloColorMaterialTechnique extends ProgramTechnique
                 RenderProperty.SPEC_MAT_COLOR,
                 RenderProperty.SHININESS
         });
-
     }
-
 
     @Override
     public void applyInstanceProperties()
@@ -44,7 +42,6 @@ public class HoloColorMaterialTechnique extends ProgramTechnique
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
         setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
 
-        //TODO: Normal transform should be based on eye position as well as model.
         normalTransform.setNormalTransformFromMatrix4Fast(modelMatrix);
         setUniformValue(UniformName.NORMAL_MATRIX, normalTransform.m);
 
@@ -57,11 +54,11 @@ public class HoloColorMaterialTechnique extends ProgramTechnique
 
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-//        lightPosUniform.setValue(lighting.getRawLightPositions());
 
-        //TODO: Can give eye-space position or absolute position depending whether light is fixed to eye.
-        //Should use overridden lighting class with this extra information
+        //TODO: Should use overridden lighting class with this extra information to specify if a light is in screen space or eye-space
+        //setUniformValue(UniformName.LIGHT_POS, lighting.getPositions());
         setUniformValue(UniformName.LIGHT_POS, lighting.getLightPositionsInEyeSpace());
+
         setUniformValue(UniformName.DIFF_LIGHTMAT_COLOR, lighting.calcLightMatColors(diffMatColor));
         setUniformValue(UniformName.SPEC_LIGHTMAT_COLOR, lighting.calcLightMatColors(specMatColor));
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());

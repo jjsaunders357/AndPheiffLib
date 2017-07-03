@@ -28,7 +28,7 @@ in vec3 normalEyeSpace;
 
 layout(location = 0) out vec4 fragColor;
 
-vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
+vec3 light_color(vec4 lightPositionEyeSpace,vec3 diffuseLightMaterialColor, vec3 specLightMaterialColor)
 {
     //Normalize the surface's normal
     vec3 surfaceNormal = normalize(normalEyeSpace);
@@ -52,15 +52,15 @@ vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4
 }
 void main()
 {
-    vec4 totalLightMaterialColor = ambientLightMaterialColor;
+    vec3 totalLightMaterialColor = ambientLightMaterialColor.rgb;
     for(int i=0;i<numLights;i++)
     {
         if(onState[i])
         {
-            totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
+            totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor[i].rgb,specLightMaterialColor[i].rgb);
         }
     }
     //Color of fragment is the combination of all colors
-	fragColor = totalLightMaterialColor;
+	fragColor = vec4(totalLightMaterialColor,1.0);
 }
 

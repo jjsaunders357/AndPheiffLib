@@ -29,12 +29,12 @@ void main()
 	normal = normalize(normalMatrix * vertexNormal);
 	position = modelMatrix * vertexPosition4;
     position.y *= aspectRatio;
-	float w = eyePosition.z - position.z;
+	highp float w = eyePosition.z - position.z;
 	float x = position.x * w - position.z * (eyePosition.x - position.x);
 	float y = position.y * w - position.z * (eyePosition.y - position.y);
 
 // z mapped to range [0,1]
-    float z = (w-zNear)/(zFar-zNear);
+    highp float z = (w-zNear)/(zFar-zNear);
 
 // z mapped to range [-1,1]
     z = 2.0 * z - 1.0;

@@ -111,8 +111,8 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         private SimpleRenderer simpleRenderer;
         private ColorMaterialTechnique colorTechnique;
         private TextureMaterialTechnique textureTechnique;
-        private Matrix4 cubeTransform = Matrix4.newTranslation(-2, 2, -4);
-        private Matrix4 monkeyTransform = Matrix4.newTranslation(0, 0, -4);
+        private Matrix4 cubeTransform;
+        private Matrix4 monkeyTransform;
 
         public Renderer()
         {
@@ -163,6 +163,9 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
             }
             monkeyHandle = loader.getHandle("Monkey");
             cubeHandle = loader.getHandle("multi");
+            monkeyTransform = Matrix4.newTranslation(0, 0, -4);
+            monkeyTransform.scaleBy(1f, -1f, -1f);
+            cubeTransform = Matrix4.newTranslation(-2, 2, -4);
         }
 
         @Override
