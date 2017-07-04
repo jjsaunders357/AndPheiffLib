@@ -2,6 +2,7 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
 import java.util.Collections;
@@ -14,6 +15,9 @@ public abstract class ProgramTechnique extends BaseTechnique
 {
     //Program being wrapped
     private final Program program;
+
+    //Used internally to compute values to apply to uniforms
+    private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
     public ProgramTechnique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, RenderProperty[] properties) throws GraphicsException
     {
@@ -47,5 +51,16 @@ public abstract class ProgramTechnique extends BaseTechnique
     public final void bindToVertexBuffer(VertexAttributeHandle handle)
     {
         handle.bindToProgram(program);
+    }
+
+    protected final void setProjectionViewModel()
+    {
+        Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
+        Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
+        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
+        projectionViewModelMatrix.set(projectionMatrix);
+        projectionViewModelMatrix.multiplyBy(viewMatrix);
+        projectionViewModelMatrix.multiplyBy(modelMatrix);
+        setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
     }
 }

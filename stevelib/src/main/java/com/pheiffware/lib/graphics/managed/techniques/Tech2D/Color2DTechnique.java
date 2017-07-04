@@ -5,7 +5,6 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.UniformName;
 
 /**
  * Draws 2D geometry with a solid color.  x values occupy the range [-1,1].  y values occupy a smaller/larger range based on aspect ratio.
@@ -32,9 +31,6 @@ public class Color2DTechnique extends ProgramTechnique
     @Override
     public void applyInstanceProperties()
     {
-        //TODO: Should use projectionView, no model.  Better document per point color.
-        projectionViewModelMatrix.set((Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX));
-        projectionViewModelMatrix.multiplyBy((Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX));
-        setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
+        setProjectionViewModel();
     }
 }

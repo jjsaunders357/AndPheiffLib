@@ -82,20 +82,21 @@ public class Example2ManagedVertexBuffersFragment extends BaseGameFragment
             handle1 = manager.addMesh(
                     mesh1,
                     EnumSet.of(VertexAttribute.COLOR),
-                    color2DTechnique);
+                    color2DTechnique,
+                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MODEL_MATRIX, Matrix4.newIdentity())});
 
             //Mesh 2 - Texture, dynamic modulated color - green to cyan
             handle2 = manager.addMesh(
                     mesh2,
                     EnumSet.of(VertexAttribute.COLOR),
                     colorTexture2DTechnique,
-                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture)});
+                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture), new RenderPropertyValue(RenderProperty.MODEL_MATRIX, Matrix4.newIdentity())});
 
             //Mesh 2 - Texture, static modulated color - constant blue
             handle3 = manager.addStaticMesh(
                     mesh3,
                     colorTexture2DTechnique,
-                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture)});
+                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture), new RenderPropertyValue(RenderProperty.MODEL_MATRIX, Matrix4.newIdentity())});
             manager.packAndTransfer();
         }
 

@@ -32,11 +32,8 @@ public class Texture2DTechnique extends ProgramTechnique
     @Override
     public void applyInstanceProperties()
     {
-        //TODO: Should use projectionView, no model.  Better document per point color.
-        projectionViewModelMatrix.set((Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX));
-        projectionViewModelMatrix.multiplyBy((Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX));
+        setProjectionViewModel();
         Texture texture = (Texture) getPropertyValue(RenderProperty.MAT_COLOR_TEXTURE);
-        setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
         setUniformValue(UniformName.MATERIAL_SAMPLER, texture.autoBind());
     }
 }

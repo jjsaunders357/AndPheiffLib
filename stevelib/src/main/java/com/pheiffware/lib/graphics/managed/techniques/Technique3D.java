@@ -16,7 +16,6 @@ import com.pheiffware.lib.graphics.managed.program.UniformName;
 public abstract class Technique3D extends ProgramTechnique
 {
     //Used internally to compute values to apply to uniforms
-    private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
     private final Matrix3 normalTransform = Matrix3.newIdentity();
     private final float[] matColor = new float[4];
@@ -48,16 +47,6 @@ public abstract class Technique3D extends ProgramTechnique
         setUniformValue(UniformName.NORMAL_MATRIX, normalTransform.m);
     }
 
-    protected final void setProjectionViewModel()
-    {
-        Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
-        Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
-        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
-        projectionViewModelMatrix.set(projectionMatrix);
-        projectionViewModelMatrix.multiplyBy(viewMatrix);
-        projectionViewModelMatrix.multiplyBy(modelMatrix);
-        setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
-    }
 
     protected final void setProjection()
     {
