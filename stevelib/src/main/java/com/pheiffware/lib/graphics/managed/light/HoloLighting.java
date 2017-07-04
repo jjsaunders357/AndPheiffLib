@@ -15,13 +15,14 @@ public class HoloLighting extends Lighting
      * Creates a Lighting object representing the set of lights to use for rendering.  Each light's position and color is encoded as a 4 element block in the corresponding array.
      * Any additional lights supported by the implementation will be turned off.  Each light can be in eye space OR tethered to screen space.
      *
-     * @param positions
-     * @param colors
-     * @param eyeSpace
+     * @param ambientLightColor the general ambient light
+     * @param positions         the positions of the lights
+     * @param colors            the colors of the lights
+     * @param eyeSpace          is the light fixed in eye space or part of the screen space itself
      */
-    public HoloLighting(float[] positions, float[] colors, boolean eyeSpace[])
+    public HoloLighting(float[] ambientLightColor, float[] positions, float[] colors, boolean eyeSpace[])
     {
-        super(positions, colors);
+        super(ambientLightColor, positions, colors);
         this.eyeSpace = new boolean[eyeSpace.length];
         System.arraycopy(eyeSpace, 0, this.eyeSpace, 0, eyeSpace.length);
     }

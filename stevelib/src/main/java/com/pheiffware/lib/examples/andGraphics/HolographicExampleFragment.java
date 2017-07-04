@@ -70,7 +70,7 @@ public class HolographicExampleFragment extends BaseGameFragment
     {
         private static final float SCREEN_ALPHA = 0.3f;
         private OrientationTracker orientationTracker;
-        private final HoloLighting lighting = new HoloLighting(new float[]{2, 2, 3, 1}, new float[]{0.7f, 0.7f, 0.7f, 1.0f}, new boolean[]{true});
+        private final HoloLighting lighting = new HoloLighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{2, 2, 3, 1}, new float[]{0.7f, 0.7f, 0.7f, 1.0f}, new boolean[]{true});
         private float rotation = 0;
 
         private HoloColorMaterialTechnique holoColorTechnique;
@@ -157,7 +157,6 @@ public class HolographicExampleFragment extends BaseGameFragment
 
                 lighting.calcOnLightPositionsInEyeSpace(orientationMatrix);
                 holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 0.1f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, SCREEN_ALPHA}));
-                holoColorTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
                 holoColorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});

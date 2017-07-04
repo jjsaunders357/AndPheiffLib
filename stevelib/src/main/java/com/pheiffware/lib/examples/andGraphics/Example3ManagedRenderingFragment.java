@@ -134,7 +134,7 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
             PheiffGLUtils.enableAlphaTransparency();
             colorTechnique = new ColorMaterialTechnique(al);
             textureTechnique = new TextureMaterialTechnique(al);
-            lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();
             manager = new ObjectManager();
             ColladaMaterial defaultMaterial = new ColladaMaterial(
@@ -183,11 +183,9 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
 
             colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
-            colorTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             textureTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
             textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
-            textureTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
 
             simpleRenderer.add(monkeyHandle);

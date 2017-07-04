@@ -16,9 +16,6 @@ public enum RenderProperty
     //Holds the model matrix
     MODEL_MATRIX,
 
-    //Color of ambient light in the scene
-    AMBIENT_LIGHT_COLOR,
-
     //Position/color of all positional lights along with their on/off status
     LIGHTING,
 

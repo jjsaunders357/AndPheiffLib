@@ -16,6 +16,9 @@ public class Lighting
     //The number of lights actually supported by underlying shaders.
     private static final int numLightsSupported = 4;
 
+    //General ambient lighting
+    private final float[] ambientLightColor;
+
     //The light's positions
     private final float[] positions;
 
@@ -25,31 +28,38 @@ public class Lighting
     //Boolean on/off values for each light.  Represented as an int for underlying openGL's benefit.
     private final int[] onStates;
 
-    //Calculation buffer used to hold result of multiplying material colors by light colors
-    private final float[] lightMatColors;
+    //The maximum distance the given light shines.
+    private final float[] maxDistances;
 
     //Calculation buffer used to hold result of transforming light positions to eye-space
     private final float[] lightPositionsInEyeSpace;
 
-    //The maximum distance the given light shines.
-    private final float[] maxDistances;
+    //Temporary storage for ambientLightColor * matColor.  This result is overwritten every time the calculation is made.
+    private final float[] ambLightMatColor = new float[4];
+
+    //Temporary storage for lightColor * matColor, for each light.  This result is overwritten every time the calculation is made.
+    private final float[] lightDiffMatColors = new float[numLightsSupported * 4];
+
+    //Temporary storage for lightColor * specMatColor, for each light.  This result is overwritten every time the calculation is made.
+    private final float[] lightSpecMatColors = new float[numLightsSupported * 4];
 
     /**
      * Creates a Lighting object representing the set of lights to use for rendering.  Each light's position and color is encoded as a 4 element block in the corresponding array.
      * Any additional lights supported by the implementation will be turned off.
      *
-     * @param positions
-     * @param colors
-     * @return
+     * @param ambientLightColor the general ambient light
+     * @param positions         the positions of the lights
+     * @param colors            the colors of the lights
      */
-    public Lighting(float[] positions, float[] colors)
+    public Lighting(float[] ambientLightColor, float[] positions, float[] colors)
     {
+        this.ambientLightColor = new float[4];
         this.positions = new float[numLightsSupported * 4];
         this.colors = new float[numLightsSupported * 4];
-        lightMatColors = new float[numLightsSupported * 4];
         lightPositionsInEyeSpace = new float[numLightsSupported * 4];
         onStates = new int[numLightsSupported];
         maxDistances = new float[numLightsSupported];
+        System.arraycopy(ambientLightColor, 0, this.ambientLightColor, 0, 4);
         System.arraycopy(positions, 0, this.positions, 0, positions.length);
         System.arraycopy(colors, 0, this.colors, 0, colors.length);
 
@@ -63,8 +73,8 @@ public class Lighting
     /**
      * Moves the given light to the specified position
      *
-     * @param lightIndex
-     * @param position
+     * @param lightIndex the index of the light to move
+     * @param position   the light's position
      */
     public final void moveTo(int lightIndex, float[] position)
     {
@@ -78,8 +88,8 @@ public class Lighting
     /**
      * Moves the given light to the specified position
      *
-     * @param lightIndex
-     * @param position
+     * @param lightIndex the index of the light to move
+     * @param position   the light's position
      */
     public final void moveTo(int lightIndex, Vec3D position)
     {
@@ -93,8 +103,8 @@ public class Lighting
     /**
      * Changes the given light's color
      *
-     * @param lightIndex
-     * @param color
+     * @param lightIndex the index of the light to set color for
+     * @param color      the light's color
      */
     public final void setColor(int lightIndex, float[] color)
     {
@@ -108,8 +118,8 @@ public class Lighting
     /**
      * Changes the given light's color
      *
-     * @param lightIndex
-     * @param color
+     * @param lightIndex the index of the light to set color for
+     * @param color      the light's color
      */
     public final void setColor(int lightIndex, Color4F color)
     {
@@ -123,8 +133,8 @@ public class Lighting
     /**
      * Turns the given light on/off
      *
-     * @param lightIndex
-     * @param on         0 = off, anything else = on
+     * @param lightIndex the index of the light to turn on/off
+     * @param on         is the light on?
      */
     public final void setOnState(int lightIndex, boolean on)
     {
@@ -141,8 +151,8 @@ public class Lighting
     /**
      * Turns the given light on/off
      *
-     * @param lightIndex
-     * @param on
+     * @param lightIndex the index of the light to turn on/off
+     * @param on         0 = off, anything else = on
      */
     public final void setOnState(int lightIndex, int on)
     {
@@ -152,7 +162,7 @@ public class Lighting
     /**
      * Sets the maximum distance of the given light.
      *
-     * @param lightIndex
+     * @param lightIndex  the index of the light to set distance for
      * @param maxDistance
      */
     public final void setMaximumDistance(int lightIndex, float maxDistance)
@@ -200,24 +210,68 @@ public class Lighting
     }
 
     /**
-     * Calculates and returns the array containing the multiplication of the given material color (4-element array) with each light individually.  Note, for efficiency, the
-     * returned value is reused every time and its value will be changed every time this is called.
+     * Multiply ambientLightColor * matColor, using internal array.
      *
-     * @param materialColor
-     * @return the array containing the result.  This array is reused for all future calculations.
+     * @param matColor the material color
+     * @return temporary result of the multiplication.  This array will be overwritten next time it is computed, so put the value somewhere useful!
      */
-    public float[] calcLightMatColors(float[] materialColor)
+    public final float[] calcAmbientMatColor(float[] matColor)
+    {
+        GraphicsUtils.vecMultiply(4, ambLightMatColor, ambientLightColor, matColor);
+        return ambLightMatColor;
+    }
+
+    /**
+     * Multiply lightColor * diffMatColor, for each light, using internal array.
+     *
+     * @param diffMatColor the material color
+     * @return temporary result of the multiplication.  This array will be overwritten next time it is computed, so put the value somewhere useful!
+     */
+    public final float[] calcDiffMatColor(float[] diffMatColor)
+    {
+        computeAndStoreLightMatColors(lightDiffMatColors, diffMatColor);
+        return lightDiffMatColors;
+    }
+
+    /**
+     * Multiply lightColor * specMatColor, for each light, using internal array.
+     *
+     * @param specMatColor the material color
+     * @return temporary result of the multiplication.  This array will be overwritten next time it is computed, so put the value somewhere useful!
+     */
+    public final float[] calcSpecMatColor(float[] specMatColor)
+    {
+        computeAndStoreLightMatColors(lightSpecMatColors, specMatColor);
+        return lightSpecMatColors;
+    }
+
+    /**
+     * Multiply lightColor * matColor, for each light and store in given lightMatColors array.
+     *
+     * @param lightMatColors where to store result of multiplication
+     * @param matColor       the material color
+     */
+    private final void computeAndStoreLightMatColors(float[] lightMatColors, float[] matColor)
     {
         int offset = 0;
         for (int i = 0; i < numLightsSupported; i++)
         {
             if (onStates[i] == 1)
             {
-                GraphicsUtils.vecMultiply(4, offset, lightMatColors, offset, colors, 0, materialColor);
+                lightMatColors[offset] = colors[offset] * matColor[0];
+                offset++;
+                lightMatColors[offset] = colors[offset] * matColor[1];
+                offset++;
+                lightMatColors[offset] = colors[offset] * matColor[2];
+                offset++;
+                lightMatColors[offset] = colors[offset] * matColor[3];
+                offset++;
             }
-            offset += 4;
+            else
+            {
+                offset += 4;
+            }
         }
-        return lightMatColors;
     }
 
     public final float[] getPositions()
@@ -230,8 +284,14 @@ public class Lighting
         return colors;
     }
 
-    public int[] getOnStates()
+    public final int[] getOnStates()
     {
         return onStates;
+    }
+
+
+    public final float[] getAmbientLightColor()
+    {
+        return ambientLightColor;
     }
 }

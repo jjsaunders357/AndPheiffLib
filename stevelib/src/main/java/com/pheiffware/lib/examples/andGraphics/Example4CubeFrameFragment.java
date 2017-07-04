@@ -139,7 +139,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             textureTechnique = new TextureMaterialTechnique(al);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
-            lighting = new Lighting(new float[]{0, 0, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f},new float[]{0, 0, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
 
             //Left Cube: -2,0,-2
             //Right Cube: 0,0,0
@@ -191,7 +191,6 @@ public class Example4CubeFrameFragment extends BaseGameFragment
 
             colorShadowTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
             colorShadowTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
-            colorShadowTechnique.setProperty(RenderProperty.AMBIENT_LIGHT_COLOR, new float[]{0.2f, 0.2f, 0.2f, 1.0f});
             colorShadowTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorShadowTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
             colorShadowTechnique.setProperty(RenderProperty.MAXIMUM_LIGHT_DISTANCE, maximumLightDistance);
