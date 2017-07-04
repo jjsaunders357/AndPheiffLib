@@ -37,7 +37,7 @@ import java.util.EnumMap;
  * technique.applyInstanceProperties();
  * <p>
  * technique.bind();
- * technique.bindToVertexBuffer(...);
+ * technique.attachAndBindBuffer(...);
  * <p>
  * NOTE: All constant properties must be set AND applied, before any instance properties are set/applied.
  * Setting constant properties may perform calculations/setup state in order to make instance setting most efficient.
@@ -65,7 +65,7 @@ public interface Technique
     /**
      * Set a group of rendering properties
      *
-     * @param renderPropertyValues array of name/value pair render properies
+     * @param renderPropertyValues array of name/value pair render properties
      */
     void setProperties(RenderPropertyValue[] renderPropertyValues);
 
@@ -84,12 +84,10 @@ public interface Technique
      */
     void bind();
 
-    //TODO: Should not bind vertex buffer. This should be done manually.
-
     /**
      * Attach the given buffer to this technique/program.
      *
      * @param handle buffer's handle
      */
-    void bindToVertexBuffer(VertexAttributeHandle handle);
+    void attachAndBindBuffer(VertexAttributeHandle handle);
 }

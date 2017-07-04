@@ -55,11 +55,11 @@ public class MeshHandle
         technique.applyInstanceProperties();
         if (sHandle != null)
         {
-            technique.bindToVertexBuffer(sHandle);
+            technique.attachAndBindBuffer(sHandle);
         }
         if (dHandle != null)
         {
-            technique.bindToVertexBuffer(dHandle);
+            technique.attachAndBindBuffer(dHandle);
         }
         iHandle.drawTriangles();
     }
@@ -77,11 +77,11 @@ public class MeshHandle
         technique.applyInstanceProperties();
         if (sHandle != null)
         {
-            technique.bindToVertexBuffer(sHandle);
+            technique.attachAndBindBuffer(sHandle);
         }
         if (dHandle != null)
         {
-            technique.bindToVertexBuffer(dHandle);
+            technique.attachAndBindBuffer(dHandle);
         }
         iHandle.drawTriangles();
     }

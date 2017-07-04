@@ -48,7 +48,7 @@ public abstract class ProgramTechnique extends BaseTechnique
     }
 
     @Override
-    public final void bindToVertexBuffer(VertexAttributeHandle handle)
+    public final void attachAndBindBuffer(VertexAttributeHandle handle)
     {
         handle.bindToProgram(program);
     }
