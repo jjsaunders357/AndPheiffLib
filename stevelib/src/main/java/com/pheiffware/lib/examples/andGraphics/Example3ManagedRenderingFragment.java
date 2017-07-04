@@ -173,7 +173,7 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
+            lighting.transformLightPositionsToEyeSpace(viewMatrix);
 
             monkeyTransform.rotateBy(rotationRate, 1, 1, 0);
             cubeTransform.rotateBy(rotationRate, 1, 1, 0);

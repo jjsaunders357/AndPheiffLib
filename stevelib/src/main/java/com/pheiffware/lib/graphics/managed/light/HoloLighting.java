@@ -9,6 +9,7 @@ import com.pheiffware.lib.graphics.Matrix4;
  */
 public class HoloLighting extends Lighting
 {
+    //Does this light exist in eye space (fixed in the viewer's frame of reference) or in screen space (fixed in the screen's frame of reference).
     private final boolean[] eyeSpace;
 
     /**
@@ -27,13 +28,19 @@ public class HoloLighting extends Lighting
         System.arraycopy(eyeSpace, 0, this.eyeSpace, 0, eyeSpace.length);
     }
 
+    /**
+     * Don't transform lights which are attached to eye space.
+     *
+     * @param lightIndex            the index of the light
+     * @param lightToEyeSpaceMatrix the transform from light to eye space
+     */
     @Override
-    protected void calcLightPositionInEyeSpace(int lightIndex, Matrix4 lightToEyeSpaceMatrix)
+    protected void transformLightPositionToEyeSpace(int lightIndex, Matrix4 lightToEyeSpaceMatrix)
     {
         if (eyeSpace[lightIndex])
         {
             //If light exists in eye-space, perform standard transformation
-            super.calcLightPositionInEyeSpace(lightIndex, lightToEyeSpaceMatrix);
+            super.transformLightPositionToEyeSpace(lightIndex, lightToEyeSpaceMatrix);
         }
         else
         {

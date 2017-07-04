@@ -187,7 +187,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             cubeRenderer.add(manager.getGroupObjects("main"));
             cubeRenderer.render();
 
-            lighting.calcOnLightPositionsInEyeSpace(viewMatrix);
+            lighting.transformLightPositionsToEyeSpace(viewMatrix);
 
             colorShadowTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
             colorShadowTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);

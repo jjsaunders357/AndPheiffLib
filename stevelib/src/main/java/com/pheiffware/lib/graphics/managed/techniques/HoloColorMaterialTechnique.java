@@ -42,8 +42,7 @@ public class HoloColorMaterialTechnique extends Technique3D
         applyConstantColorMaterialLight();
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        //TODO: Should use overridden lighting class with this extra information to specify if a light is in screen space or eye-space
-        //setUniformValue(UniformName.LIGHT_POS, lighting.getPositions());
+
         setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
         setUniformValue(UniformName.LIGHT_POS, lighting.getLightPositionsInEyeSpace());
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());

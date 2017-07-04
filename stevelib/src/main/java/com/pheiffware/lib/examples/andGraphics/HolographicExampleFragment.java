@@ -155,7 +155,7 @@ public class HolographicExampleFragment extends BaseGameFragment
             {
                 float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
 
-                lighting.calcOnLightPositionsInEyeSpace(orientationMatrix);
+                lighting.transformLightPositionsToEyeSpace(orientationMatrix);
                 holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 0.1f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, SCREEN_ALPHA}));
                 holoColorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
                 holoColorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});

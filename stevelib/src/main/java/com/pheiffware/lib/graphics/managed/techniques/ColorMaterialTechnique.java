@@ -35,8 +35,7 @@ public class ColorMaterialTechnique extends Technique3D
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
 
-        //TODO: Figure out holo lighting
-        //TODO: Make part of constant setup and remove calcOnLightPositionsInEyeSpace()
+        //TODO: Make part of constant setup and remove transformLightPositionsToEyeSpace()
         setUniformValue(UniformName.LIGHT_POS_EYE, lighting.getLightPositionsInEyeSpace());
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
         setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));

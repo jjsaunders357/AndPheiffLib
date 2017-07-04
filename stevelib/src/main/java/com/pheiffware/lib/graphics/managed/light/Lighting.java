@@ -176,13 +176,13 @@ public class Lighting
      *
      * @param lightToEyeSpaceMatrix
      */
-    public void calcOnLightPositionsInEyeSpace(Matrix4 lightToEyeSpaceMatrix)
+    public void transformLightPositionsToEyeSpace(Matrix4 lightToEyeSpaceMatrix)
     {
         for (int i = 0; i < numLightsSupported; i++)
         {
             if (onStates[i] == 1)
             {
-                calcLightPositionInEyeSpace(i, lightToEyeSpaceMatrix);
+                transformLightPositionToEyeSpace(i, lightToEyeSpaceMatrix);
             }
         }
     }
@@ -193,14 +193,14 @@ public class Lighting
      * @param lightIndex
      * @param lightToEyeSpaceMatrix
      */
-    protected void calcLightPositionInEyeSpace(int lightIndex, Matrix4 lightToEyeSpaceMatrix)
+    protected void transformLightPositionToEyeSpace(int lightIndex, Matrix4 lightToEyeSpaceMatrix)
     {
         int offset = lightIndex * 4;
         lightToEyeSpaceMatrix.transform4DFloatVector(lightPositionsInEyeSpace, offset, positions, offset);
     }
 
     /**
-     * Obtains the result of previous call to calcOnLightPositionsInEyeSpace
+     * Obtains the result of previous call to transformLightPositionsToEyeSpace
      *
      * @return
      */
