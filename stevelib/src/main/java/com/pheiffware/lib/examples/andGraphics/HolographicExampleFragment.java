@@ -76,8 +76,8 @@ public class HolographicExampleFragment extends BaseGameFragment
         private HoloColorMaterialTechnique holoColorTechnique;
         private MeshDataManager manager;
 
-        //Represents the position of the eye relative to surface of the direct center of the screen
-        private final float[] eyePositionRelativeToScreen = new float[]{0, 0, 6, 1};
+        //Represents the position of the eye relative to surface of the direct center of the screen if screen is flat.
+        private final float[] eyePositionInFlatScreenSpace = new float[]{0, 0, 6, 1};
         private float aspectRatio;
         private MeshHandle monkeyHandle;
         private MeshHandle monkeyHandle2;
@@ -149,18 +149,13 @@ public class HolographicExampleFragment extends BaseGameFragment
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
             Matrix4 orientationMatrix = orientationTracker.getCurrentOrientation();
-
-
             if (orientationMatrix != null)
             {
-                float[] eyePosition = orientationMatrix.transform4DFloatVector(eyePositionRelativeToScreen);
-
-                lighting.transformLightPositionsToEyeSpace(orientationMatrix);
-                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(eyePosition, 0.1f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, SCREEN_ALPHA}));
+                holoColorTechnique.setProperty(RenderProperty.HOLO_PROJECTION, new HoloColorMaterialTechnique.HoloData(orientationMatrix, eyePositionInFlatScreenSpace, 0.1f, 10f, aspectRatio, new float[]{0.5f, 0.5f, 0.5f, SCREEN_ALPHA}));
                 holoColorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
                 holoColorTechnique.setProperty(RenderProperty.MAT_COLOR, new float[]{0.0f, 0.6f, 0.9f, 1.0f});
                 holoColorTechnique.setProperty(RenderProperty.SPEC_MAT_COLOR, new float[]{0.75f, 0.85f, 1.0f, 1.0f});
-                holoColorTechnique.setProperty(RenderProperty.SHININESS, 30.0f);
+                holoColorTechnique.applyConstantProperties();
 
                 monkeyHandle.drawTriangles();
                 monkeyHandle2.drawTriangles();
@@ -194,7 +189,7 @@ public class HolographicExampleFragment extends BaseGameFragment
             if (numPointers == 1)
             {
                 //Scale distance of eye from the screen
-                eyePositionRelativeToScreen[2] += transform.translation.x / 100.0f;
+                eyePositionInFlatScreenSpace[2] += transform.translation.x / 100.0f;
             }
         }
 

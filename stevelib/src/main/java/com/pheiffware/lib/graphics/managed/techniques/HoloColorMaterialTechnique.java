@@ -2,7 +2,6 @@ package com.pheiffware.lib.graphics.managed.techniques;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
@@ -17,9 +16,6 @@ import com.pheiffware.lib.graphics.managed.program.UniformName;
  */
 public class HoloColorMaterialTechnique extends Technique3D
 {
-    //Used internally to compute values to apply to uniforms
-    private final Matrix3 normalTransform = Matrix3.newIdentity();
-
     public HoloColorMaterialTechnique(AssetLoader al) throws GraphicsException
     {
         super(al, "shaders/vert_holo_mncl.glsl", "shaders/frag_holo_mncl.glsl", new RenderProperty[]{
@@ -32,42 +28,53 @@ public class HoloColorMaterialTechnique extends Technique3D
         });
     }
 
-    @Override
-    public void applyInstanceProperties()
+    protected void applyConstantPropertiesImplement()
     {
-        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
-
-        setNormalFrom(modelMatrix);
-
-        applyConstantColorMaterialLight();
+        HoloData holoData = (HoloData) getPropertyValue(RenderProperty.HOLO_PROJECTION);
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-
-        setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
-        setUniformValue(UniformName.LIGHT_POS, lighting.getLightPositionsInEyeSpace());
+        float[] transformedLightPositions = lighting.transformLightPositions(holoData.orientationMatrix);
+        setUniformValue(UniformName.LIGHT_POS, transformedLightPositions);
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
 
-        setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
-
-        HoloData holoData = (HoloData) getPropertyValue(RenderProperty.HOLO_PROJECTION);
-        setUniformValue(UniformName.EYE_POSITION, holoData.eye);
+        setUniformValue(UniformName.EYE_POSITION, holoData.eyePositionInScreenSpace);
         setUniformValue(UniformName.ZNEAR, holoData.zNear);
         setUniformValue(UniformName.ZFAR, holoData.zFar);
         setUniformValue(UniformName.ASPECT_RATIO, holoData.aspectRatio);
         setUniformValue(UniformName.SCREEN_COLOR, holoData.screenColor);
     }
 
+    @Override
+    public void applyInstanceProperties()
+    {
+        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
+        setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
+        setNormalFrom(modelMatrix);
+        setLightingColors();
+        setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
+    }
+
     public static class HoloData
     {
-        public final float[] eye;
-        public float zNear;
-        public float zFar;
-        public float aspectRatio;
-        public float[] screenColor;
+        private final Matrix4 orientationMatrix;
+        final float[] eyePositionInScreenSpace;
+        final float zNear;
+        final float zFar;
+        final float aspectRatio;
+        final float[] screenColor;
 
-        public HoloData(float[] eye, float zNear, float zFar, float aspectRatio, float[] screenColor)
+        /**
+         * @param orientationMatrix
+         * @param eyePositionInFlatScreenSpace absolute space is relative to the center of the screen, with flat orientation
+         * @param zNear
+         * @param zFar
+         * @param aspectRatio
+         * @param screenColor
+         */
+        public HoloData(Matrix4 orientationMatrix, float[] eyePositionInFlatScreenSpace, float zNear, float zFar, float aspectRatio, float[] screenColor)
         {
-            this.eye = eye;
+            this.orientationMatrix = orientationMatrix;
+            this.eyePositionInScreenSpace = orientationMatrix.transform4DFloatVector(eyePositionInFlatScreenSpace);
             this.zNear = zNear;
             this.zFar = zFar;
             this.aspectRatio = aspectRatio;

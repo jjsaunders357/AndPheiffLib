@@ -24,9 +24,15 @@ public class Color2DTechnique extends ProgramTechnique
         super(al, "shaders/2d/vert_2d_color_pos4.glsl", "shaders/2d/frag_2d_color_pos4.glsl", new RenderProperty[]{RenderProperty.PROJECTION_MATRIX, RenderProperty.VIEW_MATRIX});
     }
 
+    public void applyConstantPropertiesImplement()
+    {
+
+    }
+
     @Override
     public void applyInstanceProperties()
     {
+        //TODO: Should use projectionView, no model.  Better document per point color.
         projectionViewModelMatrix.set((Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX));
         projectionViewModelMatrix.multiplyBy((Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX));
         setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);

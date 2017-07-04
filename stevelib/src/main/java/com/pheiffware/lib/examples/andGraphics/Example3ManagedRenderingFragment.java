@@ -173,8 +173,6 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         @Override
         protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
         {
-            lighting.transformLightPositionsToEyeSpace(viewMatrix);
-
             monkeyTransform.rotateBy(rotationRate, 1, 1, 0);
             cubeTransform.rotateBy(rotationRate, 1, 1, 0);
 
@@ -184,9 +182,12 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
             colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+            colorTechnique.applyConstantProperties();
+
             textureTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
             textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
             textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+            textureTechnique.applyConstantProperties();
 
             simpleRenderer.add(monkeyHandle);
             simpleRenderer.add(cubeHandle);

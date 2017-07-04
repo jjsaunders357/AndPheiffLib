@@ -45,7 +45,6 @@ import java.util.EnumMap;
  * Created by Steve on 7/2/2017.
  */
 
-//TODO: ALL PROPERTIES ARE CURRENT INSTANCE PROPERTIES.  IMPROVE THIS!
 public interface Technique
 {
     /**

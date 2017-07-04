@@ -3,7 +3,6 @@ package com.pheiffware.lib.graphics.managed.techniques;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
@@ -30,24 +29,25 @@ public class ColorShadowMaterialTechnique extends Technique3D
         });
     }
 
+    public void applyConstantPropertiesImplement()
+    {
+        setProjection();
+        setLightingConstants();
+    }
+
     @Override
     public void applyInstanceProperties()
     {
-        setProjection();
         setViewModelNormal();
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
         setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
-        applyConstantColorMaterialLight();
+        setLightingColors();
 
         float maximumLightDistance = (float) getPropertyValue(RenderProperty.MAXIMUM_LIGHT_DISTANCE);
 
-        Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-
         setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
-        setUniformValue(UniformName.LIGHT_POS_EYE, lighting.getLightPositionsInEyeSpace());
-        setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
-        setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
 
+        setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
         Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);
         setUniformValue(UniformName.DEPTH_CUBE_SAMPLER, cubeDepthTexture.autoBind());
 

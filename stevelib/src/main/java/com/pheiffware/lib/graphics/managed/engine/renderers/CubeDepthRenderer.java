@@ -87,8 +87,8 @@ public class CubeDepthRenderer extends Renderer
         depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, lightCamera.getProjectionMatrix());
         depthCubeTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
         depthCubeTechnique.setProperty(RenderProperty.MAXIMUM_LIGHT_DISTANCE, maximumLightDistance);
+        depthCubeTechnique.applyConstantProperties();
 
-        //TODO: Test rendering a large shape which covers entire face.
         renderPass(depthRenderPass);
     }
 

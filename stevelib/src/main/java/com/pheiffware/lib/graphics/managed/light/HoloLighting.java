@@ -31,21 +31,22 @@ public class HoloLighting extends Lighting
     /**
      * Don't transform lights which are attached to eye space.
      *
-     * @param lightIndex            the index of the light
-     * @param lightToEyeSpaceMatrix the transform from light to eye space
+     * @param transformedLightPositions
+     * @param lightIndex                the index of the light
+     * @param lightTransform            the transform from light to eye space
      */
     @Override
-    protected void transformLightPositionToEyeSpace(int lightIndex, Matrix4 lightToEyeSpaceMatrix)
+    protected void transformLight(float[] transformedLightPositions, int lightIndex, Matrix4 lightTransform)
     {
         if (eyeSpace[lightIndex])
         {
             //If light exists in eye-space, perform standard transformation
-            super.transformLightPositionToEyeSpace(lightIndex, lightToEyeSpaceMatrix);
+            super.transformLight(transformedLightPositions, lightIndex, lightTransform);
         }
         else
         {
             //Otherwise, use the raw light position (no transform)
-            System.arraycopy(getPositions(), lightIndex * 4, getLightPositionsInEyeSpace(), lightIndex * 4, 4);
+            System.arraycopy(getPositions(), lightIndex * 4, transformedLightPositions, lightIndex * 4, 4);
         }
     }
 }

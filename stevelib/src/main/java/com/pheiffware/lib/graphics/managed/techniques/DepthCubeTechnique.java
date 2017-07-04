@@ -28,10 +28,15 @@ public class DepthCubeTechnique extends ProgramTechnique
         });
     }
 
+    public void applyConstantPropertiesImplement()
+    {
+        float maximumLightDistance = (float) getPropertyValue(RenderProperty.MAXIMUM_LIGHT_DISTANCE);
+        setUniformValue(UniformName.MAXIMUM_LIGHT_DISTANCE_SQUARED, maximumLightDistance * maximumLightDistance);
+    }
+
     @Override
     public void applyInstanceProperties()
     {
-        float maximumLightDistance = (float) getPropertyValue(RenderProperty.MAXIMUM_LIGHT_DISTANCE);
         Matrix4 projectionMatrix = (Matrix4) getPropertyValue(RenderProperty.PROJECTION_MATRIX);
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
@@ -43,6 +48,5 @@ public class DepthCubeTechnique extends ProgramTechnique
 
         setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
         setUniformValue(UniformName.VIEW_MODEL_MATRIX, viewModelMatrix.m);
-        setUniformValue(UniformName.MAXIMUM_LIGHT_DISTANCE_SQUARED, maximumLightDistance * maximumLightDistance);
     }
 }

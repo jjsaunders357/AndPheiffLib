@@ -26,12 +26,14 @@ public abstract class ProgramTechnique extends BaseTechnique
         program.setUniformValue(name, value);
     }
 
-    //TODO: Make abstract
     @Override
-    public void applyConstantProperties()
+    public final void applyConstantProperties()
     {
-
+        program.bind();
+        applyConstantPropertiesImplement();
     }
+
+    protected abstract void applyConstantPropertiesImplement();
 
     public abstract void applyInstanceProperties();
 

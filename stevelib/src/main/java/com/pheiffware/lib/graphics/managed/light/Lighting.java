@@ -31,9 +31,6 @@ public class Lighting
     //The maximum distance the given light shines.
     private final float[] maxDistances;
 
-    //Calculation buffer used to hold result of transforming light positions to eye-space
-    private final float[] lightPositionsInEyeSpace;
-
     //Temporary storage for ambientLightColor * matColor.  This result is overwritten every time the calculation is made.
     private final float[] ambLightMatColor = new float[4];
 
@@ -56,7 +53,6 @@ public class Lighting
         this.ambientLightColor = new float[4];
         this.positions = new float[numLightsSupported * 4];
         this.colors = new float[numLightsSupported * 4];
-        lightPositionsInEyeSpace = new float[numLightsSupported * 4];
         onStates = new int[numLightsSupported];
         maxDistances = new float[numLightsSupported];
         System.arraycopy(ambientLightColor, 0, this.ambientLightColor, 0, 4);
@@ -171,42 +167,36 @@ public class Lighting
     }
 
     /**
-     * Calculates and retains the value of all active light positions as transformed by a lightToEyeSpaceMatrix matrix.  This is generally done once per frame and the result is
-     * obtained many times via the corresponding getter.
+     * Applies the given transform to all lights, which are on.  Returns a newly generated array containing the position of all lights.
      *
-     * @param lightToEyeSpaceMatrix
+     * @param lightTransform transform to apply to lights
+     * @return a newly generated array containing transformed light positions
      */
-    public void transformLightPositionsToEyeSpace(Matrix4 lightToEyeSpaceMatrix)
+    public float[] transformLightPositions(Matrix4 lightTransform)
     {
+        float[] transformedLightPositions = new float[numLightsSupported * 4];
+
         for (int i = 0; i < numLightsSupported; i++)
         {
             if (onStates[i] == 1)
             {
-                transformLightPositionToEyeSpace(i, lightToEyeSpaceMatrix);
+                transformLight(transformedLightPositions, i, lightTransform);
             }
         }
+        return transformedLightPositions;
     }
 
     /**
      * Calculates and retains the value of a single light position as transformed by a lightToEyeSpaceMatrix matrix.
      *
-     * @param lightIndex
-     * @param lightToEyeSpaceMatrix
+     * @param transformedLightPositions where to store transformed light positions
+     * @param lightIndex                the index of the light
+     * @param lightTransform            transform to apply to lights
      */
-    protected void transformLightPositionToEyeSpace(int lightIndex, Matrix4 lightToEyeSpaceMatrix)
+    protected void transformLight(float[] transformedLightPositions, int lightIndex, Matrix4 lightTransform)
     {
         int offset = lightIndex * 4;
-        lightToEyeSpaceMatrix.transform4DFloatVector(lightPositionsInEyeSpace, offset, positions, offset);
-    }
-
-    /**
-     * Obtains the result of previous call to transformLightPositionsToEyeSpace
-     *
-     * @return
-     */
-    public float[] getLightPositionsInEyeSpace()
-    {
-        return lightPositionsInEyeSpace;
+        lightTransform.transform4DFloatVector(transformedLightPositions, offset, positions, offset);
     }
 
     /**
