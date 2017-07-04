@@ -23,6 +23,9 @@ uniform vec4 ambientLightMaterialColor;
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
 
+// How opaque the material.  Typically this, plus the specular highlighting will determine opaqueness.
+uniform float materialAlpha;
+
 //Position of the eye
 uniform vec4 eyePosition;
 
@@ -81,6 +84,6 @@ void main()
     {
         totalLightMaterialColor = blendScreen(totalLightMaterialColor);
     }
-	fragColor = totalLightMaterialColor;
+	fragColor = totalLightMaterialColor + vec4(ZERO, ZERO, ZERO, materialAlpha);
 }
 

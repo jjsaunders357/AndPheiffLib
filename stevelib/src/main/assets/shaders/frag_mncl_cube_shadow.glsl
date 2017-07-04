@@ -1,7 +1,7 @@
 #version 300 es
 precision highp float;
 
-const float zero=0.0;
+const float ZERO=0.0;
 const int numLights = 4;
 
 //Is the light on?
@@ -24,6 +24,9 @@ uniform vec4 ambientLightMaterialColor;
 
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
+
+// How opaque the material.  Typically this, plus the specular highlighting will determine opaqueness.
+uniform float materialAlpha;
 
 //Maximum distance the light shines.  This is used to uspack the distance from the value in the depth buffer.
 uniform float maxLightDistanceSquared;
@@ -54,8 +57,8 @@ vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuse
     vec3 positionToEyeDirection = normalize(-positionEyeSpace.xyz);
 
     //Calculate how bright various types of light are
-	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),zero);
-	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),zero);
+	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),ZERO);
+	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),ZERO);
     specBrightness = pow(specBrightness,shininess);
 
     vec3 lightToPositionAbs = absPosition - absLightPosition.xyz;
@@ -89,6 +92,6 @@ void main()
         }
     }
     //Color of fragment is the combination of all colors
-	fragColor = vec4(totalLightMaterialColor.xyz,1);
+	fragColor = totalLightMaterialColor + vec4(ZERO, ZERO, ZERO, materialAlpha);
 }
 

@@ -1,7 +1,7 @@
 #version 300 es
 precision mediump float;
 
-const float zero=0.0;
+const float ZERO=0.0;
 const int numLights = 4;
 
 //Is the light on?
@@ -10,17 +10,20 @@ uniform bool onState[numLights];
 //Position of light
 uniform vec4 lightPositionEyeSpace[numLights];
 
-//The light color * specular material color
+//The light color * specular material color (this will carry opaqueness typically)
 uniform vec4 specLightMaterialColor[numLights];
 
-//The light color * diff material color
+//The light color * diff material color (this will be transparent typically as it adds nothing to determining opaqueness)
 uniform vec4 diffuseLightMaterialColor[numLights];
 
-//The ambient light color * material color
+//The ambient light color * material color (this will be transparent typically as it adds nothing to determining opaqueness)
 uniform vec4 ambientLightMaterialColor;
 
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
+
+// How opaque the material.  Typically this, plus the specular highlighting will determine opaqueness.
+uniform float materialAlpha;
 
 //Position of point being rendered in eye space
 in vec4 positionEyeSpace;
@@ -28,7 +31,7 @@ in vec3 normalEyeSpace;
 
 layout(location = 0) out vec4 fragColor;
 
-vec3 light_color(vec4 lightPositionEyeSpace,vec3 diffuseLightMaterialColor, vec3 specLightMaterialColor)
+vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
     //Normalize the surface's normal
     vec3 surfaceNormal = normalize(normalEyeSpace);
@@ -43,8 +46,8 @@ vec3 light_color(vec4 lightPositionEyeSpace,vec3 diffuseLightMaterialColor, vec3
     vec3 positionToEyeDirection = normalize(-positionEyeSpace.xyz);
 
     //Calculate how bright various types of light are
-	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),zero);
-	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),zero);
+	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),ZERO);
+	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),ZERO);
     specBrightness = pow(specBrightness,shininess);
 
 	//Sum (light brightness) * (light color) * (material color) for diff and spec.
@@ -52,15 +55,15 @@ vec3 light_color(vec4 lightPositionEyeSpace,vec3 diffuseLightMaterialColor, vec3
 }
 void main()
 {
-    vec3 totalLightMaterialColor = ambientLightMaterialColor.rgb;
+    vec4 totalLightMaterialColor = ambientLightMaterialColor;
     for(int i=0;i<numLights;i++)
     {
         if(onState[i])
         {
-            totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor[i].rgb,specLightMaterialColor[i].rgb);
+            totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
         }
     }
     //Color of fragment is the combination of all colors
-	fragColor = vec4(totalLightMaterialColor,1.0);
+	fragColor = totalLightMaterialColor + vec4(ZERO, ZERO, ZERO,materialAlpha);
 }
 

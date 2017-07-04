@@ -26,6 +26,7 @@ import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -130,6 +131,7 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
 
+            PheiffGLUtils.enableAlphaTransparency();
             colorTechnique = new ColorMaterialTechnique(al);
             textureTechnique = new TextureMaterialTechnique(al);
             lighting = new Lighting(new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});

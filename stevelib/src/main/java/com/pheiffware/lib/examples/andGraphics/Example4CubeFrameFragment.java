@@ -29,6 +29,7 @@ import com.pheiffware.lib.graphics.managed.techniques.ColorShadowMaterialTechniq
 import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import java.io.IOException;
@@ -132,6 +133,8 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
+
+            PheiffGLUtils.enableAlphaTransparency();
             colorShadowTechnique = new ColorShadowMaterialTechnique(al);
             textureTechnique = new TextureMaterialTechnique(al);
 

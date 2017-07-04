@@ -23,6 +23,8 @@ public class ColorShadowMaterialTechnique extends ProgramTechnique
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
     private final Matrix3 normalTransform = Matrix3.newIdentity();
     private final float[] ambLightMatColor = new float[4];
+    //Holds the diffraction material color, with the alpha component set to 0
+    private final float[] diffMatColor = new float[4];
 
     public ColorShadowMaterialTechnique(AssetLoader al) throws GraphicsException
     {
@@ -52,7 +54,11 @@ public class ColorShadowMaterialTechnique extends ProgramTechnique
         normalTransform.setNormalTransformFromMatrix4Fast(viewModelMatrix);
 
         float[] ambLightColor = (float[]) getPropertyValue(RenderProperty.AMBIENT_LIGHT_COLOR);
-        float[] diffMatColor = (float[]) getPropertyValue(RenderProperty.MAT_COLOR);
+        float[] temp = (float[]) getPropertyValue(RenderProperty.MAT_COLOR);
+        diffMatColor[0] = temp[0];
+        diffMatColor[1] = temp[1];
+        diffMatColor[2] = temp[2];
+        float alpha = temp[3];
         float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
         GraphicsUtils.vecMultiply(4, ambLightMatColor, ambLightColor, diffMatColor);
 
@@ -67,6 +73,7 @@ public class ColorShadowMaterialTechnique extends ProgramTechnique
         setUniformValue(UniformName.DIFF_LIGHTMAT_COLOR, lighting.calcLightMatColors(diffMatColor));
         setUniformValue(UniformName.SPEC_LIGHTMAT_COLOR, lighting.calcLightMatColors(specMatColor));
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
+        setUniformValue(UniformName.MAT_ALPHA, alpha);
         setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
 
         Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);

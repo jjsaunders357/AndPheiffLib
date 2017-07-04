@@ -1,7 +1,7 @@
 #version 300 es
 precision mediump float;
 
-const float zero=0.0;
+const float ZERO=0.0;
 const int numLights = 4;
 
 //Is the light on?
@@ -47,8 +47,8 @@ vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4
     vec3 positionToEyeDirection = normalize(-positionEyeSpace.xyz);
 
     //Calculate how bright various types of light are
-	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),zero);
-	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),zero);
+	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),ZERO);
+	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),ZERO);
     specBrightness = pow(specBrightness,shininess);
 
 	//Sum (light brightness) * (light color) * (material color) for diff and spec.
@@ -57,7 +57,13 @@ vec4 light_color(vec4 lightPositionEyeSpace,vec4 diffuseLightMaterialColor, vec4
 void main()
 {
     //Base color of material
-    vec4 baseMaterialColor = texture(materialColorSampler,texCoord);
+    vec4 sampledColor = texture(materialColorSampler,texCoord);
+
+    //Base material color used for ambient and diffuse lighting adds 0.0 opaqueness
+    vec4 baseMaterialColor = vec4(sampledColor.rgb,ZERO);
+
+    //The material alpha at this point is added in at the end, irrespective of lighting
+    float materialAlpha = sampledColor.a;
 
     //Calc ambient color
     vec4 ambientLightMaterialColor = baseMaterialColor * ambientLightColor;
@@ -72,5 +78,5 @@ void main()
             totalLightMaterialColor += light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor,specLightMaterialColor[i]);
         }
     }
-    fragColor = totalLightMaterialColor;
+    fragColor = totalLightMaterialColor + vec4(ZERO, ZERO, ZERO, materialAlpha);
 }

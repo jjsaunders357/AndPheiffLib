@@ -20,6 +20,7 @@ public enum UniformName
     AMBIENT_LIGHTMAT_COLOR("ambientLightMaterialColor"),
     DIFF_LIGHTMAT_COLOR("diffuseLightMaterialColor"),
     SPEC_LIGHTMAT_COLOR("specLightMaterialColor"),
+    MAT_ALPHA("materialAlpha"),
     LIGHT_POS_EYE("lightPositionEyeSpace"),
     LIGHT_POS("lightPosition"),
     ON_STATE("onState"),

@@ -93,6 +93,7 @@ public class HolographicExampleFragment extends BaseGameFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache, surfaceMetrics);
+            PheiffGLUtils.enableAlphaTransparency();
             orientationTracker = new OrientationTracker(true);
             GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
 
