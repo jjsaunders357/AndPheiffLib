@@ -9,6 +9,7 @@ import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.and.gui.graphics.openGL.TouchTransformGameView;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
+import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -171,7 +172,7 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
         }
 
         @Override
-        protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
+        protected void onDrawFrame(Camera camera) throws GraphicsException
         {
             monkeyTransform.rotateBy(rotationRate, 1, 1, 0);
             cubeTransform.rotateBy(rotationRate, 1, 1, 0);
@@ -179,13 +180,13 @@ public class Example3ManagedRenderingFragment extends BaseGameFragment
             monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
             cubeHandle.setProperty(RenderProperty.MODEL_MATRIX, cubeTransform);
 
-            colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
-            colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
+            colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
+            colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorTechnique.applyConstantProperties();
 
-            textureTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
-            textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
+            textureTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
+            textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             textureTechnique.applyConstantProperties();
 

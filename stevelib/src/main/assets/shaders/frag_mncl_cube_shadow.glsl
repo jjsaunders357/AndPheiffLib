@@ -28,8 +28,8 @@ uniform float shininess;
 // How opaque the material.  Typically this, plus the specular highlighting will determine opaqueness.
 uniform float materialAlpha;
 
-//Maximum distance the light shines.  This is used to uspack the distance from the value in the depth buffer.
-uniform float maxLightDistanceSquared;
+//Maximum depth projected into texture
+uniform float projectionMaxDepth;
 
 uniform mediump samplerCube cubeDepthSampler;
 
@@ -61,24 +61,16 @@ vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuse
 	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),ZERO);
     specBrightness = pow(specBrightness,shininess);
 
+    vec4 color = diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
+
     vec3 lightToPositionAbs = absPosition - absLightPosition.xyz;
     float depthSample = texture(cubeDepthSampler, lightToPositionAbs).r;
-    //float depthSample = texture(cubeDepthSampler, vec3(0.0,0.0,-1.0)).r;
-    float trash=pow((depthSample+maxLightDistanceSquared+lightToPositionAbs.x)/10000.0,10.0);
+    depthSample = depthSample * projectionMaxDepth;
 
-    float distanceSquared = dot(lightToPositionAbs,lightToPositionAbs);
-    float sampledDistanceSquared = depthSample * maxLightDistanceSquared;
+    float depth = max(max(abs(lightToPositionAbs.x),abs(lightToPositionAbs.y)),abs(lightToPositionAbs.z));
+    float visibleness = step(depth,depthSample+0.1);
 
-//    float depthSample = texture(cubeDepthSampler, vec4(lightToPositionAbs,0.01)).x;
-    //depthSample = 2.0 * depthSample - 1.0;
-    //If sampledDistanceSquared<distance squared then this is 0, otherwise 1.  It uses the slight bias given.
-    //float visibleness = step(distanceSquared,sampledDistanceSquared+400.01);
-//    float visibleness = step(0.41,depthSample+0.01);
-    float visibleness = step(distanceSquared,sampledDistanceSquared+0.5);
-    //is visible if x<y
-    //TODO: Shaders using color, need to remove alpha from the colors.  Instead, should use 3 components for all colors and provide single transparency value
-   	//Sum (light brightness) * (light color) * (material color) for diff and spec.
-	return visibleness*(diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor)*(1.0+trash);
+	return vec4(visibleness*color.rgb,color.a);
 }
 
 void main()

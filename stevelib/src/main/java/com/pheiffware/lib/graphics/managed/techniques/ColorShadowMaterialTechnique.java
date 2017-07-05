@@ -18,7 +18,7 @@ public class ColorShadowMaterialTechnique extends Technique3D
     public ColorShadowMaterialTechnique(AssetLoader al) throws GraphicsException
     {
         super(al, "shaders/vert_mncl_cube_shadow.glsl", "shaders/frag_mncl_cube_shadow.glsl", new RenderProperty[]{
-                RenderProperty.PROJECTION_MATRIX,
+                RenderProperty.PROJECTION_LINEAR_DEPTH,
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX,
                 RenderProperty.LIGHTING,
@@ -31,26 +31,20 @@ public class ColorShadowMaterialTechnique extends Technique3D
 
     public void applyConstantPropertiesImplement()
     {
-        setProjection();
+        setProjectionLinearDepth();
         setLightingConstants();
     }
 
     @Override
     public void applyInstanceProperties()
     {
-        setViewModelNormal();
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
         setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
+        setViewModelNormal();
         setLightingColors();
-
-        float maximumLightDistance = (float) getPropertyValue(RenderProperty.MAXIMUM_LIGHT_DISTANCE);
-
-        setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
 
         setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
         Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);
         setUniformValue(UniformName.DEPTH_CUBE_SAMPLER, cubeDepthTexture.autoBind());
-
-        setUniformValue(UniformName.MAXIMUM_LIGHT_DISTANCE_SQUARED, maximumLightDistance * maximumLightDistance);
     }
 }

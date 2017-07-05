@@ -54,6 +54,14 @@ public abstract class Technique3D extends ProgramTechnique
         setUniformValue(UniformName.PROJECTION_MATRIX, projectionMatrix.m);
     }
 
+    protected void setProjectionLinearDepth()
+    {
+        ProjectionLinearDepth projectionLinearDepth = (ProjectionLinearDepth) getPropertyValue(RenderProperty.PROJECTION_LINEAR_DEPTH);
+        setUniformValue(UniformName.PROJECTION_SCALE_X, projectionLinearDepth.scaleX);
+        setUniformValue(UniformName.PROJECTION_SCALE_Y, projectionLinearDepth.scaleY);
+        setUniformValue(UniformName.PROJECTION_MAX_DEPTH, projectionLinearDepth.maxDepth);
+    }
+
 
     protected final void setLightingConstants()
     {

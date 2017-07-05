@@ -11,6 +11,9 @@ public enum UniformName
 {
     PROJECTION_VIEW_MODEL_MATRIX("projectionViewModelMatrix"),
     PROJECTION_MATRIX("projectionMatrix"),
+    PROJECTION_SCALE_X("projectionScaleX"),
+    PROJECTION_SCALE_Y("projectionScaleY"),
+    PROJECTION_MAX_DEPTH("projectionMaxDepth"),
     VIEW_MODEL_MATRIX("viewModelMatrix"),
     VIEW_MATRIX("viewMatrix"),
     MODEL_MATRIX("modelMatrix"),
@@ -32,8 +35,7 @@ public enum UniformName
     SCREEN_COLOR("screenColor"),
     MATERIAL_SAMPLER("materialColorSampler"),
     DEPTH_SAMPLER("depthSampler"),
-    DEPTH_CUBE_SAMPLER("cubeDepthSampler"),
-    MAXIMUM_LIGHT_DISTANCE_SQUARED("maxLightDistanceSquared");
+    DEPTH_CUBE_SAMPLER("cubeDepthSampler");
     private static final Map<String, UniformName> nameLookup;
 
     static

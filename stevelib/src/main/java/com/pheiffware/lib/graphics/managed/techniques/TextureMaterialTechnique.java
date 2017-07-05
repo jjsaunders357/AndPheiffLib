@@ -16,7 +16,7 @@ public class TextureMaterialTechnique extends Technique3D
     public TextureMaterialTechnique(AssetLoader al) throws GraphicsException
     {
         super(al, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl", new RenderProperty[]{
-                RenderProperty.PROJECTION_MATRIX,
+                RenderProperty.PROJECTION_LINEAR_DEPTH,
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX,
                 RenderProperty.LIGHTING,
@@ -28,7 +28,7 @@ public class TextureMaterialTechnique extends Technique3D
 
     public void applyConstantPropertiesImplement()
     {
-        setProjection();
+        setProjectionLinearDepth();
         setLightingConstants();
     }
 

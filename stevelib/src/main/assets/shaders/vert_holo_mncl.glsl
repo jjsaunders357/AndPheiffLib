@@ -1,5 +1,5 @@
 #version 300 es
-precision mediump float;
+precision highp float;
 //Transforms vertices within screen space
 uniform mat4 modelMatrix;
 
@@ -29,12 +29,12 @@ void main()
 	normal = normalize(normalMatrix * vertexNormal);
 	position = modelMatrix * vertexPosition4;
     position.y *= aspectRatio;
-	highp float w = eyePosition.z - position.z;
+	float w = eyePosition.z - position.z;
 	float x = position.x * w - position.z * (eyePosition.x - position.x);
 	float y = position.y * w - position.z * (eyePosition.y - position.y);
 
 // z mapped to range [0,1]
-    highp float z = (w-zNear)/(zFar-zNear);
+    float z = (w-zNear)/(zFar-zNear);
 
 // z mapped to range [-1,1]
     z = 2.0 * z - 1.0;

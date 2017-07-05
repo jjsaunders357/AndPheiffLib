@@ -10,6 +10,8 @@ import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
 import com.pheiffware.lib.and.gui.graphics.openGL.TouchTransformGameView;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
+import com.pheiffware.lib.geometry.collada.ColladaObject3D;
+import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -17,6 +19,7 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.ColladaLoader;
+import com.pheiffware.lib.graphics.managed.engine.ObjectHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectManager;
 import com.pheiffware.lib.graphics.managed.engine.renderers.CubeDepthRenderer;
 import com.pheiffware.lib.graphics.managed.engine.renderers.SimpleRenderer;
@@ -51,6 +54,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
     {
         private final Technique colorTechnique;
         private final Technique textureTechnique;
+        private ObjectHandle monkeyHandle;
 
         public ExampleColladaLoader(ObjectManager objectManager,
                                     GLCache glCache,
@@ -64,6 +68,20 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             super(objectManager, glCache, al, imageDirectory, homogenizePositions, defaultColladaMaterial);
             this.colorTechnique = colorTechnique;
             this.textureTechnique = textureTechnique;
+        }
+
+        @Override
+        protected ObjectHandle addObject(String name, String defaultGroupID, ColladaObject3D object3D)
+        {
+            if (name.equals("Monkey"))
+            {
+                monkeyHandle = super.addObject(name, "main", object3D);
+                return monkeyHandle;
+            }
+            else
+            {
+                return super.addObject(name, defaultGroupID, object3D);
+            }
         }
 
         @Override
@@ -104,6 +122,11 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         {
             return glCache.buildImageTex(imagePath).build();
         }
+
+        public ObjectHandle getMonkeyHandle()
+        {
+            return monkeyHandle;
+        }
     }
 
     private static class Renderer extends Example3DRenderer
@@ -117,6 +140,8 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         private TextureCubeMap cubeDepthTexture;
         private SimpleRenderer simpleRenderer;
         private CubeDepthRenderer cubeRenderer;
+        private ObjectHandle monkeyHandle;
+        private Matrix4 monkeyTransform;
 
         public Renderer()
         {
@@ -139,7 +164,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             textureTechnique = new TextureMaterialTechnique(al);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
-            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{0, 0, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
 
             //Left Cube: -2,0,-2
             //Right Cube: 0,0,0
@@ -148,7 +173,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
 
             lighting.setMaximumDistance(0, maximumLightDistance);
             simpleRenderer = new SimpleRenderer();
-            cubeRenderer = new CubeDepthRenderer(al, cubeDepthTexture, maximumLightDistance);
+            cubeRenderer = new CubeDepthRenderer(al, cubeDepthTexture);
 
             manager = new ObjectManager();
             ColladaMaterial defaultMaterial = new ColladaMaterial(
@@ -166,9 +191,14 @@ public class Example4CubeFrameFragment extends BaseGameFragment
                     defaultMaterial,
                     colorShadowTechnique,
                     textureTechnique);
+
             try
             {
+                loader.loadCollada("meshes/test_render.dae", "other");
                 loader.loadCollada("meshes/shadows.dae");
+                monkeyHandle = loader.getMonkeyHandle();
+                monkeyTransform = Matrix4.newTranslation(0.5f, 1f, -2f);
+                monkeyTransform.scaleBy(0.7f, 0.7f, 0.7f);
                 manager.packAndTransfer();
             }
             catch (XMLParseException | IOException e)
@@ -178,20 +208,21 @@ public class Example4CubeFrameFragment extends BaseGameFragment
         }
 
         @Override
-        protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
+        protected void onDrawFrame(Camera camera) throws GraphicsException
         {
+            monkeyTransform.rotateBy(1f, 1f, 0f, 1f);
+            monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
+
             //Render to texture 1st
             float[] absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
-
             cubeRenderer.setRenderPosition(absoluteLightPosition);
             cubeRenderer.add(manager.getGroupObjects("main"));
             cubeRenderer.render();
 
-            colorShadowTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projectionMatrix);
-            colorShadowTechnique.setProperty(RenderProperty.VIEW_MATRIX, viewMatrix);
+            colorShadowTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
+            colorShadowTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorShadowTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorShadowTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
-            colorShadowTechnique.setProperty(RenderProperty.MAXIMUM_LIGHT_DISTANCE, maximumLightDistance);
             colorShadowTechnique.applyConstantProperties();
 
 
@@ -203,6 +234,7 @@ public class Example4CubeFrameFragment extends BaseGameFragment
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             simpleRenderer.add(manager.getGroupObjects("main"));
+
             simpleRenderer.render();
         }
     }

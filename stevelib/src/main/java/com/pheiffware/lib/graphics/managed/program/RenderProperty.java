@@ -7,6 +7,11 @@ package com.pheiffware.lib.graphics.managed.program;
  */
 public enum RenderProperty
 {
+    //An alternative to a projection matrix, this holds all information required to perform projection,
+    //but results in linear depth.  In practice this is often faster than a projection matrix, as the
+    //projection matrix can't be multiplied in with view and model anyways.
+    PROJECTION_LINEAR_DEPTH,
+
     //Holds the projection matrix
     PROJECTION_MATRIX,
 
@@ -41,8 +46,5 @@ public enum RenderProperty
     DEPTH_TEXTURE,
 
     //This is the cube texture containing depth
-    CUBE_DEPTH_TEXTURE,
-
-    //The maximum distance from light allowed in the depth distance squared technique
-    MAXIMUM_LIGHT_DISTANCE
+    CUBE_DEPTH_TEXTURE
 }

@@ -4,7 +4,6 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.UniformName;
 
 /**
  * Renders the depth of geometry and nothing else.
@@ -18,7 +17,7 @@ public class DepthSpotTechnique extends Technique3D
     public DepthSpotTechnique(AssetLoader al) throws GraphicsException
     {
         super(al, "shaders/vert_depth.glsl", "shaders/frag_depth.glsl", new RenderProperty[]{
-                RenderProperty.PROJECTION_MATRIX,
+                RenderProperty.PROJECTION_LINEAR_DEPTH,
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX
         });
@@ -26,11 +25,12 @@ public class DepthSpotTechnique extends Technique3D
 
     public void applyConstantPropertiesImplement()
     {
+        setProjectionLinearDepth();
     }
 
     @Override
     public void applyInstanceProperties()
     {
-        setProjectionViewModel();
+        setViewModel();
     }
 }

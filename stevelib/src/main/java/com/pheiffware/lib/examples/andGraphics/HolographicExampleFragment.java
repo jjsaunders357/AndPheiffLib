@@ -17,6 +17,7 @@ import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
+import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -146,7 +147,7 @@ public class HolographicExampleFragment extends BaseGameFragment
 
 
         @Override
-        protected void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException
+        protected void onDrawFrame(Camera camera) throws GraphicsException
         {
             Matrix4 orientationMatrix = orientationTracker.getCurrentOrientation();
             if (orientationMatrix != null)

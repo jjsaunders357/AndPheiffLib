@@ -66,7 +66,7 @@ public abstract class ColladaLoader
         }
     }
 
-    protected void addObject(String name, String defaultGroupID, ColladaObject3D object3D)
+    protected ObjectHandle addObject(String name, String defaultGroupID, ColladaObject3D object3D)
     {
         Matrix4 initialMatrix = object3D.getInitialMatrix();
         ObjectHandle objectHandle = objectManager.startObject(getGroupID(name, object3D, defaultGroupID));
@@ -81,6 +81,7 @@ public abstract class ColladaLoader
             addMesh(mesh, material, initialMatrix, name);
         }
         objectManager.endObject();
+        return objectHandle;
     }
 
 

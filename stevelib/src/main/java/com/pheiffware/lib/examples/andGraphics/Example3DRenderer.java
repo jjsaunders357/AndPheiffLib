@@ -11,7 +11,6 @@ import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.utils.dataContainers.MapCounterLong;
 
@@ -70,14 +69,14 @@ public abstract class Example3DRenderer implements GameRenderer
         GLES20.glClearDepthf(1);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         profileStartTime = System.nanoTime();
-        onDrawFrame(camera.getProjectionMatrix(), camera.getViewMatrix());
+        onDrawFrame(camera);
         GLES20.glFinish();
         frameCounter++;
         logAverages();
         addFrameProfilePoint("Render");
     }
 
-    protected abstract void onDrawFrame(Matrix4 projectionMatrix, Matrix4 viewMatrix) throws GraphicsException;
+    protected abstract void onDrawFrame(Camera camera) throws GraphicsException;
 
     private void logAverages()
     {

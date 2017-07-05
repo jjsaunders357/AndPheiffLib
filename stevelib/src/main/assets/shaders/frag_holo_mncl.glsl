@@ -27,7 +27,7 @@ uniform float shininess;
 uniform float materialAlpha;
 
 //Position of the eye
-uniform vec4 eyePosition;
+uniform highp vec4 eyePosition;
 
 //Position/normal of point being rendered in screen space
 in vec4 position;
@@ -35,9 +35,6 @@ in vec3 normal;
 
 //Color of the screen's surface.  Anything with a z position < 0, has this blended in.
 uniform vec4 screenColor;
-
-//Near visible plane, relative to eye.  In other words, minimum distance from eye, in z direction, towards screen, which is visible.
-uniform float zNear;
 
 layout(location = 0) out vec4 fragColor;
 

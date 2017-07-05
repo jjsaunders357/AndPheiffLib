@@ -1,6 +1,7 @@
 package com.pheiffware.lib.graphics;
 
 import com.pheiffware.lib.geometry.Vec3D;
+import com.pheiffware.lib.graphics.managed.techniques.ProjectionLinearDepth;
 
 /**
  * Used for tracking display and orientation.
@@ -24,11 +25,11 @@ public class Camera
     private float farZ;
     private boolean flipVertical;
 
-    //Has any lens attribute been changed since the projection matrix was last calculated?
-    boolean projectionMatrixStale;
-
     //The projection matrix representing the lens
     private final Matrix4 projectionMatrix;
+
+    //The linear depth projection representing the lens
+    private ProjectionLinearDepth projectionLinearDepth;
 
     //Represent the composition of invOrientation * inverseTranslation
     private Matrix4 cameraMatrix;
@@ -48,9 +49,6 @@ public class Camera
         cameraMatrix = Matrix4.newIdentity();
         projectionMatrix = Matrix4.newZeroMatrix();
         setLens(FOV, aspect, nearZ, farZ, flipVertical);
-
-        //All matrices marked stale
-        projectionMatrixStale = true;
     }
 
     /**
@@ -79,17 +77,17 @@ public class Camera
         this.nearZ = nearZ;
         this.farZ = farZ;
         this.flipVertical = flipVertical;
-        projectionMatrixStale = true;
+        updateProjection();
     }
 
 
     /**
      * Recomputes the projection matrix from lens attributes.
      */
-    private void updateProjectionMatrix()
+    private void updateProjection()
     {
         projectionMatrix.setProjection(FOV, aspect, nearZ, farZ, flipVertical);
-        projectionMatrixStale = false;
+        projectionLinearDepth = new ProjectionLinearDepth(FOV, aspect, farZ);
     }
 
     /**
@@ -227,41 +225,42 @@ public class Camera
 
     public Matrix4 getProjectionMatrix()
     {
-        if (projectionMatrixStale)
-        {
-            updateProjectionMatrix();
-        }
         return projectionMatrix;
+    }
+
+    public ProjectionLinearDepth getProjectionLinearDepth()
+    {
+        return projectionLinearDepth;
     }
 
     public void setFOV(float FOV)
     {
         this.FOV = FOV;
-        projectionMatrixStale = true;
+        updateProjection();
     }
 
     public void setAspect(float aspect)
     {
         this.aspect = aspect;
-        projectionMatrixStale = true;
+        updateProjection();
     }
 
     public void setNearZ(float nearZ)
     {
         this.nearZ = nearZ;
-        projectionMatrixStale = true;
+        updateProjection();
     }
 
     public void setFarZ(float farZ)
     {
         this.farZ = farZ;
-        projectionMatrixStale = true;
+        updateProjection();
     }
 
     public void setFlipVertical(boolean flipVertical)
     {
         this.flipVertical = flipVertical;
-        projectionMatrixStale = true;
+        updateProjection();
     }
 
 

@@ -1,4 +1,5 @@
 #version 300 es
+precision highp float;
 /*
 2 dimensional vertex shader.
 All x values are interpreteted following the convention that -1 is the left of the screen and +1 is the right of the screen.
