@@ -10,7 +10,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/stevelib" />
+            <option value="$PROJECT_DIR$/andPheiffLib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
