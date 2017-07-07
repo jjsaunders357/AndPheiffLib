@@ -1,1 +1,1 @@
-include ':andPheiffLib'
+include ':andPheiffLib', ':andpheifflibdemo'

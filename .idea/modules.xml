@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndPheiffLib.iml" filepath="$PROJECT_DIR$/AndPheiffLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/andPheiffLib/andPheiffLib.iml" filepath="$PROJECT_DIR$/andPheiffLib/andPheiffLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/andpheifflibdemo/andpheifflibdemo.iml" filepath="$PROJECT_DIR$/andpheifflibdemo/andpheifflibdemo.iml" />
     </modules>
   </component>
 </project>
