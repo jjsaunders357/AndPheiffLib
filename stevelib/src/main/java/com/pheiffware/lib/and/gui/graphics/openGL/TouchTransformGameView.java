@@ -9,7 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 
 import com.pheiffware.lib.and.input.TouchAnalyzer;
-import com.pheiffware.lib.examples.andGraphics.Example3DRenderer;
+import com.pheiffware.lib.demo.andGraphics.Demo3DRenderer;
 import com.pheiffware.lib.graphics.FilterQuality;
 
 /**
@@ -19,9 +19,9 @@ public class TouchTransformGameView extends BaseGameView
 {
     private final boolean forwardTouchTransformEvents;
     private final TouchAnalyzer touchAnalyzer;
-    private final Example3DRenderer renderer;
+    private final Demo3DRenderer renderer;
 
-    public TouchTransformGameView(Context context, Example3DRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
+    public TouchTransformGameView(Context context, Demo3DRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
     {
         super(context, renderer, filterQuality, forwardRotationSensorEvents);
         this.renderer = renderer;

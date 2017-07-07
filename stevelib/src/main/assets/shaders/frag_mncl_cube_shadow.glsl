@@ -31,7 +31,7 @@ uniform float materialAlpha;
 //Maximum depth projected into texture
 uniform float projectionMaxDepth;
 
-uniform mediump samplerCube cubeDepthSampler;
+uniform mediump samplerCubeShadow cubeDepthSampler;
 
 //Position of point being rendered in eye space
 in vec4 positionEyeSpace;
@@ -42,6 +42,32 @@ in vec3 absPosition;
 
 layout(location = 0) out vec4 fragColor;
 
+
+/**
+The amount of light transmission taking into account shadows.
+1.0 - no shadow,
+0.0 - 100% shadow,
+*/
+float getShadowTransmission(vec4 absLightPosition)
+{
+    vec3 lightToPositionAbs = absPosition - absLightPosition.xyz;
+
+    //Depth is the maximum of x, y or z as the cube map faces are along these axes
+    float depth = max(max(abs(lightToPositionAbs.x),abs(lightToPositionAbs.y)),abs(lightToPositionAbs.z));
+
+    //Divide out maximum depth for comparison purposes
+    depth /= projectionMaxDepth;
+
+    //Sample the depth texture.  Does lookup based on lightToPositionAbs, but then compares result to depth, returning 0 or 1 (or possibly in between if multiple samples are taken).
+    float depthSample = texture(cubeDepthSampler, vec4(lightToPositionAbs,depth));
+    depthSample = depthSample;
+
+    return depthSample;
+}
+
+/**
+The light color for the given light.  The alpha channel will generally be 0.0 except for specular contributions.
+*/
 vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
     //Normalize the surface's normal
@@ -63,15 +89,10 @@ vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuse
 
     vec4 color = diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
 
-    vec3 lightToPositionAbs = absPosition - absLightPosition.xyz;
-    float depthSample = texture(cubeDepthSampler, lightToPositionAbs).r;
-    depthSample = depthSample * projectionMaxDepth;
-
-    float depth = max(max(abs(lightToPositionAbs.x),abs(lightToPositionAbs.y)),abs(lightToPositionAbs.z));
-    float visibleness = step(depth,depthSample+0.1);
-
-	return vec4(visibleness*color.rgb,color.a);
+	return vec4(getShadowTransmission(absLightPosition)*color.rgb,color.a);
 }
+
+
 
 void main()
 {

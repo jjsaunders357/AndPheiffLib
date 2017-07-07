@@ -10,17 +10,17 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/AppTheme"
-    tools:context="com.pheiffware.lib.examples.MainActivity">
+    tools:context="com.pheiffware.lib.demo.DemoActivity">
 
     <fragment
-        android:id="@+id/fragment_example_list"
+        android:id="@+id/fragment_demo_list"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:name="com.pheiffware.lib.examples.ExampleListFragment"
-        tools:layout="@layout/fragment_example_list"/>
+        android:name="com.pheiffware.lib.demo.DemoListFragment"
+        tools:layout="@layout/fragment_demo_list"/>
 
     <FrameLayout
-        android:id="@+id/exampleFragmentContainer"
+        android:id="@+id/demoFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4">

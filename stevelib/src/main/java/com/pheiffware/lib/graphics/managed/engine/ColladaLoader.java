@@ -43,8 +43,9 @@ public abstract class ColladaLoader
         loadCollada(assetPath, "main");
     }
 
-    public final void loadCollada(String assetPath, String defaultGroupID) throws XMLParseException, IOException, GraphicsException
+    public final Map<String, ObjectHandle> loadCollada(String assetPath, String defaultGroupID) throws XMLParseException, IOException, GraphicsException
     {
+        Map<String, ObjectHandle> objectMap = new HashMap<>();
         Collada collada = colladaFactory.loadCollada(al, assetPath);
         for (String imageFileName : collada.imageFileNames)
         {
@@ -62,8 +63,10 @@ public abstract class ColladaLoader
         }
         for (Map.Entry<String, ColladaObject3D> entry : collada.objects.entrySet())
         {
-            addObject(entry.getKey(), defaultGroupID, entry.getValue());
+            ObjectHandle objectHandle = addObject(entry.getKey(), defaultGroupID, entry.getValue());
+            objectMap.put(entry.getKey(), objectHandle);
         }
+        return objectMap;
     }
 
     protected ObjectHandle addObject(String name, String defaultGroupID, ColladaObject3D object3D)
