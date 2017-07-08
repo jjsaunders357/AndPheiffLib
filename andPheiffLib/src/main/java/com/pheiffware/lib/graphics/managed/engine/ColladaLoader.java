@@ -38,9 +38,9 @@ public abstract class ColladaLoader
         colladaFactory = new ColladaFactory(homogenizePositions, defaultColladaMaterial);
     }
 
-    public final void loadCollada(String assetPath) throws XMLParseException, IOException, GraphicsException
+    public final Map<String, ObjectHandle> loadCollada(String assetPath) throws XMLParseException, IOException, GraphicsException
     {
-        loadCollada(assetPath, "main");
+        return loadCollada(assetPath, "main");
     }
 
     public final Map<String, ObjectHandle> loadCollada(String assetPath, String defaultGroupID) throws XMLParseException, IOException, GraphicsException
@@ -100,7 +100,7 @@ public abstract class ColladaLoader
 
     protected abstract void addMesh(Mesh mesh, ColladaMaterial material, Matrix4 initialMatrix, String name);
 
-    protected abstract Texture2D loadTexture2D(String imageFileName) throws GraphicsException;
+    protected abstract Texture2D loadTexture2D(String imagePath) throws GraphicsException;
 
     public ObjectHandle getHandle(String name)
     {

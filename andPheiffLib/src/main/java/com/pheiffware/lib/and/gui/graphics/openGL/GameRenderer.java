@@ -12,7 +12,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 /**
  * Wraps the GLSurfaceView.Renderer concepts.  The GLCache object manages/simplifies many aspects of OpenGL. This triggers TouchTransformListener events, in the rendering thread.
  */
-public abstract class BaseGameRenderer
+public abstract class GameRenderer
 {
     private final int minSupportedGLVersion;
     private final int maxSupportedGLVersion;
@@ -32,7 +32,7 @@ public abstract class BaseGameRenderer
      *                              available to the renderer will always be <=maxSupportedGLVersion depending on hardware capabilities.
      *                              This should a major/minor version number such as AndGraphicsUtils.GL_VERSION_31
      */
-    public BaseGameRenderer(int minSupportedGLVersion, int maxSupportedGLVersion)
+    public GameRenderer(int minSupportedGLVersion, int maxSupportedGLVersion)
     {
         this.minSupportedGLVersion = minSupportedGLVersion;
         this.maxSupportedGLVersion = maxSupportedGLVersion;

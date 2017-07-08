@@ -24,13 +24,13 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup BaseGameRenderer.
+ * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup GameRenderer.
  */
 public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, SensorEventListener
 {
     private final FilterQuality filterQuality;
     private final AndAssetLoader assetLoader;
-    private final BaseGameRenderer renderer;
+    private final GameRenderer renderer;
     private final boolean forwardRotationSensorEvents;
     private final boolean forwardTouchTransformEvents;
     private final SensorManager sensorManager;
@@ -40,7 +40,7 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
     //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
 
-    public GameView(Context context, BaseGameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
+    public GameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
     {
         super(context);
         this.filterQuality = filterQuality;

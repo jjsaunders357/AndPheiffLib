@@ -32,7 +32,7 @@ import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.techniques.HoloColorMaterialTechnique;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
-import com.pheiffware.libDemo.Demo3DRendererBase;
+import com.pheiffware.libDemo.Demo3DRenderer;
 
 import java.io.IOException;
 
@@ -45,7 +45,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
     @Override
     public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new GameView(getContext(), new RendererBase(), FilterQuality.MEDIUM, true, true)
+        return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, true, true)
         {
             private OrientationTracker orientationTracker = new OrientationTracker(true);
 
@@ -69,7 +69,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
         };
     }
 
-    private static class RendererBase extends Demo3DRendererBase
+    private static class Renderer extends Demo3DRenderer
     {
         private static final float SCREEN_ALPHA = 0.3f;
         private OrientationTracker orientationTracker;
@@ -87,7 +87,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
         private MeshHandle monkeyHandle3;
         private Matrix4 transform3;
 
-        public RendererBase()
+        public Renderer()
         {
             super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30, 90f, 1.0f, 100.0f, 0.01f);
         }

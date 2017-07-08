@@ -34,7 +34,7 @@ import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
-import com.pheiffware.libDemo.Demo3DRendererBase;
+import com.pheiffware.libDemo.Demo3DRenderer;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,7 +48,7 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
     @Override
     public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new GameView(getContext(), new RendererBase(), FilterQuality.MEDIUM, false, true);
+        return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false, true);
     }
 
     static class DemoColladaLoader extends ColladaLoader
@@ -110,7 +110,7 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
         }
     }
 
-    private static class RendererBase extends Demo3DRendererBase
+    private static class Renderer extends Demo3DRenderer
     {
         private final float maximumLightDistance = 25.0f;
         private Lighting lighting;
@@ -124,7 +124,7 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
         private ObjectHandle monkeyHandle;
         private Matrix4 monkeyTransform;
 
-        public RendererBase()
+        public Renderer()
         {
             super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30, 90f, 1.0f, 100.0f, 0.01f);
         }

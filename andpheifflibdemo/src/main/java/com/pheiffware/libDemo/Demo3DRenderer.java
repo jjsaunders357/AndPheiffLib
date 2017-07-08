@@ -5,7 +5,7 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameRenderer;
+import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.Transform2D;
@@ -21,7 +21,7 @@ import java.util.Map;
  * <p/>
  * Created by Steve on 4/23/2016.
  */
-public abstract class Demo3DRendererBase extends BaseGameRenderer
+public abstract class Demo3DRenderer extends GameRenderer
 {
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDragToCameraTranslation;
@@ -31,7 +31,7 @@ public abstract class Demo3DRendererBase extends BaseGameRenderer
     private int frameCounter;
     private int logFramePeriod = 120;
 
-    public Demo3DRendererBase(int minSupportedGLVersion, int maxSupportedGLVersion, float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
+    public Demo3DRenderer(int minSupportedGLVersion, int maxSupportedGLVersion, float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
     {
         super(minSupportedGLVersion, maxSupportedGLVersion);
         this.screenDragToCameraTranslation = screenDragToCameraTranslation;
@@ -91,6 +91,7 @@ public abstract class Demo3DRendererBase extends BaseGameRenderer
         profileStartTime = System.nanoTime();
     }
 
+    @Override
     public void onTouchTransformEvent(TouchAnalyzer.TouchTransformEvent event)
     {
         int numPointers = event.numPointers;

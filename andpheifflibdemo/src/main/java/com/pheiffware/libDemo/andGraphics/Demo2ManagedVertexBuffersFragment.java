@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
-import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameRenderer;
+import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.graphics.FilterQuality;
@@ -39,10 +39,10 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
     @Override
     public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new GameView(getContext(), new RendererBase(), FilterQuality.MEDIUM, false, false);
+        return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false, false);
     }
 
-    private static class RendererBase extends BaseGameRenderer
+    private static class Renderer extends GameRenderer
     {
         private MeshDataManager manager;
 
@@ -55,7 +55,7 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
         private Color2DTechnique color2DTechnique;
         private ColorTexture2DTechnique colorTexture2DTechnique;
 
-        private RendererBase()
+        private Renderer()
         {
             super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30);
         }
@@ -97,9 +97,6 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
             manager.packAndTransfer();
         }
 
-        /* (non-Javadoc)
-         * @see android.opengl.GLSurfaceView.RendererBase#onDrawFrame(javax.microedition.khronos.opengles.GL10)
-         */
         @Override
         public void onDrawFrame()
         {
@@ -136,10 +133,6 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
             globalTestColor += 0.01;
         }
 
-
-        /* (non-Javadoc)
-         * @see android.opengl.GLSurfaceView.RendererBase#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)
-         */
         @Override
         public void onSurfaceResize(int width, int height)
         {
