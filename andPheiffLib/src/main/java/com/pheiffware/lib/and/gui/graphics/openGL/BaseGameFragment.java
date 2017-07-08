@@ -22,14 +22,14 @@ public abstract class BaseGameFragment extends LoggedFragment
      * @return
      */
     @Override
-    public abstract BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+    public abstract GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
     @NonNull
     @Override
-    public BaseGameView getView()
+    public GameView getView()
     {
         //noinspection ConstantConditions
-        return (BaseGameView) super.getView();
+        return (GameView) super.getView();
     }
 
     @Override

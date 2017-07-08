@@ -23,7 +23,7 @@ import static com.pheiffware.lib.and.AndGuiUtils.ClipTransform;
  * <p/>
  * 1. The view is invalidated at a configurable period.  This causes onDraw() to be called over and over for the purposes of rendering something in real time.
  * <p/>
- * 2. When rendering in draw, all positions can be specified in "render space".  The specified visibleRenderAreain this space is displayed in the largest possible rectangle in the
+ * 2. When rendering in draw, all positions can be specified in "render space".  The specified visibleRenderArea in this space is displayed in the largest possible rectangle in the
  * view which maintains a consistent aspect ratio AND which is centered and clipped.
  */
 public class RenderView extends View

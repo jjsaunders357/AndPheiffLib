@@ -5,8 +5,8 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
-import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameRenderer;
+import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.Camera;
@@ -21,7 +21,7 @@ import java.util.Map;
  * <p/>
  * Created by Steve on 4/23/2016.
  */
-public abstract class Demo3DRenderer implements GameRenderer
+public abstract class Demo3DRendererBase extends BaseGameRenderer
 {
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDragToCameraTranslation;
@@ -30,20 +30,17 @@ public abstract class Demo3DRenderer implements GameRenderer
     private final MapCounterLong<String> nanoTimes = new MapCounterLong<>();
     private int frameCounter;
     private int logFramePeriod = 120;
-    private TouchAnalyzer touchAnalyzer;
-    private int renderWidth;
-    private int renderHeight;
 
-    public Demo3DRenderer(float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
+    public Demo3DRendererBase(int minSupportedGLVersion, int maxSupportedGLVersion, float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
     {
+        super(minSupportedGLVersion, maxSupportedGLVersion);
         this.screenDragToCameraTranslation = screenDragToCameraTranslation;
         camera = new Camera(initialFOV, 1, nearPlane, farPlane, false);
     }
 
     @Override
-    public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
+    public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
     {
-        touchAnalyzer = new TouchAnalyzer(surfaceMetrics.xdpi, surfaceMetrics.ydpi);
         frameCounter = 0;
         nanoTimes.clear();
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -54,11 +51,7 @@ public abstract class Demo3DRenderer implements GameRenderer
     @Override
     public void onSurfaceResize(int width, int height)
     {
-        this.renderWidth = width;
-        this.renderHeight = height;
-        //For renderers which never change from the main FrameBuffer, this keeps the viewport working
-        //Any renderer which does change frame buffer will be changing the viewport manually before rendering anyway and will not be affected by this
-        GLES20.glViewport(0, 0, renderWidth, renderHeight);
+        super.onSurfaceResize(width, height);
         camera.setAspect(width / (float) height);
     }
 
@@ -98,14 +91,10 @@ public abstract class Demo3DRenderer implements GameRenderer
         profileStartTime = System.nanoTime();
     }
 
-    @Override
-    public int maxMajorGLVersion()
+    public void onTouchTransformEvent(TouchAnalyzer.TouchTransformEvent event)
     {
-        return 3;
-    }
-
-    public void touchTransformEvent(int numPointers, Transform2D transform)
-    {
+        int numPointers = event.numPointers;
+        Transform2D transform = event.transform;
         if (numPointers > 2)
         {
             //Geometric average of x and y scale factors
@@ -129,15 +118,5 @@ public abstract class Demo3DRenderer implements GameRenderer
     public void onSensorChanged(SensorEvent event)
     {
 
-    }
-
-    public int getRenderWidth()
-    {
-        return renderWidth;
-    }
-
-    public int getRenderHeight()
-    {
-        return renderHeight;
     }
 }

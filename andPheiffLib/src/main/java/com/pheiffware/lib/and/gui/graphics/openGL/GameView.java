@@ -1,7 +1,6 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,51 +8,66 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
+import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup GameRenderer.
+ * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup BaseGameRenderer.
  */
-public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Renderer, SensorEventListener
+public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, SensorEventListener
 {
     private final FilterQuality filterQuality;
-    private final AssetManager assetManager;
-    private final GameRenderer renderer;
+    private final AndAssetLoader assetLoader;
+    private final BaseGameRenderer renderer;
     private final boolean forwardRotationSensorEvents;
+    private final boolean forwardTouchTransformEvents;
     private final SensorManager sensorManager;
+    private final TouchAnalyzer touchAnalyzer;
 
-    private GLCache glCache;
     //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
     //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
 
-    public BaseGameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents)
+    public GameView(Context context, BaseGameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
     {
         super(context);
         this.filterQuality = filterQuality;
-        this.assetManager = context.getAssets();
+        this.assetLoader = new AndAssetLoader(context.getAssets());
         this.renderer = renderer;
         this.forwardRotationSensorEvents = forwardRotationSensorEvents;
+        this.forwardTouchTransformEvents = forwardTouchTransformEvents;
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-
-        int requestedGLMajorVersion = Math.min(renderer.maxMajorGLVersion(), AndGraphicsUtils.getDeviceGLMajorVersion(context));
-        setEGLContextClientVersion(requestedGLMajorVersion);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi);
+        requestOpenGLVersion(context);
         setRenderer(this);
-
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    }
+
+    private void requestOpenGLVersion(Context context)
+    {
+        int maxHardwareSupportedGLVersion = AndGraphicsUtils.getDeviceGLVersion(context);
+        if (renderer.getMinSupportedGLVersion() > maxHardwareSupportedGLVersion)
+        {
+            String errorMessage = String.format(getContext().getString(R.string.MinOpenGLVersionError), AndGraphicsUtils.glVersionString(renderer.getMinSupportedGLVersion()));
+            Log.e("Fatal", errorMessage);
+        }
+        int requestedGLVersion = Math.min(renderer.getMaxSupportedGLVersion(), maxHardwareSupportedGLVersion);
+        //Can only request major versions
+        int requestedGLMajorVersion = requestedGLVersion >> 16;
+        setEGLContextClientVersion(requestedGLMajorVersion);
     }
 
     @Override
@@ -71,19 +85,16 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     public void onSurfaceCreated(GL10 useless, EGLConfig config)
     {
         AndUtils.logLC(this, "SurfaceCreated");
-        AssetLoader al = new AndAssetLoader(assetManager);
-        //All resources held by glCache will have been thrown away
-        glCache = new GLCache(AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, al);
         try
         {
             DisplayMetrics metrics = getResources().getDisplayMetrics();
-            renderer.onSurfaceCreated(al, glCache, new SurfaceMetrics(metrics.xdpi, metrics.ydpi));
+            renderer.onSurfaceCreated(assetLoader, AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, new SystemInfo(metrics.xdpi, metrics.ydpi));
             PheiffGLUtils.assertNoError();
             surfaceInitialized = true;
         }
         catch (GraphicsException e)
         {
-            Log.e("Failed Surface Creation", "Error during surface creation", e);
+            Log.e("Fatal", "Error during surface creation", e);
         }
     }
 
@@ -124,15 +135,13 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     {
         AndUtils.logLC(this, "SurfaceDestroyed");
         super.surfaceDestroyed(holder);
+        renderer.onSurfaceDestroyed();
+        assetLoader.destroy();
         surfaceInitialized = false;
-
-        //Deallocate any memory in direct buffers and erase reference to AssetLoader
-        glCache.deallocate();
-        //Destroy any reference to GL/EGL object (not sure if this matters).
-        glCache = null;
     }
 
 
+    @Override
     public void onSensorChanged(SensorEvent event)
     {
         forwardSensorEvent(event);
@@ -142,6 +151,42 @@ public class BaseGameView extends GLSurfaceView implements GLSurfaceView.Rendere
     public void onAccuracyChanged(Sensor sensor, int accuracy)
     {
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        return forwardTouchTransformEvent(event);
+    }
+
+
+    /**
+     * Forwards a touch event to the renderer as a onTouchTransformEvent.
+     *
+     * @param event
+     * @return
+     */
+    protected boolean forwardTouchTransformEvent(final MotionEvent event)
+    {
+        if (isSurfaceInitialized() && forwardTouchTransformEvents)
+        {
+            //Must process event in gui thread as the event object itself is modified (its not safe to pass to another thread).
+            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
+
+            if (touchTransformEvent != null)
+            {
+                queueEvent(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        renderer.onTouchTransformEvent(touchTransformEvent);
+                    }
+                });
+            }
+            return true;
+        }
+        return false;
     }
 
     public void forwardSensorEvent(final SensorEvent event)

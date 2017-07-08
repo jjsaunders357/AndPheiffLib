@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndPheiffLib</string>
+    <string name="MinOpenGLVersionError">Required openGL version: %s is not available on this device.</string>
 </resources>

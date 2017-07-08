@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndUtils;
+import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
-import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
+import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.and.input.OrientationTracker;
-import com.pheiffware.lib.geometry.Transform2D;
+import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
@@ -30,8 +32,7 @@ import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.techniques.HoloColorMaterialTechnique;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
-import com.pheiffware.libDemo.Demo3DRenderer;
-import com.pheiffware.libDemo.DemoGameView;
+import com.pheiffware.libDemo.Demo3DRendererBase;
 
 import java.io.IOException;
 
@@ -42,9 +43,9 @@ import java.io.IOException;
 public class Demo5HolographicFragment extends BaseGameFragment
 {
     @Override
-    public DemoGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new DemoGameView(getContext(), new Renderer(), FilterQuality.MEDIUM, true, true)
+        return new GameView(getContext(), new RendererBase(), FilterQuality.MEDIUM, true, true)
         {
             private OrientationTracker orientationTracker = new OrientationTracker(true);
 
@@ -68,7 +69,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
         };
     }
 
-    private static class Renderer extends Demo3DRenderer
+    private static class RendererBase extends Demo3DRendererBase
     {
         private static final float SCREEN_ALPHA = 0.3f;
         private OrientationTracker orientationTracker;
@@ -86,15 +87,15 @@ public class Demo5HolographicFragment extends BaseGameFragment
         private MeshHandle monkeyHandle3;
         private Matrix4 transform3;
 
-        public Renderer()
+        public RendererBase()
         {
-            super(90f, 1.0f, 100.0f, 0.01f);
+            super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30, 90f, 1.0f, 100.0f, 0.01f);
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
-            super.onSurfaceCreated(al, glCache, surfaceMetrics);
+            super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
             orientationTracker = new OrientationTracker(true);
             GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
@@ -150,6 +151,9 @@ public class Demo5HolographicFragment extends BaseGameFragment
         @Override
         protected void onDrawFrame(Camera camera) throws GraphicsException
         {
+            GLES20.glViewport(0, 0, getSurfaceWidth(), getSurfaceHeight());
+            aspectRatio = getSurfaceWidth() / (float) getSurfaceHeight();
+
             Matrix4 orientationMatrix = orientationTracker.getCurrentOrientation();
             if (orientationMatrix != null)
             {
@@ -165,42 +169,19 @@ public class Demo5HolographicFragment extends BaseGameFragment
                 transform3.rotateBy(1, 0, 0, 1);
                 monkeyHandle3.setProperty(RenderProperty.MODEL_MATRIX, transform3);
                 monkeyHandle3.drawTriangles();
-//
-//                translationMatrix = Matrix4.newTranslation(-0.3f, 0.0f, -0.3f);
-//                modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
-//
-//                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
-//                holoColorTechnique.applyProperties();
-//
-//                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
-//
-//                translationMatrix = Matrix4.newTranslation(0.0f, -0.2f, -0.1f);
-//                modelMatrix = Matrix4.multiply(translationMatrix, Matrix4.newRotate(rotation, 1, 1, 0), Matrix4.newScale(0.2f, 0.2f, 0.2f));
-//
-//                holoColorTechnique.setProperty(RenderProperty.MODEL_MATRIX, modelMatrix);
-//                holoColorTechnique.applyProperties();
-//
-//                indexBuffer.drawAll(GLES20.GL_TRIANGLES);
-                //rotation++;
             }
         }
 
         @Override
-        public void touchTransformEvent(int numPointers, Transform2D transform)
+        public void onTouchTransformEvent(TouchAnalyzer.TouchTransformEvent event)
         {
-            if (numPointers == 1)
+            if (event.numPointers == 1)
             {
                 //Scale distance of eye from the screen
-                eyePositionInFlatScreenSpace[2] += transform.translation.x / 100.0f;
+                eyePositionInFlatScreenSpace[2] += event.transform.translation.x / 100.0f;
             }
         }
 
-        @Override
-        public void onSurfaceResize(int width, int height)
-        {
-            GLES20.glViewport(0, 0, width, height);
-            aspectRatio = width / (float) height;
-        }
 
         @Override
         public void onSensorChanged(SensorEvent event)

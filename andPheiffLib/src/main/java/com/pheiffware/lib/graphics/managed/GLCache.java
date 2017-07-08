@@ -117,10 +117,8 @@ public class GLCache
     }
 
 
-    public void deallocate()
+    public void destroy()
     {
-        //Do not retain reference to this as it can leak memory
-        al = null;
         //TODO: dynamic buffers should be created through this class
         //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }

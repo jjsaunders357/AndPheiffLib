@@ -29,6 +29,11 @@ public class AndGraphicsUtils
     public static final int GL_VERSION_11 = 0x10001;
     public static final int GL_VERSION_10 = 0x10000;
 
+    public static String glVersionString(int version)
+    {
+        return (version >> 16) + "." + (version & (0x1111));
+    }
+
     /**
      * Get the major openGL version that is actually available on this device (ie 3).
      *
@@ -38,7 +43,7 @@ public class AndGraphicsUtils
     public static int getDeviceGLMajorVersion(Context context)
     {
         int deviceGLVersion = getDeviceGLVersion(context);
-        return deviceGLVersion >> 4;
+        return deviceGLVersion >> 16;
     }
 
     /**

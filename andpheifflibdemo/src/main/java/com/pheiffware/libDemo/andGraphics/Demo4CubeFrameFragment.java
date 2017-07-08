@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
-import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
+import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.graphics.Camera;
 import com.pheiffware.lib.graphics.Color4F;
@@ -32,8 +34,7 @@ import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
-import com.pheiffware.libDemo.Demo3DRenderer;
-import com.pheiffware.libDemo.DemoGameView;
+import com.pheiffware.libDemo.Demo3DRendererBase;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -45,9 +46,9 @@ import java.util.Arrays;
 public class Demo4CubeFrameFragment extends BaseGameFragment
 {
     @Override
-    public DemoGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new DemoGameView(getContext(), new Demo4CubeFrameFragment.Renderer(), FilterQuality.MEDIUM, false, true);
+        return new GameView(getContext(), new RendererBase(), FilterQuality.MEDIUM, false, true);
     }
 
     static class DemoColladaLoader extends ColladaLoader
@@ -109,7 +110,7 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
         }
     }
 
-    private static class Renderer extends Demo3DRenderer
+    private static class RendererBase extends Demo3DRendererBase
     {
         private final float maximumLightDistance = 25.0f;
         private Lighting lighting;
@@ -123,21 +124,15 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
         private ObjectHandle monkeyHandle;
         private Matrix4 monkeyTransform;
 
-        public Renderer()
+        public RendererBase()
         {
-            super(90f, 1.0f, 100.0f, 0.01f);
+            super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30, 90f, 1.0f, 100.0f, 0.01f);
         }
 
         @Override
-        public int maxMajorGLVersion()
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
-            return 3;
-        }
-
-        @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
-        {
-            super.onSurfaceCreated(al, glCache, surfaceMetrics);
+            super.onSurfaceCreated(al, glCache, systemInfo);
 
             PheiffGLUtils.enableAlphaTransparency();
             colorShadowTechnique = new ColorShadowMaterialTechnique(al);
@@ -207,7 +202,8 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
 
 
             //Remove bindings to frame buffers
-            FrameBuffer.main.bind(0, 0, getRenderWidth(), getRenderHeight());
+            FrameBuffer.main.bind(0, 0, getSurfaceWidth(), getSurfaceHeight());
+            GLES20.glViewport(0, 0, getSurfaceWidth(), getSurfaceHeight());
 
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
             GLES20.glClearDepthf(1);

@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Manages loading of files/resources from disc for the library.  Allows platform neutral ways of accessing resources, such as image files, shader code, etc.
- * <p/>
- * The assetPath argument to various methods, refers to some system resource such as a file path to load from.
+ * Manages loading of files/assets/resources from disc for the library.
  * <p/>
  * Created by Steve on 4/23/2016.
  */

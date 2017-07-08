@@ -7,10 +7,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
-import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameView;
-import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
-import com.pheiffware.lib.and.gui.graphics.openGL.SurfaceMetrics;
+import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameRenderer;
+import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
+import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -35,12 +36,12 @@ import java.util.EnumSet;
 public class Demo1RawVertexBufferFragment extends BaseGameFragment
 {
     @Override
-    public BaseGameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new BaseGameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false);
+        return new GameView(getContext(), new RendererBase(), FilterQuality.MEDIUM, false, false);
     }
 
-    private static class Renderer implements GameRenderer
+    private static class RendererBase extends BaseGameRenderer
     {
         private static final int samplerToUse = 0;
 
@@ -54,18 +55,13 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
         private VertexAttributeGroup staticVertexAttributeGroup;
         private VertexAttributeGroup dynamicVertexAttributeGroup;
 
-
-        @Override
-        public int maxMajorGLVersion()
+        private RendererBase()
         {
-            return 3;
+            super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30);
         }
 
-        /* (non-Javadoc)
-         * @see android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.microedition.khronos.opengles.GL10, javax.microedition.khronos.egl.EGLConfig)
-         */
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SurfaceMetrics surfaceMetrics) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -118,7 +114,7 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
         }
 
         /* (non-Javadoc)
-         * @see android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.microedition.khronos.opengles.GL10)
+         * @see android.opengl.GLSurfaceView.RendererBase#onDrawFrame(javax.microedition.khronos.opengles.GL10)
          */
         @Override
         public void onDrawFrame()
@@ -155,11 +151,12 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
 
 
         /* (non-Javadoc)
-         * @see android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)
+         * @see android.opengl.GLSurfaceView.RendererBase#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)
          */
         @Override
         public void onSurfaceResize(int width, int height)
         {
+            super.onSurfaceResize(width, height);
             GLES20.glViewport(0, 0, width, height);
             ortho2DMatrix = Matrix4.newOrtho2D(width / (float) height);
         }
