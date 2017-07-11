@@ -107,7 +107,7 @@ public class Mesh
      */
     public Mesh newTransformedMesh(Matrix4 transformMatrix)
     {
-        float[] positionData = getPosition4Data();
+        float[] positionData = getPositionData();
         float[] normalData = getNormalData();
         Matrix3 normalTransform = transformMatrix.newNormalTransformMatrix3();
         if (positionData != null)
@@ -174,7 +174,7 @@ public class Mesh
         return vertexAttributeData.containsKey(vertexAttribute);
     }
 
-    public final float[] getPosition4Data()
+    public final float[] getPositionData()
     {
         return vertexAttributeData.get(VertexAttribute.POSITION4);
     }
