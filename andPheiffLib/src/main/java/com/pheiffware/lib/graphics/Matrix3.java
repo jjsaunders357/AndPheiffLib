@@ -1,8 +1,5 @@
 package com.pheiffware.lib.graphics;
 
-import android.opengl.Matrix;
-import android.renderscript.Matrix3f;
-
 import java.util.Arrays;
 
 /**
@@ -138,7 +135,7 @@ public class Matrix3
      * Probably less numerically stable (not sure if it will handle skew).
      * Totally gratuitous, but fun!
      *
-     * @param transform 4x4 transform to compute normal transform from
+     * @param transform 4x4 transform from which to compute normal transform
      */
     public void setNormalTransformFromMatrix4Fast(Matrix4 transform)
     {

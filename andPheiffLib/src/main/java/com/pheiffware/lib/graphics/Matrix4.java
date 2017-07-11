@@ -47,6 +47,14 @@ public class Matrix4
         return matrix;
     }
 
+    /**
+     * Create new rotation matrix around specified axis by given angle (in degrees).
+     *
+     * @param angle in degrees
+     * @param x     rotation axis x
+     * @param y     rotation axis y
+     * @param z     rotation axis z
+     */
     public static Matrix4 newRotate(float angle, float x, float y, float z)
     {
         Matrix4 matrix = new Matrix4(new float[16]);
@@ -161,7 +169,7 @@ public class Matrix4
      *
      * @param m reference to array which should back this matrix.
      */
-    private Matrix4(float[] m)
+    public Matrix4(float[] m)
     {
         this.m = m;
     }

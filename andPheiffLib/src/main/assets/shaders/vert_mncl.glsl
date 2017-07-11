@@ -19,6 +19,7 @@ out vec3 normalEyeSpace;
 
 void main()
 {
+    //TODO: Should be able to pre-normalize normalMatrix if necessary
 	normalEyeSpace = normalize(normalMatrix * vertexNormal);
 	positionEyeSpace = viewModelMatrix * vertexPosition4;
 
