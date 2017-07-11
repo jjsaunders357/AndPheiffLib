@@ -56,12 +56,10 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
                                  GLCache glCache,
                                  AssetLoader al,
                                  String imageDirectory,
-                                 boolean homogenizePositions,
-                                 ColladaMaterial defaultColladaMaterial,
                                  Technique colorTechnique,
                                  Technique textureTechnique) throws GraphicsException
         {
-            super(objectManager, glCache, al, imageDirectory, homogenizePositions, defaultColladaMaterial);
+            super(objectManager, glCache, al, imageDirectory);
             this.colorTechnique = colorTechnique;
             this.textureTechnique = textureTechnique;
         }
@@ -147,8 +145,6 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
                     glCache,
                     al,
                     "images", //Where images are located
-                    true, //Homogenize coordinates
-                    defaultMaterial,
                     colorTechnique,
                     textureTechnique);
             try

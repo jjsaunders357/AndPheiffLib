@@ -102,7 +102,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
 
             PheiffGLUtils.enableAlphaTransparency();
             holoColorTechnique = new HoloColorMaterialTechnique(al);
-            ColladaFactory colladaFactory = new ColladaFactory(true);
+            ColladaFactory colladaFactory = new ColladaFactory();
             try
             {
                 Collada collada = colladaFactory.loadCollada(al, "meshes/test_render.dae");

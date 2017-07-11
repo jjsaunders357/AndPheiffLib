@@ -6,9 +6,9 @@ import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
-import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,22 +28,30 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestCollada
 {
-    @Test
-    public void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
+    public static void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
-        FileInputStream input = new FileInputStream("stevelib/src/test/assets/meshes/weird_blender_example.dae");
-        ColladaFactory colladaFactory = new ColladaFactory(true);
+        File dir = new File(".");
+        File[] filesList = dir.listFiles();
+        for (File file : filesList)
+        {
+            if (file.isFile())
+            {
+                System.out.println(file.getName());
+            }
+        }
+
+        FileInputStream input = new FileInputStream("src/test/assets/meshes/weird_blender_example.dae");
+        ColladaFactory colladaFactory = new ColladaFactory();
         colladaFactory.loadCollada(input);
-        input = new FileInputStream("stevelib/src/test/assets/meshes/weird_sketchup_example.dae");
-        colladaFactory = new ColladaFactory(true);
+        input = new FileInputStream("src/test/assets/meshes/weird_sketchup_example.dae");
+        colladaFactory = new ColladaFactory();
         colladaFactory.loadCollada(input);
     }
 
-    @Test
-    public void testCompleteLoadBlender() throws XMLParseException, IOException, ParserConfigurationException, SAXException
+    public static void testCompleteLoadBlender() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
-        FileInputStream input = new FileInputStream("stevelib/src/test/assets/meshes/test_blender.dae");
-        ColladaFactory colladaFactory = new ColladaFactory(true);
+        FileInputStream input = new FileInputStream("src/test/assets/meshes/test_blender.dae");
+        ColladaFactory colladaFactory = new ColladaFactory();
         Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
@@ -145,11 +153,10 @@ public class TestCollada
         assertEquals(16, noMatMesh.getPosition4Data().length);
     }
 
-    @Test
-    public void testCompleteLoadSketchup() throws XMLParseException, IOException, ParserConfigurationException, SAXException
+    public static void testCompleteLoadSketchup() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
-        FileInputStream input = new FileInputStream("stevelib/src/test/assets/meshes/test_sketchup.dae");
-        ColladaFactory colladaFactory = new ColladaFactory(true);
+        FileInputStream input = new FileInputStream("src/test/assets/meshes/test_sketchup.dae");
+        ColladaFactory colladaFactory = new ColladaFactory();
         Collada collada = colladaFactory.loadCollada(input);
 
         //Check materials
@@ -249,8 +256,7 @@ public class TestCollada
         assertEquals(1.0, reference.matMeshTO(mat1).getPosition4Data()[1], 0.0);
     }
 
-    @Test
-    public void testColladaSource()
+    public static void testColladaSource()
     {
         ColladaAccessor colladaAccessor = new ColladaAccessor(3, 2, new boolean[]{true, false, true}, 3);
         float[] output = colladaAccessor.removeUnusedData(new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8});
@@ -261,8 +267,7 @@ public class TestCollada
     /**
      * Tests normalization of mesh.
      */
-    @Test
-    public void testColladaMeshNormalizer()
+    public static void testColladaMeshNormalizer()
     {
         //2 interleaved sets of index data.  1st set is for input1 {0,1,1,2,3,0,0,0,2}.  2nd set is shared by input2 and input3 {0,0,0,0,0,1,0,1,0}
         short[] interleavedIndices = new short[]{0, 0, 1, 0, 1, 0, 2, 0, 3, 0, 0, 1, 0, 0, 0, 1, 2, 0};
@@ -279,11 +284,11 @@ public class TestCollada
         inputs.put(Collada.COLLADA_VERTEX_NORMAL, new ColladaInput(Collada.COLLADA_VERTEX_NORMAL, new ColladaSource(3, 3, new float[]{0, 1, 2, 3, 4, 5, 6, 7, 8}), 1));
 
         ColladaMesh colladaMesh = new ColladaMesh(inputs, interleavedIndices, vertexCount);
-        ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, true);
+        ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, true, false);
         Mesh mesh = colladaMeshNormalizer.generateMesh();
         assertArrayEquals(new short[]{0, 1, 1, 2, 3, 4, 0, 4, 2}, mesh.getIndices());
         assertArrayEquals(new float[]{0, 1, 2, 1, 3, 4, 5, 1, 6, 7, 8, 1, 9, 10, 11, 1, 0, 1, 2, 1}, mesh.getAttributeData(VertexAttribute.POSITION4), 0);
         assertArrayEquals(new float[]{0, 1, 0, 1, 0, 1, 0, 1, 2, 3}, mesh.getAttributeData(VertexAttribute.TEXCOORD), 0);
-        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.getAttributeData(VertexAttribute.NORMAL), 0);
+        assertArrayEquals(new float[]{0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5}, mesh.getAttributeData(VertexAttribute.NORMAL3), 0);
     }
 }

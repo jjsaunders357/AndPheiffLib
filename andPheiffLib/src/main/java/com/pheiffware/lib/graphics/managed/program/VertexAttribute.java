@@ -39,7 +39,7 @@ public enum VertexAttribute
                     // @formatter:on
                 }
             },
-    NORMAL("vertexNormal", GLES20.GL_FLOAT, 3, 1)
+    NORMAL3("vertexNormal", GLES20.GL_FLOAT, 3, 1)
             {
                 @Override
                 public void put(ByteBuffer byteBuffer, int offset, float[] data)
@@ -71,7 +71,18 @@ public enum VertexAttribute
                     byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
                     // @formatter:on
                 }
-            };
+            },
+    NORMAL4("vertexNormal4", GLES20.GL_FLOAT, 4, 1)
+            {
+                @Override
+                public void put(ByteBuffer byteBuffer, int offset, float[] data)
+                {
+                    // @formatter:off
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    byteBuffer.putFloat(data[offset]);offset++;byteBuffer.putFloat(data[offset]);offset++;
+                    // @formatter:on
+                }
+            },;
 
     private static final Map<String, VertexAttribute> nameLookup;
 

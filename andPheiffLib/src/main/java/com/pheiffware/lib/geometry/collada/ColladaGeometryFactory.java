@@ -13,17 +13,19 @@ import java.util.Map;
 
 /**
  * Parses "geometry" tags and extracts ColladaGeometry objects.
- *
+ * <p>
  * Created by Steve on 2/15/2016.
  */
 class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
 {
     //When position/normals are loaded, a 1/0 is appended to the end of the loaded data to create a homogeneous coordinate/vector
     private final boolean homogenizePositions;
+    private final boolean homogenizeNormals;
 
-    public ColladaGeometryFactory(boolean homogenizePositions)
+    public ColladaGeometryFactory(boolean homogenizePositions, boolean homogenizeNormals)
     {
         this.homogenizePositions = homogenizePositions;
+        this.homogenizeNormals = homogenizeNormals;
     }
 
     @Override
@@ -50,7 +52,7 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromPolyListElement(polyListElement);
             if (colladaMesh != null)
             {
-                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions);
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions, homogenizeNormals);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
                 colladaGeometry.add(localMaterialID, mesh);
             }
@@ -63,7 +65,7 @@ class ColladaGeometryFactory implements ElementObjectFactory<ColladaGeometry>
             ColladaMesh colladaMesh = colladaMeshFactory.fromTrianglesElement(trianglesElement);
             if (colladaMesh != null)
             {
-                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions);
+                ColladaMeshNormalizer colladaMeshNormalizer = new ColladaMeshNormalizer(colladaMesh, homogenizePositions, homogenizeNormals);
                 Mesh mesh = colladaMeshNormalizer.generateMesh();
                 colladaGeometry.add(localMaterialID, mesh);
             }

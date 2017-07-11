@@ -29,13 +29,13 @@ public abstract class ColladaLoader
     private final ColladaFactory colladaFactory;
     private final String imageDirectory;
 
-    public ColladaLoader(ObjectManager objectManager, GLCache glCache, AssetLoader al, String imageDirectory, boolean homogenizePositions, ColladaMaterial defaultColladaMaterial)
+    public ColladaLoader(ObjectManager objectManager, GLCache glCache, AssetLoader al, String imageDirectory)
     {
         this.objectManager = objectManager;
         this.glCache = glCache;
         this.al = al;
         this.imageDirectory = imageDirectory;
-        colladaFactory = new ColladaFactory(homogenizePositions, defaultColladaMaterial);
+        colladaFactory = new ColladaFactory();
     }
 
     public final Map<String, ObjectHandle> loadCollada(String assetPath) throws XMLParseException, IOException, GraphicsException
@@ -105,5 +105,20 @@ public abstract class ColladaLoader
     public ObjectHandle getHandle(String name)
     {
         return objectHandleMap.get(name);
+    }
+
+    public void setHomogenizePositions(boolean homogenizePositions)
+    {
+        colladaFactory.setHomogenizePositions(homogenizePositions);
+    }
+
+    public void setHomogenizeNormals(boolean homogenizeNormals)
+    {
+        colladaFactory.setHomogenizeNormals(homogenizeNormals);
+    }
+
+    public void setDefaultColladaMaterial(ColladaMaterial defaultColladaMaterial)
+    {
+        colladaFactory.setDefaultColladaMaterial(defaultColladaMaterial);
     }
 }

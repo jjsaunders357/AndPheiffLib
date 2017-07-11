@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 /**
  * Main class which parses a Collada file to produce a Collada object.  This holds lots of additional intermediate information which can be used during testing or for other
  * purposes. Created by Steve on 2/19/2016.
@@ -53,22 +54,18 @@ public class ColladaFactory
     //List of all unnamed objects, either: node didn't have a name attribute, multiple nodes with the same name attribute (all but 1st put in this bin) or top-level geometry instance in a SketchUp node.
     private final List<ColladaObject3D> anonymousObjects = new LinkedList<>();
 
-    //When position are loaded, a 1 is appended to the end of the loaded data to create a homogeneous coordinates
-    private final boolean homogenizePositions;
+    //When position are loaded, a 1 is appended to the end of the loaded data to create a homogeneous coordinate
+    private boolean homogenizePositions = true;
+
+    //When position are loaded, a 0 is appended to the end of the loaded data to create a homogeneous vector
+    private boolean homogenizeNormals = false;
 
     //Default material for meshes with unassigned material
-    private final ColladaMaterial defaultColladaMaterial;
+    private ColladaMaterial defaultColladaMaterial = DEFAULT_DEFAULT_COLLADA_MATERIAL;
 
 
-    public ColladaFactory(boolean homogenizePositions)
+    public ColladaFactory()
     {
-        this(homogenizePositions, DEFAULT_DEFAULT_COLLADA_MATERIAL);
-    }
-
-    public ColladaFactory(boolean homogenizePositions, ColladaMaterial defaultColladaMaterial)
-    {
-        this.homogenizePositions = homogenizePositions;
-        this.defaultColladaMaterial = defaultColladaMaterial;
         clear();
     }
 
@@ -111,7 +108,7 @@ public class ColladaFactory
         Element libraryMaterialsElement = DomUtils.assertGetSubElement(rootElement, "library_materials");
         DomUtils.putSubElementsInMap(materialsByID, libraryMaterialsElement, "material", "id", new ColladaMaterialFactory(imageFileNames, colladaEffects));
         Element libraryGeometriesElement = DomUtils.assertGetSubElement(rootElement, "library_geometries");
-        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory(homogenizePositions));
+        DomUtils.putSubElementsInMap(geometries, libraryGeometriesElement, "geometry", "id", new ColladaGeometryFactory(homogenizePositions, homogenizeNormals));
 
         Element libraryNodesElement = DomUtils.getSubElement(rootElement, "library_nodes");
         if (libraryNodesElement != null)
@@ -164,5 +161,20 @@ public class ColladaFactory
     List<ColladaObject3D> getAnonymousObjects()
     {
         return anonymousObjects;
+    }
+
+    public void setHomogenizePositions(boolean homogenizePositions)
+    {
+        this.homogenizePositions = homogenizePositions;
+    }
+
+    public void setHomogenizeNormals(boolean homogenizeNormals)
+    {
+        this.homogenizeNormals = homogenizeNormals;
+    }
+
+    public void setDefaultColladaMaterial(ColladaMaterial defaultColladaMaterial)
+    {
+        this.defaultColladaMaterial = defaultColladaMaterial;
     }
 }

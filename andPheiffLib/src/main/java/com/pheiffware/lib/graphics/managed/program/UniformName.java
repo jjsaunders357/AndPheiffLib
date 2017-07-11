@@ -35,7 +35,9 @@ public enum UniformName
     SCREEN_COLOR("screenColor"),
     MATERIAL_SAMPLER("materialColorSampler"),
     DEPTH_SAMPLER("depthSampler"),
-    DEPTH_CUBE_SAMPLER("cubeDepthSampler");
+    DEPTH_CUBE_SAMPLER("cubeDepthSampler"),
+    SPHERE_VIEW_MODEL_MATRIX("sphereViewModelMatrix"),
+    SPHERE_NORMAL_MATRIX("sphereNormalMatrix");
     private static final Map<String, UniformName> nameLookup;
 
     static

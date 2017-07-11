@@ -120,7 +120,7 @@ public class Mesh
         }
         EnumMap<VertexAttribute, float[]> transformedVertexData = new EnumMap<>(vertexAttributeData);
         transformedVertexData.put(VertexAttribute.POSITION4, positionData);
-        transformedVertexData.put(VertexAttribute.NORMAL, normalData);
+        transformedVertexData.put(VertexAttribute.NORMAL3, normalData);
         return new Mesh(numVertices, transformedVertexData, vertexIndices);
     }
 
@@ -181,7 +181,7 @@ public class Mesh
 
     public final float[] getNormalData()
     {
-        return vertexAttributeData.get(VertexAttribute.NORMAL);
+        return vertexAttributeData.get(VertexAttribute.NORMAL3);
     }
 
     public final float[] getTexCoordData()

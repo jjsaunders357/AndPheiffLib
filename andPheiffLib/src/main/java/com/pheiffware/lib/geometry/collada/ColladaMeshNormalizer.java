@@ -24,7 +24,7 @@ class ColladaMeshNormalizer
     private static final Map<String, VertexAttribute> colladaNameToAttribute = new HashMap<>();
 
     {
-        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_NORMAL, VertexAttribute.NORMAL);
+        colladaNameToAttribute.put(Collada.COLLADA_VERTEX_NORMAL, VertexAttribute.NORMAL3);
         colladaNameToAttribute.put(Collada.COLLADA_VERTEX_TEXCOORD, VertexAttribute.TEXCOORD);
         colladaNameToAttribute.put(Collada.COLLADA_VERTEX_COLOR, VertexAttribute.COLOR);
     }
@@ -32,8 +32,11 @@ class ColladaMeshNormalizer
     //Original mesh as loaded from Collada
     private final ColladaMesh colladaMesh;
 
-    //When position are loaded, a 1 is appended to the end of the loaded data to create a homogeneous position
+    //When positions are loaded, a 1 is appended to the end of the loaded data to create a homogeneous position
     private final boolean homogenizePositions;
+
+    //When normals are loaded, a 0 is appended to the end of the loaded data to create a homogeneous normal
+    private final boolean homogenizeNormals;
 
     //The number of unique vertices.  Each array in vertex data is this length
     private short numUniqueVertices;
@@ -97,10 +100,12 @@ class ColladaMeshNormalizer
     /**
      * @param colladaMesh         the mesh to normalize
      * @param homogenizePositions should the positions be normalized? (4th element with value 1 added to each position)
+     * @param homogenizeNormals
      */
-    public ColladaMeshNormalizer(ColladaMesh colladaMesh, boolean homogenizePositions)
+    public ColladaMeshNormalizer(ColladaMesh colladaMesh, boolean homogenizePositions, boolean homogenizeNormals)
     {
         this.homogenizePositions = homogenizePositions;
+        this.homogenizeNormals = homogenizeNormals;
         this.colladaMesh = colladaMesh;
     }
 
@@ -108,42 +113,45 @@ class ColladaMeshNormalizer
     {
         generateUniversalVertexIndices();
         generateUniqueVertexData();
-        homogenizePositions();
 
         EnumMap<VertexAttribute, float[]> attributeData = new EnumMap<>(VertexAttribute.class);
         for (Map.Entry<String, float[]> entry : vertexData.entrySet())
         {
             String colladaName = entry.getKey();
+            float[] floats = entry.getValue();
             VertexAttribute vertexAttribute;
-            if (colladaName.equals(Collada.COLLADA_VERTEX_POSITION))
+            switch (colladaName)
             {
-                if (homogenizePositions)
-                {
-                    vertexAttribute = VertexAttribute.POSITION4;
-                }
-                else
-                {
-                    vertexAttribute = VertexAttribute.POSITION4;
-                }
+                case Collada.COLLADA_VERTEX_POSITION:
+                    if (homogenizePositions)
+                    {
+                        vertexAttribute = VertexAttribute.POSITION4;
+                        floats = GraphicsUtils.homogenizeVec3Array(floats, 1.0f);
+                    }
+                    else
+                    {
+                        vertexAttribute = VertexAttribute.POSITION3;
+                    }
+                    break;
+                case Collada.COLLADA_VERTEX_NORMAL:
+                    if (homogenizeNormals)
+                    {
+                        vertexAttribute = VertexAttribute.NORMAL4;
+                        floats = GraphicsUtils.homogenizeVec3Array(floats, 0.0f);
+                    }
+                    else
+                    {
+                        vertexAttribute = VertexAttribute.NORMAL3;
+                    }
+                    break;
+                default:
+                    vertexAttribute = colladaNameToAttribute.get(colladaName);
+                    break;
             }
-            else
-            {
-                vertexAttribute = colladaNameToAttribute.get(colladaName);
-            }
-            attributeData.put(vertexAttribute, entry.getValue());
+            attributeData.put(vertexAttribute, floats);
         }
         return new Mesh(numUniqueVertices, attributeData, vertexDataIndices);
     }
-
-    private void homogenizePositions()
-    {
-        if (homogenizePositions)
-        {
-            float[] nonHomogeneousVectors = vertexData.get(Collada.COLLADA_VERTEX_POSITION);
-            vertexData.put(Collada.COLLADA_VERTEX_POSITION, GraphicsUtils.homogenizeVec3Array(nonHomogeneousVectors, 1.0f));
-        }
-    }
-
 
     /**
      * Holds a group of indices representing different aspects of vertex.  It is setup for hashing these combinations.
