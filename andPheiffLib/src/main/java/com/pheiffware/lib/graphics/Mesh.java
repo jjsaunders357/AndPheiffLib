@@ -164,6 +164,11 @@ public class Mesh
         return EnumSet.copyOf(vertexAttributeData.keySet());
     }
 
+    public final void setAttributeData(VertexAttribute vertexAttribute, float[] data)
+    {
+        vertexAttributeData.put(vertexAttribute, data);
+    }
+
     public final float[] getAttributeData(VertexAttribute vertexAttribute)
     {
         return vertexAttributeData.get(vertexAttribute);
