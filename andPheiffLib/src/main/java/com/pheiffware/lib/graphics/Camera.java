@@ -178,7 +178,7 @@ public class Camera
     }
 
     /**
-     * Used to turn screen input (such as a mouse or touch/drag) into a camera rotation. Given the direction the camera is looking and an x,y vector, in screen space, rotate om the
+     * Used to turn screen input (such as a mouse or touch/drag) into a camera rotation. Given the direction the camera is looking and an x,y vector, in screen space, rotate in the
      * plane described by the vectors (x,y,0) and (0,0,z). Rotate by an amount proportional to length.
      * <p/>
      * If x,y magnitude is 0, then nothing happens.
