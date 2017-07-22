@@ -144,7 +144,7 @@ public class Camera
      * @param angleDegrees
      * @param x            left/right (+/-)
      * @param y            up/down (+/-)
-     * @param z            roll
+     * @param z
      */
     public void rotateScreen(float angleDegrees, float x, float y, float z)
     {

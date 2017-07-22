@@ -17,4 +17,16 @@ public class ObjectHandle
             meshHandle.setProperty(renderProperty, value);
         }
     }
+
+    public ObjectHandle copy()
+    {
+        //TODO: There should be central modelMatrix value shared by all meshes
+        ObjectHandle copy = new ObjectHandle();
+        copy.meshHandles = new MeshHandle[meshHandles.length];
+        for (int i = 0; i < meshHandles.length; i++)
+        {
+            copy.meshHandles[i] = meshHandles[i].copy();
+        }
+        return copy;
+    }
 }

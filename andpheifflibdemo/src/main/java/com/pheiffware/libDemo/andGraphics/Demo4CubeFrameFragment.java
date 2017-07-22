@@ -12,7 +12,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.graphics.Camera;
-import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -138,23 +137,11 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-
-            //Left Cube: -2,0,-2
-            //Right Cube: 0,0,0
-            //Screen: -3,-3,-7
-
-
             lighting.setMaximumDistance(0, maximumLightDistance);
             simpleRenderer = new SimpleRenderer();
             cubeRenderer = new CubeDepthRenderer(al, cubeDepthTexture);
 
             manager = new ObjectManager();
-            ColladaMaterial defaultMaterial = new ColladaMaterial(
-                    "default",
-                    null,
-                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f),
-                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f),
-                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f), 1.0f);
             DemoColladaLoader loader = new DemoColladaLoader(
                     manager,
                     glCache,

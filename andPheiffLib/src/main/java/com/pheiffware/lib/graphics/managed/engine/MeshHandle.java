@@ -100,4 +100,9 @@ public class MeshHandle
     {
         return new MeshHandle(iHandle, sHandle, dHandle, technique, renderProperties);
     }
+
+    public void setRenderProperty(RenderProperty renderProperty, Object value)
+    {
+        renderProperties.put(renderProperty, value);
+    }
 }

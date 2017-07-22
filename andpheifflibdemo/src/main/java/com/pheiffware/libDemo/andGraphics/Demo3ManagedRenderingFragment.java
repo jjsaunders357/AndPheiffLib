@@ -12,7 +12,6 @@ import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.graphics.Camera;
-import com.pheiffware.lib.graphics.Color4F;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -134,12 +133,6 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();
             manager = new ObjectManager();
-            ColladaMaterial defaultMaterial = new ColladaMaterial(
-                    "default",
-                    null,
-                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f),
-                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f),
-                    new Color4F(1.0f, 1.0f, 1.0f, 1.0f), 1.0f);
             DemoColladaLoader loader = new DemoColladaLoader(
                     manager,
                     glCache,
