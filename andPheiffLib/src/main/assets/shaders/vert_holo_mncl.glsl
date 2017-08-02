@@ -39,7 +39,9 @@ void main()
 // z mapped to range [-1,1]
     z = 2.0 * z - 1.0;
 
+//TODO: Does not map propetly due to opengl "noperspective" interpolation on depth.  Either need per fragment depth or to figure out alternate equation (if possible).
 // z mapped to range [-w,w] (pre-homogeneous divide).
     z *= w;
+
 	gl_Position = vec4(x,y,z,w);
 }
