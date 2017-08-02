@@ -3,7 +3,7 @@ package com.pheiffware.lib.graphics.managed.engine.renderers;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.graphics.Camera;
+import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
@@ -23,7 +23,7 @@ public class CubeDepthRenderer extends Renderer
     private final Technique depthCubeTechnique;
     private final TextureCubeMap cubeDepthTexture;
     private final TechniqueRenderPass depthRenderPass;
-    private final Camera lightCamera = new Camera(90, 1, 0.1f, 100, false);
+    private final EuclideanCamera lightCamera = new EuclideanCamera(90, 1, 0.1f, 100, false);
 
     private float[] renderPosition;
 

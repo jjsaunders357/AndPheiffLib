@@ -18,7 +18,7 @@ import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.collada.Collada;
 import com.pheiffware.lib.geometry.collada.ColladaFactory;
 import com.pheiffware.lib.geometry.collada.ColladaObject3D;
-import com.pheiffware.lib.graphics.Camera;
+import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -149,7 +149,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
 
 
         @Override
-        protected void onDrawFrame(Camera camera) throws GraphicsException
+        protected void onDrawFrame(EuclideanCamera camera) throws GraphicsException
         {
             GLES20.glViewport(0, 0, getSurfaceWidth(), getSurfaceHeight());
             aspectRatio = getSurfaceWidth() / (float) getSurfaceHeight();

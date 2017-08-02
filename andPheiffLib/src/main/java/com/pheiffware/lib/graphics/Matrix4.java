@@ -2,6 +2,8 @@ package com.pheiffware.lib.graphics;
 
 import android.opengl.Matrix;
 
+import com.pheiffware.lib.geometry.Angle;
+import com.pheiffware.lib.geometry.Axis;
 import com.pheiffware.lib.geometry.DecomposedTransform3D;
 import com.pheiffware.lib.geometry.Vec3D;
 
@@ -11,6 +13,10 @@ import java.util.Arrays;
  * Stores and manipulates a 4x4 matrix.  Stored as a 16 element float array in column major order. This is an enhanced version of the built in Matrix4f. 1. Provides more
  * convenience methods 2. Doesn't have a bugged rotation method (Matrix4f's method does not normalize axis properly). 3. Backed by the native Matrix library, so it is slightly
  * faster
+ * <p>
+ * Column major order:
+ * [(r0,c0), (r1,c0), (r2,c0), (r3,c0), (r0,c1), (r1,c1), (r2,c1), (r3,c1),...]
+ * <p>
  * <p/>
  * Created by Steve on 3/9/2016.
  */
@@ -50,15 +56,15 @@ public class Matrix4
     /**
      * Create new rotation matrix around specified axis by given angle (in degrees).
      *
-     * @param angle in degrees
-     * @param x     rotation axis x
-     * @param y     rotation axis y
-     * @param z     rotation axis z
+     * @param angleDegrees in degrees
+     * @param x            rotation axis x
+     * @param y            rotation axis y
+     * @param z            rotation axis z
      */
-    public static Matrix4 newRotate(float angle, float x, float y, float z)
+    public static Matrix4 newRotate(float angleDegrees, float x, float y, float z)
     {
         Matrix4 matrix = new Matrix4(new float[16]);
-        matrix.setRotate(angle, x, y, z);
+        matrix.setRotate(angleDegrees, x, y, z);
         return matrix;
     }
 
@@ -217,15 +223,15 @@ public class Matrix4
     /**
      * Set matrix state to a rotation around specified axis by given angle (in degrees).
      *
-     * @param angle in degrees
-     * @param x     rotation axis x
-     * @param y     rotation axis y
-     * @param z     rotation axis z
+     * @param angleDegrees in degrees
+     * @param x            rotation axis x
+     * @param y            rotation axis y
+     * @param z            rotation axis z
      */
 
-    public final void setRotate(float angle, float x, float y, float z)
+    public final void setRotate(float angleDegrees, float x, float y, float z)
     {
-        Matrix.setRotateM(m, 0, angle, x, y, z);
+        Matrix.setRotateM(m, 0, angleDegrees, x, y, z);
     }
 
     public final void setScale(float x, float y, float z)
@@ -567,4 +573,31 @@ public class Matrix4
 
     }
 
+    /**
+     * Applies a rotation to the left hand side (left hand multiplication).  Rotation will be in the plane defined by the from/to major axes.
+     * Rotation rotates the positive value of from towards the positive value of to.
+     * Example:
+     * LHSRotatePlane(Axis.X, Axis.negZ, angle) will rotate from x-axis to the z-axis such that [1 0 0 0] rotates towards [0 0 -1 0]
+     *
+     * @param fromAxis
+     * @param toAxis
+     * @param angle
+     */
+    public void rotatePlaneLHS(Axis fromAxis, Axis toAxis, Angle angle)
+    {
+        if (fromAxis == toAxis)
+        {
+            throw new IllegalArgumentException("From and to axes cannot be the same!");
+        }
+        float sinAngle = angle.sin * fromAxis.sign * toAxis.sign;
+        float temp;
+        for (int col = 0; col < 4; col++)
+        {
+            int index1 = col * 4 + fromAxis.axisIndex;
+            int index2 = col * 4 + toAxis.axisIndex;
+            temp = m[index1] * angle.cos - m[index2] * sinAngle;
+            m[index2] = m[index2] * angle.cos + m[index1] * sinAngle;
+            m[index1] = temp;
+        }
+    }
 }

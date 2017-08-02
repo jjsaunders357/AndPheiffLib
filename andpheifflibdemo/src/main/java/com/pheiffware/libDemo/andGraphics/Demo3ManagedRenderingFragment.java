@@ -11,7 +11,7 @@ import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
-import com.pheiffware.lib.graphics.Camera;
+import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
@@ -159,7 +159,7 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
         }
 
         @Override
-        protected void onDrawFrame(Camera camera) throws GraphicsException
+        protected void onDrawFrame(EuclideanCamera camera) throws GraphicsException
         {
             GLES20.glViewport(0, 0, getSurfaceWidth(), getSurfaceHeight());
             monkeyTransform.rotateBy(rotationRate, 1, 1, 0);

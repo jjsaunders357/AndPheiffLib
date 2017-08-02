@@ -9,7 +9,7 @@ import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.Transform2D;
-import com.pheiffware.lib.graphics.Camera;
+import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.utils.dataContainers.MapCounterLong;
@@ -24,18 +24,18 @@ import java.util.Map;
 public abstract class Demo3DRenderer extends GameRenderer
 {
     //How far a move of a pointer on the screen scales to a translation of the camera
-    private final double screenDragToCameraTranslation;
-    private final Camera camera;
+    private final double screenDPToCameraTranslation;
+    private final EuclideanCamera camera;
     private long profileStartTime;
     private final MapCounterLong<String> nanoTimes = new MapCounterLong<>();
     private int frameCounter;
     private int logFramePeriod = 120;
 
-    public Demo3DRenderer(int minSupportedGLVersion, int maxSupportedGLVersion, float initialFOV, float nearPlane, float farPlane, double screenDragToCameraTranslation)
+    public Demo3DRenderer(int minSupportedGLVersion, int maxSupportedGLVersion, float initialFOV, float nearPlane, float farPlane, double screenDPToCameraTranslation)
     {
         super(minSupportedGLVersion, maxSupportedGLVersion);
-        this.screenDragToCameraTranslation = screenDragToCameraTranslation;
-        camera = new Camera(initialFOV, 1, nearPlane, farPlane, false);
+        this.screenDPToCameraTranslation = screenDPToCameraTranslation;
+        camera = new EuclideanCamera(initialFOV, 1, nearPlane, farPlane, false);
     }
 
     @Override
@@ -69,7 +69,7 @@ public abstract class Demo3DRenderer extends GameRenderer
         addFrameProfilePoint("Render");
     }
 
-    protected abstract void onDrawFrame(Camera camera) throws GraphicsException;
+    protected abstract void onDrawFrame(EuclideanCamera camera) throws GraphicsException;
 
     private void logAverages()
     {
@@ -105,13 +105,11 @@ public abstract class Demo3DRenderer extends GameRenderer
         else if (numPointers > 1)
         {
             camera.roll((float) (180 * transform.rotation / Math.PI));
-            camera.rotateScreenInputVector((float) transform.translation.x, (float) -transform.translation.y);
+            camera.rotateInput((float) transform.translation.x, (float) -transform.translation.y, 0.1f);
         }
         else
         {
-            float cameraX = (float) (transform.translation.x * screenDragToCameraTranslation);
-            float cameraZ = (float) (transform.translation.y * screenDragToCameraTranslation);
-            camera.translateScreen(cameraX, 0, cameraZ);
+            camera.forwardStrafeInput((float) transform.translation.x, (float) transform.translation.y, (float) screenDPToCameraTranslation);
         }
     }
 
