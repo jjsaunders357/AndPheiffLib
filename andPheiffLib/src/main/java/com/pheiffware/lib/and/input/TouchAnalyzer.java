@@ -1,6 +1,5 @@
 package com.pheiffware.lib.and.input;
 
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.pheiffware.lib.geometry.Transform2D;
@@ -11,7 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Takes in Android multi-touch events and processes them into translation, rotation and scale.
+ * Takes in Android multi-touch events and processes them into commonly wanted events:
+ * 2D transform: a measure of translation, rotation and scale which occurred and how many pointers, were present, when transform occurred.
+ * <p>
  * <p/>
  * Created by Steve on 3/9/2016.
  */
@@ -32,14 +33,6 @@ public class TouchAnalyzer
 
     //Averaged radius of circle formed by all pointers on screen squared
     private double averageRadiusSquared;
-
-    /**
-     * Reports touch transform events in terms of pixels.  This is equivalent to reporting in units of dp on a screen with a DPI of 160.
-     */
-    public TouchAnalyzer()
-    {
-        this(160.0, 160.0);
-    }
 
     /**
      * Reports touch transform events in terms of dp.  1 dp = 1 pixel on a 160 DPI screen.
