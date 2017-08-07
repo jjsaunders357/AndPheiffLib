@@ -1,4 +1,4 @@
-package com.pheiffware.lib.physics;
+package com.pheiffware.lib.geometry.collada;
 
 import com.pheiffware.lib.utils.dom.XMLParseException;
 
@@ -15,7 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * <p>
  * Created by Steve on 2/20/2016.
  */
-public class TestCollada
+public class ColladaTests
 {
     @Test
     public void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException

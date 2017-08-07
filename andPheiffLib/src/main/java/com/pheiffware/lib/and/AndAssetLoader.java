@@ -17,7 +17,7 @@ import java.io.InputStream;
  * <p>
  * Created by Steve on 4/23/2016.
  */
-public class AndAssetLoader extends AssetLoader
+public class AndAssetLoader implements AssetLoader
 {
     private AssetManager assetManager;
 

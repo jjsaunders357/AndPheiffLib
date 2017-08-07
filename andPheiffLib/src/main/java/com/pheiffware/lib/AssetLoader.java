@@ -10,10 +10,10 @@ import java.io.InputStream;
  * <p/>
  * Created by Steve on 4/23/2016.
  */
-public abstract class AssetLoader
+public interface AssetLoader
 {
 
-    public abstract Bitmap loadBitmap(String assetPath) throws IOException;
+    Bitmap loadBitmap(String assetPath) throws IOException;
 
     /**
      * Load the contents of the given assetPath as a String.
@@ -21,7 +21,7 @@ public abstract class AssetLoader
      * @param assetPath
      * @return
      */
-    public abstract String loadAssetAsString(String assetPath) throws IOException;
+    String loadAssetAsString(String assetPath) throws IOException;
 
-    public abstract InputStream getInputStream(String assetPath) throws IOException;
+    InputStream getInputStream(String assetPath) throws IOException;
 }

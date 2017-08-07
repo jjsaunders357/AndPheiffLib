@@ -1,0 +1,17 @@
+line1; //Line comment remove
+//const int numLights = 4; remove
+line2;
+x
+//*/*remove*/
+/*/ *//*
+remove
+remove
+remove
+*/*y;
+line4; //*blah remove
+keep /*remove*/ keep /*remove*/ keep
+keep
+line5; /*
+remove
+remove
+*/ line6;
