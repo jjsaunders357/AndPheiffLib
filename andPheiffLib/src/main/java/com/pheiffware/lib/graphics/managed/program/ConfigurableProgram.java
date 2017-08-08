@@ -40,6 +40,7 @@ public class ConfigurableProgram implements Program
         for (int i = 0; i < shaderPaths.length; i++)
         {
             ShaderCode shaderCode = shaderBuilder.build(shaderPaths[i], config);
+            shaderCode.printCode();
             if (shaderHandles[i] != 0)
             {
                 GLES20.glDeleteShader(shaderHandles[i]);

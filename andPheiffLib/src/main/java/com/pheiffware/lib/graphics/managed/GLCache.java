@@ -123,7 +123,12 @@ public class GLCache
         return new CubeDepthRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
     }
 
-    private Program buildProgram(Map<String, Object> versionConfig, String... shaderPaths) throws ParseException, GraphicsException, IOException
+    public Program buildProgram(String... shaderPaths) throws ParseException, GraphicsException, IOException
+    {
+        return buildProgram(new HashMap<String, Object>(), shaderPaths);
+    }
+
+    public Program buildProgram(Map<String, Object> versionConfig, String... shaderPaths) throws ParseException, GraphicsException, IOException
     {
         ConfigurableProgram configurableProgram = new ConfigurableProgram(versionConfig, shaderPaths);
         configurableProgram.configure(shaderBuilder, systemConfig);
@@ -136,4 +141,8 @@ public class GLCache
         //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }
 
+    public AssetLoader getAssertLoader()
+    {
+        return al;
+    }
 }

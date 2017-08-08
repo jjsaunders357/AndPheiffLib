@@ -16,10 +16,13 @@ class ShaderFile
     private final String filePath;
 
     //The OpenGL version of the shader.  This will only be included in main files
-    private final int version;
+    private final String version;
 
     //The OpenGL type of shader (GL_VERTEX_SHADER).  This corresponds to #type VERTEX | FRAGMENT | GEOMETRY
     private final int type;
+
+    //The default precision for floating point operations
+    private final String defaultPrecision;
 
     //List of files included by this file
     private final List<String> dependencies;
@@ -30,11 +33,12 @@ class ShaderFile
     //List of fragments composing the code of the file
     private final List<ShaderFragment> tokens;
 
-    public ShaderFile(String filePath, int version, int type, List<String> dependencies, LinkedHashMap<String, ShaderConstant> constants, List<ShaderFragment> tokens)
+    public ShaderFile(String filePath, String version, int type, String defaultPrecision, List<String> dependencies, LinkedHashMap<String, ShaderConstant> constants, List<ShaderFragment> tokens)
     {
         this.filePath = filePath;
         this.version = version;
         this.type = type;
+        this.defaultPrecision = defaultPrecision;
         this.dependencies = new ArrayList<>(dependencies);
         this.constants = new LinkedHashMap<>(constants);
         this.tokens = tokens;
@@ -45,7 +49,7 @@ class ShaderFile
         return filePath;
     }
 
-    int getVersion()
+    String getVersion()
     {
         return version;
     }
@@ -68,5 +72,15 @@ class ShaderFile
     public int getType()
     {
         return type;
+    }
+
+    String getVersionCodeLine()
+    {
+        return "#version " + version + "\n";
+    }
+
+    public String getDefaultPrecisionCodeLine()
+    {
+        return "precision " + defaultPrecision + " float;\n";
     }
 }

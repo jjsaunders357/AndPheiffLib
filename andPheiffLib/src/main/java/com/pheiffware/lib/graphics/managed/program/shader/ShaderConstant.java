@@ -84,7 +84,7 @@ class ShaderConstant
         builder.append(getType());
         builder.append(" ");
         builder.append(getName());
-        builder.append(" ");
+        builder.append("= ");
         builder.append(getValue());
         builder.append(";\n");
     }

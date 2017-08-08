@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
@@ -16,7 +17,6 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
-import com.pheiffware.lib.graphics.managed.program.BaseProgram;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
@@ -27,6 +27,7 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeGroup;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
@@ -62,12 +63,14 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException
         {
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            programTextureColor = new BaseProgram(al, "shaders/2d/vert_2d_color_texture_pos4.glsl", "shaders/2d/frag_2d_color_texture_pos4.glsl");
+//            programTextureColor = new BaseProgram(al, "shaders/2d/vert_2d_color_texture_pos4.glsl", "shaders/2d/frag_2d_color_texture_pos4.glsl");
+            programTextureColor = glCache.buildProgram("2d/vert_2d_color_texture_pos4.glsl", "2d/frag_2d_color_texture_pos4.glsl");
+
             faceTexture = glCache.buildImageTex("images/face.png").build();
 
             indexBuffer = new IndexBuffer();

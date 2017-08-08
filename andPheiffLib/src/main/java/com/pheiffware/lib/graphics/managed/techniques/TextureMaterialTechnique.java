@@ -1,11 +1,15 @@
 package com.pheiffware.lib.graphics.managed.techniques;
 
-import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Shades mesh with a textured color and with given lights' settings.  Handles, ambient, diffuse and specular lighting.
@@ -13,9 +17,9 @@ import com.pheiffware.lib.graphics.managed.texture.Texture;
  */
 public class TextureMaterialTechnique extends Technique3D
 {
-    public TextureMaterialTechnique(AssetLoader al) throws GraphicsException
+    public TextureMaterialTechnique(GLCache glCache) throws GraphicsException, IOException, ParseException
     {
-        super(al, "shaders/vert_mntl.glsl", "shaders/frag_mntl.glsl", new RenderProperty[]{
+        super(glCache, new HashMap<String, Object>(), new RenderProperty[]{
                 RenderProperty.PROJECTION_LINEAR_DEPTH,
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX,
@@ -23,7 +27,7 @@ public class TextureMaterialTechnique extends Technique3D
                 RenderProperty.MAT_COLOR_TEXTURE,
                 RenderProperty.SPEC_MAT_COLOR,
                 RenderProperty.SHININESS
-        });
+        }, "vert_mntl.glsl", "frag_mntl.glsl");
     }
 
     public void applyConstantPropertiesImplement()

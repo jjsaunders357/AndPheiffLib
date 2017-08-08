@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
@@ -123,13 +124,12 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
 
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
-
             PheiffGLUtils.enableAlphaTransparency();
-            colorTechnique = new ColorMaterialTechnique(al);
-            textureTechnique = new TextureMaterialTechnique(al);
+            colorTechnique = new ColorMaterialTechnique(glCache);
+            textureTechnique = new TextureMaterialTechnique(glCache);
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();
             manager = new ObjectManager();

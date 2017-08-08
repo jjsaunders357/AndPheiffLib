@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
@@ -127,19 +128,18 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
-
             PheiffGLUtils.enableAlphaTransparency();
-            colorShadowTechnique = new ColorShadowMaterialTechnique(al);
-            textureTechnique = new TextureMaterialTechnique(al);
+            colorShadowTechnique = new ColorShadowMaterialTechnique(glCache);
+            textureTechnique = new TextureMaterialTechnique(glCache);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             lighting.setMaximumDistance(0, maximumLightDistance);
             simpleRenderer = new SimpleRenderer();
-            cubeRenderer = new CubeDepthRenderer(al, cubeDepthTexture);
+            cubeRenderer = new CubeDepthRenderer(glCache, cubeDepthTexture);
 
             manager = new ObjectManager();
             DemoColladaLoader loader = new DemoColladaLoader(

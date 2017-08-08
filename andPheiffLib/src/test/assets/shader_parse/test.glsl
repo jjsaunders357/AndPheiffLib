@@ -1,5 +1,6 @@
-#version 300
 #type VERTEX
+#version 300 es
+precision mediump float;
 #include test_include5.glsl
 #include test_include1.glsl
 #include test_include3.glsl

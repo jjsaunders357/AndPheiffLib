@@ -1,11 +1,15 @@
 package com.pheiffware.lib.graphics.managed.techniques;
 
-import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Mesh projected such that it appears embedded below or projecting out from screen surface.  All vertex locations should be expressed in screen space. [0,0,0] represents the
@@ -16,16 +20,16 @@ import com.pheiffware.lib.graphics.managed.program.UniformName;
  */
 public class HoloColorMaterialTechnique extends Technique3D
 {
-    public HoloColorMaterialTechnique(AssetLoader al) throws GraphicsException
+    public HoloColorMaterialTechnique(GLCache glCache) throws GraphicsException, IOException, ParseException
     {
-        super(al, "shaders/vert_holo_mncl.glsl", "shaders/frag_holo_mncl.glsl", new RenderProperty[]{
+        super(glCache, new HashMap<String, Object>(), new RenderProperty[]{
                 RenderProperty.HOLO_PROJECTION,
                 RenderProperty.MODEL_MATRIX,
                 RenderProperty.LIGHTING,
                 RenderProperty.MAT_COLOR,
                 RenderProperty.SPEC_MAT_COLOR,
                 RenderProperty.SHININESS
-        });
+        }, "vert_holo_mncl.glsl", "frag_holo_mncl.glsl");
     }
 
     protected void applyConstantPropertiesImplement()

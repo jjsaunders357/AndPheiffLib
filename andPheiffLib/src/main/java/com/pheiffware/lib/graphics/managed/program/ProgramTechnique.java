@@ -1,11 +1,15 @@
 package com.pheiffware.lib.graphics.managed.program;
 
-import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A technique which wraps a single OpenGL program.  All RenderProperties map to that program's uniform settings in some way.
@@ -19,10 +23,15 @@ public abstract class ProgramTechnique extends BaseTechnique
     //Used internally to compute values to apply to uniforms
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
-    public ProgramTechnique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, RenderProperty[] properties) throws GraphicsException
+    public ProgramTechnique(GLCache glCache, RenderProperty[] properties, String... shaderPaths) throws GraphicsException, IOException, ParseException
+    {
+        this(glCache, new HashMap<String, Object>(), properties, shaderPaths);
+    }
+
+    public ProgramTechnique(GLCache glCache, Map<String, Object> versionConfig, RenderProperty[] properties, String... shaderPaths) throws GraphicsException, IOException, ParseException
     {
         Collections.addAll(this.properties, properties);
-        this.program = new BaseProgram(al, vertexShaderAsset, fragmentShaderAsset);
+        this.program = glCache.buildProgram(versionConfig, shaderPaths);
     }
 
     protected final void setUniformValue(UniformName name, Object value)

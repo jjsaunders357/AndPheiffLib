@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.and.AndUtils;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
@@ -93,7 +94,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
@@ -101,7 +102,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
             GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
 
             PheiffGLUtils.enableAlphaTransparency();
-            holoColorTechnique = new HoloColorMaterialTechnique(al);
+            holoColorTechnique = new HoloColorMaterialTechnique(glCache);
             ColladaFactory colladaFactory = new ColladaFactory();
             try
             {

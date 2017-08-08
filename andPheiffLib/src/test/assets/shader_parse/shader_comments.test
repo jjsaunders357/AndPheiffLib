@@ -1,5 +1,6 @@
-#version 300
 #type VERTEX
+#version 300 es
+precision mediump float;
 
 line1; //Line comment remove
 //const int numLights = 4; remove

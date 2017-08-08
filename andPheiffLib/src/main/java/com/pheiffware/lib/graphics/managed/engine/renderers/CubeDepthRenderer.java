@@ -2,15 +2,18 @@ package com.pheiffware.lib.graphics.managed.engine.renderers;
 
 import android.opengl.GLES20;
 
-import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.DepthCubeTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
+
+import java.io.IOException;
 
 /**
  * Created by Steve on 6/28/2017.
@@ -28,10 +31,10 @@ public class CubeDepthRenderer extends Renderer
     private float[] renderPosition;
 
 
-    public CubeDepthRenderer(AssetLoader al, TextureCubeMap cubeDepthTexture) throws GraphicsException
+    public CubeDepthRenderer(GLCache glCache, TextureCubeMap cubeDepthTexture) throws GraphicsException, IOException, ParseException
     {
         frameBuffer = new FrameBuffer();
-        depthCubeTechnique = new DepthCubeTechnique(al);
+        depthCubeTechnique = new DepthCubeTechnique(glCache);
         depthRenderPass = new TechniqueRenderPass(depthCubeTechnique);
         this.cubeDepthTexture = cubeDepthTexture;
     }

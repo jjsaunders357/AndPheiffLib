@@ -29,7 +29,7 @@ class ShaderLoader
 {
     private static final Pattern intConstPattern = Pattern.compile("const\\s+int");
     private static final Pattern floatConstPattern = Pattern.compile("const\\s+float");
-
+    private static final Pattern equalPattern = Pattern.compile("(?<!<<)(?<!>>)(?<![+\\-*/%&\\^|])=");
     //How assets are loaded
     private final AssetLoader assetLoader;
 
@@ -42,8 +42,9 @@ class ShaderLoader
     private final List<String> dependencies = new ArrayList<>();
     private String filePath;
 
-    private int version;
+    private String version;
     private int type;
+    private String defaultPrecision;
     private Iterator<ShaderFragment> tokenIterator;
     private ShaderFragment lastToken;
 
@@ -55,8 +56,9 @@ class ShaderLoader
 
     private void clear()
     {
-        version = 0;
+        version = "";
         type = 0;
+        defaultPrecision = "";
         constantSettings.clear();
         constants.clear();
         dependencies.clear();
@@ -80,16 +82,20 @@ class ShaderLoader
         }
         if (mainFile)
         {
-            if (version == 0)
+            if (version.equals(""))
             {
-                throw new ParseException("Version unspecified for main file.");
+                throw new ParseException("Version unspecified for main file: \"" + filePath + "\"");
             }
             if (type == 0)
             {
-                throw new ParseException("Type unspecified for main file.");
+                throw new ParseException("Type unspecified for main file: \"" + filePath + "\"");
+            }
+            if (defaultPrecision.equals(""))
+            {
+                throw new ParseException("Default precision unspecified for main file (needed for generated constants): \"" + filePath + "\"");
             }
         }
-        return new ShaderFile(filePath, version, type, dependencies, constants, tokens);
+        return new ShaderFile(filePath, version, type, defaultPrecision, dependencies, constants, tokens);
     }
 
 
@@ -98,10 +104,11 @@ class ShaderLoader
         String code = assetLoader.loadAssetAsString(shaderRootPath + "/" + filePath);
         code = intConstPattern.matcher(code).replaceAll("const_int");
         code = floatConstPattern.matcher(code).replaceAll("const_float");
+        code = equalPattern.matcher(code).replaceAll(" = ");
+
         code = code.replace(";", " ; ");
         code = code.replace("(", " ( ");
         code = code.replace(")", " ) ");
-        code = code.replace("=", " = ");
 
         //Use any line separator, as this may be run locally for testing
         String[] rawLines = code.split("(\r(?!\n))|\n|(\r\n)");
@@ -164,6 +171,13 @@ class ShaderLoader
             }
             constants.put(shaderConstant.getName(), shaderConstant);
         }
+        else if (token.equals("precision"))
+        {
+            remove();
+            defaultPrecision = removeNext();
+            removeNext();
+            removeNext();
+        }
         else if (token.equals("#include"))
         {
             remove();
@@ -173,7 +187,9 @@ class ShaderLoader
         else if (token.equals("#version"))
         {
             remove();
-            version = Integer.parseInt(removeNext());
+
+            version = removeNext();
+            version += " " + removeNext();
         }
         else if (token.equals("#type"))
         {

@@ -189,12 +189,13 @@ public class ShaderBuilder
     private void finalizeCode(ShaderFile mainFile)
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("#version ");
-        builder.append(mainFile.getVersion());
-        builder.append("\n");
+        builder.append(mainFile.getVersionCodeLine());
         lineLookup.add(0, new LineLookup(mainFile.getFilePath(), 0));
 
-        int lineInsertPosition = 1;
+        builder.append(mainFile.getDefaultPrecisionCodeLine());
+        lineLookup.add(1, new LineLookup(mainFile.getFilePath(), 0));
+
+        int lineInsertPosition = 2;
         for (ShaderConstant constant : normalizedConstants)
         {
             constant.appendCode(builder);

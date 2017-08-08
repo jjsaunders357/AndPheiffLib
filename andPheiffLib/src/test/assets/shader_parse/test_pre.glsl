@@ -1,5 +1,6 @@
-#version 300
 #type VERTEX
+#version 300 es
+precision mediump float;
 #const b1 true
 #const b2 false
 const int b4test=4;

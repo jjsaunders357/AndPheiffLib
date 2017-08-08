@@ -1,3 +1,4 @@
+#type VERTEX
 #version 300 es
 precision highp float;
 

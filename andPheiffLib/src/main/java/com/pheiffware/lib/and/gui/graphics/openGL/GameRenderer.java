@@ -3,11 +3,14 @@ package com.pheiffware.lib.and.gui.graphics.openGL;
 import android.hardware.SensorEvent;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
+
+import java.io.IOException;
 
 /**
  * Wraps the GLSurfaceView.Renderer concepts.  The GLCache object manages/simplifies many aspects of OpenGL. This triggers TouchTransformListener events, in the rendering thread.
@@ -50,7 +53,8 @@ public abstract class GameRenderer
      * @param defaultFilterQuality
      * @param systemInfo
      */
-    void onSurfaceCreated(AndAssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, SystemInfo systemInfo) throws GraphicsException
+    //TODO: Manage exceptions
+    void onSurfaceCreated(AndAssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException
     {
         this.al = al;
         glCache = new GLCache(al, deviceGLVersion, defaultFilterQuality, rootShaderPath);
@@ -66,7 +70,7 @@ public abstract class GameRenderer
      * @param systemInfo information about the system
      * @throws GraphicsException
      */
-    protected abstract void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException;
+    protected abstract void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException;
 
     /**
      * Cleans up resources in the glCache and any addition tear down necessary for this renderer.
