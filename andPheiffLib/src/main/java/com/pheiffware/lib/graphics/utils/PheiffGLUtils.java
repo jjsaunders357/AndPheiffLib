@@ -1,8 +1,12 @@
 package com.pheiffware.lib.graphics.utils;
 
+import android.opengl.GLES10;
 import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.GraphicsException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Steve on 2/9/2016.
@@ -68,6 +72,38 @@ public class PheiffGLUtils
         return frameBufferHandles[0];
     }
 
+
+    /**
+     * Sets up OpenGL to perform standard alpha transparency
+     */
+    public static void enableAlphaTransparency()
+    {
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    /**
+     * Returns a set of extensions supported.  An individual extension can be looked up by name.
+     *
+     * @return
+     */
+    public static Set<String> getSuportedExtensions()
+    {
+        String extensionsString = GLES10.glGetString(GLES10.GL_EXTENSIONS);
+        String[] extensions = extensionsString.split(" ");
+        Set extensionSet = new HashSet<>();
+        for (String extension : extensions)
+        {
+            extensionSet.add(extension);
+        }
+        return extensionSet;
+    }
+
+    /**
+     * For debugging.
+     *
+     * @throws GraphicsException
+     */
     public static void assertFrameBufferStatus() throws GraphicsException
     {
         int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
@@ -77,6 +113,11 @@ public class PheiffGLUtils
         }
     }
 
+    /**
+     * For debugging.
+     *
+     * @throws GraphicsException
+     */
     public static void assertNoError() throws GraphicsException
     {
         int error = GLES20.glGetError();
@@ -96,14 +137,4 @@ public class PheiffGLUtils
                 throw new GraphicsException("Unknown exception");
         }
     }
-
-    /**
-     * Sets up opengl to perform standard alpha transparency
-     */
-    public static void enableAlphaTransparency()
-    {
-        GLES20.glEnable(GLES20.GL_BLEND);
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
 }

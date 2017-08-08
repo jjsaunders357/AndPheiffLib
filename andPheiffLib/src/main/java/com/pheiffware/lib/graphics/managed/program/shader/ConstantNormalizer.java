@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.program.parse;
+package com.pheiffware.lib.graphics.managed.program.shader;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -37,29 +37,22 @@ class ConstantNormalizer
     //Regex for an isolated float constant in code
     private static final Pattern floatPattern = Pattern.compile("[0-9]*\\.[0-9]+");
 
-    private final LinkedHashMap<Object, ShaderConstant> valueToConstantMap;
+    private final LinkedHashMap<Object, ShaderConstant> valueToConstantMap = new LinkedHashMap<>();
+    private LinkedList<ShaderConstant> normalizedConstants = new LinkedList<>();
     private String code;
-    private LinkedList<ShaderConstant> normalizedConstants;
 
-    ConstantNormalizer(List<ShaderConstant> constants, String code)
+    /**
+     * Performs normalization.  Results obtained via, getCode() and getNormalizedConstants().
+     */
+    void normalize(List<ShaderConstant> constants, String code)
     {
-        normalizedConstants = new LinkedList<>();
-
-        //Build constants, into a map, by value, in original order
-        this.valueToConstantMap = new LinkedHashMap<>();
+        clear();
+        this.code = code;
         for (ShaderConstant constant : constants)
         {
             valueToConstantMap.put(constant.getValue(), constant);
             normalizedConstants.add(constant);
         }
-        this.code = code;
-    }
-
-    /**
-     * Performs normalization.  Results obtained via, getCode() and getNormalizedConstants().
-     */
-    void normalize()
-    {
         normalizeIntConstants();
         normalizeFloatConstants();
     }
@@ -82,6 +75,12 @@ class ConstantNormalizer
     LinkedList<ShaderConstant> getNormalizedConstants()
     {
         return normalizedConstants;
+    }
+
+    private void clear()
+    {
+        valueToConstantMap.clear();
+        normalizedConstants.clear();
     }
 
     /**

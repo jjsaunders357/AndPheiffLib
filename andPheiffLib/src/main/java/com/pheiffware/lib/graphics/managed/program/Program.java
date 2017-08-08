@@ -33,9 +33,10 @@ public class Program
         this(ProgramUtils.loadProgram(al, vertexShaderAsset, fragmentShaderAsset));
     }
 
-    private Program(int handle)
+    protected Program(int handle)
     {
         this.handle = handle;
+        GLES20.glUseProgram(handle);
 
         int[] numUniformsArray = new int[1];
         GLES20.glGetProgramiv(handle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
@@ -77,6 +78,16 @@ public class Program
         uniforms.get(name).setValue(value);
     }
 
+    public final void bind()
+    {
+        GLES20.glUseProgram(handle);
+    }
+
+    public EnumSet<VertexAttribute> getAttributes()
+    {
+        return vertexAttributes;
+    }
+
     @Override
     public String toString()
     {
@@ -95,18 +106,4 @@ public class Program
         return builder.toString();
     }
 
-    public final void bind()
-    {
-        GLES20.glUseProgram(handle);
-    }
-
-    public final int getHandle()
-    {
-        return handle;
-    }
-
-    public EnumSet<VertexAttribute> getAttributes()
-    {
-        return vertexAttributes;
-    }
 }

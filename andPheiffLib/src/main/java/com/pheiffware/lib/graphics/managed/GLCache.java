@@ -1,7 +1,12 @@
 package com.pheiffware.lib.graphics.managed;
 
 import com.pheiffware.lib.AssetLoader;
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.FilterQuality;
+import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.program.ConfigurableProgram;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderCode;
 import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
@@ -12,11 +17,10 @@ import com.pheiffware.lib.graphics.managed.texture.textureBuilders.DepthRenderTe
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ImageTextureBuilder;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
-//TODO: glDepthRange(n,f) (might make sense for the sphere)
 
 //TODO: sRGB textures and immutable textures (opengl 3.0 only)
 //TODO: glBlendFunc and glDepthMask(false) - turn off after rendering opaque objects.  Turn back on again after translucent objects.
@@ -116,6 +120,20 @@ public class GLCache
         return new CubeDepthRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
     }
 
+    private ConfigurableProgram buildProgram(String shaderRootPath, Map<String, Object> configuration, String... shaderPaths) throws ParseException, GraphicsException, IOException
+    {
+        ShaderBuilder builder = new ShaderBuilder(al, shaderRootPath, configuration);
+        int[] shaderHandles = new int[shaderPaths.length];
+        for (int i = 0; i < shaderPaths.length; i++)
+        {
+
+            //TODO: Make program interface
+            //TODO: Store shader file names in program
+            ShaderCode shaderCode = builder.build(shaderPaths[i]);
+            shaderHandles[i] = shaderCode.compile();
+        }
+        return new ConfigurableProgram(shaderHandles);
+    }
 
     public void destroy()
     {

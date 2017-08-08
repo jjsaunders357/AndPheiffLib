@@ -82,6 +82,7 @@ public class ProgramUtils
             throw new GraphicsException(e);
         }
     }
+    //GLES32.GL_GEOMETRY_SHADER
 
 
     /**

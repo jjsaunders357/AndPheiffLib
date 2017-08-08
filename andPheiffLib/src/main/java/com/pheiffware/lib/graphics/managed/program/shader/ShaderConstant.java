@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.program.parse;
+package com.pheiffware.lib.graphics.managed.program.shader;
 
 /**
  * Holds information about a float or int constant parsed from a shader.

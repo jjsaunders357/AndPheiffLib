@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.program.parse;
+package com.pheiffware.lib.graphics.managed.program.shader;
 
 import java.util.List;
 import java.util.regex.Pattern;

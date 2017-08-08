@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.program.parse;
+package com.pheiffware.lib.graphics.managed.program.shader;
 
 /**
  * Used for looking up information about the origins of a given line in a shader (for debugging purposes).
@@ -29,6 +29,13 @@ class LineLookup
     @Override
     public String toString()
     {
-        return filePath + ":" + lineNumber;
+        if (lineNumber > 0)
+        {
+            return filePath + ":" + lineNumber;
+        }
+        else
+        {
+            return filePath;
+        }
     }
 }

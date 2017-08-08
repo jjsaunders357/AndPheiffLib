@@ -1,5 +1,7 @@
-package com.pheiffware.lib.graphics.managed.program.parse;
+package com.pheiffware.lib.graphics.managed.program.shader;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,24 +15,28 @@ class ShaderFile
     //The name of the file (relative to the shader path being loaded from)
     private final String filePath;
 
-    //The OpenGL version of the shader.  Include file versions cannot be higher than the file which is including them.
+    //The OpenGL version of the shader.  This will only be included in main files
     private final int version;
 
+    //The OpenGL type of shader (GL_VERTEX_SHADER).  This corresponds to #type VERTEX | FRAGMENT | GEOMETRY
+    private final int type;
+
     //List of files included by this file
-    private final List<String> includePaths;
+    private final List<String> dependencies;
 
     //Constants extracted from this file.  These do not appear in the tokens.
-    private final Map<String, ShaderConstant> constants;
+    private final LinkedHashMap<String, ShaderConstant> constants;
 
     //List of fragments composing the code of the file
     private final List<ShaderFragment> tokens;
 
-    ShaderFile(String filePath, int version, List<String> includePaths, Map<String, ShaderConstant> constants, List<ShaderFragment> tokens)
+    public ShaderFile(String filePath, int version, int type, List<String> dependencies, LinkedHashMap<String, ShaderConstant> constants, List<ShaderFragment> tokens)
     {
         this.filePath = filePath;
         this.version = version;
-        this.includePaths = includePaths;
-        this.constants = constants;
+        this.type = type;
+        this.dependencies = new ArrayList<>(dependencies);
+        this.constants = new LinkedHashMap<>(constants);
         this.tokens = tokens;
     }
 
@@ -49,13 +55,18 @@ class ShaderFile
         return constants;
     }
 
-    List<String> getIncludePaths()
+    List<String> getDependencies()
     {
-        return includePaths;
+        return dependencies;
     }
 
     List<ShaderFragment> getTokens()
     {
         return tokens;
+    }
+
+    public int getType()
+    {
+        return type;
     }
 }

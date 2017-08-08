@@ -1,3 +1,6 @@
+#version 300
+#type VERTEX
+
 line1; //Line comment remove
 //const int numLights = 4; remove
 line2;

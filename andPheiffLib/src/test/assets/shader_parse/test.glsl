@@ -1,5 +1,5 @@
 #version 300
-
+#type VERTEX
 #include test_include5.glsl
 #include test_include1.glsl
 #include test_include3.glsl
