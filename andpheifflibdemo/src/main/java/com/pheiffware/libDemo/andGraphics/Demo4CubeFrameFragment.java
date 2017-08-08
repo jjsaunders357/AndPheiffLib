@@ -123,7 +123,7 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
 
         public Renderer()
         {
-            super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30, 90f, 1.0f, 100.0f, 0.01f);
+            super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30, "shaders", 90f, 1.0f, 100.0f, 0.01f);
         }
 
         @Override

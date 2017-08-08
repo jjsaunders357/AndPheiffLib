@@ -16,6 +16,8 @@ public abstract class GameRenderer
 {
     private final int minSupportedGLVersion;
     private final int maxSupportedGLVersion;
+    private final String rootShaderPath;
+
     //The asset loader object for this renderer.
     private AndAssetLoader al;
 
@@ -23,6 +25,7 @@ public abstract class GameRenderer
     private GLCache glCache;
     private int surfaceWidth;
     private int surfaceHeight;
+    private SystemInfo systemInfo;
 
     /**
      * @param minSupportedGLVersion The minimum, version of openGL, which your renderer has been coded to support.  If this version is not available,
@@ -32,10 +35,11 @@ public abstract class GameRenderer
      *                              available to the renderer will always be <=maxSupportedGLVersion depending on hardware capabilities.
      *                              This should a major/minor version number such as AndGraphicsUtils.GL_VERSION_31
      */
-    public GameRenderer(int minSupportedGLVersion, int maxSupportedGLVersion)
+    public GameRenderer(int minSupportedGLVersion, int maxSupportedGLVersion, String rootShaderPath)
     {
         this.minSupportedGLVersion = minSupportedGLVersion;
         this.maxSupportedGLVersion = maxSupportedGLVersion;
+        this.rootShaderPath = rootShaderPath;
     }
 
     /**
@@ -49,7 +53,8 @@ public abstract class GameRenderer
     void onSurfaceCreated(AndAssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, SystemInfo systemInfo) throws GraphicsException
     {
         this.al = al;
-        glCache = new GLCache(deviceGLVersion, defaultFilterQuality, al);
+        glCache = new GLCache(al, deviceGLVersion, defaultFilterQuality, rootShaderPath);
+        this.systemInfo = systemInfo;
         onSurfaceCreated(al, glCache, systemInfo);
     }
 
@@ -163,5 +168,4 @@ public abstract class GameRenderer
     {
         return maxSupportedGLVersion;
     }
-
 }

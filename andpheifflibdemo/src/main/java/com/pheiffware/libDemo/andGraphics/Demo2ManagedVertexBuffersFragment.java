@@ -57,7 +57,7 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
 
         private Renderer()
         {
-            super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30);
+            super(AndGraphicsUtils.GL_VERSION_30, AndGraphicsUtils.GL_VERSION_30, "shaders");
         }
 
         @Override

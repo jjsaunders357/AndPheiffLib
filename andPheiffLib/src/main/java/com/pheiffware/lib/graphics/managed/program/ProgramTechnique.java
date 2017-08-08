@@ -22,7 +22,7 @@ public abstract class ProgramTechnique extends BaseTechnique
     public ProgramTechnique(AssetLoader al, String vertexShaderAsset, String fragmentShaderAsset, RenderProperty[] properties) throws GraphicsException
     {
         Collections.addAll(this.properties, properties);
-        this.program = new Program(al, vertexShaderAsset, fragmentShaderAsset);
+        this.program = new BaseProgram(al, vertexShaderAsset, fragmentShaderAsset);
     }
 
     protected final void setUniformValue(UniformName name, Object value)

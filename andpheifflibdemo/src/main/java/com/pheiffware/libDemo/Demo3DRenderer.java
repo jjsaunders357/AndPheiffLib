@@ -31,9 +31,9 @@ public abstract class Demo3DRenderer extends GameRenderer
     private int frameCounter;
     private int logFramePeriod = 120;
 
-    public Demo3DRenderer(int minSupportedGLVersion, int maxSupportedGLVersion, float initialFOV, float nearPlane, float farPlane, double screenDPToCameraTranslation)
+    public Demo3DRenderer(int minSupportedGLVersion, int maxSupportedGLVersion, String shaderRootPath, float initialFOV, float nearPlane, float farPlane, double screenDPToCameraTranslation)
     {
-        super(minSupportedGLVersion, maxSupportedGLVersion);
+        super(minSupportedGLVersion, maxSupportedGLVersion, shaderRootPath);
         this.screenDPToCameraTranslation = screenDPToCameraTranslation;
         camera = new EuclideanCamera(initialFOV, 1, nearPlane, farPlane, false);
     }

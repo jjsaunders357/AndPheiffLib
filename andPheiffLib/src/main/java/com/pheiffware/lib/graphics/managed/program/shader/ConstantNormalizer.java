@@ -31,8 +31,8 @@ import java.util.regex.Pattern;
 
 class ConstantNormalizer
 {
-    //Regex for an isolated integer constant in code
-    private static final Pattern intPattern = Pattern.compile("(?<![a-zA-Z0-9_.]+)\\d+(?![a-zA-Z0-9_.]+)");
+    //Regex for an isolated integer constant in code.  Note: {1,1000} is a "fancy" version of "+".  For some reason Android device requires bounded maximum length in look behind.
+    private static final Pattern intPattern = Pattern.compile("(?<![a-zA-Z0-9_.]{1,1000})\\d+(?![a-zA-Z0-9_.]+)");
 
     //Regex for an isolated float constant in code
     private static final Pattern floatPattern = Pattern.compile("[0-9]*\\.[0-9]+");

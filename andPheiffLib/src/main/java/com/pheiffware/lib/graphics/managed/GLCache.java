@@ -5,8 +5,8 @@ import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.program.ConfigurableProgram;
+import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
-import com.pheiffware.lib.graphics.managed.program.shader.ShaderCode;
 import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
@@ -27,29 +27,32 @@ import java.util.Map;
 //TODO: multisample enable (opengl 3.0 only)
 
 /**
- * Keeps references to core graphics objects which should only be loaded once or need to be cleaned up later.
+ * Keeps references to core graphics objects for caching, reconfiguration and eventual clean up.
  * <p/>
  * Created by Steve on 2/13/2016.
  */
 public class GLCache
 {
-    //Remembered texture images, used to avoid loading the same image twice
-    private final Map<String, Texture2D> textures = new HashMap<>();
+    private final int deviceGLVersion;
     private final FilterQuality defaultFilterQuality;
     private final TextureBinder textureBinder;
-    private AssetLoader al;
-    private final int deviceGLVersion;
+    private final AssetLoader al;
+    private final ShaderBuilder shaderBuilder;
+    private final Map<String, Object> systemConfig = new HashMap<>();
 
-    public GLCache(int deviceGLVersion, FilterQuality defaultFilterQuality, AssetLoader al)
+    //Remembered texture images, used to avoid loading the same image twice
+    private final Map<String, Texture2D> textureImageCache = new HashMap<>();
+
+    public GLCache(AssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, String shaderRootPath)
     {
-        this.defaultFilterQuality = defaultFilterQuality;
-        this.deviceGLVersion = deviceGLVersion;
-        this.al = al;
         if (deviceGLVersion < 2)
         {
             throw new RuntimeException("Cannot work with openGL version below 2.0");
         }
-
+        this.deviceGLVersion = deviceGLVersion;
+        this.defaultFilterQuality = defaultFilterQuality;
+        this.al = al;
+        shaderBuilder = new ShaderBuilder(al, shaderRootPath);
         textureBinder = new TextureBinder(PheiffGLUtils.getNumTextureUnits(), new MostRecentTextureBindingStrategy(PheiffGLUtils.getNumTextureUnits()));
     }
 
@@ -61,7 +64,7 @@ public class GLCache
      */
     public Texture2D getTexture(String ID)
     {
-        return textures.get(ID);
+        return textureImageCache.get(ID);
     }
 
     /**
@@ -72,7 +75,7 @@ public class GLCache
      */
     public void putTexture(String ID, Texture2D texture)
     {
-        textures.put(ID, texture);
+        textureImageCache.put(ID, texture);
     }
 
     /**
@@ -120,19 +123,11 @@ public class GLCache
         return new CubeDepthRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
     }
 
-    private ConfigurableProgram buildProgram(String shaderRootPath, Map<String, Object> configuration, String... shaderPaths) throws ParseException, GraphicsException, IOException
+    private Program buildProgram(Map<String, Object> versionConfig, String... shaderPaths) throws ParseException, GraphicsException, IOException
     {
-        ShaderBuilder builder = new ShaderBuilder(al, shaderRootPath);
-        int[] shaderHandles = new int[shaderPaths.length];
-        for (int i = 0; i < shaderPaths.length; i++)
-        {
-
-            //TODO: Make program interface
-            //TODO: Store shader file names in program
-            ShaderCode shaderCode = builder.build(shaderPaths[i], configuration);
-            shaderHandles[i] = shaderCode.compile();
-        }
-        return new ConfigurableProgram(shaderHandles);
+        ConfigurableProgram configurableProgram = new ConfigurableProgram(versionConfig, shaderPaths);
+        configurableProgram.configure(shaderBuilder, systemConfig);
+        return configurableProgram;
     }
 
     public void destroy()
