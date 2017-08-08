@@ -55,9 +55,6 @@ public class ShaderBuilder
     //Configuration settings which alter how the shader is built
     private final Map<String, Object> configuration = new HashMap<>();
 
-    //A cache of loaded shaders.  Any loaded shader is valid until configuration changes.
-    private final Map<String, ShaderFile> loadedShaders = new HashMap<>();
-
     //A dependency ordered list of shaders.  Items near the beginning of the list are depended on by items further down the list.
     private final LinkedHashMap<String, ShaderFile> dependencies = new LinkedHashMap<>();
 
@@ -70,32 +67,27 @@ public class ShaderBuilder
     //The final assembled code for compiling
     private String code;
 
-    public ShaderBuilder(AssetLoader assetLoader, String shaderRootPath, Map<String, Object> configuration)
+    public ShaderBuilder(AssetLoader assetLoader, String shaderRootPath)
     {
         shaderLoader = new ShaderLoader(assetLoader, shaderRootPath);
-        this.configuration.putAll(configuration);
-    }
-
-    public void setConfiguration(Map<String, Object> configuration)
-    {
-        this.loadedShaders.clear();
-        this.configuration.clear();
-        this.configuration.putAll(configuration);
     }
 
     /**
-     * Builds the given shader file and all dependencies, using current settings, to form a single ShaderCode object.
+     * Builds the given shader file and all dependencies, using given settings, to form a single ShaderCode object.
      *
      * @param shaderFilePath
+     * @param configuration
      * @return
      * @throws IOException
      * @throws GraphicsException
      * @throws ParseException
      */
-    public ShaderCode build(String shaderFilePath) throws IOException, GraphicsException, ParseException
+    public ShaderCode build(String shaderFilePath, Map<String, Object> configuration) throws IOException, GraphicsException, ParseException
     {
         dependencies.clear();
         lineLookup.clear();
+        this.configuration.clear();
+        this.configuration.putAll(configuration);
         ShaderFile mainFile = shaderLoader.parse(configuration, shaderFilePath, true);
         loadDependencies(mainFile);
         buildCode();
@@ -123,34 +115,11 @@ public class ShaderBuilder
             }
             else
             {
-                ShaderFile subFile = loadFile(dependencyFileName);
+                ShaderFile subFile = shaderLoader.parse(configuration, dependencyFileName, false);
                 loadDependencies(subFile);
             }
         }
         dependencies.put(shaderFile.getFilePath(), shaderFile);
-        loadedShaders.put(shaderFile.getFilePath(), shaderFile);
-    }
-
-    /**
-     * Load the file shader using current configuration, if not already in cache.
-     *
-     * @param shaderFile file to load
-     * @return
-     * @throws ParseException
-     * @throws GraphicsException
-     * @throws IOException
-     */
-    private ShaderFile loadFile(String shaderFile) throws ParseException, GraphicsException, IOException
-    {
-        if (loadedShaders.containsKey(shaderFile))
-        {
-            return loadedShaders.get(shaderFile);
-        }
-        else
-        {
-            return shaderLoader.parse(configuration, shaderFile, false);
-        }
-
     }
 
     /**

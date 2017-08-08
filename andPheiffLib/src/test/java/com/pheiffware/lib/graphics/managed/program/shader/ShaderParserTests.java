@@ -27,13 +27,13 @@ public class ShaderParserTests
         settings.put("b3", Boolean.FALSE);
         settings.put("b4test", 5);
 
-        ShaderBuilder parser = new ShaderBuilder(assetLoader, "shader_parse", settings);
+        ShaderBuilder parser = new ShaderBuilder(assetLoader, "shader_parse");
         ShaderCode code;
-        code = parser.build("test_pre.glsl");
+        code = parser.build("test_pre.glsl", settings);
         code.printCode();
-        code = parser.build("test.glsl");
+        code = parser.build("test.glsl", settings);
         code.printCode();
-        code = parser.build("shader_comments.test");
+        code = parser.build("shader_comments.test", settings);
         code.printCode();
     }
 }

@@ -122,14 +122,14 @@ public class GLCache
 
     private ConfigurableProgram buildProgram(String shaderRootPath, Map<String, Object> configuration, String... shaderPaths) throws ParseException, GraphicsException, IOException
     {
-        ShaderBuilder builder = new ShaderBuilder(al, shaderRootPath, configuration);
+        ShaderBuilder builder = new ShaderBuilder(al, shaderRootPath);
         int[] shaderHandles = new int[shaderPaths.length];
         for (int i = 0; i < shaderPaths.length; i++)
         {
 
             //TODO: Make program interface
             //TODO: Store shader file names in program
-            ShaderCode shaderCode = builder.build(shaderPaths[i]);
+            ShaderCode shaderCode = builder.build(shaderPaths[i], configuration);
             shaderHandles[i] = shaderCode.compile();
         }
         return new ConfigurableProgram(shaderHandles);
