@@ -20,7 +20,7 @@ public abstract class ProgramTechnique extends BaseTechnique
     private final String[] shaderPaths;
 
     //Program being wrapped
-    private BaseProgram program;
+    private Program program;
 
     //Used internally to compute values to apply to uniforms
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
@@ -41,7 +41,7 @@ public abstract class ProgramTechnique extends BaseTechnique
         }
         try
         {
-            program = new BaseProgram(shaderBuilder, config, shaderPaths);
+            program = new Program(shaderBuilder, config, shaderPaths);
         }
         catch (ParseException e)
         {

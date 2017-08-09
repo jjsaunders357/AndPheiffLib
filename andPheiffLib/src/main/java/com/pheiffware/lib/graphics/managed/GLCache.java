@@ -4,7 +4,6 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.program.BaseProgram;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
@@ -136,7 +135,7 @@ public class GLCache
 
     public Program buildProgram(Map<String, Object> localConfig, String... shaderPaths) throws ParseException, GraphicsException, IOException
     {
-        return new BaseProgram(shaderBuilder, localConfig, shaderPaths);
+        return new Program(shaderBuilder, localConfig, shaderPaths);
     }
 
     public <T extends Technique> T buildTechnique(Class<T> cls) throws GraphicsException
