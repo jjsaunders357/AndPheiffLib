@@ -2,11 +2,16 @@ package com.pheiffware.lib.graphics.managed.program;
 
 import android.opengl.GLES20;
 
+import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderCode;
 
+import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.Map;
 
 /**
  * Wraps the concept of an OpenGL program into a convenient object.  This allows querying details about uniforms and vertexAttributes.
@@ -14,7 +19,8 @@ import java.util.EnumSet;
  * <p/>
  * Created by Steve on 2/13/2016.
  */
-class BaseProgram implements Program
+//TODO: Merge into Program and make final
+public class BaseProgram implements Program
 {
     //Handle to the GL program
     private final int programHandle;
@@ -28,14 +34,14 @@ class BaseProgram implements Program
     //Map of all program attribute locations (location is essentially a GL handle to the attribute itself)
     private final EnumMap<VertexAttribute, Integer> vertexAttributeLocations = new EnumMap<>(VertexAttribute.class);
 
-    /**
-     * Builds a program from the given shader handles.  The handles are then marked for deletion with OpenGL.
-     *
-     * @param shaderHandles OpenGL shader handles
-     * @throws GraphicsException
-     */
-    protected BaseProgram(int[] shaderHandles) throws GraphicsException
+    public BaseProgram(ShaderBuilder shaderBuilder, Map<String, Object> config, String... shaderPaths) throws ParseException, GraphicsException, IOException
     {
+        int[] shaderHandles = new int[shaderPaths.length];
+        for (int i = 0; i < shaderPaths.length; i++)
+        {
+            ShaderCode shaderCode = shaderBuilder.build(shaderPaths[i], config);
+            shaderHandles[i] = shaderCode.compile();
+        }
         programHandle = link(shaderHandles);
         GLES20.glUseProgram(programHandle);
         extractUniforms();

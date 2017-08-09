@@ -3,12 +3,11 @@ package com.pheiffware.lib.graphics.managed.program;
 import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,21 +16,45 @@ import java.util.Map;
  */
 public abstract class ProgramTechnique extends BaseTechnique
 {
+    //Paths to shaders comprising the program
+    private final String[] shaderPaths;
+
     //Program being wrapped
-    private final Program program;
+    private BaseProgram program;
 
     //Used internally to compute values to apply to uniforms
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
-    public ProgramTechnique(GLCache glCache, RenderProperty[] properties, String... shaderPaths) throws GraphicsException, IOException, ParseException
+    public ProgramTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig, RenderProperty[] properties, String... shaderPaths) throws GraphicsException, IOException, ParseException
     {
-        this(glCache, new HashMap<String, Object>(), properties, shaderPaths);
+        super(shaderBuilder, localConfig);
+        this.shaderPaths = shaderPaths;
+        Collections.addAll(this.properties, properties);
     }
 
-    public ProgramTechnique(GLCache glCache, Map<String, Object> versionConfig, RenderProperty[] properties, String... shaderPaths) throws GraphicsException, IOException, ParseException
+    @Override
+    protected void onConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> config)
     {
-        Collections.addAll(this.properties, properties);
-        this.program = glCache.buildProgram(versionConfig, shaderPaths);
+        if (program != null)
+        {
+            program.destroy();
+        }
+        try
+        {
+            program = new BaseProgram(shaderBuilder, config, shaderPaths);
+        }
+        catch (ParseException e)
+        {
+            throw new RuntimeException("Failure during program reconfiguration: " + program.toString(), e);
+        }
+        catch (GraphicsException e)
+        {
+            throw new RuntimeException("Failure during program reconfiguration: " + program.toString(), e);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Failure during program reconfiguration: " + program.toString(), e);
+        }
     }
 
     protected final void setUniformValue(UniformName name, Object value)

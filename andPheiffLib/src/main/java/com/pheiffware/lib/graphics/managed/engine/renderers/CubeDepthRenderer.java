@@ -34,7 +34,7 @@ public class CubeDepthRenderer extends Renderer
     public CubeDepthRenderer(GLCache glCache, TextureCubeMap cubeDepthTexture) throws GraphicsException, IOException, ParseException
     {
         frameBuffer = new FrameBuffer();
-        depthCubeTechnique = new DepthCubeTechnique(glCache);
+        depthCubeTechnique = glCache.buildTechnique(DepthCubeTechnique.class);
         depthRenderPass = new TechniqueRenderPass(depthCubeTechnique);
         this.cubeDepthTexture = cubeDepthTexture;
     }

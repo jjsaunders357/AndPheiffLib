@@ -2,12 +2,12 @@ package com.pheiffware.lib.graphics.managed.techniques;
 
 import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Shades mesh with a constant surface color and given lights' settings.  Handles, ambient, diffuse and specular lighting.
@@ -16,9 +16,9 @@ import java.util.HashMap;
 public class ColorMaterialTechnique extends Technique3D
 {
 
-    public ColorMaterialTechnique(GLCache glCache) throws GraphicsException, IOException, ParseException
+    public ColorMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException, IOException, ParseException
     {
-        super(glCache, new HashMap<String, Object>(), new RenderProperty[]{
+        super(shaderBuilder, localConfig, new RenderProperty[]{
                 RenderProperty.PROJECTION_LINEAR_DEPTH,
                 RenderProperty.VIEW_MATRIX,
                 RenderProperty.MODEL_MATRIX,

@@ -1,5 +1,6 @@
 package com.pheiffware.lib.graphics.managed.program;
 
+import com.pheiffware.lib.graphics.managed.GraphicsConfigListener;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
 import java.util.EnumMap;
@@ -45,7 +46,7 @@ import java.util.EnumMap;
  * Created by Steve on 7/2/2017.
  */
 
-public interface Technique
+public interface Technique extends GraphicsConfigListener
 {
     /**
      * Set an individual rendering property.

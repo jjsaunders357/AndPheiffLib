@@ -4,8 +4,9 @@ import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.program.ConfigurableProgram;
+import com.pheiffware.lib.graphics.managed.program.BaseProgram;
 import com.pheiffware.lib.graphics.managed.program.Program;
+import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
@@ -18,7 +19,11 @@ import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ImageTextureB
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -38,7 +43,8 @@ public class GLCache
     private final TextureBinder textureBinder;
     private final AssetLoader al;
     private final ShaderBuilder shaderBuilder;
-    private final Map<String, Object> systemConfig = new HashMap<>();
+    private final Map<String, Object> graphicsSystemConfig = new HashMap<>();
+    private final List<GraphicsConfigListener> graphicsConfigListeners = new ArrayList<>();
 
     //Remembered texture images, used to avoid loading the same image twice
     private final Map<String, Texture2D> textureImageCache = new HashMap<>();
@@ -128,11 +134,60 @@ public class GLCache
         return buildProgram(new HashMap<String, Object>(), shaderPaths);
     }
 
-    public Program buildProgram(Map<String, Object> versionConfig, String... shaderPaths) throws ParseException, GraphicsException, IOException
+    public Program buildProgram(Map<String, Object> localConfig, String... shaderPaths) throws ParseException, GraphicsException, IOException
     {
-        ConfigurableProgram configurableProgram = new ConfigurableProgram(versionConfig, shaderPaths);
-        configurableProgram.configure(shaderBuilder, systemConfig);
-        return configurableProgram;
+        return new BaseProgram(shaderBuilder, localConfig, shaderPaths);
+    }
+
+    public <T extends Technique> T buildTechnique(Class<T> cls) throws GraphicsException
+    {
+        return buildTechnique(new HashMap<String, Object>(), cls);
+    }
+
+    public <T extends Technique> T buildTechnique(Map<String, Object> localConfig, Class<T> cls) throws GraphicsException
+    {
+        try
+        {
+            Constructor<T> constructor = cls.getConstructor(ShaderBuilder.class, Map.class);
+            T technique = constructor.newInstance(shaderBuilder, localConfig);
+            addSystemConfigListener(technique);
+            technique.onSystemConfigChanged(graphicsSystemConfig);
+            return technique;
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new GraphicsException(e);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new GraphicsException(e);
+        }
+        catch (InstantiationException e)
+        {
+            throw new GraphicsException(e);
+        }
+        catch (InvocationTargetException e)
+        {
+            throw new GraphicsException(e);
+        }
+    }
+
+    public void addSystemConfigListener(GraphicsConfigListener listener)
+    {
+        graphicsConfigListeners.add(listener);
+    }
+
+    public void removeSystemConfigListener(GraphicsConfigListener listener)
+    {
+        graphicsConfigListeners.remove(listener);
+    }
+
+    private void notifyGraphicsConfigListeners()
+    {
+        for (GraphicsConfigListener listener : graphicsConfigListeners)
+        {
+            listener.onSystemConfigChanged(graphicsSystemConfig);
+        }
     }
 
     public void destroy()

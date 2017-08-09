@@ -132,8 +132,8 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
-            colorShadowTechnique = new ColorShadowMaterialTechnique(glCache);
-            textureTechnique = new TextureMaterialTechnique(glCache);
+            colorShadowTechnique = glCache.buildTechnique(ColorShadowMaterialTechnique.class);
+            textureTechnique = glCache.buildTechnique(TextureMaterialTechnique.class);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});

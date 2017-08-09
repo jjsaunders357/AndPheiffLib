@@ -128,8 +128,8 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
-            colorTechnique = new ColorMaterialTechnique(glCache);
-            textureTechnique = new TextureMaterialTechnique(glCache);
+            colorTechnique = glCache.buildTechnique(ColorMaterialTechnique.class);
+            textureTechnique = glCache.buildTechnique(TextureMaterialTechnique.class);
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();
             manager = new ObjectManager();

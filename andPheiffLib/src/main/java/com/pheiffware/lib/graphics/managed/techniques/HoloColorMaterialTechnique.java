@@ -3,13 +3,13 @@ package com.pheiffware.lib.graphics.managed.techniques;
 import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Mesh projected such that it appears embedded below or projecting out from screen surface.  All vertex locations should be expressed in screen space. [0,0,0] represents the
@@ -20,9 +20,9 @@ import java.util.HashMap;
  */
 public class HoloColorMaterialTechnique extends Technique3D
 {
-    public HoloColorMaterialTechnique(GLCache glCache) throws GraphicsException, IOException, ParseException
+    public HoloColorMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException, IOException, ParseException
     {
-        super(glCache, new HashMap<String, Object>(), new RenderProperty[]{
+        super(shaderBuilder, localConfig, new RenderProperty[]{
                 RenderProperty.HOLO_PROJECTION,
                 RenderProperty.MODEL_MATRIX,
                 RenderProperty.LIGHTING,

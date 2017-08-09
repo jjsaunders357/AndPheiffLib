@@ -102,7 +102,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
             GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
 
             PheiffGLUtils.enableAlphaTransparency();
-            holoColorTechnique = new HoloColorMaterialTechnique(glCache);
+            holoColorTechnique = glCache.buildTechnique(HoloColorMaterialTechnique.class);
             ColladaFactory colladaFactory = new ColladaFactory();
             try
             {

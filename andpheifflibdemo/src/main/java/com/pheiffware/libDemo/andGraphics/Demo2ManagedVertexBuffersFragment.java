@@ -68,8 +68,8 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            color2DTechnique = new Color2DTechnique(glCache);
-            colorTexture2DTechnique = new ColorTexture2DTechnique(glCache);
+            color2DTechnique = glCache.buildTechnique(Color2DTechnique.class);
+            colorTexture2DTechnique = glCache.buildTechnique(ColorTexture2DTechnique.class);
             faceTexture = glCache.buildImageTex("images/face.png").build();
 
             manager = new MeshDataManager();
