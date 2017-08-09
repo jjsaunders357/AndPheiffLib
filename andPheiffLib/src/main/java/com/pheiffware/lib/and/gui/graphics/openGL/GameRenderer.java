@@ -96,11 +96,21 @@ public abstract class GameRenderer
 
 
     /**
-     * If the surrounding view is initialized to forward TouchTransformEvents this is called in the rendering thread whenever an event happens.
+     * If the surrounding view is initialized to forward touch events this is called in the rendering thread whenever a transform event happens.
      *
      * @param event
      */
     public void onTouchTransformEvent(TouchAnalyzer.TouchTransformEvent event)
+    {
+
+    }
+
+    /**
+     * If the surrounding view is initialized to forward touch events this is called in the rendering thread whenever a tap event happens.
+     *
+     * @param event
+     */
+    public void onTouchTapEvent(TouchAnalyzer.TouchTapEvent event)
     {
 
     }

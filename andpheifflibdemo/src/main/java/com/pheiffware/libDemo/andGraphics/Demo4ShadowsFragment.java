@@ -198,33 +198,20 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             simpleRenderer.render();
         }
 
-        //TODO: Add tap sensor to touch analyzer
-        private boolean latch;
-
-        @Override
-        public void onTouchTransformEvent(TouchAnalyzer.TouchTransformEvent event)
+        public void onTouchTapEvent(TouchAnalyzer.TouchTapEvent event)
         {
-            super.onTouchTransformEvent(event);
-            if (event.numPointers == 5)
+            if (event.numPointers == 3)
             {
-                if (!latch)
+                try
                 {
-                    latch = true;
-                    try
-                    {
-                        getGlCache().setProperty(GLCache.ENABLE_SHADOWS, !getGlCache().getProperty(GLCache.ENABLE_SHADOWS, Boolean.class));
-                    }
-                    catch (GraphicsException e)
-                    {
-                        throw new RuntimeException("Failed to change graphics configuration", e);
-                    }
+                    getGlCache().setProperty(GLCache.ENABLE_SHADOWS, !getGlCache().getProperty(GLCache.ENABLE_SHADOWS, Boolean.class));
                 }
-            }
-            else
-            {
-                latch = false;
-            }
+                catch (GraphicsException e)
+                {
+                    throw new RuntimeException("Failed to change graphics configuration", e);
+                }
 
+            }
         }
     }
 }

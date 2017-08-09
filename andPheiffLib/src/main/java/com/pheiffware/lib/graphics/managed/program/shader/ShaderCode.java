@@ -81,9 +81,4 @@ public class ShaderCode
         }
         return builder.toString();
     }
-
-    public void printCode()
-    {
-        System.out.println(getCodeMarkup());
-    }
 }

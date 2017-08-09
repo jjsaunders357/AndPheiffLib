@@ -4,7 +4,8 @@
 */
 package com.pheiffware.lib.utils;
 
-import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -75,6 +76,7 @@ public class Utils
         System.out.println(message + " " + getTimeElapsed(earlierTimeStamp));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @SuppressWarnings("unchecked")
     public static <T> T loadObj(String path, Class<T> cls) throws IOException, ClassNotFoundException
     {
@@ -86,6 +88,7 @@ public class Utils
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void saveObj(String path, Object object) throws IOException
     {
 
@@ -98,7 +101,7 @@ public class Utils
     }
 
     /**
-     * Quick and dirty way to copy and object using serialization.  THIS IS NOT EFFICIENT AT ALL.
+     * Quick and dirty way to copy an object using serialization.  THIS IS NOT EFFICIENT AT ALL.
      *
      * @param object
      * @return

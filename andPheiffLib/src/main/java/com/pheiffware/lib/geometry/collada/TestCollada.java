@@ -8,7 +8,6 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 
 import org.xml.sax.SAXException;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,16 +29,6 @@ public class TestCollada
 {
     public static void doesntCrash() throws XMLParseException, IOException, ParserConfigurationException, SAXException
     {
-        File dir = new File(".");
-        File[] filesList = dir.listFiles();
-        for (File file : filesList)
-        {
-            if (file.isFile())
-            {
-                System.out.println(file.getName());
-            }
-        }
-
         FileInputStream input = new FileInputStream("src/test/assets/meshes/weird_blender_example.dae");
         ColladaFactory colladaFactory = new ColladaFactory();
         colladaFactory.loadCollada(input);

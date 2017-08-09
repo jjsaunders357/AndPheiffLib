@@ -32,6 +32,9 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, SensorEventListener
 {
+    //Maximum time allowed for an action to be considered a tap event
+    private static final double maxTouchTapTime = 0.2;
+
     private final FilterQuality filterQuality;
     private final AndAssetLoader assetLoader;
     private final GameRenderer renderer;
@@ -55,7 +58,8 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         this.forwardTouchTransformEvents = forwardTouchTransformEvents;
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi);
+
+        touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi, maxTouchTapTime);
         requestOpenGLVersion(context);
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -176,19 +180,27 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
      */
     protected boolean forwardTouchTransformEvent(final MotionEvent event)
     {
+
         if (isSurfaceInitialized() && forwardTouchTransformEvents)
         {
             //Must process event in gui thread as the event object itself is modified (its not safe to pass to another thread).
-            final TouchAnalyzer.TouchTransformEvent touchTransformEvent = touchAnalyzer.convertRawTouchEvent(event);
+            final TouchAnalyzer.TouchEvent touchEvent = touchAnalyzer.convertRawTouchEvent(event);
 
-            if (touchTransformEvent != null)
+            if (touchEvent != null)
             {
                 queueEvent(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-                        renderer.onTouchTransformEvent(touchTransformEvent);
+                        if (touchEvent.touchTransformEvent != null)
+                        {
+                            renderer.onTouchTransformEvent(touchEvent.touchTransformEvent);
+                        }
+                        else
+                        {
+                            renderer.onTouchTapEvent(touchEvent.touchTapEvent);
+                        }
                     }
                 });
             }

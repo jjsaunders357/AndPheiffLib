@@ -31,19 +31,65 @@ public class TouchAnalyzer
     private final double xDPI;
     private final double yDPI;
 
+    //The maximum time which can elapse during pointers being added/removed and for it to still be considered a tap event.
+    private final double maxTapTime;
+
     //Averaged radius of circle formed by all pointers on screen squared
     private double averageRadiusSquared;
 
+    //When the 1st pointer was put down
+    private long startTapTime;
+
+    //The maximum number of pointers seen during the tap event
+    private int maxTapPointersEncountered;
+
     /**
      * Reports touch transform events in terms of dp.  1 dp = 1 pixel on a 160 DPI screen.
-     *
-     * @param xDPI touchTransform translation events specified in units of dp
+     *  @param xDPI touchTransform translation events specified in units of dp
      * @param yDPI touchTransform translation events specified in units of dp
+     * @param maxTapTime
      */
-    public TouchAnalyzer(double xDPI, double yDPI)
+    public TouchAnalyzer(double xDPI, double yDPI, double maxTapTime)
     {
         this.xDPI = xDPI;
         this.yDPI = yDPI;
+        this.maxTapTime = maxTapTime;
+    }
+
+    /**
+     * Describes a transform caused by pointers on the screen or a tap event caused by rapidly tapping the screen with N pointers.
+     */
+    public static class TouchEvent
+    {
+        //If this was a transform event, this will contain the transform, otherwise it will be null.
+        public TouchTransformEvent touchTransformEvent;
+
+        //If this was a transform event, this will contain the tap information, otherwise it will be null.
+        public TouchTapEvent touchTapEvent;
+
+        public TouchEvent(TouchTransformEvent touchTransformEvent, TouchTapEvent touchTapEvent)
+        {
+            this.touchTransformEvent = touchTransformEvent;
+            this.touchTapEvent = touchTapEvent;
+        }
+    }
+
+    /**
+     * Describes the event of N pointers rapidly (faster than maxTapTime) tapping the screen.
+     */
+    public static class TouchTapEvent
+    {
+        //Number of pointers involved in the tap
+        public final int numPointers;
+
+        //How fast the tap occurred in seconds
+        public final double tapTime;
+
+        public TouchTapEvent(int numPointers, double tapTime)
+        {
+            this.numPointers = numPointers;
+            this.tapTime = tapTime;
+        }
     }
 
     /**
@@ -64,37 +110,35 @@ public class TouchAnalyzer
     }
 
     /**
-     * Converts a raw touch event into a TouchTransformEvent or returns null if this does not result in a transformation (adding/removing pointers does not cause a
-     * transformation).
+     * Converts a raw touch event into a TouchEvent or returns null if this does not result in a transformation or tap event.
      *
      * @param event
-     * @return a TouchTransformEvent or null if this event did not cause a transformation.
+     * @return a TouchEvent or null if this event did not cause a transformation or tap event.
      */
-    public TouchTransformEvent convertRawTouchEvent(MotionEvent event)
+    public TouchEvent convertRawTouchEvent(MotionEvent event)
     {
-        int index;
-        int id;
         switch (event.getActionMasked())
         {
             case MotionEvent.ACTION_POINTER_DOWN:
             case MotionEvent.ACTION_DOWN:
-                index = event.getActionIndex();
-                id = event.getPointerId(index);
-                addPointer(id, event.getX(index), event.getY(index));
+                addPointer(event);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_UP:
-                index = event.getActionIndex();
-                id = event.getPointerId(index);
-                removePointer(id);
+                TouchEvent touchEvent = removePointer(event);
+                if (touchEvent != null)
+                {
+                    return touchEvent;
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 Transform2D transform2D = updateStateAndGetTransform(event);
                 scaleTransformToDP(transform2D);
-                return new TouchTransformEvent(pointerPositions.size(), transform2D);
+                return new TouchEvent(new TouchTransformEvent(pointerPositions.size(), transform2D), null);
         }
         return null;
     }
+
 
     /**
      * Scales translation to be in units of dp.  1 dp == 1 pixel on a 160 DPI screen.
@@ -109,29 +153,55 @@ public class TouchAnalyzer
 
     /**
      * Starts tracking the given pointer and updates center position based on all pointers.
+     * If this is the 1st point, its time stamp is recorded for tap detection purposes.
      *
-     * @param id
+     * @param event
      */
-    private void addPointer(int id, float x, float y)
+    private void addPointer(MotionEvent event)
     {
-        Vec2D position = new Vec2D(x, y);
+        int index = event.getActionIndex();
+        int id = event.getPointerId(index);
+        Vec2D position = new Vec2D(event.getX(index), event.getY(index));
         pointerPositions.put(id, position);
         updateCenter();
         updateRadiusAndAngles();
+        int numPointers = pointerPositions.size();
+        if (numPointers == 1)
+        {
+            startTapTime = event.getEventTime();
+            maxTapPointersEncountered = 1;
+        }
+        else
+        {
+            if (numPointers > maxTapPointersEncountered)
+            {
+                maxTapPointersEncountered = numPointers;
+            }
+        }
     }
-
 
     /**
      * Stops tracking the given pointer and updates center position based on remaining pointers.
      *
-     * @param id
+     * @param event
      */
-    private void removePointer(int id)
+    private TouchEvent removePointer(MotionEvent event)
     {
+        int index = event.getActionIndex();
+        int id = event.getPointerId(index);
         pointerPositions.remove(id);
         pointerAngles.remove(id);
         updateCenter();
         updateRadiusAndAngles();
+        if (pointerPositions.size() == 0)
+        {
+            double tapTime = (event.getEventTime() - startTapTime) / 1000.0;
+            if (tapTime < maxTapTime)
+            {
+                return new TouchEvent(null, new TouchTapEvent(maxTapPointersEncountered, tapTime));
+            }
+        }
+        return null;
     }
 
     /**

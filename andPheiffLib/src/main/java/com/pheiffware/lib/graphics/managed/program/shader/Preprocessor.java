@@ -144,12 +144,6 @@ class Preprocessor
     {
         for (ShaderFragment shaderLine : shaderLines)
         {
-//            for (boolean bool : processingState)
-//            {
-//                System.out.print(bool + ", ");
-//            }
-//            System.out.println("");
-//            System.out.println(shaderLine.code);
             if (getProcessingState())
             {
                 if (!processDefine(shaderLine))
