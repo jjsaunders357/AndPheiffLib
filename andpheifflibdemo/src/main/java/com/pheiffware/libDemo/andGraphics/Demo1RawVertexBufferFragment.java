@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
@@ -27,7 +26,6 @@ import com.pheiffware.lib.graphics.managed.vertexBuffer.StaticAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeGroup;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
@@ -63,7 +61,7 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
         }
 
         @Override
-        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException
+        public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);

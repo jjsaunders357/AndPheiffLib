@@ -1,12 +1,10 @@
 package com.pheiffware.lib.graphics.managed.techniques;
 
-import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -16,7 +14,7 @@ import java.util.Map;
 public class ColorMaterialTechnique extends Technique3D
 {
 
-    public ColorMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException, IOException, ParseException
+    public ColorMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
     {
         super(shaderBuilder, localConfig, new RenderProperty[]{
                 RenderProperty.PROJECTION_LINEAR_DEPTH,

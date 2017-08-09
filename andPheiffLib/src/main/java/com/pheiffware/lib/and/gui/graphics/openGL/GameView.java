@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.R;
 import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.AndUtils;
@@ -20,8 +19,6 @@ import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
-
-import java.io.IOException;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -97,14 +94,6 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
             surfaceInitialized = true;
         }
         catch (GraphicsException e)
-        {
-            Log.e("Fatal", "Error during surface creation", e);
-        }
-        catch (ParseException e)
-        {
-            Log.e("Fatal", "Error during surface creation", e);
-        }
-        catch (IOException e)
         {
             Log.e("Fatal", "Error during surface creation", e);
         }

@@ -5,7 +5,6 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameRenderer;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
@@ -15,7 +14,6 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.utils.dataContainers.MapCounterLong;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -41,7 +39,7 @@ public abstract class Demo3DRenderer extends GameRenderer
     }
 
     @Override
-    protected void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException, IOException, ParseException
+    protected void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
     {
         frameCounter = 0;
         nanoTimes.clear();

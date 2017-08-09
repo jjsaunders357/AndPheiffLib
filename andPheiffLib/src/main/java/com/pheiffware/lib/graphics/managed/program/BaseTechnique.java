@@ -1,5 +1,6 @@
 package com.pheiffware.lib.graphics.managed.program;
 
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
 import java.util.EnumMap;
@@ -62,7 +63,7 @@ public abstract class BaseTechnique implements Technique
     }
 
     @Override
-    public void onSystemConfigChanged(Map<String, Object> graphicsSystemConfig)
+    public void onSystemConfigChanged(Map<String, Object> graphicsSystemConfig) throws GraphicsException
     {
         HashMap<String, Object> config = new HashMap<>();
         config.putAll(graphicsSystemConfig);
@@ -70,5 +71,5 @@ public abstract class BaseTechnique implements Technique
         onConfigChanged(shaderBuilder, config);
     }
 
-    protected abstract void onConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> config);
+    protected abstract void onConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> config) throws GraphicsException;
 }

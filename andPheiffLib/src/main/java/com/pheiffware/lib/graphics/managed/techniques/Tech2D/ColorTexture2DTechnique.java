@@ -1,6 +1,5 @@
 package com.pheiffware.lib.graphics.managed.techniques.Tech2D;
 
-import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
@@ -9,7 +8,6 @@ import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -24,7 +22,7 @@ public class ColorTexture2DTechnique extends ProgramTechnique
 {
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
-    public ColorTexture2DTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException, IOException, ParseException
+    public ColorTexture2DTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
     {
         super(shaderBuilder, localConfig, new RenderProperty[]{RenderProperty.PROJECTION_MATRIX, RenderProperty.VIEW_MATRIX}, "2d/vert_2d_color_texture_pos4.glsl", "2d/frag_2d_color_texture_pos4.glsl");
     }

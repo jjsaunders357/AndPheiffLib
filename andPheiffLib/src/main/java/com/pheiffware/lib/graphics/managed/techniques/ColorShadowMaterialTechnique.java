@@ -1,6 +1,5 @@
 package com.pheiffware.lib.graphics.managed.techniques;
 
-import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
@@ -8,7 +7,6 @@ import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -19,7 +17,7 @@ import java.util.Map;
  */
 public class ColorShadowMaterialTechnique extends Technique3D
 {
-    public ColorShadowMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException, IOException, ParseException
+    public ColorShadowMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
     {
         super(shaderBuilder, localConfig, new RenderProperty[]{
                 RenderProperty.PROJECTION_LINEAR_DEPTH,

@@ -1,5 +1,7 @@
 package com.pheiffware.lib.graphics.managed;
 
+import com.pheiffware.lib.graphics.GraphicsException;
+
 import java.util.Map;
 
 /**
@@ -13,5 +15,5 @@ public interface GraphicsConfigListener
     /**
      * @param graphicsSystemConfig the new system configuration state, a map of arbitrary objects
      */
-    void onSystemConfigChanged(Map<String, Object> graphicsSystemConfig);
+    void onSystemConfigChanged(Map<String, Object> graphicsSystemConfig) throws GraphicsException;
 }

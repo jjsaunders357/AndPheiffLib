@@ -34,18 +34,34 @@ public class Program
     //Map of all program attribute locations (location is essentially a GL handle to the attribute itself)
     private final EnumMap<VertexAttribute, Integer> vertexAttributeLocations = new EnumMap<>(VertexAttribute.class);
 
-    public Program(ShaderBuilder shaderBuilder, Map<String, Object> config, String... shaderPaths) throws ParseException, GraphicsException, IOException
+    public Program(ShaderBuilder shaderBuilder, Map<String, Object> config, String... shaderPaths) throws GraphicsException
     {
-        int[] shaderHandles = new int[shaderPaths.length];
-        for (int i = 0; i < shaderPaths.length; i++)
+        try
         {
-            ShaderCode shaderCode = shaderBuilder.build(shaderPaths[i], config);
-            shaderHandles[i] = shaderCode.compile();
+            int[] shaderHandles = new int[shaderPaths.length];
+            for (int i = 0; i < shaderPaths.length; i++)
+            {
+                ShaderCode shaderCode = shaderBuilder.build(shaderPaths[i], config);
+                shaderHandles[i] = shaderCode.compile();
+            }
+            programHandle = link(shaderHandles);
+            for (int i = 0; i < shaderHandles.length; i++)
+            {
+                GLES20.glDeleteShader(shaderHandles[i]);
+            }
+            assertProgramStatus(programHandle);
+            GLES20.glUseProgram(programHandle);
+            extractUniforms();
+            extractAttibutes();
         }
-        programHandle = link(shaderHandles);
-        GLES20.glUseProgram(programHandle);
-        extractUniforms();
-        extractAttibutes();
+        catch (IOException e)
+        {
+            throw new GraphicsException(e);
+        }
+        catch (ParseException e)
+        {
+            throw new GraphicsException(e);
+        }
     }
 
     private int link(int[] shaderHandles) throws GraphicsException
@@ -56,11 +72,6 @@ public class Program
             GLES20.glAttachShader(handle, shaderHandles[i]);
         }
         GLES20.glLinkProgram(handle);
-        for (int i = 0; i < shaderHandles.length; i++)
-        {
-            GLES20.glDeleteShader(shaderHandles[i]);
-        }
-        assertProgramStatus(handle);
         return handle;
     }
 

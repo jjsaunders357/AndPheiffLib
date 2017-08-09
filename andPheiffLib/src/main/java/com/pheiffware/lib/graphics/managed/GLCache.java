@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.managed;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.ParseException;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.program.Program;
@@ -17,7 +16,6 @@ import com.pheiffware.lib.graphics.managed.texture.textureBuilders.DepthRenderTe
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ImageTextureBuilder;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -128,12 +126,12 @@ public class GLCache
         return new CubeDepthRenderTextureBuilder(textureBinder, defaultFilterQuality, width, height);
     }
 
-    public Program buildProgram(String... shaderPaths) throws ParseException, GraphicsException, IOException
+    public Program buildProgram(String... shaderPaths) throws GraphicsException
     {
         return buildProgram(new HashMap<String, Object>(), shaderPaths);
     }
 
-    public Program buildProgram(Map<String, Object> localConfig, String... shaderPaths) throws ParseException, GraphicsException, IOException
+    public Program buildProgram(Map<String, Object> localConfig, String... shaderPaths) throws GraphicsException
     {
         return new Program(shaderBuilder, localConfig, shaderPaths);
     }
@@ -149,8 +147,8 @@ public class GLCache
         {
             Constructor<T> constructor = cls.getConstructor(ShaderBuilder.class, Map.class);
             T technique = constructor.newInstance(shaderBuilder, localConfig);
-            addSystemConfigListener(technique);
             technique.onSystemConfigChanged(graphicsSystemConfig);
+            addSystemConfigListener(technique);
             return technique;
         }
         catch (NoSuchMethodException e)
@@ -181,7 +179,7 @@ public class GLCache
         graphicsConfigListeners.remove(listener);
     }
 
-    private void notifyGraphicsConfigListeners()
+    private void notifyGraphicsConfigListeners() throws GraphicsException
     {
         for (GraphicsConfigListener listener : graphicsConfigListeners)
         {
