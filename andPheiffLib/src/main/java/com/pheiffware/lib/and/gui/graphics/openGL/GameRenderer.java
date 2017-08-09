@@ -7,6 +7,8 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.GLCache;
 
+import java.util.Map;
+
 /**
  * Wraps the GLSurfaceView.Renderer concepts.  The GLCache object manages/simplifies many aspects of OpenGL. This triggers TouchTransformListener events, in the rendering thread.
  */
@@ -49,10 +51,10 @@ public abstract class GameRenderer
      * @param systemInfo
      * @throws GraphicsException
      */
-    void onSurfaceCreated(AndAssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, SystemInfo systemInfo) throws GraphicsException
+    void onSurfaceCreated(AndAssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, Map<String, Object> graphicsSystemConfig, SystemInfo systemInfo) throws GraphicsException
     {
         this.al = al;
-        glCache = new GLCache(al, deviceGLVersion, defaultFilterQuality, rootShaderPath);
+        glCache = new GLCache(al, deviceGLVersion, graphicsSystemConfig, defaultFilterQuality, rootShaderPath);
         this.systemInfo = systemInfo;
         onSurfaceCreated(al, glCache, systemInfo);
     }

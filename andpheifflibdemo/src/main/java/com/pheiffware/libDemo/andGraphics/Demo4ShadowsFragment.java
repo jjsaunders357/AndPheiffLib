@@ -10,6 +10,7 @@ import com.pheiffware.lib.and.graphics.AndGraphicsUtils;
 import com.pheiffware.lib.and.gui.graphics.openGL.BaseGameFragment;
 import com.pheiffware.lib.and.gui.graphics.openGL.GameView;
 import com.pheiffware.lib.and.gui.graphics.openGL.SystemInfo;
+import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.collada.ColladaMaterial;
 import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.FilterQuality;
@@ -42,7 +43,7 @@ import java.util.Arrays;
  * Created by Steve on 6/19/2017.
  */
 
-public class Demo4CubeFrameFragment extends BaseGameFragment
+public class Demo4ShadowsFragment extends BaseGameFragment
 {
     @Override
     public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -130,6 +131,7 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
+            glCache.setProperty(GLCache.ENABLE_SHADOWS, true);
             PheiffGLUtils.enableAlphaTransparency();
             colorShadowTechnique = glCache.buildTechnique(ColorShadowMaterialTechnique.class);
             textureTechnique = glCache.buildTechnique(TextureMaterialTechnique.class);
@@ -194,6 +196,35 @@ public class Demo4CubeFrameFragment extends BaseGameFragment
             simpleRenderer.add(manager.getGroupObjects("main"));
             simpleRenderer.add(monkeyHandle);
             simpleRenderer.render();
+        }
+
+        //TODO: Add tap sensor to touch analyzer
+        private boolean latch;
+
+        @Override
+        public void onTouchTransformEvent(TouchAnalyzer.TouchTransformEvent event)
+        {
+            super.onTouchTransformEvent(event);
+            if (event.numPointers == 5)
+            {
+                if (!latch)
+                {
+                    latch = true;
+                    try
+                    {
+                        getGlCache().setProperty(GLCache.ENABLE_SHADOWS, !getGlCache().getProperty(GLCache.ENABLE_SHADOWS, Boolean.class));
+                    }
+                    catch (GraphicsException e)
+                    {
+                        throw new RuntimeException("Failed to change graphics configuration", e);
+                    }
+                }
+            }
+            else
+            {
+                latch = false;
+            }
+
         }
     }
 }

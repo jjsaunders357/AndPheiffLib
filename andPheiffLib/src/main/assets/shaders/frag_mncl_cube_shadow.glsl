@@ -90,7 +90,13 @@ vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuse
 
     vec4 color = diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
 
-	return vec4(getShadowTransmission(absLightPosition)*color.rgb,color.a);
+    //TODO: Temporary proof of concept to show that configurations work
+    #if enableShadows
+        color.rgb = color.rgb * getShadowTransmission(absLightPosition);
+    #else
+        color.rgb = color.rgb * 1.0 + getShadowTransmission(absLightPosition)/1000.0;
+    #endif
+	return vec4(color.rgb,color.a);
 }
 
 

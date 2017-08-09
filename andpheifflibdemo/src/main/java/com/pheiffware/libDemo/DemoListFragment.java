@@ -15,7 +15,7 @@ import com.pheiffware.lib.and.gui.pheiffListFragment.PheiffViewHolder;
 import com.pheiffware.libDemo.andGraphics.Demo1RawVertexBufferFragment;
 import com.pheiffware.libDemo.andGraphics.Demo2ManagedVertexBuffersFragment;
 import com.pheiffware.libDemo.andGraphics.Demo3ManagedRenderingFragment;
-import com.pheiffware.libDemo.andGraphics.Demo4CubeFrameFragment;
+import com.pheiffware.libDemo.andGraphics.Demo4ShadowsFragment;
 import com.pheiffware.libDemo.andGraphics.Demo5HolographicFragment;
 import com.pheiffware.libDemo.physics.Demo6PhysicsFragment;
 
@@ -47,7 +47,7 @@ public class DemoListFragment extends Fragment implements View.OnClickListener, 
 
     {
         demos = new ArrayList<>(20);
-        demos.add(new DemoData("Cube-Frame", Demo4CubeFrameFragment.class));
+        demos.add(new DemoData("Shadows", Demo4ShadowsFragment.class));
         demos.add(new DemoData("Managed Render", Demo3ManagedRenderingFragment.class));
         demos.add(new DemoData("Managed Vertex Buffers", Demo2ManagedVertexBuffersFragment.class));
         demos.add(new DemoData("Raw Vertex Buffers", Demo1RawVertexBufferFragment.class));
@@ -98,10 +98,10 @@ public class DemoListFragment extends Fragment implements View.OnClickListener, 
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_demo_list, container, false);
-        expandButton = (Button) view.findViewById(R.id.button_expand_demo);
+        expandButton = view.findViewById(R.id.button_expand_demo);
         expandButton.setOnClickListener(this);
         expandButton.setEnabled(selectedItemIndex != -1);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_demo);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_demo);
         PheiffRecyclerViewAdapter<DemoData> adapter = new PheiffRecyclerViewAdapter<DemoData>(demos, selectedItemIndex, this)
         {
             @Override

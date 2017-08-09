@@ -52,6 +52,7 @@ public class TouchAnalyzer
      */
     public static class TouchTransformEvent
     {
+        //Number of pointers involved in the transform
         public final int numPointers;
         public final Transform2D transform;
 

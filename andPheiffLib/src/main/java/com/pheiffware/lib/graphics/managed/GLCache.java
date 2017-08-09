@@ -35,18 +35,20 @@ import java.util.Map;
  */
 public class GLCache
 {
+    public static final String ENABLE_SHADOWS = "enableShadows";
+
     private final int deviceGLVersion;
     private final FilterQuality defaultFilterQuality;
     private final TextureBinder textureBinder;
     private final AssetLoader al;
     private final ShaderBuilder shaderBuilder;
-    private final Map<String, Object> graphicsSystemConfig = new HashMap<>();
+    private final Map<String, Object> graphicsSystemConfig;
     private final List<GraphicsConfigListener> graphicsConfigListeners = new ArrayList<>();
 
     //Remembered texture images, used to avoid loading the same image twice
     private final Map<String, Texture2D> textureImageCache = new HashMap<>();
 
-    public GLCache(AssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, String shaderRootPath)
+    public GLCache(AssetLoader al, int deviceGLVersion, Map<String, Object> graphicsSystemConfig, FilterQuality defaultFilterQuality, String shaderRootPath)
     {
         if (deviceGLVersion < 2)
         {
@@ -55,8 +57,33 @@ public class GLCache
         this.deviceGLVersion = deviceGLVersion;
         this.defaultFilterQuality = defaultFilterQuality;
         this.al = al;
+        this.graphicsSystemConfig = graphicsSystemConfig;
         shaderBuilder = new ShaderBuilder(al, shaderRootPath);
         textureBinder = new TextureBinder(PheiffGLUtils.getNumTextureUnits(), new MostRecentTextureBindingStrategy(PheiffGLUtils.getNumTextureUnits()));
+    }
+
+    /**
+     * Changes configuration settings for the graphics system.  This will notify all graphical objects, which care, to reconfigure themselves.
+     * This will only be called on the rendering thread!
+     *
+     * @param graphicsSystemConfig the new configuration
+     */
+    public void configure(Map<String, Object> graphicsSystemConfig) throws GraphicsException
+    {
+        this.graphicsSystemConfig.clear();
+        this.graphicsSystemConfig.putAll(graphicsSystemConfig);
+        notifyGraphicsConfigListeners();
+    }
+
+    public void setProperty(String name, Object value) throws GraphicsException
+    {
+        graphicsSystemConfig.put(name, value);
+        notifyGraphicsConfigListeners();
+    }
+
+    public <T> T getProperty(String name, Class<T> cls)
+    {
+        return (T) graphicsSystemConfig.get(name);
     }
 
     /**
@@ -192,4 +219,5 @@ public class GLCache
         //TODO: dynamic buffers should be created through this class
         //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }
+
 }

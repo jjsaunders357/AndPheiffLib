@@ -21,6 +21,8 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -87,17 +89,19 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
     @Override
     public void onSurfaceCreated(GL10 useless, EGLConfig config)
     {
-        //TODO: Cleanup exceptions
         AndUtils.logLC(this, "SurfaceCreated");
         try
         {
             DisplayMetrics metrics = getResources().getDisplayMetrics();
-            renderer.onSurfaceCreated(assetLoader, AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, new SystemInfo(metrics.xdpi, metrics.ydpi));
+            //TODO: Get this from loaded system state somehow
+            Map<String, Object> graphicsSystemConfig = new HashMap<>();
+            renderer.onSurfaceCreated(assetLoader, AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, graphicsSystemConfig, new SystemInfo(metrics.xdpi, metrics.ydpi));
             PheiffGLUtils.assertNoError();
             surfaceInitialized = true;
         }
         catch (GraphicsException e)
         {
+            //TODO: How to kill program gracefully on exception here?
             Log.e("Fatal", "Error during surface creation", e);
         }
     }
