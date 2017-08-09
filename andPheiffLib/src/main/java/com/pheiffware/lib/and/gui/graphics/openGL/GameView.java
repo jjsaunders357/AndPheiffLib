@@ -20,6 +20,8 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
+import java.util.Arrays;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -37,9 +39,10 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
     private final TouchAnalyzer touchAnalyzer;
 
     //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
-    //Prevents messages from ever being sent to rendering thread if it has not been initialized yet.
+    //Prevents sensor and other messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
 
+    //TODO: Merge FilterQuality into system graphics settings
     public GameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
     {
         super(context);
@@ -192,7 +195,6 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
 
     public void forwardSensorEvent(final SensorEvent event)
     {
-        //TODO: Is it safe to pass SensorEvent objects into another thread or do they need to be copied?
         if (isSurfaceInitialized())
         {
             queueEvent(new Runnable()
@@ -200,7 +202,10 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
                 @Override
                 public void run()
                 {
-                    renderer.onSensorChanged(event);
+                    long timestamp = event.timestamp;
+                    float[] values = Arrays.copyOf(event.values, event.values.length);
+                    int type = event.sensor.getType();
+                    renderer.onSensorChanged(type, values, timestamp);
                 }
             });
         }

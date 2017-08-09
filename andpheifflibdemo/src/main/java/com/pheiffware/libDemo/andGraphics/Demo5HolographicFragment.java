@@ -47,7 +47,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
     {
         return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, true, true)
         {
-            private OrientationTracker orientationTracker = new OrientationTracker(true);
+            private OrientationTracker brightnessOrientationTracker = new OrientationTracker(true);
 
             @Override
             public void onSensorChanged(SensorEvent event)
@@ -56,9 +56,8 @@ public class Demo5HolographicFragment extends BaseGameFragment
                 switch (event.sensor.getType())
                 {
                     case Sensor.TYPE_ROTATION_VECTOR:
-
-                        orientationTracker.onSensorChanged(event);
-                        Matrix4 currentOrientation = orientationTracker.getCurrentOrientation();
+                        brightnessOrientationTracker.onSensorChanged(event.values);
+                        Matrix4 currentOrientation = brightnessOrientationTracker.getCurrentOrientation();
                         float[] vals = new float[]{0, 0, 1, 0};
                         float[] result = currentOrientation.transform4DFloatVector(vals);
                         float cosTheta = vals[0] * result[0] + vals[1] * result[1] + vals[2] * result[2];
@@ -182,18 +181,16 @@ public class Demo5HolographicFragment extends BaseGameFragment
             }
         }
 
-
         @Override
-        public void onSensorChanged(SensorEvent event)
+        protected void onSensorChanged(int type, float[] values, long timestamp)
         {
-            switch (event.sensor.getType())
+            switch (type)
             {
                 case Sensor.TYPE_ROTATION_VECTOR:
-                    orientationTracker.onSensorChanged(event);
+                    orientationTracker.onSensorChanged(values);
                     break;
             }
         }
     }
-
 
 }

@@ -1,8 +1,5 @@
 package com.pheiffware.lib.and.input;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.pheiffware.lib.graphics.Matrix4;
@@ -12,7 +9,7 @@ import com.pheiffware.lib.graphics.Matrix4;
  * <p/>
  * Created by Steve on 7/5/2016.
  */
-public class OrientationTracker implements SensorEventListener
+public class OrientationTracker
 {
     //This tracks whether a sensor event has come in yet.  If not, then calling getCurrentOrientation, will return null.
     private boolean initialSensorStateRead = false;
@@ -38,13 +35,12 @@ public class OrientationTracker implements SensorEventListener
         this.zeroOnFirstReading = zeroOnFirstReading;
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event)
+    public void onSensorChanged(float[] sensorEventValues)
     {
-        lastReadSensorValues[0] = event.values[0];
-        lastReadSensorValues[1] = event.values[1];
-        lastReadSensorValues[2] = event.values[2];
-        lastReadSensorValues[3] = event.values[3];
+        lastReadSensorValues[0] = sensorEventValues[0];
+        lastReadSensorValues[1] = sensorEventValues[1];
+        lastReadSensorValues[2] = sensorEventValues[2];
+        lastReadSensorValues[3] = sensorEventValues[3];
         initialSensorStateRead = true;
     }
 
@@ -91,12 +87,5 @@ public class OrientationTracker implements SensorEventListener
     {
         SensorManager.getRotationMatrixFromVector(rawOrientationMatrix.m, lastReadSensorValues);
         setZeroOrientationMatrix(rawOrientationMatrix);
-    }
-
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy)
-    {
-
     }
 }

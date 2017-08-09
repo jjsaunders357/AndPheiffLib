@@ -1,6 +1,5 @@
 package com.pheiffware.libDemo.andGraphics;
 
-import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -139,12 +138,6 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
             super.onSurfaceResize(width, height);
             GLES20.glViewport(0, 0, width, height);
             ortho2DMatrix = Matrix4.newOrtho2D(width / (float) height);
-        }
-
-        @Override
-        public void onSensorChanged(SensorEvent event)
-        {
-
         }
     }
 }

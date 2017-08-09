@@ -1,7 +1,5 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
-import android.hardware.SensorEvent;
-
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
@@ -95,18 +93,6 @@ public abstract class GameRenderer
     public abstract void onDrawFrame() throws GraphicsException;
 
 
-    //TODO: Move out of renderer.  Instead should be forwarded to logic thread which manages state
-
-    /**
-     * If the surrounding view is initialized to forward one or more types of sensor events this is called in the rendering thread whenever a sensor event happens.
-     *
-     * @param event
-     */
-    public void onSensorChanged(SensorEvent event)
-    {
-
-    }
-
     /**
      * If the surrounding view is initialized to forward TouchTransformEvents this is called in the rendering thread whenever an event happens.
      *
@@ -148,6 +134,20 @@ public abstract class GameRenderer
     }
 
     /**
+     * If the surrounding view is initialized to forward one or more types of sensor events this is called in the rendering thread whenever a sensor event happens.
+     * <p>
+     * Note: parameters are copied from the original event, for thread safety reasons.
+     *
+     * @param type      the type of sensor (example: Sensor.TYPE_ROTATION_VECTOR)
+     * @param values    the sensor's values
+     * @param timestamp when the event occurred
+     */
+    protected void onSensorChanged(int type, float[] values, long timestamp)
+    {
+
+    }
+
+    /**
      * The minimum, major version of openGL, which your renderer has been coded to support.  If this version is not available,
      * this will fail gracefully.
      *
@@ -169,4 +169,5 @@ public abstract class GameRenderer
     {
         return maxSupportedGLVersion;
     }
+
 }

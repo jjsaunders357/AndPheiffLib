@@ -1,6 +1,5 @@
 package com.pheiffware.libDemo;
 
-import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -111,11 +110,5 @@ public abstract class Demo3DRenderer extends GameRenderer
         {
             camera.forwardStrafeInput((float) transform.translation.x, (float) transform.translation.y, (float) screenDPToCameraTranslation);
         }
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event)
-    {
-
     }
 }

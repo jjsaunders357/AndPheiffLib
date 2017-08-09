@@ -192,9 +192,4 @@ public class GLCache
         //TODO: dynamic buffers should be created through this class
         //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }
-
-    public AssetLoader getAssertLoader()
-    {
-        return al;
-    }
 }
