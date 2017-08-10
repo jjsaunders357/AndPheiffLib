@@ -11,9 +11,6 @@ uniform bool onState[numLights];
 //Position of light
 uniform vec4 lightPositionEyeSpace[numLights];
 
-//Position of light in absolute space
-uniform vec4 lightPosition[numLights];
-
 //The light color * specular material color
 uniform vec4 specLightMaterialColor[numLights];
 
@@ -38,8 +35,14 @@ uniform mediump samplerCubeShadow cubeDepthSampler;
 in vec4 positionEyeSpace;
 in vec3 normalEyeSpace;
 
-//Position of point being rendered in absolute space
-in vec3 absPosition;
+//TODO: Structures for lighting info?
+#if enableShadows
+    //Position of lights in absolute space
+    uniform vec4 lightPosition[numLights];
+
+    //Position of point being rendered in absolute space
+    in vec3 absPosition;
+#endif
 
 layout(location = 0) out vec4 fragColor;
 
@@ -49,7 +52,7 @@ The amount of light transmission taking into account shadows.
 1.0 - no shadow,
 0.0 - 100% shadow,
 */
-float getShadowTransmission(vec4 absLightPosition)
+float getShadowTransmission(vec3 absPosition, vec4 absLightPosition)
 {
     vec3 lightToPositionAbs = absPosition - absLightPosition.xyz;
 
@@ -69,7 +72,7 @@ float getShadowTransmission(vec4 absLightPosition)
 /**
 The light color for the given light.  The alpha channel will generally be 0.0 except for specular contributions.
 */
-vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
+vec4 light_color(vec4 lightPositionEyeSpace, vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
 {
     //Normalize the surface's normal
     vec3 surfaceNormal = normalize(normalEyeSpace);
@@ -88,15 +91,7 @@ vec4 light_color(vec4 absLightPosition, vec4 lightPositionEyeSpace, vec4 diffuse
 	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),ZERO);
     specBrightness = pow(specBrightness,shininess);
 
-    vec4 color = diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
-
-    //TODO: Temporary proof of concept to show that configurations work
-    #if enableShadows
-        color.rgb = color.rgb * getShadowTransmission(absLightPosition);
-    #else
-        color.rgb = color.rgb * 1.0 + getShadowTransmission(absLightPosition)/1000.0;
-    #endif
-	return vec4(color.rgb,color.a);
+    return diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
 }
 
 
@@ -108,7 +103,11 @@ void main()
     {
         if(onState[i])
         {
-            totalLightMaterialColor += light_color(lightPosition[i],lightPositionEyeSpace[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
+            vec4 color = light_color(lightPositionEyeSpace[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
+            #if enableShadows
+                color.rgb = color.rgb * getShadowTransmission(absPosition, lightPosition[i]);
+            #endif
+            totalLightMaterialColor += color;
         }
     }
     //Color of fragment is the combination of all colors

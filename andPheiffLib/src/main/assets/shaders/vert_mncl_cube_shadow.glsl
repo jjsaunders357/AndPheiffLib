@@ -2,9 +2,6 @@
 #version 300 es
 precision highp float;
 
-//Transforms vertices to model space
-uniform mat4 modelMatrix;
-
 //Transforms vertices to eye space
 uniform mat4 viewModelMatrix;
 
@@ -19,18 +16,25 @@ uniform float projectionMaxDepth;
 in vec4 vertexPosition4;
 in vec3 vertexNormal;
 
-//Absolute position
-out vec3 absPosition;
-
 //Position, in eye space
 out vec4 positionEyeSpace;
 
 //Normal, in eye space
 out vec3 normalEyeSpace;
 
+#if enableShadows
+    //Transforms vertices to model space
+    uniform mat4 modelMatrix;
+
+    //Absolute position
+    out vec3 absPosition;
+#endif
+
 void main()
 {
-    absPosition = (modelMatrix * vertexPosition4).xyz;
+    #if enableShadows
+        absPosition = (modelMatrix * vertexPosition4).xyz;
+    #endif
 	normalEyeSpace = normalize(normalMatrix * vertexNormal);
 	positionEyeSpace = viewModelMatrix * vertexPosition4;
 

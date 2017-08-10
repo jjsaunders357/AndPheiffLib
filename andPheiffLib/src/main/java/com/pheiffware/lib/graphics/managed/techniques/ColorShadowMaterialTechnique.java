@@ -2,6 +2,8 @@ package com.pheiffware.lib.graphics.managed.techniques;
 
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
@@ -17,6 +19,8 @@ import java.util.Map;
  */
 public class ColorShadowMaterialTechnique extends Technique3D
 {
+    private boolean shadows;
+
     public ColorShadowMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
     {
         super(shaderBuilder, localConfig, new RenderProperty[]{
@@ -35,18 +39,33 @@ public class ColorShadowMaterialTechnique extends Technique3D
     {
         setProjectionLinearDepth();
         setLightingConstants();
+        if (shadows)
+        {
+            Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
+            setUniformValue(UniformName.LIGHT_POS, lighting.getPositions());
+        }
     }
 
     @Override
     public void applyInstanceProperties()
     {
-        Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
-        setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
         setViewModelNormal();
         setLightingColors();
 
         setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
-        Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);
-        setUniformValue(UniformName.DEPTH_CUBE_SAMPLER, cubeDepthTexture.autoBind());
+        if (shadows)
+        {
+            Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);
+            setUniformValue(UniformName.DEPTH_CUBE_SAMPLER, cubeDepthTexture.autoBind());
+            Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
+            setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
+        }
+    }
+
+    @Override
+    protected void onConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> config) throws GraphicsException
+    {
+        super.onConfigChanged(shaderBuilder, config);
+        shadows = (Boolean) config.get(GLCache.ENABLE_SHADOWS);
     }
 }

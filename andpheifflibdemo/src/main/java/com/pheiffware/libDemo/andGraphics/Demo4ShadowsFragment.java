@@ -137,7 +137,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             textureTechnique = glCache.buildTechnique(TextureMaterialTechnique.class);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
-            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 2, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 3, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             lighting.setMaximumDistance(0, maximumLightDistance);
             simpleRenderer = new SimpleRenderer();
             cubeRenderer = new CubeDepthRenderer(glCache, cubeDepthTexture);
@@ -155,7 +155,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             {
                 monkeyHandle = loader.loadCollada("meshes/test_render.dae", "other").get("Monkey");
                 loader.loadCollada("meshes/shadows.dae");
-                monkeyTransform = Matrix4.newTranslation(0.5f, 1f, -2f);
+                monkeyTransform = Matrix4.newTranslation(0.5f, 1f, -1f);
                 monkeyTransform.scaleBy(0.7f, 0.7f, 0.7f);
                 manager.packAndTransfer();
             }

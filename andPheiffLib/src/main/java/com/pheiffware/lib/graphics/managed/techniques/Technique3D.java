@@ -69,8 +69,7 @@ public abstract class Technique3D extends ProgramTechnique
     {
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        float[] transformedLightPositions = lighting.transformLightPositions(viewMatrix);
-        setUniformValue(UniformName.LIGHT_POS_EYE, transformedLightPositions);
+        setUniformValue(UniformName.LIGHT_POS_EYE, lighting.transformLightPositions(viewMatrix));
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
     }
 
