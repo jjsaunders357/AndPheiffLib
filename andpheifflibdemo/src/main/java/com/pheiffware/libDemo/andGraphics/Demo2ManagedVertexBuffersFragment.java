@@ -18,11 +18,11 @@ import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.MeshDataManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
+import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
-import com.pheiffware.lib.graphics.managed.techniques.Tech2D.Color2DTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.Tech2D.ColorTexture2DTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.Tech2D.Std2DTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 
@@ -51,8 +51,8 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
         private MeshHandle handle1;
         private MeshHandle handle2;
         private MeshHandle handle3;
-        private Color2DTechnique color2DTechnique;
-        private ColorTexture2DTechnique colorTexture2DTechnique;
+        private Std2DTechnique color2DTechnique;
+        private Std2DTechnique colorTexture2DTechnique;
 
         private Renderer()
         {
@@ -65,8 +65,10 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            color2DTechnique = glCache.buildTechnique(Color2DTechnique.class);
-            colorTexture2DTechnique = glCache.buildTechnique(ColorTexture2DTechnique.class);
+            color2DTechnique = glCache.buildTechnique(Std2DTechnique.class,
+                    GraphicsConfig.TEXTURED_2D, false,
+                    GraphicsConfig.COLOR_VERTEX_2D, true);
+            colorTexture2DTechnique = glCache.buildTechnique(Std2DTechnique.class);
             faceTexture = glCache.buildImageTex("images/face.png").build();
 
             manager = new MeshDataManager();
@@ -86,13 +88,13 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
                     mesh2,
                     EnumSet.of(VertexAttribute.COLOR),
                     colorTexture2DTechnique,
-                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture), new RenderPropertyValue(RenderProperty.MODEL_MATRIX, Matrix4.newIdentity())});
+                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.IMAGE_TEXTURE, faceTexture), new RenderPropertyValue(RenderProperty.MODEL_MATRIX, Matrix4.newIdentity())});
 
             //Mesh 2 - Texture, static modulated color - constant blue
             handle3 = manager.addStaticMesh(
                     mesh3,
                     colorTexture2DTechnique,
-                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.MAT_COLOR_TEXTURE, faceTexture), new RenderPropertyValue(RenderProperty.MODEL_MATRIX, Matrix4.newIdentity())});
+                    new RenderPropertyValue[]{new RenderPropertyValue(RenderProperty.IMAGE_TEXTURE, faceTexture), new RenderPropertyValue(RenderProperty.MODEL_MATRIX, Matrix4.newIdentity())});
             manager.packAndTransfer();
         }
 

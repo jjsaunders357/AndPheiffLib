@@ -1,7 +1,6 @@
 package com.pheiffware.lib.graphics.managed.techniques;
 
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
 import java.util.Map;
@@ -16,11 +15,7 @@ public class DepthCubeTechnique extends Technique3D
 {
     public DepthCubeTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
     {
-        super(shaderBuilder, localConfig, new RenderProperty[]{
-                RenderProperty.PROJECTION_LINEAR_DEPTH,
-                RenderProperty.VIEW_MATRIX,
-                RenderProperty.MODEL_MATRIX
-        }, "vert_depth.glsl", "frag_depth.glsl");
+        super(shaderBuilder, localConfig, "vert_depth.glsl", "frag_depth.glsl");
     }
 
     public void applyConstantPropertiesImplement()

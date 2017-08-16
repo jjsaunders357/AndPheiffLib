@@ -35,7 +35,6 @@ import java.util.Map;
  */
 public class GLCache
 {
-    public static final String ENABLE_SHADOWS = "enableShadows";
 
     private final int deviceGLVersion;
     private final FilterQuality defaultFilterQuality;
@@ -75,13 +74,13 @@ public class GLCache
         notifyGraphicsConfigListeners();
     }
 
-    public void setProperty(String name, Object value) throws GraphicsException
+    public void setConfigProperty(String name, Object value) throws GraphicsException
     {
         graphicsSystemConfig.put(name, value);
         notifyGraphicsConfigListeners();
     }
 
-    public <T> T getProperty(String name, Class<T> cls)
+    public <T> T getConfigProperty(String name, Class<T> cls)
     {
         return (T) graphicsSystemConfig.get(name);
     }
@@ -166,6 +165,22 @@ public class GLCache
     public <T extends Technique> T buildTechnique(Class<T> cls) throws GraphicsException
     {
         return buildTechnique(new HashMap<String, Object>(), cls);
+    }
+
+    public <T extends Technique> T buildTechnique(Class<T> cls, Object... nameValues) throws GraphicsException
+    {
+        if (nameValues.length % 2 != 0)
+        {
+            throw new IllegalArgumentException("Uneven number of arguments to buildTechnique");
+        }
+        Map<String, Object> localConfig = new HashMap<>();
+        for (int i = 0; i < nameValues.length; i += 2)
+        {
+            String name = (String) nameValues[i];
+            Object value = nameValues[i + 1];
+            localConfig.put(name, value);
+        }
+        return buildTechnique(localConfig, cls);
     }
 
     public <T extends Technique> T buildTechnique(Map<String, Object> localConfig, Class<T> cls) throws GraphicsException

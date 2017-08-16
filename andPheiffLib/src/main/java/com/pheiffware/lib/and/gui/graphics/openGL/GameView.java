@@ -47,7 +47,6 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
     //Prevents sensor and other messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
 
-    //TODO: Merge FilterQuality into system graphics settings
     public GameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
     {
         super(context);
@@ -106,7 +105,8 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         catch (GraphicsException e)
         {
             //TODO: How to kill program gracefully on exception here?
-            Log.e("Fatal", "Error during surface creation", e);
+            //Log.e("Fatal", "Error during surface creation", e);
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,25 +1,13 @@
 #type FRAGMENT
+#include include/lightingUniforms.glsl
+#include include/lightingCalcs.glsl
 #version 300 es
 precision mediump float;
 
-const float ZERO=0.0;
-const float ONE=1.0;
-const int numLights = 4;
-
-//Is the light on?
-uniform bool onState[numLights];
-
-//Position of light
-uniform vec4 lightPosition[numLights];
-
-//The light color * specular material color
-uniform vec4 specLightMaterialColor[numLights];
-
-//The light color * diff material color
-uniform vec4 diffuseLightMaterialColor[numLights];
-
-//The ambient light color * material color
-uniform vec4 ambientLightMaterialColor;
+#if !enableShadows
+    //Position of lights in absolute space
+    uniform vec4 lightPositionAbs[numLights];
+#endif
 
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;
@@ -31,42 +19,18 @@ uniform float materialAlpha;
 uniform highp vec4 eyePosition;
 
 //Position/normal of point being rendered in screen space
-in vec4 position;
-in vec3 normal;
+in vec4 fragPositionAbs;
+in vec3 normalAbs;
 
 //Color of the screen's surface.  Anything with a z position < 0, has this blended in.
 uniform vec4 screenColor;
 
 layout(location = 0) out vec4 fragColor;
 
-vec4 light_color(vec4 lightPosition,vec4 diffuseLightMaterialColor, vec4 specLightMaterialColor)
-{
-    //Normalize the surface's normal
-    vec3 surfaceNormal = normalize(normal);
-
-    //Incoming light vector to current position
-    vec3 incomingLightDirection = normalize(position.xyz - lightPosition.xyz);
-
-    //Reflected light vector from current position
-    vec3 outgoingLightDirection = reflect(incomingLightDirection,surfaceNormal);
-
-    //Vector from position to eye.  Since all geometry is assumed to be in eye space, the eye is always at the origin.
-    vec3 positionToEyeDirection = normalize(eyePosition.xyz-position.xyz);
-
-    //Calculate how bright various types of light are
-	float diffuseBrightness = max(dot(incomingLightDirection,-surfaceNormal),ZERO);
-	float specBrightness = max(dot(outgoingLightDirection, positionToEyeDirection),ZERO);
-    specBrightness = pow(specBrightness,shininess);
-
-	//Sum (light brightness) * (light color) * (material color) for diff and spec.
-	return diffuseBrightness * diffuseLightMaterialColor + specBrightness * specLightMaterialColor;
-}
-
 vec4 blendScreen(vec4 color)
 {
     return vec4(mix(color.rgb, screenColor.rgb, screenColor.a), color.a);
 }
-
 
 void main()
 {
@@ -75,13 +39,18 @@ void main()
     {
         if(onState[i])
         {
-            totalLightMaterialColor += light_color(lightPosition[i],diffuseLightMaterialColor[i],specLightMaterialColor[i]);
+            totalLightMaterialColor += calcLightColor(fragPositionAbs.xyz - lightPositionAbs[i].xyz, //light to fragment vector
+                                     eyePosition.xyz-fragPositionAbs.xyz,                            //fragment to eye vector
+                                     normalAbs,                                                      //Surface normal
+                                     diffuseLightMaterialColor[i],                                   //Light * diffuse material color
+                                     specLightMaterialColor[i],                                      //Light * specular material color
+                                     shininess);                                                     //Material shininess
         }
     }
-    if(position.z < ZERO)
+    if(fragPositionAbs.z < 0.0)
     {
         totalLightMaterialColor = blendScreen(totalLightMaterialColor);
     }
-	fragColor = totalLightMaterialColor + vec4(ZERO, ZERO, ZERO, materialAlpha);
+	fragColor = totalLightMaterialColor + vec4(0.0, 0.0, 0.0, materialAlpha);
 }
 

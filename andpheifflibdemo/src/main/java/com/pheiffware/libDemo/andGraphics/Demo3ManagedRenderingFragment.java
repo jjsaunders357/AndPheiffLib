@@ -22,11 +22,11 @@ import com.pheiffware.lib.graphics.managed.engine.ObjectHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectManager;
 import com.pheiffware.lib.graphics.managed.engine.renderers.SimpleRenderer;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.techniques.ColorMaterialTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.Std3DTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 import com.pheiffware.lib.utils.dom.XMLParseException;
@@ -111,8 +111,8 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
         private ObjectHandle cubeHandle;
         private float rotationRate = 1f;
         private SimpleRenderer simpleRenderer;
-        private ColorMaterialTechnique colorTechnique;
-        private TextureMaterialTechnique textureTechnique;
+        private Std3DTechnique colorTechnique;
+        private Std3DTechnique textureTechnique;
         private Matrix4 cubeTransform;
         private Matrix4 monkeyTransform;
 
@@ -125,10 +125,15 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
         @Override
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
+            //TODO: Add configurable precision
+            //TODO: Merge FilterQuality into system graphics settings
+
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
-            colorTechnique = glCache.buildTechnique(ColorMaterialTechnique.class);
-            textureTechnique = glCache.buildTechnique(TextureMaterialTechnique.class);
+            glCache.setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, false);
+            colorTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
+            textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
+
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             simpleRenderer = new SimpleRenderer();
             manager = new ObjectManager();

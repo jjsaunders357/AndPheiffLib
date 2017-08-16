@@ -7,6 +7,10 @@ package com.pheiffware.lib.graphics.managed.program;
  */
 public enum RenderProperty
 {
+    //2D
+    //Texture used as an image for 2D rendering
+    IMAGE_TEXTURE,
+
     //An alternative to a projection matrix, this holds all information required to perform projection,
     //but results in linear depth.  In practice this is often faster than a projection matrix, as the
     //projection matrix can't be multiplied in with view and model anyways.

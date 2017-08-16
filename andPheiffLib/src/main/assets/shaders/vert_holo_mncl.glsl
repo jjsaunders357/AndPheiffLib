@@ -23,16 +23,16 @@ uniform float aspectRatio;
 //A length of 1 corresponds to 1/2 the width of the screen.
 in vec4 vertexPosition4;
 in vec3 vertexNormal;
-out vec4 position;
-out vec3 normal;
+out vec4 fragPositionAbs;
+out vec3 normalAbs;
 void main()
 {
-	normal = normalize(normalMatrix * vertexNormal);
-	position = modelMatrix * vertexPosition4;
-    position.y *= aspectRatio;
-	float w = eyePosition.z - position.z;
-	float x = position.x * w - position.z * (eyePosition.x - position.x);
-	float y = position.y * w - position.z * (eyePosition.y - position.y);
+	normalAbs = normalize(normalMatrix * vertexNormal);
+	fragPositionAbs = modelMatrix * vertexPosition4;
+    fragPositionAbs.y *= aspectRatio;
+	float w = eyePosition.z - fragPositionAbs.z;
+	float x = fragPositionAbs.x * w - fragPositionAbs.z * (eyePosition.x - fragPositionAbs.x);
+	float y = fragPositionAbs.y * w - fragPositionAbs.z * (eyePosition.y - fragPositionAbs.y);
 
 // z mapped to range [0,1]
     float z = (w-zNear)/(zFar-zNear);

@@ -9,6 +9,10 @@ import java.util.Map;
 
 public enum UniformName
 {
+    //2D
+    //Texture used as an image for 2D rendering
+    IMAGE_TEXTURE("imageTexture"),
+
     PROJECTION_VIEW_MODEL_MATRIX("projectionViewModelMatrix"),
     PROJECTION_MATRIX("projectionMatrix"),
     PROJECTION_SCALE_X("projectionScaleX"),
@@ -18,24 +22,34 @@ public enum UniformName
     VIEW_MATRIX("viewMatrix"),
     MODEL_MATRIX("modelMatrix"),
     NORMAL_MATRIX("normalMatrix"),
-    AMBIENT_LIGHT_COLOR("ambientLightColor"),
-    LIGHT_COLOR("lightColor"),
-    AMBIENT_LIGHTMAT_COLOR("ambientLightMaterialColor"),
-    DIFF_LIGHTMAT_COLOR("diffuseLightMaterialColor"),
-    SPEC_LIGHTMAT_COLOR("specLightMaterialColor"),
-    MAT_ALPHA("materialAlpha"),
-    LIGHT_POS_EYE("lightPositionEyeSpace"),
-    LIGHT_POS("lightPosition"),
+
+    //General Lighting:
     ON_STATE("onState"),
+    LIGHT_POS_EYE("lightPositionEyeSpace"),
+    SPEC_LIGHTMAT_COLOR("specLightMaterialColor"),
+
+    //Textured material lighting:
+    LIGHT_COLOR("lightColor"),
+    AMBIENT_LIGHT_COLOR("ambientLightColor"),
+    DIFFUSE_MATERIAL_SAMPLER("diffuseMaterialColorSampler"),
+
+    //Solid color material lighting:
+    DIFF_LIGHTMAT_COLOR("diffuseLightMaterialColor"),
+    AMBIENT_LIGHTMAT_COLOR("ambientLightMaterialColor"),
+
+    //For shadow casting:
+    LIGHT_POS("lightPositionAbs"),
+    DEPTH_CUBE_SAMPLER("cubeDepthSampler"),
+
+
+    MAT_ALPHA("materialAlpha"),
     SHININESS("shininess"),
     EYE_POSITION("eyePosition"),
     ZNEAR("zNear"),
     ZFAR("zFar"),
     ASPECT_RATIO("aspectRatio"),
     SCREEN_COLOR("screenColor"),
-    MATERIAL_SAMPLER("materialColorSampler"),
-    DEPTH_SAMPLER("depthSampler"),
-    DEPTH_CUBE_SAMPLER("cubeDepthSampler");
+    DEPTH_SAMPLER("depthSampler");
     private static final Map<String, UniformName> nameLookup;
 
     static

@@ -19,7 +19,6 @@ import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 public class CubeDepthRenderer extends Renderer
 {
     private final FrameBuffer frameBuffer;
-    //TODO: Make programs/techniques unique (put them in cache, so same program/shader loaded more than once, ends up being cached).
     private final Technique depthCubeTechnique;
     private final TextureCubeMap cubeDepthTexture;
     private final TechniqueRenderPass depthRenderPass;

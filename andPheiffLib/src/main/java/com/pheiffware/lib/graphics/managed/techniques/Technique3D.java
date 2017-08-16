@@ -23,9 +23,9 @@ public abstract class Technique3D extends ProgramTechnique
     private final float[] matColor = new float[4];
 
 
-    public Technique3D(ShaderBuilder shaderBuilder, Map<String, Object> localConfig, RenderProperty[] properties, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
+    public Technique3D(ShaderBuilder shaderBuilder, Map<String, Object> localConfig, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
     {
-        super(shaderBuilder, localConfig, properties, vertexShaderAsset, fragmentShaderAsset);
+        super(shaderBuilder, localConfig, vertexShaderAsset, fragmentShaderAsset);
     }
 
     protected final void setViewModel()
@@ -87,16 +87,14 @@ public abstract class Technique3D extends ProgramTechnique
         matColor[2] = temp[2];
         final float alpha = temp[3];
 
-        final float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
-
         final Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
         float[] ambLightMatColor = lighting.calcAmbientMatColor(matColor);
         float[] lightDiffMatColor = lighting.calcDiffMatColor(matColor);
-        float[] lightSpecColor = lighting.calcSpecMatColor(specMatColor);
         setUniformValue(UniformName.AMBIENT_LIGHTMAT_COLOR, ambLightMatColor);
         setUniformValue(UniformName.DIFF_LIGHTMAT_COLOR, lightDiffMatColor);
-        setUniformValue(UniformName.SPEC_LIGHTMAT_COLOR, lightSpecColor);
         setUniformValue(UniformName.MAT_ALPHA, alpha);
+
+        setSpecLightingColor();
     }
 
     /**
@@ -104,8 +102,8 @@ public abstract class Technique3D extends ProgramTechnique
      */
     protected final void setSpecLightingColor()
     {
-        final float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
         final Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
+        final float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
         float[] lightSpecColor = lighting.calcSpecMatColor(specMatColor);
         setUniformValue(UniformName.SPEC_LIGHTMAT_COLOR, lightSpecColor);
     }

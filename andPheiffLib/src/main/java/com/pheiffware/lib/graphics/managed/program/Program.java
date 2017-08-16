@@ -90,7 +90,7 @@ public class Program
     /**
      * Extracts all uniforms and their details from the program by querying OpenGL.
      */
-    private void extractUniforms()
+    private void extractUniforms() throws GraphicsException
     {
         int[] numUniformsArray = new int[1];
         GLES20.glGetProgramiv(programHandle, GLES20.GL_ACTIVE_UNIFORMS, numUniformsArray, 0);
@@ -99,6 +99,10 @@ public class Program
         {
             Uniform uniform = Uniform.createUniform(programHandle, i);
             UniformName name = UniformName.lookupByName(uniform.name);
+            if (name == null)
+            {
+                throw new GraphicsException("Unregister uniform: " + uniform.name);
+            }
             uniforms.put(name, uniform);
         }
     }

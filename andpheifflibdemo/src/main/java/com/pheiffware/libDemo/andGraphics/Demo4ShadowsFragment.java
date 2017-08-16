@@ -25,11 +25,11 @@ import com.pheiffware.lib.graphics.managed.engine.renderers.CubeDepthRenderer;
 import com.pheiffware.lib.graphics.managed.engine.renderers.SimpleRenderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.managed.techniques.ColorShadowMaterialTechnique;
-import com.pheiffware.lib.graphics.managed.techniques.TextureMaterialTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.Std3DTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
@@ -113,9 +113,9 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         private final float maximumLightDistance = 25.0f;
         private Lighting lighting;
         private ObjectManager manager;
-        private ColorShadowMaterialTechnique colorShadowTechnique;
+        private Std3DTechnique colorTechnique;
 
-        private TextureMaterialTechnique textureTechnique;
+        private Std3DTechnique textureTechnique;
         private TextureCubeMap cubeDepthTexture;
         private SimpleRenderer simpleRenderer;
         private CubeDepthRenderer cubeRenderer;
@@ -131,10 +131,11 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
-            glCache.setProperty(GLCache.ENABLE_SHADOWS, true);
             PheiffGLUtils.enableAlphaTransparency();
-            colorShadowTechnique = glCache.buildTechnique(ColorShadowMaterialTechnique.class);
-            textureTechnique = glCache.buildTechnique(TextureMaterialTechnique.class);
+            glCache.setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, true);
+
+            colorTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
+            textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 3, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
@@ -148,7 +149,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
                     glCache,
                     al,
                     "images", //Where images are located
-                    colorShadowTechnique,
+                    colorTechnique,
                     textureTechnique);
 
             try
@@ -178,11 +179,11 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             cubeRenderer.add(monkeyHandle);
             cubeRenderer.render();
 
-            colorShadowTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
-            colorShadowTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
-            colorShadowTechnique.setProperty(RenderProperty.LIGHTING, lighting);
-            colorShadowTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
-            colorShadowTechnique.applyConstantProperties();
+            colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
+            colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
+            colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+            colorTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
+            colorTechnique.applyConstantProperties();
 
 
             //Remove bindings to frame buffers
@@ -204,7 +205,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             {
                 try
                 {
-                    getGlCache().setProperty(GLCache.ENABLE_SHADOWS, !getGlCache().getProperty(GLCache.ENABLE_SHADOWS, Boolean.class));
+                    getGlCache().setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, !getGlCache().getConfigProperty(GraphicsConfig.ENABLE_SHADOWS, Boolean.class));
                 }
                 catch (GraphicsException e)
                 {

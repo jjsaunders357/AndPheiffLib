@@ -4,7 +4,6 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,17 +19,13 @@ public abstract class BaseTechnique implements Technique
     //Local, version specific configuration for this instance
     private final Map<String, Object> localConfig;
 
-    //TODO: Possibly remove this
-    //The set of properties which apply to this technique
-    protected final EnumSet<RenderProperty> properties = EnumSet.noneOf(RenderProperty.class);
-
     //Values of properties cached here for use in apply_____Properties() methods
     private final EnumMap<RenderProperty, Object> propertyValues = new EnumMap<>(RenderProperty.class);
 
     public BaseTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig)
     {
         this.shaderBuilder = shaderBuilder;
-        this.localConfig = localConfig;
+        this.localConfig = new HashMap<>(localConfig);
     }
 
     public final void setProperty(RenderProperty property, Object propertyValue)
@@ -72,4 +67,20 @@ public abstract class BaseTechnique implements Technique
     }
 
     protected abstract void onConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> config) throws GraphicsException;
+
+    /**
+     * For use in constructor:
+     * Sets default values for local config.  These will be overridden by any local config provided by user.
+     *
+     * @param configSetting
+     * @param value
+     */
+    protected void defaultConfig(String configSetting, Object value)
+    {
+        if (!localConfig.containsKey(configSetting))
+        {
+            localConfig.put(configSetting, value);
+        }
+    }
+
 }

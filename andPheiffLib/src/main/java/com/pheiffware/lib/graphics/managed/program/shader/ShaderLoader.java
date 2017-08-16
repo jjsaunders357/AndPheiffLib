@@ -29,7 +29,7 @@ class ShaderLoader
 {
     private static final Pattern intConstPattern = Pattern.compile("const\\s+int");
     private static final Pattern floatConstPattern = Pattern.compile("const\\s+float");
-    private static final Pattern equalPattern = Pattern.compile("(?<!<<)(?<!>>)(?<![+\\-*/%&\\^|])=");
+    private static final Pattern equalPattern = Pattern.compile("(?<![+\\-*/!])=");
     //How assets are loaded
     private final AssetLoader assetLoader;
 

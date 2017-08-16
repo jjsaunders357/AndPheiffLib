@@ -27,6 +27,7 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.MeshDataManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.light.HoloLighting;
+import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.techniques.HoloColorMaterialTechnique;
@@ -100,7 +101,9 @@ public class Demo5HolographicFragment extends BaseGameFragment
             GLES20.glClearColor(0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 0.5f * SCREEN_ALPHA, 1.0f);
 
             PheiffGLUtils.enableAlphaTransparency();
-            holoColorTechnique = glCache.buildTechnique(HoloColorMaterialTechnique.class);
+
+            glCache.setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, false);
+            holoColorTechnique = glCache.buildTechnique(HoloColorMaterialTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
             ColladaFactory colladaFactory = new ColladaFactory();
             try
             {

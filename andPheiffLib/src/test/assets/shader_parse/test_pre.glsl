@@ -19,4 +19,9 @@ const int b4test=4;
     #endif
 #else
     const int b1test=0;
+    #if !b2
+        const int b2test=0;
+    #else
+        const int b2test=1;
+    #endif
 #endif

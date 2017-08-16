@@ -22,19 +22,29 @@ out vec4 positionEyeSpace;
 //Normal, in eye space
 out vec3 normalEyeSpace;
 
+#if texturedMaterial
+    in vec2 vertexTexCoord;
+    out vec2 texCoord;
+#endif
+
 #if enableShadows
     //Transforms vertices to model space
     uniform mat4 modelMatrix;
 
     //Absolute position
-    out vec3 absPosition;
+    out vec3 fragPositionAbs;
 #endif
 
 void main()
 {
-    #if enableShadows
-        absPosition = (modelMatrix * vertexPosition4).xyz;
+    #if texturedMaterial
+	    texCoord = vertexTexCoord;
     #endif
+    #if enableShadows
+        fragPositionAbs = (modelMatrix * vertexPosition4).xyz;
+    #endif
+
+	//TODO: Decide on normalization policy
 	normalEyeSpace = normalize(normalMatrix * vertexNormal);
 	positionEyeSpace = viewModelMatrix * vertexPosition4;
 

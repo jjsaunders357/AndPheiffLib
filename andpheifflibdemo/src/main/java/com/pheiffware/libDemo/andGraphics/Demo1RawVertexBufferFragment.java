@@ -15,6 +15,7 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.Program;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
@@ -27,6 +28,8 @@ import com.pheiffware.lib.graphics.utils.MeshGenUtils;
 
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Example of using a CombinedBuffer for storing some vertex attributes statically and other dynamically.  In this case, vertices are static and colors are dynamically updated.
@@ -65,7 +68,10 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
             // Wait for vertical retrace
             GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
-            programTextureColor = glCache.buildProgram("2d/vert_2d_color_texture_pos4.glsl", "2d/frag_2d_color_texture_pos4.glsl");
+            Map<String, Object> settings = new HashMap<>();
+            settings.put(GraphicsConfig.COLOR_VERTEX_2D, true);
+            settings.put(GraphicsConfig.TEXTURED_2D, true);
+            programTextureColor = glCache.buildProgram(settings, "2d/vert_2d.glsl", "2d/frag_2d.glsl");
 
             faceTexture = glCache.buildImageTex("images/face.png").build();
 
@@ -138,7 +144,7 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
             programTextureColor.setUniformValue(UniformName.PROJECTION_VIEW_MODEL_MATRIX, projectionViewModelMatrix.m);
             faceTexture.manualBind(samplerToUse);
 
-            programTextureColor.setUniformValue(UniformName.MATERIAL_SAMPLER, samplerToUse);
+            programTextureColor.setUniformValue(UniformName.IMAGE_TEXTURE, samplerToUse);
 
             staticBuffer.bindToProgram(programTextureColor, staticVertexAttributeGroup, 0);
             dynamicBuffer.bindToProgram(programTextureColor, dynamicVertexAttributeGroup, 0);

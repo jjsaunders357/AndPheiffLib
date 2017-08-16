@@ -20,14 +20,7 @@ public class HoloColorMaterialTechnique extends Technique3D
 {
     public HoloColorMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
     {
-        super(shaderBuilder, localConfig, new RenderProperty[]{
-                RenderProperty.HOLO_PROJECTION,
-                RenderProperty.MODEL_MATRIX,
-                RenderProperty.LIGHTING,
-                RenderProperty.MAT_COLOR,
-                RenderProperty.SPEC_MAT_COLOR,
-                RenderProperty.SHININESS
-        }, "vert_holo_mncl.glsl", "frag_holo_mncl.glsl");
+        super(shaderBuilder, localConfig, "vert_holo_mncl.glsl", "frag_holo_mncl.glsl");
     }
 
     protected void applyConstantPropertiesImplement()

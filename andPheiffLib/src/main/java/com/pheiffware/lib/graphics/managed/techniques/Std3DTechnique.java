@@ -2,8 +2,8 @@ package com.pheiffware.lib.graphics.managed.techniques;
 
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
+import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
@@ -17,22 +17,14 @@ import java.util.Map;
  * Omni-directional shadows - diffuse/specular light, is blocked based on given cube depth map.
  * Created by Steve on 4/23/2016.
  */
-public class ColorShadowMaterialTechnique extends Technique3D
+public class Std3DTechnique extends Technique3D
 {
     private boolean shadows;
+    private boolean textured;
 
-    public ColorShadowMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
+    public Std3DTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
     {
-        super(shaderBuilder, localConfig, new RenderProperty[]{
-                RenderProperty.PROJECTION_LINEAR_DEPTH,
-                RenderProperty.VIEW_MATRIX,
-                RenderProperty.MODEL_MATRIX,
-                RenderProperty.LIGHTING,
-                RenderProperty.CUBE_DEPTH_TEXTURE,
-                RenderProperty.MAT_COLOR,
-                RenderProperty.SPEC_MAT_COLOR,
-                RenderProperty.SHININESS
-        }, "vert_mncl_cube_shadow.glsl", "frag_mncl_cube_shadow.glsl");
+        super(shaderBuilder, localConfig, "vert_3d.glsl", "frag_3d.glsl");
     }
 
     public void applyConstantPropertiesImplement()
@@ -50,9 +42,23 @@ public class ColorShadowMaterialTechnique extends Technique3D
     public void applyInstanceProperties()
     {
         setViewModelNormal();
-        setLightingColors();
 
         setUniformValue(UniformName.SHININESS, getPropertyValue(RenderProperty.SHININESS));
+
+        if (textured)
+        {
+            setSpecLightingColor();
+            Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
+            Texture texture = (Texture) getPropertyValue(RenderProperty.MAT_COLOR_TEXTURE);
+
+            setUniformValue(UniformName.AMBIENT_LIGHT_COLOR, lighting.getAmbientLightColor());
+            setUniformValue(UniformName.LIGHT_COLOR, lighting.getColors());
+            setUniformValue(UniformName.DIFFUSE_MATERIAL_SAMPLER, texture.autoBind());
+        }
+        else
+        {
+            setLightingColors();
+        }
         if (shadows)
         {
             Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);
@@ -66,6 +72,7 @@ public class ColorShadowMaterialTechnique extends Technique3D
     protected void onConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> config) throws GraphicsException
     {
         super.onConfigChanged(shaderBuilder, config);
-        shadows = (Boolean) config.get(GLCache.ENABLE_SHADOWS);
+        shadows = (Boolean) config.get(GraphicsConfig.ENABLE_SHADOWS);
+        textured = (Boolean) config.get(GraphicsConfig.TEXTURED_MATERIAL);
     }
 }

@@ -43,11 +43,14 @@ class Preprocessor
     //Is the parser in a block comment or not?
     private boolean inBlockComment = false;
 
-    //Tracks the nested #if states the parser is currently inside.  The last element is always the deepest state (the parser is currently in this state).
-    private final LinkedList<Boolean> processingState = new LinkedList<>();
+    //A stack of all surrounding #if blocks
+    private final LinkedList<Boolean> nestIfState = new LinkedList<>();
+
+    //Whenever a #if block is encountered a new state is added to this stack representing the AND-ed state of it and all surrounding blocks.
+    private final LinkedList<Boolean> nestAndIfState = new LinkedList<>();
 
     //Stores all boolean constants (defines) either preset or found during parsing
-    private final Map<String, Boolean> bConstants = new HashMap<>();
+    private final Map<String, Boolean> boolConstants = new HashMap<>();
 
     public Preprocessor(List<ShaderFragment> shaderLines, Map<String, Object> constantSettings)
     {
@@ -58,7 +61,7 @@ class Preprocessor
         {
             if (entry.getValue() instanceof Boolean)
             {
-                bConstants.put(entry.getKey(), (Boolean) entry.getValue());
+                boolConstants.put(entry.getKey(), (Boolean) entry.getValue());
             }
         }
     }
@@ -71,7 +74,7 @@ class Preprocessor
     void preProcess() throws GraphicsException, ParseException
     {
         removeComments();
-        processBConstants();
+        processIf();
     }
 
     private void removeComments() throws GraphicsException
@@ -140,11 +143,11 @@ class Preprocessor
      *
      * @throws ParseException
      */
-    void processBConstants() throws ParseException
+    void processIf() throws ParseException
     {
         for (ShaderFragment shaderLine : shaderLines)
         {
-            if (getProcessingState())
+            if (getAndedIfState())
             {
                 if (!processDefine(shaderLine))
                 {
@@ -169,9 +172,9 @@ class Preprocessor
                 shaderLine.code = "";
             }
         }
-        if (processingState.size() != 0)
+        if (nestIfState.size() != 0)
         {
-            throw new ParseException("Unclosed #if");
+            throw new ParseException("Open #if block");
         }
     }
 
@@ -183,10 +186,11 @@ class Preprocessor
         {
             String defName = matcher.group(1);
             boolean defValue = Boolean.valueOf(matcher.group(2));
-            if (!bConstants.containsKey(defName))
+            if (!boolConstants.containsKey(defName))
             {
-                bConstants.put(defName, defValue);
+                boolConstants.put(defName, defValue);
             }
+            //Throw away all preprocessor lines
             shaderLine.code = "";
             return true;
         }
@@ -200,19 +204,22 @@ class Preprocessor
         if (matcher.matches())
         {
             String negate = matcher.group(1);
-            String bConstantName = matcher.group(2);
-            Boolean value = bConstants.get(bConstantName);
-            if (value == null)
+            String boolConstantName = matcher.group(2);
+            Boolean expressionValue = boolConstants.get(boolConstantName);
+            if (expressionValue == null)
             {
-                throw new ParseException("Undefined constant used in #if: " + bConstantName);
+                throw new ParseException("Undefined constant used in #if: " + boolConstantName);
             }
             if (negate.equals("!"))
             {
-                value = !value;
+                expressionValue = !expressionValue;
             }
 
-            //Can enter a false state from a true state but cannot go in the opposite direction
-            processingState.add(getProcessingState() & value);
+
+            nestAndIfState.add(expressionValue & getAndedIfState());
+            nestIfState.add(expressionValue);
+
+            //Throw away all preprocessor lines
             shaderLine.code = "";
             return true;
         }
@@ -225,12 +232,21 @@ class Preprocessor
         matcher = elsePattern.matcher(shaderLine.code);
         if (matcher.matches())
         {
-            if (processingState.size() == 0)
+            if (nestIfState.size() == 0)
             {
                 throw new ParseException("Encountered #else without matching #if");
             }
-            //Add reverse state to the processing stack
-            processingState.add(!processingState.removeLast());
+
+            boolean invertedIfState = !nestIfState.removeLast();
+
+            //Replace last and-ed state with new and-ed state
+            nestAndIfState.removeLast();
+            nestAndIfState.add(invertedIfState & getAndedIfState());
+
+            //Add reverse state of the last nested if state
+            nestIfState.add(invertedIfState);
+
+            //Throw away all preprocessor lines
             shaderLine.code = "";
             return true;
         }
@@ -243,24 +259,29 @@ class Preprocessor
         matcher = endifPattern.matcher(shaderLine.code);
         if (matcher.matches())
         {
-            if (processingState.size() == 0)
+            if (nestIfState.size() == 0)
             {
                 throw new ParseException("Encountered #endif without matching #if");
             }
-            processingState.removeLast();
+
+            nestIfState.removeLast();
+            nestAndIfState.removeLast();
+
+            //Throw away all preprocessor lines
             shaderLine.code = "";
         }
     }
 
     /**
-     * The current define state.
-     * If this is true, then the text being parsed is going to be part of the final shader.
-     * If false, the text being parsed is ignored and we only seek the next #endif
+     * Get the combined (AND-ed) true state of the #if blocks surrounding the current #if block.
+     * This will be false if 1 or more surrounding blocks is false and true otherwise.
+     * <p>
+     * If false this code should be removed from the shader.
      *
      * @return
      */
-    private boolean getProcessingState()
+    private boolean getAndedIfState()
     {
-        return processingState.size() == 0 || processingState.getLast();
+        return nestAndIfState.size() == 0 || nestAndIfState.getLast();
     }
 }

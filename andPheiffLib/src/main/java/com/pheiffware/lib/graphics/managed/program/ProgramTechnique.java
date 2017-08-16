@@ -5,7 +5,6 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -23,11 +22,10 @@ public abstract class ProgramTechnique extends BaseTechnique
     //Used internally to compute values to apply to uniforms
     private final Matrix4 projectionViewModelMatrix = Matrix4.newIdentity();
 
-    public ProgramTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig, RenderProperty[] properties, String... shaderPaths) throws GraphicsException
+    public ProgramTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig, String... shaderPaths) throws GraphicsException
     {
         super(shaderBuilder, localConfig);
         this.shaderPaths = shaderPaths;
-        Collections.addAll(this.properties, properties);
     }
 
     @Override

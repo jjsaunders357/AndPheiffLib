@@ -23,17 +23,18 @@ public class ShaderParserTests
         TestAndAssetLoader assetLoader = new TestAndAssetLoader();
 
         Map<String, Object> settings = new HashMap<>();
+        settings.put("b1", Boolean.FALSE);
         settings.put("b2", Boolean.TRUE);
-        settings.put("b3", Boolean.FALSE);
+        settings.put("b3", Boolean.TRUE);
         settings.put("b4test", 5);
 
         ShaderBuilder parser = new ShaderBuilder(assetLoader, "shader_parse");
         ShaderCode code;
         code = parser.build("test_pre.glsl", settings);
-        code.printCode();
+        System.out.println(code.getCodeMarkup());
         code = parser.build("test.glsl", settings);
-        code.printCode();
+        System.out.println(code.getCodeMarkup());
         code = parser.build("shader_comments.test", settings);
-        code.printCode();
+        System.out.println(code.getCodeMarkup());
     }
 }
