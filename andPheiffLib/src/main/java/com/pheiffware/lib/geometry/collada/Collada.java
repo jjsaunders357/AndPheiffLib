@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO: Load camera positions or main view position (sketchup)
+//TODO 0.5 = 1/2: Load camera positions or main view position (sketchup)
 
 /**
  * Holds key data from a parsed Collada file.  Unlike the factory, which keep most intermediate data, this only keeps the essential stuff.

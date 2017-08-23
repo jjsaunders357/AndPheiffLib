@@ -2,6 +2,8 @@ package com.pheiffware.lib.graphics;
 
 import android.opengl.GLES20;
 
+//TODO 0.66 = 2/6 Refactor this so it can be applied to all textures (including cubemaps) and even other objects as a configuration setting.
+
 /**
  * Created by Steve on 2/13/2016.
  */

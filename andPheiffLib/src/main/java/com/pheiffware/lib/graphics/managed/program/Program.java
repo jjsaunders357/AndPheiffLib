@@ -19,7 +19,7 @@ import java.util.Map;
  * <p/>
  * Created by Steve on 2/13/2016.
  */
-//TODO: Merge into Program and make final
+//TODO 2.0 = 2/1: Merge into Program and make final
 public class Program
 {
     //Handle to the GL program

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public abstract class PheiffListFragment<T> extends Fragment
 {
-    // TODO: Understand fragment arguments across projects
+    // TODO 1.0 = 1/1: Understand fragment arguments across projects
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
 
@@ -58,7 +58,7 @@ public abstract class PheiffListFragment<T> extends Fragment
      */
     protected abstract PheiffViewHolder onCreatePheiffViewHolder(ViewGroup parent, int viewType);
 
-    //TODO: Figure out appropriate way to load/save list
+    //TODO 0.5 = 1/2: Figure out appropriate way to load/save list
     protected abstract List<T> loadListContents();
 
     protected abstract void saveListContents(List<T> list);

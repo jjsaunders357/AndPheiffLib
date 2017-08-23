@@ -24,9 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 
-//TODO: sRGB textures and immutable textures (opengl 3.0 only)
-//TODO: glBlendFunc and glDepthMask(false) - turn off after rendering opaque objects.  Turn back on again after translucent objects.
-//TODO: multisample enable (opengl 3.0 only)
+//TODO 0.5 = 1/2: sRGB textures and immutable textures (opengl 3.0 only)
+//TODO 0.25 = 1/4: multisample enable (opengl 3.0 only)
 
 /**
  * Keeps references to core graphics objects for caching, reconfiguration and eventual clean up.
@@ -231,8 +230,7 @@ public class GLCache
 
     public void destroy()
     {
-        //TODO: dynamic buffers should be created through this class
-        //TODO: Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
+        //TODO 0.5 = 2/4: dynamic buffers should be created through this class.  Cleanup all directByteBuffers.  All other opengl resources get automatically wiped out by the system.
     }
 
 }

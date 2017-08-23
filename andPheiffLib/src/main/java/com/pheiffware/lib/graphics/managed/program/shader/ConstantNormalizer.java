@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 class ConstantNormalizer
 {
-    //TODO: Replace {1,100} with +
+    //TODO 0.5 = 1/2: Replace {1,100} with +
     //Regex for an isolated integer constant in code.  Note: {1,100} is a "fancy" version of "+".  For some reason Android device requires bounded maximum length in look behind.
     private static final Pattern intPattern = Pattern.compile("(?<!([a-zA-Z0-9_.]{1,100}))(?<!layout \\( location = )\\d+(?![a-zA-Z0-9_.]+)");
 

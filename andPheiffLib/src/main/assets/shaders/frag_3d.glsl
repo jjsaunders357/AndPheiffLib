@@ -2,7 +2,7 @@
 #include include/lightingUniforms.glsl
 #include include/lightingCalcs.glsl
 #version 300 es
-//TODO: Optimize precision
+//TODO 0.33 = 2/6: Optimize precision
 precision highp float;
 
 // How shiny the material is.  This determines the exponent used in rendering.
@@ -13,7 +13,7 @@ in vec4 positionEyeSpace;
 in vec3 normalEyeSpace;
 
 #if enableShadows
-    //TODO: Wrong! this needs to reference the SHADOW MAP's max depth!!
+    //TODO 3.0 = 6/2: Wrong! this needs to reference the SHADOW MAP's max depth!!
     //Maximum depth projected into texture
     uniform float projectionMaxDepth;
 

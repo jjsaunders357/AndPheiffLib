@@ -96,7 +96,7 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         try
         {
             DisplayMetrics metrics = getResources().getDisplayMetrics();
-            //TODO: Get this from loaded system state somehow
+            //TODO 0.25 = 1/4: Get this from loaded system state somehow
             Map<String, Object> graphicsSystemConfig = new HashMap<>();
             renderer.onSurfaceCreated(assetLoader, AndGraphicsUtils.getDeviceGLVersion(getContext()), filterQuality, graphicsSystemConfig, new SystemInfo(metrics.xdpi, metrics.ydpi));
             PheiffGLUtils.assertNoError();
@@ -104,7 +104,7 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         }
         catch (GraphicsException e)
         {
-            //TODO: How to kill program gracefully on exception here?
+            //TODO 1.0 = 1/1: How to kill program gracefully on exception here?
             //Log.e("Fatal", "Error during surface creation", e);
             throw new RuntimeException(e);
         }

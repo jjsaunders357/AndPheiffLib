@@ -25,6 +25,7 @@ in vec4 vertexPosition4;
 in vec3 vertexNormal;
 out vec4 fragPositionAbs;
 out vec3 normalAbs;
+//TODO 1.5 = 3/2: Convert into normal shader with appropriate perspective
 void main()
 {
 	normalAbs = normalize(normalMatrix * vertexNormal);
@@ -40,7 +41,6 @@ void main()
 // z mapped to range [-1,1]
     z = 2.0 * z - 1.0;
 
-//TODO: Does not map propetly due to opengl "noperspective" interpolation on depth.  Either need per fragment depth or to figure out alternate equation (if possible).
 // z mapped to range [-w,w] (pre-homogeneous divide).
     z *= w;
 

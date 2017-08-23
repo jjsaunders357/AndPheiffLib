@@ -20,7 +20,7 @@ public class ObjectHandle
 
     public ObjectHandle copy()
     {
-        //TODO: There should be central modelMatrix value shared by all meshes
+        //TODO 0.66 = 2/3: There should be central modelMatrix value shared by all meshes
         ObjectHandle copy = new ObjectHandle();
         copy.meshHandles = new MeshHandle[meshHandles.length];
         for (int i = 0; i < meshHandles.length; i++)

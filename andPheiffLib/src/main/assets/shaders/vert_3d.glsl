@@ -44,7 +44,7 @@ void main()
         fragPositionAbs = (modelMatrix * vertexPosition4).xyz;
     #endif
 
-	//TODO: Decide on normalization policy
+	//TODO 1.5 = 3/2: Decide on normalization policy
 	normalEyeSpace = normalize(normalMatrix * vertexNormal);
 	positionEyeSpace = viewModelMatrix * vertexPosition4;
 

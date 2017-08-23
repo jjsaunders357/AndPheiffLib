@@ -125,8 +125,7 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
         @Override
         public void onSurfaceCreated(AssetLoader al, GLCache glCache, SystemInfo systemInfo) throws GraphicsException
         {
-            //TODO: Add configurable precision
-            //TODO: Merge FilterQuality into system graphics settings
+            //TODO 0.33 = 2/6: Add configurable precision
 
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
