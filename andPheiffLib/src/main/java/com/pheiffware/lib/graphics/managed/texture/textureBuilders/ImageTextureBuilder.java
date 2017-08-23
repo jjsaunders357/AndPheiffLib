@@ -18,6 +18,7 @@ import java.io.IOException;
 
 public class ImageTextureBuilder extends TextureBuilder<Texture2D>
 {
+    private static final double log2 = Math.log(2);
     private final AssetLoader assetLoader;
     private final String imageAssetPath;
 
@@ -35,6 +36,12 @@ public class ImageTextureBuilder extends TextureBuilder<Texture2D>
         {
             Bitmap bitmap = assetLoader.loadBitmap(imageAssetPath);
             Texture2D texture = new Texture2D(textureBinder, bitmap.getWidth(), bitmap.getHeight());
+
+//          This is the code to setup static/read-only textures.
+//            int internalFormat = GLUtils.getInternalFormat(bitmap);
+// However, we need to know how many mip levels to generate.  This depends on filterQuality and the generateMips option.  May want to only generate 1 level
+//            int numLevels = (int) (Math.log(Math.max(bitmap.getWidth(), bitmap.getHeight())) / log2 + 1.0); OR int numLevels = 1;
+//            GLES30.glTexStorage2D(GLES20.GL_TEXTURE_2D, numLevels, internalFormat, bitmap.getWidth(), bitmap.getHeight());
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
             bitmap.recycle();
 
