@@ -23,16 +23,23 @@ public class ProjectionLinearDepth
      * @param aspect   ratio of width/height
      * @param maxDepth the maximum depth which can be rendered
      */
-    public ProjectionLinearDepth(float FOV, float aspect, float maxDepth)
+    public ProjectionLinearDepth(float FOV, float aspect, float maxDepth, boolean flipVertical)
     {
         //If depth (w) is cos(FOV) and x is sin(FOV), then yn = 1.0 (normalized coordinate)
         //1.0 = scaleY*sin(FOV)/cos(FOV)
         //1.0/scaleY = sin(FOV)/cos(FOV)
         //scaleY = cos(FOV)/sin(FOV)
         //scaleY = cot(FOV)
-        scaleY = (float) (1.0 / Math.tan(Math.toRadians(FOV / 2.0)));
-        scaleX = scaleY / aspect;
-
+        float tempScaleY = (float) (1.0 / Math.tan(Math.toRadians(FOV / 2.0)));
+        scaleX = tempScaleY / aspect;
+        if (flipVertical)
+        {
+            scaleY = -tempScaleY;
+        }
+        else
+        {
+            scaleY = tempScaleY;
+        }
         this.maxDepth = maxDepth;
     }
 }

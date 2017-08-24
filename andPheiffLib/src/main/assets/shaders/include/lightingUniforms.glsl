@@ -27,6 +27,12 @@ uniform vec4 specLightMaterialColor[numLights];
     //Position of lights in absolute space
     uniform vec4 lightPositionAbs[numLights];
 
+    //Maximum depth projected into texture
+    uniform float shadowProjectionMaxDepth;
+
+    //uniform float depthZConst;
+    //uniform float depthZFactor;
+
     //Shadow cube map
     uniform mediump samplerCubeShadow cubeDepthSampler;
 #endif

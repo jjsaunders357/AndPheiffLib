@@ -35,6 +35,10 @@ public class Std3DTechnique extends Technique3D
         {
             Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
             setUniformValue(UniformName.LIGHT_POS, lighting.getPositions());
+            setUniformValue(UniformName.SHADOW_PROJECTION_MAX_DEPTH, getPropertyValue(RenderProperty.SHADOW_PROJECTION_MAX_DEPTH));
+            //setUniformValue(UniformName.DEPTH_Z_CONST, getPropertyValue(RenderProperty.DEPTH_Z_CONST));
+            //setUniformValue(UniformName.DEPTH_Z_FACTOR, getPropertyValue(RenderProperty.DEPTH_Z_FACTOR));
+
         }
     }
 

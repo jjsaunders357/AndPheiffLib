@@ -40,8 +40,9 @@ public enum UniformName
     //For shadow casting:
     LIGHT_POS("lightPositionAbs"),
     DEPTH_CUBE_SAMPLER("cubeDepthSampler"),
-
-
+    SHADOW_PROJECTION_MAX_DEPTH("shadowProjectionMaxDepth"),
+    DEPTH_Z_CONST("depthZConst"),
+    DEPTH_Z_FACTOR("depthZFactor"),
     MAT_ALPHA("materialAlpha"),
     SHININESS("shininess"),
     EYE_POSITION("eyePosition"),

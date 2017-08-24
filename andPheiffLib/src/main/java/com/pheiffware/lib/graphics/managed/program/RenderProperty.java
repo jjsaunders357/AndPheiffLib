@@ -49,6 +49,6 @@ public enum RenderProperty
     //This is the texture containing depth
     DEPTH_TEXTURE,
 
-    //This is the cube texture containing depth
-    CUBE_DEPTH_TEXTURE
+    SHADOW_PROJECTION_MAX_DEPTH, //This is the cube texture containing depth
+    DEPTH_Z_CONST, DEPTH_Z_FACTOR, CUBE_DEPTH_TEXTURE
 }

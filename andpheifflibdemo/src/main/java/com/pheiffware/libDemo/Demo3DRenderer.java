@@ -10,6 +10,7 @@ import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.utils.dataContainers.MapCounterLong;
 
@@ -25,6 +26,7 @@ public abstract class Demo3DRenderer extends GameRenderer
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDPToCameraTranslation;
     private final EuclideanCamera camera;
+    private final Projection projection;
     private long profileStartTime;
     private final MapCounterLong<String> nanoTimes = new MapCounterLong<>();
     private int frameCounter;
@@ -34,7 +36,8 @@ public abstract class Demo3DRenderer extends GameRenderer
     {
         super(minSupportedGLVersion, maxSupportedGLVersion, shaderRootPath);
         this.screenDPToCameraTranslation = screenDPToCameraTranslation;
-        camera = new EuclideanCamera(initialFOV, 1, nearPlane, farPlane, false);
+        camera = new EuclideanCamera();
+        projection = new Projection(initialFOV, 1, nearPlane, farPlane, false);
     }
 
     @Override
@@ -51,7 +54,7 @@ public abstract class Demo3DRenderer extends GameRenderer
     public void onSurfaceResize(int width, int height)
     {
         super.onSurfaceResize(width, height);
-        camera.setAspect(width / (float) height);
+        projection.setAspect(width / (float) height);
     }
 
     @Override
@@ -61,14 +64,14 @@ public abstract class Demo3DRenderer extends GameRenderer
         GLES20.glClearDepthf(1);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         profileStartTime = System.nanoTime();
-        onDrawFrame(camera);
+        onDrawFrame(projection, camera);
         GLES20.glFinish();
         frameCounter++;
         logAverages();
         addFrameProfilePoint("Render");
     }
 
-    protected abstract void onDrawFrame(EuclideanCamera camera) throws GraphicsException;
+    protected abstract void onDrawFrame(Projection projection, EuclideanCamera camera) throws GraphicsException;
 
     private void logAverages()
     {
@@ -97,18 +100,25 @@ public abstract class Demo3DRenderer extends GameRenderer
         Transform2D transform = event.transform;
         if (numPointers > 2)
         {
+            camera.upStrafeInput((float) transform.translation.x, (float) -transform.translation.y, (float) screenDPToCameraTranslation);
+            //camera.roll((float) (180 * transform.rotation / Math.PI));
             //Geometric average of x and y scale factors
-            float scaleFactor = (float) Math.sqrt(transform.scale.x * transform.scale.y);
-            camera.zoom(scaleFactor);
+//            float scaleFactor = (float) Math.sqrt(transform.scale.x * transform.scale.y);
+//            projection.zoom(scaleFactor);
         }
         else if (numPointers > 1)
         {
             camera.roll((float) (180 * transform.rotation / Math.PI));
-            camera.rotateInput((float) transform.translation.x, (float) -transform.translation.y, 0.1f);
+            camera.rotateInput((float) transform.translation.x, (float) -transform.translation.y, 0.3f);
         }
         else
         {
             camera.forwardStrafeInput((float) transform.translation.x, (float) transform.translation.y, (float) screenDPToCameraTranslation);
         }
+    }
+
+    public EuclideanCamera getCamera()
+    {
+        return camera;
     }
 }

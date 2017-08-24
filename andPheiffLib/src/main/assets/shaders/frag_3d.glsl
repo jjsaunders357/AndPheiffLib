@@ -13,10 +13,6 @@ in vec4 positionEyeSpace;
 in vec3 normalEyeSpace;
 
 #if enableShadows
-    //TODO 3.0 = 6/2: Wrong! this needs to reference the SHADOW MAP's max depth!!
-    //Maximum depth projected into texture
-    uniform float projectionMaxDepth;
-
     //Position of point being rendered in absolute space
     in vec3 fragPositionAbs;
 #endif
@@ -67,7 +63,9 @@ void main()
                                      specLightMaterialColor[i],                             //Light * specular material color
                                      shininess);                                            //Material shininess
             #if enableShadows
-                color.rgb = color.rgb * calcCubeShadow(fragPositionAbs, lightPositionAbs[i], cubeDepthSampler, projectionMaxDepth);
+//                color.rgb = color.rgb *0.00001 + vec3(calcCubeShadow(fragPositionAbs, lightPositionAbs[i], cubeDepthSampler, shadowProjectionMaxDepth),0,0);
+                color.rgb = color.rgb * calcCubeShadow(fragPositionAbs, lightPositionAbs[i], cubeDepthSampler, shadowProjectionMaxDepth);
+//                color.rgb = color.rgb * calcCubeShadow(fragPositionAbs, lightPositionAbs[i], cubeDepthSampler, depthZConst, depthZFactor);
             #endif
             totalLightMaterialColor += color;
         }

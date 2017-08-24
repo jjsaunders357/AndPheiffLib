@@ -1,5 +1,6 @@
 
 #if enableShadows
+    const float shadowDepthBias = 0.1;
     /**
     Calculates the amount of light transmission taking into account shadows.
     1.0 - no shadow,
@@ -7,21 +8,29 @@
     @param fragPositionAbs position of fragment in absolute space
     @param lightPositionAbs position of light in absolute space
     */
-    float calcCubeShadow(vec3 fragPositionAbs, vec4 lightPositionAbs, mediump samplerCubeShadow cubeDepthSampler, float projectionMaxDepth)
+
+
+    float calcCubeShadow(vec3 fragPositionAbs, vec4 lightPositionAbs, mediump samplerCubeShadow cubeDepthSampler, float shadowProjectionMaxDepth)
+//    float calcCubeShadow(vec3 fragPositionAbs, vec4 lightPositionAbs, mediump samplerCubeShadow cubeDepthSampler, float depthZConst, float depthZFactor)
     {
+//        float trash = texture(cubeDepthSampler, vec3(1.0,0.0,0.0)).r + shadowProjectionMaxDepth + fragPositionAbs.x + lightPositionAbs.x;
+//        trash = trash * 0.00001;
+//        vec3 lightToFragment = fragPositionAbs - lightPositionAbs.xyz;
+//        return texture(cubeDepthSampler,lightToFragment).r+trash;
+//
+//
         vec3 lightToFragment = fragPositionAbs - lightPositionAbs.xyz;
-
-        //Depth is the maximum of x, y or z as the cube map faces are along these axes
+//
+////        float rawDepth = -max(max(abs(lightToFragment.x),abs(lightToFragment.y)),abs(lightToFragment.z))-0.2;
+////        float depth = (rawDepth * depthZConst + depthZFactor) / -rawDepth;
+////        depth = 0.5 * depth + 0.5;
+//
         float depth = max(max(abs(lightToFragment.x),abs(lightToFragment.y)),abs(lightToFragment.z));
-
-        //Divide out maximum depth for comparison purposes
-        depth /= projectionMaxDepth;
-
-        //Sample the depth texture.  Does lookup based on lightToPositionAbs, but then compares result to depth, returning 0 or 1 (or possibly in between if multiple samples are taken).
-        float depthSample = texture(cubeDepthSampler, vec4(lightToFragment,depth));
-        depthSample = depthSample;
-
-        return depthSample;
+        depth = depth / shadowProjectionMaxDepth - shadowDepthBias;
+//
+//
+//        //Sample the depth texture.  Does lookup based on lightToPositionAbs, but then compares result to depth, returning 0 or 1 (or possibly in between if multiple samples are taken).
+        return texture(cubeDepthSampler, vec4(lightToFragment,depth));
     }
 #endif
 

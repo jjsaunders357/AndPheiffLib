@@ -2,7 +2,6 @@ package com.pheiffware.lib.graphics;
 
 import com.pheiffware.lib.geometry.Angle;
 import com.pheiffware.lib.geometry.Axis;
-import com.pheiffware.lib.graphics.managed.techniques.ProjectionLinearDepth;
 
 /**
  * Created by Steve on 8/2/2017.
@@ -10,22 +9,12 @@ import com.pheiffware.lib.graphics.managed.techniques.ProjectionLinearDepth;
 
 public abstract class Camera
 {
-    private float FOV;
-    private float aspect;
-    private float nearZ;
-    private float farZ;
-    private boolean flipVertical;
-    //The linear depth projection representing the lens
-    private ProjectionLinearDepth projectionLinearDepth;
-    //The projection matrix representing the lens
-    private final Matrix4 projectionMatrix;
     //Represent the composition of invOrientation * inverseTranslation
     protected Matrix4 viewMatrix;
 
     public Camera()
     {
         viewMatrix = Matrix4.newIdentity();
-        projectionMatrix = Matrix4.newIdentity();
     }
 
     /**
@@ -36,21 +25,6 @@ public abstract class Camera
     public Matrix4 getViewMatrix()
     {
         return viewMatrix;
-    }
-
-    /**
-     * Get the projection matrix corresponding to the camera.
-     *
-     * @return
-     */
-    public Matrix4 getProjectionMatrix()
-    {
-        return projectionMatrix;
-    }
-
-    public ProjectionLinearDepth getProjectionLinearDepth()
-    {
-        return projectionLinearDepth;
     }
 
     /**
@@ -117,98 +91,5 @@ public abstract class Camera
             xzAngle.negate();
             viewMatrix.rotatePlaneLHS(inputXAxis, inputYAxis, xzAngle);
         }
-    }
-
-    /**
-     * Scale FOV by given amount
-     *
-     * @param scaleFOV
-     */
-    public void zoom(float scaleFOV)
-    {
-        setFOV(getFOV() * scaleFOV);
-    }
-
-    /**
-     * Change the lens characteristics of the camera such as FOV
-     *
-     * @param FOV          field of view
-     * @param aspect       width/height ratio
-     * @param nearZ        near viewing plane
-     * @param farZ         far viewing plane
-     * @param flipVertical should the projection be flipped?  Useful for rending to textures.
-     */
-    public void setLens(float FOV, float aspect, float nearZ, float farZ, boolean flipVertical)
-    {
-        this.FOV = FOV;
-        this.aspect = aspect;
-        this.nearZ = nearZ;
-        this.farZ = farZ;
-        this.flipVertical = flipVertical;
-        updateProjection();
-    }
-
-    /**
-     * Recomputes the projection matrix from lens attributes.
-     */
-    private void updateProjection()
-    {
-        projectionMatrix.setProjection(FOV, aspect, nearZ, farZ, flipVertical);
-        projectionLinearDepth = new ProjectionLinearDepth(FOV, aspect, farZ);
-    }
-
-    public void setFOV(float FOV)
-    {
-        this.FOV = FOV;
-        updateProjection();
-    }
-
-    public void setAspect(float aspect)
-    {
-        this.aspect = aspect;
-        updateProjection();
-    }
-
-    public void setNearZ(float nearZ)
-    {
-        this.nearZ = nearZ;
-        updateProjection();
-    }
-
-    public void setFarZ(float farZ)
-    {
-        this.farZ = farZ;
-        updateProjection();
-    }
-
-    public void setFlipVertical(boolean flipVertical)
-    {
-        this.flipVertical = flipVertical;
-        updateProjection();
-    }
-
-    public float getFOV()
-    {
-        return FOV;
-    }
-
-    public float getAspect()
-    {
-        return aspect;
-    }
-
-    public float getNearZ()
-    {
-        return nearZ;
-    }
-
-    public float getFarZ()
-    {
-        return farZ;
-    }
-
-    public boolean isFlipVertical()
-    {
-        return flipVertical;
     }
 }

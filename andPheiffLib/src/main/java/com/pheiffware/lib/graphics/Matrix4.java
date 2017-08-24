@@ -600,4 +600,9 @@ public class Matrix4
             m[index1] = temp;
         }
     }
+
+    public void setLookAt(float eyeX, float eyeY, float eyeZ, float targetX, float targetY, float targetZ, float upX, float upY, float upZ)
+    {
+        Matrix.setLookAtM(m, 0, eyeX, eyeY, eyeZ, targetX, targetY, targetZ, upX, upY, upZ);
+    }
 }

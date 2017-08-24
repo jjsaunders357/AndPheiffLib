@@ -17,6 +17,7 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
+import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.ColladaLoader;
 import com.pheiffware.lib.graphics.managed.engine.ObjectHandle;
@@ -134,11 +135,14 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             PheiffGLUtils.enableAlphaTransparency();
             glCache.setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, true);
 
+
             colorTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
             textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
 
             cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
-            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1, 1, 3, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+
+            getCamera().setPosition(1, 0, 2);
+            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1.0f, 1.0f, 3, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
             lighting.setMaximumDistance(0, maximumLightDistance);
             simpleRenderer = new SimpleRenderer();
             cubeRenderer = new CubeDepthRenderer(glCache, cubeDepthTexture);
@@ -155,9 +159,9 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             try
             {
                 monkeyHandle = loader.loadCollada("meshes/test_render.dae", "other").get("Monkey");
-                loader.loadCollada("meshes/shadows.dae");
+                loader.loadCollada("meshes/shadows2.dae");
                 monkeyTransform = Matrix4.newTranslation(0.5f, 1f, -1f);
-                monkeyTransform.scaleBy(0.7f, 0.7f, 0.7f);
+                monkeyTransform.scaleBy(0.1f, 0.1f, 0.1f);
                 manager.packAndTransfer();
             }
             catch (XMLParseException | IOException e)
@@ -167,7 +171,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         }
 
         @Override
-        protected void onDrawFrame(EuclideanCamera camera) throws GraphicsException
+        protected void onDrawFrame(Projection projection, EuclideanCamera camera) throws GraphicsException
         {
             monkeyTransform.rotateBy(1f, 1f, 0f, 1f);
             monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
@@ -176,13 +180,16 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             float[] absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
             cubeRenderer.setRenderPosition(absoluteLightPosition);
             cubeRenderer.add(manager.getGroupObjects("main"));
-            cubeRenderer.add(monkeyHandle);
+            //cubeRenderer.add(monkeyHandle);
             cubeRenderer.render();
 
-            colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
+            colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
+            colorTechnique.setProperty(RenderProperty.SHADOW_PROJECTION_MAX_DEPTH, cubeRenderer.getProjection().getLinearDepth().maxDepth);
+            //colorTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, cubeRenderer.getProjection().getDepthZConst());
+            //colorTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, cubeRenderer.getProjection().getDepthZFactor());
             colorTechnique.applyConstantProperties();
 
 
@@ -194,8 +201,14 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             GLES20.glClearDepthf(1);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
+            Matrix4 lightTransform = Matrix4.newTranslation(lighting.getPositions()[0], lighting.getPositions()[1], lighting.getPositions()[2]);
+            lightTransform.scaleBy(0.1f, 0.1f, 0.1f);
+
+            monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, lightTransform);
             simpleRenderer.add(manager.getGroupObjects("main"));
             simpleRenderer.add(monkeyHandle);
+
+            GLES20.glCullFace(GLES20.GL_BACK);
             simpleRenderer.render();
         }
 

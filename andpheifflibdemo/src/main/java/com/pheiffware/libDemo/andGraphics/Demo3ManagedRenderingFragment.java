@@ -16,6 +16,7 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
+import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.ColladaLoader;
 import com.pheiffware.lib.graphics.managed.engine.ObjectHandle;
@@ -162,7 +163,7 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
         }
 
         @Override
-        protected void onDrawFrame(EuclideanCamera camera) throws GraphicsException
+        protected void onDrawFrame(Projection projection, EuclideanCamera camera) throws GraphicsException
         {
             GLES20.glViewport(0, 0, getSurfaceWidth(), getSurfaceHeight());
             monkeyTransform.rotateBy(rotationRate, 1, 1, 0);
@@ -171,12 +172,12 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
             monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
             cubeHandle.setProperty(RenderProperty.MODEL_MATRIX, cubeTransform);
 
-            colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
+            colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorTechnique.applyConstantProperties();
 
-            textureTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, camera.getProjectionLinearDepth());
+            textureTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
             textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             textureTechnique.applyConstantProperties();

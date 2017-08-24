@@ -15,21 +15,9 @@ import com.pheiffware.lib.geometry.Vec3D;
  */
 public class EuclideanCamera extends Camera
 {
-
-    /**
-     * Create camera with given lens properties
-     *
-     * @param FOV
-     * @param aspect
-     * @param nearZ
-     * @param farZ
-     * @param flipVertical
-     */
-    public EuclideanCamera(float FOV, float aspect, float nearZ, float farZ, boolean flipVertical)
+    public EuclideanCamera()
     {
         super();
-        //Looking in -z direction, with positive y axis straight up
-        setLens(FOV, aspect, nearZ, farZ, flipVertical);
     }
 
     /**
@@ -58,7 +46,6 @@ public class EuclideanCamera extends Camera
         viewMatrix.translateByLHS(-xInput * distancePerInputMagnitude, -yInput * distancePerInputMagnitude, 0);
     }
 
-
     /**
      * Translate camera position in absolute space.
      *
@@ -69,6 +56,11 @@ public class EuclideanCamera extends Camera
     public void translateAbsolute(float x, float y, float z)
     {
         viewMatrix.translateBy(-x, -y, -z);
+    }
+
+    public void lookAt(float eyeX, float eyeY, float eyeZ, float targetX, float targetY, float targetZ, float upX, float upY, float upZ)
+    {
+        viewMatrix.setLookAt(eyeX, eyeY, eyeZ, targetX, targetY, targetZ, upX, upY, upZ);
     }
 
     /**

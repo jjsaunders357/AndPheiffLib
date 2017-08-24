@@ -23,6 +23,7 @@ import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
+import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.MeshDataManager;
 import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
@@ -151,7 +152,7 @@ public class Demo5HolographicFragment extends BaseGameFragment
 
 
         @Override
-        protected void onDrawFrame(EuclideanCamera camera) throws GraphicsException
+        protected void onDrawFrame(Projection projection, EuclideanCamera camera) throws GraphicsException
         {
             GLES20.glViewport(0, 0, getSurfaceWidth(), getSurfaceHeight());
             aspectRatio = getSurfaceWidth() / (float) getSurfaceHeight();

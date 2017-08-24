@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
@@ -22,8 +23,8 @@ public class CubeDepthRenderer extends Renderer
     private final Technique depthCubeTechnique;
     private final TextureCubeMap cubeDepthTexture;
     private final TechniqueRenderPass depthRenderPass;
-    private final EuclideanCamera lightCamera = new EuclideanCamera(90, 1, 0.1f, 100, false);
-
+    private final EuclideanCamera lightCamera = new EuclideanCamera();
+    private final Projection projection;
     private float[] renderPosition;
 
 
@@ -33,6 +34,7 @@ public class CubeDepthRenderer extends Renderer
         depthCubeTechnique = glCache.buildTechnique(DepthCubeTechnique.class);
         depthRenderPass = new TechniqueRenderPass(depthCubeTechnique);
         this.cubeDepthTexture = cubeDepthTexture;
+        projection = new Projection(90.0f, 1.0f, 0.1f, 20.0f, false);
     }
 
     @Override
@@ -40,39 +42,28 @@ public class CubeDepthRenderer extends Renderer
     {
         frameBuffer.bind(0, 0, cubeDepthTexture.getWidth(), cubeDepthTexture.getHeight());
 
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
-        lightCamera.reset();
-        lightCamera.setPosition(renderPosition[0], renderPosition[1], renderPosition[2]);
+        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1], renderPosition[2] + 1.0f, 0.0f, -1.0f, 0.0f);
         renderFace();
 
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-        lightCamera.reset();
-        lightCamera.rotate(180, 0, 1, 0);
-        lightCamera.setPosition(renderPosition[0], renderPosition[1], renderPosition[2]);
+        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1], renderPosition[2] - 1.0f, 0.0f, -1.0f, 0.0f);
         renderFace();
 
         cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-        lightCamera.reset();
-        lightCamera.rotate(90, 0, 0, 1);
-        lightCamera.setPosition(renderPosition[0], renderPosition[1], renderPosition[2]);
+        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0] + 1.0f, renderPosition[1], renderPosition[2], 0.0f, -1.0f, 0.0f);
         renderFace();
 
         cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-        lightCamera.reset();
-        lightCamera.rotate(-90, 0, 0, 1);
-        lightCamera.setPosition(renderPosition[0], renderPosition[1], renderPosition[2]);
+        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0] - 1.0f, renderPosition[1], renderPosition[2], 0.0f, -1.0f, 0.0f);
         renderFace();
 
         cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-        lightCamera.reset();
-        lightCamera.rotate(90, 1, 0, 0);
-        lightCamera.setPosition(renderPosition[0], renderPosition[1], renderPosition[2]);
+        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1] + 1.0f, renderPosition[2], 0.0f, 0.0f, 1.0f);
         renderFace();
 
         cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-        lightCamera.reset();
-        lightCamera.rotate(-90, 1, 0, 0);
-        lightCamera.setPosition(renderPosition[0], renderPosition[1], renderPosition[2]);
+        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1] - 1.0f, renderPosition[2], 0.0f, 0.0f, -1.0f);
         renderFace();
     }
 
@@ -82,10 +73,10 @@ public class CubeDepthRenderer extends Renderer
         GLES20.glClearDepthf(1.0f);
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
 
-        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, lightCamera.getProjectionLinearDepth());
+        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
+//        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
         depthCubeTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
         depthCubeTechnique.applyConstantProperties();
-
         renderPass(depthRenderPass);
     }
 
@@ -94,4 +85,8 @@ public class CubeDepthRenderer extends Renderer
         this.renderPosition = renderPosition;
     }
 
+    public Projection getProjection()
+    {
+        return projection;
+    }
 }
