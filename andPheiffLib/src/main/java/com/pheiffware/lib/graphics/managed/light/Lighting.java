@@ -13,8 +13,9 @@ import com.pheiffware.lib.utils.GraphicsUtils;
  */
 public class Lighting
 {
+    //TODO: Make configurable
     //The number of lights actually supported by underlying shaders.
-    private static final int numLightsSupported = 4;
+    public static final int numLightsSupported = 4;
 
     //General ambient lighting
     private final float[] ambientLightColor;

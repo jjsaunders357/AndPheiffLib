@@ -30,6 +30,27 @@ in vec3 normalEyeSpace;
 
 layout(location = 0) out vec4 fragColor;
 
+vec4 performLightCalcs(int lightIndex,vec4 diffuseLightMaterialColor,mediump samplerCubeShadow cubeDepthSampler)
+{
+        if(onState[lightIndex])
+        {
+            vec4 color = calcLightColor(positionEyeSpace.xyz-lightPositionEyeSpace[lightIndex].xyz,  //light to fragment vector
+                                     -positionEyeSpace.xyz,                                 //fragment to eye vector (eye is at 0)
+                                     normalEyeSpace,                                        //Surface normal
+                                     diffuseLightMaterialColor,                             //Light * diffuse material color
+                                     specLightMaterialColor[lightIndex],                    //Light * specular material color
+                                     shininess);                                            //Material shininess
+            #if enableShadows
+                color.rgb = color.rgb * calcCubeShadow(fragPositionAbs, lightPositionAbs[lightIndex], cubeDepthSampler, shadowProjectionMaxDepth);
+//                color.rgb = color.rgb * calcCubeShadow(fragPositionAbs, lightPositionAbs[lightIndex], cubeDepthSampler, depthZConst, depthZFactor);
+            #endif
+            return color;
+        }
+        else
+        {
+            return vec4(0.0,0.0,0.0,0.0);
+        }
+}
 void main()
 {
     #if texturedMaterial
@@ -37,39 +58,25 @@ void main()
         vec4 sampledColor = texture(diffuseMaterialColorSampler,texCoord);
 
         //Base material color used for ambient and diffuse lighting adds 0.0 opaqueness
-        vec4 baseMaterialColor = vec4(sampledColor.rgb,0.0);
+        vec4 materialColor = vec4(sampledColor.rgb,0.0);
 
         //The material alpha at this point is added in at the end, irrespective of lighting
         float materialAlpha = sampledColor.a;
 
         //Calc ambient color
-        vec4 ambientLightMaterialColor = baseMaterialColor * ambientLightColor;
+        vec4 ambientLightMaterialColor = materialColor * ambientLightColor;
+
+        vec4 totalLightMaterialColor = ambientLightMaterialColor;
+
+        totalLightMaterialColor += performLightCalcs(0,materialColor * lightColor[0],cubeDepthSampler0);
+        totalLightMaterialColor += performLightCalcs(1,materialColor * lightColor[1],cubeDepthSampler1);
+    #else
+        vec4 totalLightMaterialColor = ambientLightMaterialColor;
+
+        totalLightMaterialColor += performLightCalcs(0,diffuseLightMaterialColor[0],cubeDepthSampler0);
+        totalLightMaterialColor += performLightCalcs(1,diffuseLightMaterialColor[1],cubeDepthSampler1);
     #endif
 
-    vec4 totalLightMaterialColor = ambientLightMaterialColor;
-    for(int i=0;i<numLights;i++)
-    {
-        if(onState[i])
-        {
-            #if texturedMaterial
-                vec4 diffuse = baseMaterialColor * lightColor[i];
-            #else
-                vec4 diffuse = diffuseLightMaterialColor[i];
-            #endif
-            vec4 color = calcLightColor(positionEyeSpace.xyz-lightPositionEyeSpace[i].xyz,  //light to fragment vector
-                                     -positionEyeSpace.xyz,                                 //fragment to eye vector (eye is at 0)
-                                     normalEyeSpace,                                        //Surface normal
-                                     diffuse,                                               //Light * diffuse material color
-                                     specLightMaterialColor[i],                             //Light * specular material color
-                                     shininess);                                            //Material shininess
-            #if enableShadows
-//                color.rgb = color.rgb *0.00001 + vec3(calcCubeShadow(fragPositionAbs, lightPositionAbs[i], cubeDepthSampler, shadowProjectionMaxDepth),0,0);
-                color.rgb = color.rgb * calcCubeShadow(fragPositionAbs, lightPositionAbs[i], cubeDepthSampler, shadowProjectionMaxDepth);
-//                color.rgb = color.rgb * calcCubeShadow(fragPositionAbs, lightPositionAbs[i], cubeDepthSampler, depthZConst, depthZFactor);
-            #endif
-            totalLightMaterialColor += color;
-        }
-    }
     //Color of fragment is the combination of all colors
     fragColor = totalLightMaterialColor + vec4(0.0, 0.0, 0.0, materialAlpha);
 }

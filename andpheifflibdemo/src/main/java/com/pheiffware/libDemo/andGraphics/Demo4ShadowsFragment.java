@@ -117,10 +117,11 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         private Std3DTechnique colorTechnique;
 
         private Std3DTechnique textureTechnique;
-        private TextureCubeMap cubeDepthTexture;
+        private TextureCubeMap[] cubeDepthTextures;
         private SimpleRenderer simpleRenderer;
         private CubeDepthRenderer cubeRenderer;
         private ObjectHandle monkeyHandle;
+        private ObjectHandle monkeyHandle2;
         private Matrix4 monkeyTransform;
 
         public Renderer()
@@ -139,13 +140,26 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             colorTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
             textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
 
-            cubeDepthTexture = glCache.buildCubeDepthTex(512, 512).build();
 
             getCamera().setPosition(1, 0, 2);
-            lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{1.0f, 1.0f, 3, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            lighting = new Lighting(
+                    new float[]{
+                            0.2f, 0.2f, 0.2f, 1.0f},  //Ambient light color
+                    new float[]{
+                            1.0f, 1.0f, 3, 1,         //Light 1 position
+                            1.0f, 2.0f, 0, 1},        //Light 2 position
+                    new float[]{
+                            0.5f, 0.2f, 0.2f, 1.0f,   //Light 1 color
+                            0.2f, 0.2f, 0.5f, 1.0f}); //Light 2 color
+
             lighting.setMaximumDistance(0, maximumLightDistance);
+            cubeDepthTextures = new TextureCubeMap[Lighting.numLightsSupported];
+            cubeDepthTextures[0] = glCache.buildCubeDepthTex(512, 512).build();
+            cubeDepthTextures[1] = glCache.buildCubeDepthTex(512, 512).build();
+
+
             simpleRenderer = new SimpleRenderer();
-            cubeRenderer = new CubeDepthRenderer(glCache, cubeDepthTexture);
+            cubeRenderer = new CubeDepthRenderer(glCache);
 
             manager = new ObjectManager();
             DemoColladaLoader loader = new DemoColladaLoader(
@@ -159,6 +173,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             try
             {
                 monkeyHandle = loader.loadCollada("meshes/test_render.dae", "other").get("Monkey");
+                monkeyHandle2 = monkeyHandle.copy();
                 loader.loadCollada("meshes/shadows2.dae");
                 monkeyTransform = Matrix4.newTranslation(0.5f, 1f, -1f);
                 monkeyTransform.scaleBy(0.1f, 0.1f, 0.1f);
@@ -179,14 +194,23 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             //Render to texture 1st
             float[] absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
             cubeRenderer.setRenderPosition(absoluteLightPosition);
+            cubeRenderer.setCubeDepthTexture(cubeDepthTextures[0]);
             cubeRenderer.add(manager.getGroupObjects("main"));
             //cubeRenderer.add(monkeyHandle);
             cubeRenderer.render();
 
+            absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 4, 8);
+            cubeRenderer.setRenderPosition(absoluteLightPosition);
+            cubeRenderer.setCubeDepthTexture(cubeDepthTextures[1]);
+            cubeRenderer.add(manager.getGroupObjects("main"));
+            //cubeRenderer.add(monkeyHandle);
+            cubeRenderer.render();
+
+
             colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
-            colorTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURE, cubeDepthTexture);
+            colorTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURES, cubeDepthTextures);
             colorTechnique.setProperty(RenderProperty.SHADOW_PROJECTION_MAX_DEPTH, cubeRenderer.getProjection().getLinearDepth().maxDepth);
             //colorTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, cubeRenderer.getProjection().getDepthZConst());
             //colorTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, cubeRenderer.getProjection().getDepthZFactor());
@@ -202,13 +226,19 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             Matrix4 lightTransform = Matrix4.newTranslation(lighting.getPositions()[0], lighting.getPositions()[1], lighting.getPositions()[2]);
-            lightTransform.scaleBy(0.1f, 0.1f, 0.1f);
+            lightTransform.scaleBy(0.2f, 0.2f, 0.2f);
 
             monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, lightTransform);
+
+            lightTransform = Matrix4.newTranslation(lighting.getPositions()[4], lighting.getPositions()[5], lighting.getPositions()[6]);
+            lightTransform.scaleBy(0.2f, 0.2f, 0.2f);
+
+            monkeyHandle2.setProperty(RenderProperty.MODEL_MATRIX, lightTransform);
+
             simpleRenderer.add(manager.getGroupObjects("main"));
             simpleRenderer.add(monkeyHandle);
+            simpleRenderer.add(monkeyHandle2);
 
-            GLES20.glCullFace(GLES20.GL_BACK);
             simpleRenderer.render();
         }
 

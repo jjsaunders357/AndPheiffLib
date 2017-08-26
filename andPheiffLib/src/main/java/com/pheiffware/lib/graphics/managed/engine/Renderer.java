@@ -14,7 +14,7 @@ public abstract class Renderer
 {
     private final List<ObjectHandle> renderList = new ArrayList<>(1000);
 
-    //Properties which will should set once for every technique which supports them (such as the perspective matrix)
+    //Properties which will set once for every technique which supports them (such as the perspective matrix)
     private final EnumMap<RenderProperty, Object> constantRenderProperties = new EnumMap<>(RenderProperty.class);
 
     public final void setRenderProperty(RenderProperty renderProperty, Object value)

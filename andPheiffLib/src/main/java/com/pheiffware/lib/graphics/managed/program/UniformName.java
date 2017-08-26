@@ -39,7 +39,8 @@ public enum UniformName
 
     //For shadow casting:
     LIGHT_POS("lightPositionAbs"),
-    DEPTH_CUBE_SAMPLER("cubeDepthSampler"),
+    DEPTH_CUBE_SAMPLER0("cubeDepthSampler0"),
+    DEPTH_CUBE_SAMPLER1("cubeDepthSampler1"),
     SHADOW_PROJECTION_MAX_DEPTH("shadowProjectionMaxDepth"),
     DEPTH_Z_CONST("depthZConst"),
     DEPTH_Z_FACTOR("depthZFactor"),
@@ -52,6 +53,7 @@ public enum UniformName
     SCREEN_COLOR("screenColor"),
     DEPTH_SAMPLER("depthSampler");
     private static final Map<String, UniformName> nameLookup;
+    private static final UniformName[] enumArray;
 
     static
     {
@@ -60,11 +62,17 @@ public enum UniformName
         {
             nameLookup.put(uniform.getName(), uniform);
         }
+        enumArray = UniformName.class.getEnumConstants();
     }
 
     public static UniformName lookupByName(String name)
     {
         return nameLookup.get(name);
+    }
+
+    public static UniformName depthCubeSampler(int index)
+    {
+        return enumArray[DEPTH_CUBE_SAMPLER0.ordinal() + index];
     }
 
     //Name of the attribute (as declared)

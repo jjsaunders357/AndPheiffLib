@@ -34,6 +34,7 @@ uniform vec4 specLightMaterialColor[numLights];
     //uniform float depthZFactor;
 
     //Shadow cube map
-    uniform mediump samplerCubeShadow cubeDepthSampler;
+    uniform mediump samplerCubeShadow cubeDepthSampler0;
+    uniform mediump samplerCubeShadow cubeDepthSampler1;
 #endif
 

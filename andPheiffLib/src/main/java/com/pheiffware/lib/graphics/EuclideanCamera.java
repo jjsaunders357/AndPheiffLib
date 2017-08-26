@@ -58,9 +58,10 @@ public class EuclideanCamera extends Camera
         viewMatrix.translateBy(-x, -y, -z);
     }
 
-    public void lookAt(float eyeX, float eyeY, float eyeZ, float targetX, float targetY, float targetZ, float upX, float upY, float upZ)
+    //TODO: Improve lookAt and similar functionality
+    public void lookAt(float posX, float posY, float posZ, float targetX, float targetY, float targetZ, float upX, float upY, float upZ)
     {
-        viewMatrix.setLookAt(eyeX, eyeY, eyeZ, targetX, targetY, targetZ, upX, upY, upZ);
+        viewMatrix.setLookAt(posX, posY, posZ, targetX, targetY, targetZ, upX, upY, upZ);
     }
 
     /**
@@ -98,6 +99,7 @@ public class EuclideanCamera extends Camera
      */
     public void setPosition(float x, float y, float z)
     {
+        //TODO: This is incorrect.
         //Directly modify the translation terms in the matrix
         viewMatrix.modifyTranslation(-x, -y, -z);
     }

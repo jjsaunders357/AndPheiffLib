@@ -65,8 +65,23 @@ public class Std3DTechnique extends Technique3D
         }
         if (shadows)
         {
-            Texture cubeDepthTexture = (Texture) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURE);
-            setUniformValue(UniformName.DEPTH_CUBE_SAMPLER, cubeDepthTexture.autoBind());
+            Texture[] depthTextures = (Texture[]) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURES);
+            int[] depthSamplers = new int[depthTextures.length];
+
+            for (int i = 0; i < depthTextures.length; i++)
+            {
+                if (depthTextures[i] != null)
+                {
+                    depthSamplers[i] = depthTextures[i].autoBind();
+                }
+                else
+                {
+                    //For null textures, just pass in 0 for the sampler.  It will not be used.
+                    depthSamplers[i] = 0;
+                }
+            }
+            setUniformValue(UniformName.depthCubeSampler(0), depthSamplers[0]);
+            setUniformValue(UniformName.depthCubeSampler(1), depthSamplers[1]);
             Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);
             setUniformValue(UniformName.MODEL_MATRIX, modelMatrix.m);
         }

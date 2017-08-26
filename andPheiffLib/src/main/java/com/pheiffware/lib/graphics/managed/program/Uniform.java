@@ -56,23 +56,7 @@ public abstract class Uniform
                     };
                 }
             case GLES20.GL_FLOAT_VEC2:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform2fv(location, arraySize, (float[]) value, 0);
-                    }
-                };
             case GLES20.GL_FLOAT_VEC3:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform3fv(location, arraySize, (float[]) value, 0);
-                    }
-                };
             case GLES20.GL_FLOAT_VEC4:
                 return new Uniform(programHandle, name, uniformType, arraySize)
                 {
@@ -82,7 +66,12 @@ public abstract class Uniform
                         GLES20.glUniform4fv(location, arraySize, (float[]) value, 0);
                     }
                 };
+            case GLES20.GL_BOOL:
             case GLES20.GL_INT:
+            case GLES20.GL_SAMPLER_2D:
+            case GLES20.GL_SAMPLER_CUBE:
+            case GLES30.GL_SAMPLER_2D_SHADOW:
+            case GLES30.GL_SAMPLER_CUBE_SHADOW:
                 if (arraySize == 1)
                 {
                     return new Uniform(programHandle, name, uniformType, arraySize)
@@ -106,74 +95,10 @@ public abstract class Uniform
                     };
                 }
             case GLES20.GL_INT_VEC2:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform2iv(location, arraySize, (int[]) value, 0);
-                    }
-                };
             case GLES20.GL_INT_VEC3:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform3iv(location, arraySize, (int[]) value, 0);
-                    }
-                };
             case GLES20.GL_INT_VEC4:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform4iv(location, arraySize, (int[]) value, 0);
-                    }
-                };
-            case GLES20.GL_BOOL:
-                if (arraySize == 1)
-                {
-                    return new Uniform(programHandle, name, uniformType, arraySize)
-                    {
-                        @Override
-                        public void setValue(Object value)
-                        {
-                            GLES20.glUniform1i(location, (Integer) value);
-                        }
-                    };
-                }
-                else
-                {
-                    return new Uniform(programHandle, name, uniformType, arraySize)
-                    {
-                        @Override
-                        public void setValue(Object value)
-                        {
-                            GLES20.glUniform1iv(location, arraySize, (int[]) value, 0);
-                        }
-                    };
-                }
             case GLES20.GL_BOOL_VEC2:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform2iv(location, arraySize, (int[]) value, 0);
-                    }
-                };
-
             case GLES20.GL_BOOL_VEC3:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform3iv(location, arraySize, (int[]) value, 0);
-                    }
-                };
             case GLES20.GL_BOOL_VEC4:
                 return new Uniform(programHandle, name, uniformType, arraySize)
                 {
@@ -211,18 +136,7 @@ public abstract class Uniform
                         GLES20.glUniformMatrix4fv(location, arraySize, false, (float[]) value, 0);
                     }
                 };
-            case GLES20.GL_SAMPLER_2D:
-            case GLES20.GL_SAMPLER_CUBE:
-            case GLES30.GL_SAMPLER_2D_SHADOW:
-            case GLES30.GL_SAMPLER_CUBE_SHADOW:
-                return new Uniform(programHandle, name, uniformType, arraySize)
-                {
-                    @Override
-                    public void setValue(Object value)
-                    {
-                        GLES20.glUniform1i(location, (int) value);
-                    }
-                };
+
             default:
                 throw new RuntimeException("Cannot get size of unsupported opengl uniform type: " + uniformType);
         }

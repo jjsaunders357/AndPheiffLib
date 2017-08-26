@@ -49,6 +49,9 @@ public enum RenderProperty
     //This is the texture containing depth
     DEPTH_TEXTURE,
 
-    SHADOW_PROJECTION_MAX_DEPTH, //This is the cube texture containing depth
-    DEPTH_Z_CONST, DEPTH_Z_FACTOR, CUBE_DEPTH_TEXTURE
+    //Array of depth textures, one per light.  Lights which don't use this will have null entries.
+    CUBE_DEPTH_TEXTURES,
+
+    SHADOW_PROJECTION_MAX_DEPTH,
+    DEPTH_Z_CONST, DEPTH_Z_FACTOR
 }

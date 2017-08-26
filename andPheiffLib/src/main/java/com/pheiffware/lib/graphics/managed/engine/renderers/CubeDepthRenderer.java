@@ -9,7 +9,6 @@ import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.DepthCubeTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 
@@ -20,20 +19,19 @@ import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 public class CubeDepthRenderer extends Renderer
 {
     private final FrameBuffer frameBuffer;
-    private final Technique depthCubeTechnique;
-    private final TextureCubeMap cubeDepthTexture;
+    private final DepthCubeTechnique depthCubeTechnique;
     private final TechniqueRenderPass depthRenderPass;
     private final EuclideanCamera lightCamera = new EuclideanCamera();
     private final Projection projection;
+    private TextureCubeMap cubeDepthTexture;
     private float[] renderPosition;
 
 
-    public CubeDepthRenderer(GLCache glCache, TextureCubeMap cubeDepthTexture) throws GraphicsException
+    public CubeDepthRenderer(GLCache glCache) throws GraphicsException
     {
         frameBuffer = new FrameBuffer();
         depthCubeTechnique = glCache.buildTechnique(DepthCubeTechnique.class);
         depthRenderPass = new TechniqueRenderPass(depthCubeTechnique);
-        this.cubeDepthTexture = cubeDepthTexture;
         projection = new Projection(90.0f, 1.0f, 0.1f, 20.0f, false);
     }
 
@@ -44,6 +42,7 @@ public class CubeDepthRenderer extends Renderer
 
         cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
         lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1], renderPosition[2] + 1.0f, 0.0f, -1.0f, 0.0f);
+        //TODO: Test look direction + move position.  This will be important for spherical rendering.
         renderFace();
 
         cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
@@ -83,6 +82,11 @@ public class CubeDepthRenderer extends Renderer
     public void setRenderPosition(float[] renderPosition)
     {
         this.renderPosition = renderPosition;
+    }
+
+    public void setCubeDepthTexture(TextureCubeMap cubeDepthTexture)
+    {
+        this.cubeDepthTexture = cubeDepthTexture;
     }
 
     public Projection getProjection()
