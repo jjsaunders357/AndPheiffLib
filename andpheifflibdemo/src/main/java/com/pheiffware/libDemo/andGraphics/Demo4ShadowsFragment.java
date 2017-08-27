@@ -211,9 +211,10 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURES, cubeDepthTextures);
-            colorTechnique.setProperty(RenderProperty.SHADOW_PROJECTION_MAX_DEPTH, cubeRenderer.getProjection().getLinearDepth().maxDepth);
-            //colorTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, cubeRenderer.getProjection().getDepthZConst());
-            //colorTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, cubeRenderer.getProjection().getDepthZFactor());
+            //colorTechnique.setProperty(RenderProperty.SHADOW_PROJECTION_MAX_DEPTH, cubeRenderer.getProjection().getLinearDepth().maxDepth);
+            //TODO: Should be part of lighting
+            colorTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, cubeRenderer.getProjection().getDepthZConst());
+            colorTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, cubeRenderer.getProjection().getDepthZFactor());
             colorTechnique.applyConstantProperties();
 
 

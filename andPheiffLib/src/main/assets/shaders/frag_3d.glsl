@@ -40,7 +40,7 @@ void performIteration(inout vec4 totalLightMaterialColor, vec4 diffuseLightMater
                              shininess);                                            //Material shininess
         if(castsCubeShadow[lightIndex])
         {
-            applyShadow(color, fragPositionAbs, lightPositionAbs[lightIndex], cubeDepthSampler, shadowProjectionMaxDepth);
+            applyShadow(color, fragPositionAbs, lightPositionAbs[lightIndex], cubeDepthSampler, depthZConst, depthZFactor);
         }
         totalLightMaterialColor += color;
     }

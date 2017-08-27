@@ -11,8 +11,12 @@ public class Projection
     private float FOV, aspect;
     private float nearZ, farZ;
     private boolean flipVertical;
+
+    //Used to extract depth values from non-linear depth buffer
     private float depthZConst;
+    //Used to extract depth values from non-linear depth buffer
     private float depthZFactor;
+
     private final Matrix4 projectionMatrix = Matrix4.newIdentity();
     private ProjectionLinearDepth linearDepth;
 
@@ -40,8 +44,8 @@ public class Projection
     private void updateProjection()
     {
         projectionMatrix.setProjection(FOV, aspect, nearZ, farZ, flipVertical);
-        depthZConst = projectionMatrix.m[10];
-        depthZFactor = projectionMatrix.m[14];
+        depthZConst = 0.5f - 0.5f * projectionMatrix.m[10];
+        depthZFactor = 0.5f * projectionMatrix.m[14];
         linearDepth = new ProjectionLinearDepth(FOV, aspect, farZ, flipVertical);
     }
 

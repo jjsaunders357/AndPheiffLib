@@ -72,8 +72,7 @@ public class CubeDepthRenderer extends Renderer
         GLES20.glClearDepthf(1.0f);
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
 
-        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
-//        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
+        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
         depthCubeTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
         depthCubeTechnique.applyConstantProperties();
         renderPass(depthRenderPass);

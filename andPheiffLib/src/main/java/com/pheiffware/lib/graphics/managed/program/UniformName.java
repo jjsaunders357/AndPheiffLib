@@ -44,6 +44,7 @@ public enum UniformName
     DEPTH_CUBE_SAMPLER1("cubeDepthSampler1"),
     DEPTH_CUBE_SAMPLER2("cubeDepthSampler2"),
     DEPTH_CUBE_SAMPLER3("cubeDepthSampler3"),
+
     SHADOW_PROJECTION_MAX_DEPTH("shadowProjectionMaxDepth"),
     DEPTH_Z_CONST("depthZConst"),
     DEPTH_Z_FACTOR("depthZFactor"),
