@@ -62,6 +62,7 @@ public class EuclideanCamera extends Camera
     public void lookAt(float posX, float posY, float posZ, float targetX, float targetY, float targetZ, float upX, float upY, float upZ)
     {
         viewMatrix.setLookAt(posX, posY, posZ, targetX, targetY, targetZ, upX, upY, upZ);
+
     }
 
     /**

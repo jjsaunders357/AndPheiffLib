@@ -134,7 +134,7 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
             textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
 
             lighting = new Lighting(new float[]{0.2f, 0.2f, 0.2f, 1.0f}, new float[]{-3, 3, 0, 1}, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
-            simpleRenderer = new SimpleRenderer();
+            simpleRenderer = new SimpleRenderer(colorTechnique, textureTechnique);
             manager = new ObjectManager();
             DemoColladaLoader loader = new DemoColladaLoader(
                     manager,
@@ -159,6 +159,10 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
             monkeyTransform = Matrix4.newTranslation(0, 0, -4);
             monkeyTransform.scaleBy(1f, -1f, -1f);
             cubeTransform = Matrix4.newTranslation(-2, 2, -4);
+
+            //Setup renderer
+            simpleRenderer.add(monkeyHandle);
+            simpleRenderer.add(cubeHandle);
         }
 
         @Override
@@ -171,22 +175,12 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
             monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
             cubeHandle.setProperty(RenderProperty.MODEL_MATRIX, cubeTransform);
 
-            colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
-            colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
-            colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
-            colorTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, 1.0f);
-            colorTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, 1.0f);
-            colorTechnique.applyConstantProperties();
-
-            textureTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
-            textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
-            textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
-            textureTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, 1.0f);
-            textureTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, 1.0f);
-            textureTechnique.applyConstantProperties();
-
-            simpleRenderer.add(monkeyHandle);
-            simpleRenderer.add(cubeHandle);
+            simpleRenderer.setConstantProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
+            simpleRenderer.setConstantProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
+            simpleRenderer.setConstantProperty(RenderProperty.LIGHTING, lighting);
+            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_CONST, 1.0f);
+            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_FACTOR, 1.0f);
+            simpleRenderer.applyConstantProperties();
             simpleRenderer.render();
         }
     }

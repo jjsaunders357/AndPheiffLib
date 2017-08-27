@@ -20,14 +20,17 @@ public class Lighting
     //General ambient lighting
     private final float[] ambientLightColor;
 
+    //Boolean on/off values for each light.  Represented as an int for underlying openGL's benefit.
+    private final int[] onStates;
+
+    //Boolean on/off values for each light specifying whether it casts a cube-map shadow
+    private final int[] castsCubeShadow = new int[numLightsSupported];
+
     //The light's positions
     private final float[] positions;
 
     //The light's colors
     private final float[] colors;
-
-    //Boolean on/off values for each light.  Represented as an int for underlying openGL's benefit.
-    private final int[] onStates;
 
     //The maximum distance the given light shines.
     private final float[] maxDistances;
@@ -41,9 +44,6 @@ public class Lighting
     //Temporary storage for lightColor * specMatColor, for each light.  This result is overwritten every time the calculation is made.
     private final float[] lightSpecMatColors = new float[numLightsSupported * 4];
 
-    //Boolean on/off values for each light specifying whether it casts a cube-map shadow
-    private final int[] castsCubeShadow = new int[numLightsSupported];
-    private int[] enablesShadows;
 
     /**
      * Creates a Lighting object representing the set of lights to use for rendering.  Each light's position and color is encoded as a 4 element block in the corresponding array.
@@ -304,10 +304,5 @@ public class Lighting
     public int[] getCastsCubeShadow()
     {
         return castsCubeShadow;
-    }
-
-    public int[] getEnablesShadows()
-    {
-        return enablesShadows;
     }
 }

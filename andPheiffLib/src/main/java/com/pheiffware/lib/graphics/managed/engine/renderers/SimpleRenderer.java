@@ -1,6 +1,9 @@
 package com.pheiffware.lib.graphics.managed.engine.renderers;
 
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
+import com.pheiffware.lib.graphics.managed.program.Technique;
+
+import java.util.List;
 
 /**
  * Created by Steve on 6/19/2017.
@@ -8,9 +11,18 @@ import com.pheiffware.lib.graphics.managed.engine.Renderer;
 
 public class SimpleRenderer extends Renderer
 {
-    @Override
-    protected void renderImplement()
+    public SimpleRenderer(Technique... techniques)
     {
-        renderPass(new SimpleRenderPass());
+        super(techniques);
+    }
+
+    public SimpleRenderer(List<Technique> techniques)
+    {
+        super(techniques);
+    }
+
+    public void render()
+    {
+        renderPass();
     }
 }

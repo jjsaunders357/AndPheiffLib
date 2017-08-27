@@ -1,10 +1,12 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
+import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexIndexHandle;
+import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 import java.nio.ByteBuffer;
 import java.util.EnumMap;
@@ -45,6 +47,14 @@ public class MeshHandle
 
     public final void drawTriangles()
     {
+        try
+        {
+            PheiffGLUtils.assertNoError();
+        }
+        catch (GraphicsException e)
+        {
+            e.printStackTrace();
+        }
         drawTriangles(technique);
     }
 

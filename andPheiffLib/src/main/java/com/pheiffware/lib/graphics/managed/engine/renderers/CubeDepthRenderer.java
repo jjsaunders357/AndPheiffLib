@@ -6,9 +6,11 @@ import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.DepthCubeTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 
@@ -19,8 +21,7 @@ import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 public class CubeDepthRenderer extends Renderer
 {
     private final FrameBuffer frameBuffer;
-    private final DepthCubeTechnique depthCubeTechnique;
-    private final TechniqueRenderPass depthRenderPass;
+    private final Technique depthCubeTechnique;
     private final EuclideanCamera lightCamera = new EuclideanCamera();
     private final Projection projection;
     private TextureCubeMap cubeDepthTexture;
@@ -29,14 +30,22 @@ public class CubeDepthRenderer extends Renderer
 
     public CubeDepthRenderer(GLCache glCache) throws GraphicsException
     {
+        super(glCache.buildTechnique(DepthCubeTechnique.class));
+        depthCubeTechnique = getTechnique(0);
         frameBuffer = new FrameBuffer();
-        depthCubeTechnique = glCache.buildTechnique(DepthCubeTechnique.class);
-        depthRenderPass = new TechniqueRenderPass(depthCubeTechnique);
         projection = new Projection(90.0f, 1.0f, 0.1f, 20.0f, false);
     }
 
     @Override
-    protected void renderImplement()
+    protected void renderObject(MeshHandle[] meshHandles)
+    {
+        for (MeshHandle meshHandle : meshHandles)
+        {
+            meshHandle.drawTriangles(depthCubeTechnique);
+        }
+    }
+
+    public void render()
     {
         frameBuffer.bind(0, 0, cubeDepthTexture.getWidth(), cubeDepthTexture.getHeight());
 
@@ -75,7 +84,7 @@ public class CubeDepthRenderer extends Renderer
         depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
         depthCubeTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
         depthCubeTechnique.applyConstantProperties();
-        renderPass(depthRenderPass);
+        renderPass();
     }
 
     public void setRenderPosition(float[] renderPosition)

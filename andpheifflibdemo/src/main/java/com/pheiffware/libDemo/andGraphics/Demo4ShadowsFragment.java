@@ -119,7 +119,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         private Std3DTechnique textureTechnique;
         private TextureCubeMap[] cubeDepthTextures;
         private SimpleRenderer simpleRenderer;
-        private CubeDepthRenderer cubeRenderer;
+        private CubeDepthRenderer cubeDepthRenderer;
         private ObjectHandle monkeyHandle;
         private ObjectHandle monkeyHandle2;
         private Matrix4 monkeyTransform;
@@ -158,8 +158,8 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             cubeDepthTextures[1] = glCache.buildCubeDepthTex(512, 512).build();
 
 
-            simpleRenderer = new SimpleRenderer();
-            cubeRenderer = new CubeDepthRenderer(glCache);
+            simpleRenderer = new SimpleRenderer(colorTechnique, textureTechnique);
+            cubeDepthRenderer = new CubeDepthRenderer(glCache);
 
             manager = new ObjectManager();
             DemoColladaLoader loader = new DemoColladaLoader(
@@ -178,6 +178,14 @@ public class Demo4ShadowsFragment extends BaseGameFragment
                 monkeyTransform = Matrix4.newTranslation(0.5f, 1f, -1f);
                 monkeyTransform.scaleBy(0.1f, 0.1f, 0.1f);
                 manager.packAndTransfer();
+
+                //Add objects to depth renderer, excluding the 2 objects standing in for the lights
+                cubeDepthRenderer.add(manager.getGroupObjects("main"));
+
+                //Add all objects to general rendering
+                simpleRenderer.add(manager.getGroupObjects("main"));
+                simpleRenderer.add(monkeyHandle);
+                simpleRenderer.add(monkeyHandle2);
             }
             catch (XMLParseException | IOException e)
             {
@@ -193,29 +201,14 @@ public class Demo4ShadowsFragment extends BaseGameFragment
 
             //Render to texture 1st
             float[] absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
-            cubeRenderer.setRenderPosition(absoluteLightPosition);
-            cubeRenderer.setCubeDepthTexture(cubeDepthTextures[0]);
-            cubeRenderer.add(manager.getGroupObjects("main"));
-            //cubeRenderer.add(monkeyHandle);
-            cubeRenderer.render();
+            cubeDepthRenderer.setRenderPosition(absoluteLightPosition);
+            cubeDepthRenderer.setCubeDepthTexture(cubeDepthTextures[0]);
+            cubeDepthRenderer.render();
 
             absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 4, 8);
-            cubeRenderer.setRenderPosition(absoluteLightPosition);
-            cubeRenderer.setCubeDepthTexture(cubeDepthTextures[1]);
-            cubeRenderer.add(manager.getGroupObjects("main"));
-            //cubeRenderer.add(monkeyHandle);
-            cubeRenderer.render();
-
-
-            colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
-            colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
-            colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
-            colorTechnique.setProperty(RenderProperty.CUBE_DEPTH_TEXTURES, cubeDepthTextures);
-            //TODO: Should be part of lighting
-            colorTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, cubeRenderer.getProjection().getDepthZConst());
-            colorTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, cubeRenderer.getProjection().getDepthZFactor());
-            colorTechnique.applyConstantProperties();
-
+            cubeDepthRenderer.setRenderPosition(absoluteLightPosition);
+            cubeDepthRenderer.setCubeDepthTexture(cubeDepthTextures[1]);
+            cubeDepthRenderer.render();
 
             //Remove bindings to frame buffers
             FrameBuffer.main.bind(0, 0, getSurfaceWidth(), getSurfaceHeight());
@@ -235,10 +228,14 @@ public class Demo4ShadowsFragment extends BaseGameFragment
 
             monkeyHandle2.setProperty(RenderProperty.MODEL_MATRIX, lightTransform);
 
-            simpleRenderer.add(manager.getGroupObjects("main"));
-            simpleRenderer.add(monkeyHandle);
-            simpleRenderer.add(monkeyHandle2);
-
+            simpleRenderer.setConstantProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
+            simpleRenderer.setConstantProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
+            simpleRenderer.setConstantProperty(RenderProperty.LIGHTING, lighting);
+            //TODO: Should be part of lighting
+            simpleRenderer.setConstantProperty(RenderProperty.CUBE_DEPTH_TEXTURES, cubeDepthTextures);
+            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_CONST, cubeDepthRenderer.getProjection().getDepthZConst());
+            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_FACTOR, cubeDepthRenderer.getProjection().getDepthZFactor());
+            simpleRenderer.applyConstantProperties();
             simpleRenderer.render();
         }
 
