@@ -28,7 +28,7 @@ public class Std3DTechnique extends Technique3D
 
     public void applyConstantPropertiesImplement()
     {
-        setProjectionLinearDepth();
+        setProjection();
         setLightingConstants();
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
         setUniformValue(UniformName.LIGHT_POS_ABS, lighting.getPositions());

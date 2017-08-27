@@ -171,15 +171,14 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
             monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
             cubeHandle.setProperty(RenderProperty.MODEL_MATRIX, cubeTransform);
 
-            colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
+            colorTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             colorTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, 1.0f);
             colorTechnique.setProperty(RenderProperty.DEPTH_Z_FACTOR, 1.0f);
-
             colorTechnique.applyConstantProperties();
 
-            textureTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
+            textureTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
             textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
             textureTechnique.setProperty(RenderProperty.DEPTH_Z_CONST, 1.0f);
