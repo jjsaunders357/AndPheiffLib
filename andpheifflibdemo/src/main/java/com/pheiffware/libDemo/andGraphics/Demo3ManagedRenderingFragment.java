@@ -130,7 +130,6 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
 
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
-            glCache.setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, false);
             colorTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
             textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
 
@@ -175,11 +174,16 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
             colorTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
             colorTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             colorTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+            //TODO: Remove
+            colorTechnique.setProperty(RenderProperty.SHADOW_PROJECTION_MAX_DEPTH, 1.0f);
+
             colorTechnique.applyConstantProperties();
 
             textureTechnique.setProperty(RenderProperty.PROJECTION_LINEAR_DEPTH, projection.getLinearDepth());
             textureTechnique.setProperty(RenderProperty.VIEW_MATRIX, camera.getViewMatrix());
             textureTechnique.setProperty(RenderProperty.LIGHTING, lighting);
+            //TODO: Remove
+            textureTechnique.setProperty(RenderProperty.SHADOW_PROJECTION_MAX_DEPTH, 1.0f);
             textureTechnique.applyConstantProperties();
 
             simpleRenderer.add(monkeyHandle);

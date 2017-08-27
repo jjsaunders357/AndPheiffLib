@@ -41,6 +41,10 @@ public class Lighting
     //Temporary storage for lightColor * specMatColor, for each light.  This result is overwritten every time the calculation is made.
     private final float[] lightSpecMatColors = new float[numLightsSupported * 4];
 
+    //Boolean on/off values for each light specifying whether it casts a cube-map shadow
+    private final int[] castsCubeShadow = new int[numLightsSupported];
+    private int[] enablesShadows;
+
     /**
      * Creates a Lighting object representing the set of lights to use for rendering.  Each light's position and color is encoded as a 4 element block in the corresponding array.
      * Any additional lights supported by the implementation will be turned off.
@@ -149,11 +153,22 @@ public class Lighting
      * Turns the given light on/off
      *
      * @param lightIndex the index of the light to turn on/off
-     * @param on         0 = off, anything else = on
+     * @param onOff      0 = off, anything else = on
      */
-    public final void setOnState(int lightIndex, int on)
+    public final void setOnState(int lightIndex, int onOff)
     {
-        onStates[lightIndex] = on;
+        onStates[lightIndex] = onOff;
+    }
+
+    /**
+     * Sets whether the given light casts omni directional shadows
+     *
+     * @param lightIndex
+     * @param onOff
+     */
+    public final void setCastsCubeShadow(int lightIndex, int onOff)
+    {
+        castsCubeShadow[lightIndex] = onOff;
     }
 
     /**
@@ -284,5 +299,15 @@ public class Lighting
     public final float[] getAmbientLightColor()
     {
         return ambientLightColor;
+    }
+
+    public int[] getCastsCubeShadow()
+    {
+        return castsCubeShadow;
+    }
+
+    public int[] getEnablesShadows()
+    {
+        return enablesShadows;
     }
 }

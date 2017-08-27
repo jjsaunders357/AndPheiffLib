@@ -1,4 +1,4 @@
-const int numLights = 4;
+#include include/consts.glsl
 
 //Is the light on?
 uniform bool onState[numLights];
@@ -22,19 +22,3 @@ uniform vec4 specLightMaterialColor[numLights];
     //The ambient light color * material color (pre-multiplied)
     uniform vec4 ambientLightMaterialColor;
 #endif
-
-#if enableShadows
-    //Position of lights in absolute space
-    uniform vec4 lightPositionAbs[numLights];
-
-    //Maximum depth projected into texture
-    uniform float shadowProjectionMaxDepth;
-
-    //uniform float depthZConst;
-    //uniform float depthZFactor;
-
-    //Shadow cube map
-    uniform mediump samplerCubeShadow cubeDepthSampler0;
-    uniform mediump samplerCubeShadow cubeDepthSampler1;
-#endif
-

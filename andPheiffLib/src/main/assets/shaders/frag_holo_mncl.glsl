@@ -1,13 +1,11 @@
 #type FRAGMENT
-#include include/lightingUniforms.glsl
+#include include/lightingInputs.glsl
 #include include/lightingCalcs.glsl
 #version 300 es
 precision mediump float;
 
-#if !enableShadows
-    //Position of lights in absolute space
-    uniform vec4 lightPositionAbs[numLights];
-#endif
+//Position of lights in absolute space
+uniform vec4 lightPositionAbs[numLights];
 
 // How shiny the material is.  This determines the exponent used in rendering.
 uniform float shininess;

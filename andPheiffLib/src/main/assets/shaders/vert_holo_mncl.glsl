@@ -1,6 +1,8 @@
 #type VERTEX
 #version 300 es
 precision highp float;
+
+
 //Transforms vertices within screen space
 uniform mat4 modelMatrix;
 

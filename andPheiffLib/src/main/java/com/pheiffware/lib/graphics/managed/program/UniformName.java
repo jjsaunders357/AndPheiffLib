@@ -38,12 +38,16 @@ public enum UniformName
     AMBIENT_LIGHTMAT_COLOR("ambientLightMaterialColor"),
 
     //For shadow casting:
-    LIGHT_POS("lightPositionAbs"),
+    LIGHT_POS_ABS("lightPositionAbs"),
+    CASTS_CUBE_SHADOW("castsCubeShadow"),
     DEPTH_CUBE_SAMPLER0("cubeDepthSampler0"),
     DEPTH_CUBE_SAMPLER1("cubeDepthSampler1"),
+    DEPTH_CUBE_SAMPLER2("cubeDepthSampler2"),
+    DEPTH_CUBE_SAMPLER3("cubeDepthSampler3"),
     SHADOW_PROJECTION_MAX_DEPTH("shadowProjectionMaxDepth"),
     DEPTH_Z_CONST("depthZConst"),
     DEPTH_Z_FACTOR("depthZFactor"),
+
     MAT_ALPHA("materialAlpha"),
     SHININESS("shininess"),
     EYE_POSITION("eyePosition"),

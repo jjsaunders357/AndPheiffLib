@@ -134,8 +134,6 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         {
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
-            glCache.setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, true);
-
 
             colorTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
             textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
@@ -152,6 +150,8 @@ public class Demo4ShadowsFragment extends BaseGameFragment
                             0.5f, 0.2f, 0.2f, 1.0f,   //Light 1 color
                             0.2f, 0.2f, 0.5f, 1.0f}); //Light 2 color
 
+            lighting.setCastsCubeShadow(0, 1);
+            lighting.setCastsCubeShadow(1, 1);
             lighting.setMaximumDistance(0, maximumLightDistance);
             cubeDepthTextures = new TextureCubeMap[Lighting.numLightsSupported];
             cubeDepthTextures[0] = glCache.buildCubeDepthTex(512, 512).build();
@@ -246,14 +246,6 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         {
             if (event.numPointers == 3)
             {
-                try
-                {
-                    getGlCache().setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, !getGlCache().getConfigProperty(GraphicsConfig.ENABLE_SHADOWS, Boolean.class));
-                }
-                catch (GraphicsException e)
-                {
-                    throw new RuntimeException("Failed to change graphics configuration", e);
-                }
 
             }
         }

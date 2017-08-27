@@ -29,7 +29,7 @@ public class HoloColorMaterialTechnique extends Technique3D
 
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
         float[] transformedLightPositions = lighting.transformLightPositions(holoData.orientationMatrix);
-        setUniformValue(UniformName.LIGHT_POS, transformedLightPositions);
+        setUniformValue(UniformName.LIGHT_POS_ABS, transformedLightPositions);
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
 
         setUniformValue(UniformName.EYE_POSITION, holoData.eyePositionInScreenSpace);

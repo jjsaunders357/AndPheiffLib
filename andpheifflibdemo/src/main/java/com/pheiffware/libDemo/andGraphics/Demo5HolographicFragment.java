@@ -103,7 +103,6 @@ public class Demo5HolographicFragment extends BaseGameFragment
 
             PheiffGLUtils.enableAlphaTransparency();
 
-            glCache.setConfigProperty(GraphicsConfig.ENABLE_SHADOWS, false);
             holoColorTechnique = glCache.buildTechnique(HoloColorMaterialTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
             ColladaFactory colladaFactory = new ColladaFactory();
             try
