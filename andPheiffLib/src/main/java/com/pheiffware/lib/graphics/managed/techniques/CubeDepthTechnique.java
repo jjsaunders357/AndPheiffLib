@@ -11,12 +11,12 @@ import com.pheiffware.lib.graphics.managed.program.UniformName;
  * Created by Steve on 6/21/2017.
  */
 
-public class DepthCubeTechnique extends Technique3D
+public class CubeDepthTechnique extends Technique3D
 {
     private final Matrix4 projectionView = Matrix4.newZeroMatrix();
     private final Matrix4 projectionViewModel = Matrix4.newZeroMatrix();
 
-    public DepthCubeTechnique() throws GraphicsException
+    public CubeDepthTechnique() throws GraphicsException
     {
         super("vert_depth.glsl", "frag_depth.glsl");
     }

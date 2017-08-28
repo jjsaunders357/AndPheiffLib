@@ -38,7 +38,6 @@ import com.pheiffware.lib.utils.dom.XMLParseException;
 import com.pheiffware.libDemo.Demo3DRenderer;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Created by Steve on 6/19/2017.
@@ -122,7 +121,6 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         private CubeDepthRenderer cubeDepthRenderer;
         private ObjectHandle monkeyHandle;
         private ObjectHandle monkeyHandle2;
-        private Matrix4 monkeyTransform;
 
         public Renderer()
         {
@@ -159,7 +157,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
 
 
             simpleRenderer = new SimpleRenderer(colorTechnique, textureTechnique);
-            cubeDepthRenderer = new CubeDepthRenderer(glCache);
+            cubeDepthRenderer = new CubeDepthRenderer(glCache, 0.1f, 20.0f);
 
             manager = new ObjectManager();
             DemoColladaLoader loader = new DemoColladaLoader(
@@ -175,8 +173,6 @@ public class Demo4ShadowsFragment extends BaseGameFragment
                 monkeyHandle = loader.loadCollada("meshes/test_render.dae", "other").get("Monkey");
                 monkeyHandle2 = monkeyHandle.copy();
                 loader.loadCollada("meshes/shadows2.dae");
-                monkeyTransform = Matrix4.newTranslation(0.5f, 1f, -1f);
-                monkeyTransform.scaleBy(0.1f, 0.1f, 0.1f);
                 manager.packAndTransfer();
 
                 //Add objects to depth renderer, excluding the 2 objects standing in for the lights
@@ -196,21 +192,12 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         @Override
         protected void onDrawFrame(Projection projection, EuclideanCamera camera) throws GraphicsException
         {
-            monkeyTransform.rotateBy(1f, 1f, 0f, 1f);
-            monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, monkeyTransform);
+            //Render light's shadows into cube-depth textures
+            float[] lightPos = lighting.getPositions();
+            cubeDepthRenderer.render(lightPos[0], lightPos[1], lightPos[2], cubeDepthTextures[0]);
+            cubeDepthRenderer.render(lightPos[4], lightPos[5], lightPos[6], cubeDepthTextures[1]);
 
-            //Render to texture 1st
-            float[] absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 0, 4);
-            cubeDepthRenderer.setRenderPosition(absoluteLightPosition);
-            cubeDepthRenderer.setCubeDepthTexture(cubeDepthTextures[0]);
-            cubeDepthRenderer.render();
-
-            absoluteLightPosition = Arrays.copyOfRange(lighting.getPositions(), 4, 8);
-            cubeDepthRenderer.setRenderPosition(absoluteLightPosition);
-            cubeDepthRenderer.setCubeDepthTexture(cubeDepthTextures[1]);
-            cubeDepthRenderer.render();
-
-            //Remove bindings to frame buffers
+            //Bind main frame buffer
             FrameBuffer.main.bind(0, 0, getSurfaceWidth(), getSurfaceHeight());
             GLES20.glViewport(0, 0, getSurfaceWidth(), getSurfaceHeight());
 
@@ -233,8 +220,8 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             simpleRenderer.setConstantProperty(RenderProperty.LIGHTING, lighting);
             //TODO: Should be part of lighting
             simpleRenderer.setConstantProperty(RenderProperty.CUBE_DEPTH_TEXTURES, cubeDepthTextures);
-            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_CONST, cubeDepthRenderer.getProjection().getDepthZConst());
-            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_FACTOR, cubeDepthRenderer.getProjection().getDepthZFactor());
+            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_CONST, cubeDepthRenderer.getDepthZConst());
+            simpleRenderer.setConstantProperty(RenderProperty.DEPTH_Z_FACTOR, cubeDepthRenderer.getDepthZFactor());
             simpleRenderer.applyConstantProperties();
             simpleRenderer.render();
         }

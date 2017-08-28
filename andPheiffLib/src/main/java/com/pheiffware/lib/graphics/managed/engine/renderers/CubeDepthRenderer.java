@@ -11,7 +11,7 @@ import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.techniques.DepthCubeTechnique;
+import com.pheiffware.lib.graphics.managed.techniques.CubeDepthTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 
 /**
@@ -24,16 +24,48 @@ public class CubeDepthRenderer extends Renderer
     private final Technique depthCubeTechnique;
     private final EuclideanCamera lightCamera = new EuclideanCamera();
     private final Projection projection;
-    private TextureCubeMap cubeDepthTexture;
-    private float[] renderPosition;
 
-
-    public CubeDepthRenderer(GLCache glCache) throws GraphicsException
+    public CubeDepthRenderer(GLCache glCache, float near, float far) throws GraphicsException
     {
-        super(glCache.buildTechnique(DepthCubeTechnique.class));
+        super(glCache.buildTechnique(CubeDepthTechnique.class));
         depthCubeTechnique = getTechnique(0);
         frameBuffer = new FrameBuffer();
-        projection = new Projection(90.0f, 1.0f, 0.1f, 20.0f, false);
+        projection = new Projection(90.0f, 1.0f, near, far, false);
+    }
+
+    public void render(float x, float y, float z, TextureCubeMap cubeDepthTexture)
+    {
+        frameBuffer.bind(0, 0, cubeDepthTexture.getWidth(), cubeDepthTexture.getHeight());
+        GLES20.glClearDepthf(1.0f);
+        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
+
+        lightCamera.reset(x, y, z, 0, 0, 1.0f, 0.0f, -1.0f, 0.0f);
+        renderFace(cubeDepthTexture, GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+
+        lightCamera.reset(x, y, z, 0, 0, -1.0f, 0.0f, -1.0f, 0.0f);
+        renderFace(cubeDepthTexture, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+
+        lightCamera.reset(x, y, z, 1.0f, 0, 0, 0.0f, -1.0f, 0.0f);
+        renderFace(cubeDepthTexture, GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+
+        lightCamera.reset(x, y, z, -1.0f, 0, 0, 0.0f, -1.0f, 0.0f);
+        renderFace(cubeDepthTexture, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+
+        lightCamera.reset(x, y, z, 0, 1.0f, 0, 0.0f, 0.0f, 1.0f);
+        renderFace(cubeDepthTexture, GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+
+        lightCamera.reset(x, y, z, 0, -1.0f, 0, 0.0f, 0.0f, -1.0f);
+        renderFace(cubeDepthTexture, GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+    }
+
+    private void renderFace(TextureCubeMap cubeDepthTexture, int attachFace)
+    {
+        cubeDepthTexture.setAttachFace(attachFace);
+        frameBuffer.attachDepth(cubeDepthTexture);
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
+        depthCubeTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
+        depthCubeTechnique.applyConstantProperties();
+        renderPass();
     }
 
     @Override
@@ -45,60 +77,18 @@ public class CubeDepthRenderer extends Renderer
         }
     }
 
-    public void render()
-    {
-        frameBuffer.bind(0, 0, cubeDepthTexture.getWidth(), cubeDepthTexture.getHeight());
-
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1], renderPosition[2] + 1.0f, 0.0f, -1.0f, 0.0f);
-        //TODO: Test look direction + move position.  This will be important for spherical rendering.
-        renderFace();
-
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
-        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1], renderPosition[2] - 1.0f, 0.0f, -1.0f, 0.0f);
-        renderFace();
-
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0] + 1.0f, renderPosition[1], renderPosition[2], 0.0f, -1.0f, 0.0f);
-        renderFace();
-
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0] - 1.0f, renderPosition[1], renderPosition[2], 0.0f, -1.0f, 0.0f);
-        renderFace();
-
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1] + 1.0f, renderPosition[2], 0.0f, 0.0f, 1.0f);
-        renderFace();
-
-        cubeDepthTexture.setAttachFace(GLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-        lightCamera.lookAt(renderPosition[0], renderPosition[1], renderPosition[2], renderPosition[0], renderPosition[1] - 1.0f, renderPosition[2], 0.0f, 0.0f, -1.0f);
-        renderFace();
-    }
-
-    private void renderFace()
-    {
-        frameBuffer.attachDepth(cubeDepthTexture);
-        GLES20.glClearDepthf(1.0f);
-        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
-
-        depthCubeTechnique.setProperty(RenderProperty.PROJECTION_MATRIX, projection.getProjectionMatrix());
-        depthCubeTechnique.setProperty(RenderProperty.VIEW_MATRIX, lightCamera.getViewMatrix());
-        depthCubeTechnique.applyConstantProperties();
-        renderPass();
-    }
-
-    public void setRenderPosition(float[] renderPosition)
-    {
-        this.renderPosition = renderPosition;
-    }
-
-    public void setCubeDepthTexture(TextureCubeMap cubeDepthTexture)
-    {
-        this.cubeDepthTexture = cubeDepthTexture;
-    }
-
     public Projection getProjection()
     {
         return projection;
+    }
+
+    public float getDepthZConst()
+    {
+        return projection.getDepthZConst();
+    }
+
+    public float getDepthZFactor()
+    {
+        return projection.getDepthZFactor();
     }
 }
