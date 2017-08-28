@@ -1,8 +1,8 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
 import com.pheiffware.lib.graphics.Mesh;
+import com.pheiffware.lib.graphics.managed.Technique;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.VertexAttribute;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.DynamicAttributeBuffer;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.IndexBuffer;

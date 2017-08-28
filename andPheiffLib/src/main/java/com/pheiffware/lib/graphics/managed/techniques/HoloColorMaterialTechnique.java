@@ -5,9 +5,6 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
-import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
-
-import java.util.Map;
 
 /**
  * Mesh projected such that it appears embedded below or projecting out from screen surface.  All vertex locations should be expressed in screen space. [0,0,0] represents the
@@ -18,9 +15,9 @@ import java.util.Map;
  */
 public class HoloColorMaterialTechnique extends Technique3D
 {
-    public HoloColorMaterialTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
+    public HoloColorMaterialTechnique() throws GraphicsException
     {
-        super(shaderBuilder, localConfig, "vert_holo_mncl.glsl", "frag_holo_mncl.glsl");
+        super("vert_holo_mncl.glsl", "frag_holo_mncl.glsl");
     }
 
     protected void applyConstantPropertiesImplement()

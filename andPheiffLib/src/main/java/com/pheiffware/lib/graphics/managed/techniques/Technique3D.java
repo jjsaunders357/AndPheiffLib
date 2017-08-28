@@ -3,13 +3,11 @@ package com.pheiffware.lib.graphics.managed.techniques;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.ProjectionLinearDepth;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
-import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
-
-import java.util.Map;
 
 /**
  * Created by Steve on 7/4/2017.
@@ -23,9 +21,9 @@ public abstract class Technique3D extends ProgramTechnique
     private final float[] matColor = new float[4];
 
 
-    public Technique3D(ShaderBuilder shaderBuilder, Map<String, Object> localConfig, String vertexShaderAsset, String fragmentShaderAsset) throws GraphicsException
+    public Technique3D(String... shaderPaths) throws GraphicsException
     {
-        super(shaderBuilder, localConfig, vertexShaderAsset, fragmentShaderAsset);
+        super(shaderPaths);
     }
 
     protected final void setViewModel()

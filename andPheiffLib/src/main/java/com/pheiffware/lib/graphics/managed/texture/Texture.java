@@ -15,7 +15,7 @@ import com.pheiffware.lib.graphics.utils.TextureUtils;
 public abstract class Texture implements RenderTarget
 {
     //The type of the texture such as GL_TEXTURE_2D
-    private final int type;
+    final int type;
 
     //The openGL handle to this texture
     final int handle;
@@ -32,12 +32,17 @@ public abstract class Texture implements RenderTarget
     //A priority associated with this texture, in terms of desirability to keep it bound to a texture unit.  This could be held by the texture manager, but this is easier/more efficient than keeping a HashMap there.
     double texturePriority = 0;
 
-    public Texture(int type, TextureBinder textureBinder)
+    protected Texture(int handle, int type, TextureBinder textureBinder)
     {
-        this.handle = TextureUtils.genTexture();
+        this.handle = handle;
         this.type = type;
         this.textureBinder = textureBinder;
         GLES20.glBindTexture(type, handle);
+    }
+
+    public Texture(int type, TextureBinder textureBinder)
+    {
+        this(TextureUtils.genTexture(), type, textureBinder);
     }
 
     /**

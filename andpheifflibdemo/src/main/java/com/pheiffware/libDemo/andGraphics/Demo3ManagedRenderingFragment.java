@@ -18,6 +18,7 @@ import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.Mesh;
 import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.Technique;
 import com.pheiffware.lib.graphics.managed.engine.ColladaLoader;
 import com.pheiffware.lib.graphics.managed.engine.ObjectHandle;
 import com.pheiffware.lib.graphics.managed.engine.ObjectManager;
@@ -26,7 +27,6 @@ import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.Std3DTechnique;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
@@ -130,6 +130,7 @@ public class Demo3ManagedRenderingFragment extends BaseGameFragment
 
             super.onSurfaceCreated(al, glCache, systemInfo);
             PheiffGLUtils.enableAlphaTransparency();
+
             colorTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, false);
             textureTechnique = glCache.buildTechnique(Std3DTechnique.class, GraphicsConfig.TEXTURED_MATERIAL, true);
 

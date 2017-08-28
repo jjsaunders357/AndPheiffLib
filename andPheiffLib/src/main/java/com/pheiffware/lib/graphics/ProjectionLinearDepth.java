@@ -1,4 +1,4 @@
-package com.pheiffware.lib.graphics.managed.techniques;
+package com.pheiffware.lib.graphics;
 
 /**
  * This class contains all the information required to perform the same function as a projection matrix, but which produces linear depth.  This has a number of advantages/disadvantages:

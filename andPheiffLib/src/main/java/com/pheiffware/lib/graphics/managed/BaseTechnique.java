@@ -1,6 +1,8 @@
-package com.pheiffware.lib.graphics.managed.program;
+package com.pheiffware.lib.graphics.managed;
 
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
 import java.util.EnumMap;
@@ -14,19 +16,22 @@ import java.util.Map;
 
 public abstract class BaseTechnique implements Technique
 {
-    private final ShaderBuilder shaderBuilder;
-
     //Local, version specific configuration for this instance
-    private final Map<String, Object> localConfig;
+    private final Map<String, Object> localConfig = new HashMap<>();
 
-    //Values of properties cached here for use in apply_____Properties() methods
+    //Values of properties cached here for use in applyProperty methods
     private final EnumMap<RenderProperty, Object> propertyValues = new EnumMap<>(RenderProperty.class);
 
-    public BaseTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig)
+    protected void init(GLCache glCache)
     {
-        this.shaderBuilder = shaderBuilder;
-        this.localConfig = new HashMap<>(localConfig);
+
     }
+
+    void overrideLocalConfig(Map<String, Object> localConfig)
+    {
+        this.localConfig.putAll(localConfig);
+    }
+
 
     public final void setProperty(RenderProperty property, Object propertyValue)
     {
@@ -58,7 +63,7 @@ public abstract class BaseTechnique implements Technique
     }
 
     @Override
-    public void onSystemConfigChanged(Map<String, Object> graphicsSystemConfig) throws GraphicsException
+    public void onSystemConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> graphicsSystemConfig) throws GraphicsException
     {
         HashMap<String, Object> config = new HashMap<>();
         config.putAll(graphicsSystemConfig);

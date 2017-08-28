@@ -1,7 +1,7 @@
 package com.pheiffware.lib.graphics.managed.engine.renderers;
 
+import com.pheiffware.lib.graphics.managed.Technique;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 
 import java.util.List;
 

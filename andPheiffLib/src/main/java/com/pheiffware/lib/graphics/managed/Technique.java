@@ -1,6 +1,7 @@
-package com.pheiffware.lib.graphics.managed.program;
+package com.pheiffware.lib.graphics.managed;
 
-import com.pheiffware.lib.graphics.managed.GraphicsConfigListener;
+import com.pheiffware.lib.graphics.managed.program.RenderProperty;
+import com.pheiffware.lib.graphics.managed.program.RenderPropertyValue;
 import com.pheiffware.lib.graphics.managed.vertexBuffer.VertexAttributeHandle;
 
 import java.util.EnumMap;

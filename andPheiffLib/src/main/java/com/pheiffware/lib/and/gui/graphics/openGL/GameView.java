@@ -128,6 +128,7 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         catch (Exception e)
         {
             Log.e("Fatal", "Error during surface render", e);
+            throw new RuntimeException(e);
         }
 
     }

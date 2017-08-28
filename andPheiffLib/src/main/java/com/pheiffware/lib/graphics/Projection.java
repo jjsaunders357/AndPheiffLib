@@ -1,7 +1,5 @@
 package com.pheiffware.lib.graphics;
 
-import com.pheiffware.lib.graphics.managed.techniques.ProjectionLinearDepth;
-
 /**
  * Created by Steve on 8/23/2017.
  */

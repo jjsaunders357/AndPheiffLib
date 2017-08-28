@@ -22,9 +22,9 @@ public class Std2DTechnique extends ProgramTechnique
 {
     private boolean textured;
 
-    public Std2DTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
+    public Std2DTechnique() throws GraphicsException
     {
-        super(shaderBuilder, localConfig, "2d/vert_2d.glsl", "2d/frag_2d.glsl");
+        super("2d/vert_2d.glsl", "2d/frag_2d.glsl");
         defaultConfig(GraphicsConfig.TEXTURED_2D, true);
         defaultConfig(GraphicsConfig.COLOR_VERTEX_2D, true);
     }

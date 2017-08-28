@@ -4,9 +4,6 @@ import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
-import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
-
-import java.util.Map;
 
 /**
  * Renders the depth of geometry and nothing else.
@@ -19,9 +16,9 @@ public class DepthCubeTechnique extends Technique3D
     private final Matrix4 projectionView = Matrix4.newZeroMatrix();
     private final Matrix4 projectionViewModel = Matrix4.newZeroMatrix();
 
-    public DepthCubeTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
+    public DepthCubeTechnique() throws GraphicsException
     {
-        super(shaderBuilder, localConfig, "vert_depth.glsl", "frag_depth.glsl");
+        super("vert_depth.glsl", "frag_depth.glsl");
     }
 
     public void applyConstantPropertiesImplement()

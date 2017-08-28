@@ -1,6 +1,7 @@
 package com.pheiffware.lib.graphics.managed;
 
 import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 
 import java.util.Map;
 
@@ -13,7 +14,8 @@ import java.util.Map;
 public interface GraphicsConfigListener
 {
     /**
+     * @param shaderBuilder
      * @param graphicsSystemConfig the new system configuration state, a map of arbitrary objects
      */
-    void onSystemConfigChanged(Map<String, Object> graphicsSystemConfig) throws GraphicsException;
+    void onSystemConfigChanged(ShaderBuilder shaderBuilder, Map<String, Object> graphicsSystemConfig) throws GraphicsException;
 }

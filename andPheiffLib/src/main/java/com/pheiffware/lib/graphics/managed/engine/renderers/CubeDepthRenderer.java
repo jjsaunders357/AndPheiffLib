@@ -6,11 +6,11 @@ import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.managed.Technique;
 import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
 import com.pheiffware.lib.graphics.managed.engine.Renderer;
 import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.techniques.DepthCubeTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
 

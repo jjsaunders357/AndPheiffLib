@@ -1,12 +1,15 @@
 package com.pheiffware.lib.graphics.managed;
 
+import android.opengl.GLES20;
+import android.opengl.GLES30;
+
 import com.pheiffware.lib.AssetLoader;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.managed.program.Program;
-import com.pheiffware.lib.graphics.managed.program.Technique;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
 import com.pheiffware.lib.graphics.managed.texture.MostRecentTextureBindingStrategy;
+import com.pheiffware.lib.graphics.managed.texture.NullTexture;
 import com.pheiffware.lib.graphics.managed.texture.Texture2D;
 import com.pheiffware.lib.graphics.managed.texture.TextureBinder;
 import com.pheiffware.lib.graphics.managed.texture.textureBuilders.ColorRenderTextureBuilder;
@@ -46,6 +49,10 @@ public class GLCache
     //Remembered texture images, used to avoid loading the same image twice
     private final Map<String, Texture2D> textureImageCache = new HashMap<>();
 
+    //Used for binding blank textures to samplers
+    public final NullTexture nullTexture2D;
+    public final NullTexture nullTextureCubeMap;
+
     public GLCache(AssetLoader al, int deviceGLVersion, Map<String, Object> graphicsSystemConfig, FilterQuality defaultFilterQuality, String shaderRootPath)
     {
         if (deviceGLVersion < 2)
@@ -58,6 +65,8 @@ public class GLCache
         this.graphicsSystemConfig = graphicsSystemConfig;
         shaderBuilder = new ShaderBuilder(al, shaderRootPath);
         textureBinder = new TextureBinder(PheiffGLUtils.getNumTextureUnits(), new MostRecentTextureBindingStrategy(PheiffGLUtils.getNumTextureUnits()));
+        nullTexture2D = new NullTexture(GLES20.GL_TEXTURE_2D, textureBinder);
+        nullTextureCubeMap = new NullTexture(GLES30.GL_TEXTURE_CUBE_MAP, textureBinder);
     }
 
     /**
@@ -161,12 +170,12 @@ public class GLCache
         return new Program(shaderBuilder, localConfig, shaderPaths);
     }
 
-    public <T extends Technique> T buildTechnique(Class<T> cls) throws GraphicsException
+    public <T extends BaseTechnique> T buildTechnique(Class<T> cls) throws GraphicsException
     {
         return buildTechnique(new HashMap<String, Object>(), cls);
     }
 
-    public <T extends Technique> T buildTechnique(Class<T> cls, Object... nameValues) throws GraphicsException
+    public <T extends BaseTechnique> T buildTechnique(Class<T> cls, Object... nameValues) throws GraphicsException
     {
         if (nameValues.length % 2 != 0)
         {
@@ -182,13 +191,15 @@ public class GLCache
         return buildTechnique(localConfig, cls);
     }
 
-    public <T extends Technique> T buildTechnique(Map<String, Object> localConfig, Class<T> cls) throws GraphicsException
+    public <T extends BaseTechnique> T buildTechnique(Map<String, Object> localConfig, Class<T> cls) throws GraphicsException
     {
         try
         {
-            Constructor<T> constructor = cls.getConstructor(ShaderBuilder.class, Map.class);
-            T technique = constructor.newInstance(shaderBuilder, localConfig);
-            technique.onSystemConfigChanged(graphicsSystemConfig);
+            Constructor<T> constructor = cls.getConstructor();
+            T technique = constructor.newInstance();
+            technique.init(this);
+            technique.overrideLocalConfig(localConfig);
+            technique.onSystemConfigChanged(shaderBuilder, graphicsSystemConfig);
             addSystemConfigListener(technique);
             return technique;
         }
@@ -224,7 +235,7 @@ public class GLCache
     {
         for (GraphicsConfigListener listener : graphicsConfigListeners)
         {
-            listener.onSystemConfigChanged(graphicsSystemConfig);
+            listener.onSystemConfigChanged(shaderBuilder, graphicsSystemConfig);
         }
     }
 

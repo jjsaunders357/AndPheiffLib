@@ -30,7 +30,7 @@ layout(location = 0) out vec4 fragColor;
 
 void performIteration(inout vec4 totalLightMaterialColor, vec4 diffuseLightMaterialColor, int lightIndex, mediump samplerCubeShadow cubeDepthSampler)
 {
-    if(onState[0])
+    if(onState[lightIndex])
     {
         vec4 color = calcLightColor(positionEyeSpace.xyz-lightPositionEyeSpace[lightIndex].xyz,  //light to fragment vector
                              -positionEyeSpace.xyz,                                 //fragment to eye vector (eye is at 0)

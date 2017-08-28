@@ -2,11 +2,13 @@ package com.pheiffware.lib.graphics.managed.techniques;
 
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.GraphicsConfig;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.program.UniformName;
 import com.pheiffware.lib.graphics.managed.program.shader.ShaderBuilder;
+import com.pheiffware.lib.graphics.managed.texture.NullTexture;
 import com.pheiffware.lib.graphics.managed.texture.Texture;
 
 import java.util.Map;
@@ -20,10 +22,17 @@ import java.util.Map;
 public class Std3DTechnique extends Technique3D
 {
     private boolean textured;
+    private NullTexture nullCubeMapTexture;
 
-    public Std3DTechnique(ShaderBuilder shaderBuilder, Map<String, Object> localConfig) throws GraphicsException
+    public Std3DTechnique() throws GraphicsException
     {
-        super(shaderBuilder, localConfig, "vert_3d.glsl", "frag_3d.glsl");
+        super("vert_3d.glsl", "frag_3d.glsl");
+    }
+
+    @Override
+    protected void init(GLCache glCache)
+    {
+        nullCubeMapTexture = glCache.nullTextureCubeMap;
     }
 
     public void applyConstantPropertiesImplement()
@@ -59,11 +68,16 @@ public class Std3DTechnique extends Technique3D
         int[] castsCubeShadow = lighting.getCastsCubeShadow();
         setUniformValue(UniformName.CASTS_CUBE_SHADOW, castsCubeShadow);
         Texture[] depthTextures = (Texture[]) getPropertyValue(RenderProperty.CUBE_DEPTH_TEXTURES);
-        for (int i = 0; i < castsCubeShadow.length; i++)
+        for (int i = 0; i < Lighting.numLightsSupported; i++)
         {
             if (castsCubeShadow[i] == 1)
             {
                 setUniformValue(UniformName.depthCubeSampler(i), depthTextures[i].autoBind());
+            }
+            else
+            {
+                //Even if light doesn't cast shadows, OpenGL may still query texture due to shader if branching.
+                setUniformValue(UniformName.depthCubeSampler(i), nullCubeMapTexture.autoBind());
             }
         }
         Matrix4 modelMatrix = (Matrix4) getPropertyValue(RenderProperty.MODEL_MATRIX);

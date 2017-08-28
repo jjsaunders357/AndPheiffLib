@@ -1,9 +1,7 @@
 package com.pheiffware.lib.graphics.managed.engine;
 
-import com.pheiffware.lib.graphics.GraphicsException;
+import com.pheiffware.lib.graphics.managed.Technique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
-import com.pheiffware.lib.graphics.managed.program.Technique;
-import com.pheiffware.lib.graphics.utils.PheiffGLUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,14 +98,6 @@ public abstract class Renderer
         for (MeshHandle meshHandle : meshHandles)
         {
             meshHandle.drawTriangles();
-            try
-            {
-                PheiffGLUtils.assertNoError();
-            }
-            catch (GraphicsException e)
-            {
-                e.printStackTrace();
-            }
         }
     }
 }
