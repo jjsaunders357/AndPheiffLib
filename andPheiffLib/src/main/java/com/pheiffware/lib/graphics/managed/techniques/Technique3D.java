@@ -3,7 +3,7 @@ package com.pheiffware.lib.graphics.managed.techniques;
 import com.pheiffware.lib.graphics.GraphicsException;
 import com.pheiffware.lib.graphics.Matrix3;
 import com.pheiffware.lib.graphics.Matrix4;
-import com.pheiffware.lib.graphics.ProjectionLinearDepth;
+import com.pheiffware.lib.graphics.Vec4F;
 import com.pheiffware.lib.graphics.managed.light.Lighting;
 import com.pheiffware.lib.graphics.managed.program.ProgramTechnique;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
@@ -19,11 +19,18 @@ public abstract class Technique3D extends ProgramTechnique
     private final Matrix4 viewModelMatrix = Matrix4.newIdentity();
     private final Matrix3 normalTransform = Matrix3.newIdentity();
     private final float[] matColor = new float[4];
-
+    private final Vec4F lightEyePositions;
+    private final Vec4F ambientLightMat;
+    private final Vec4F diffLightMat;
+    private final Vec4F specLightMat;
 
     public Technique3D(String... shaderPaths) throws GraphicsException
     {
         super(shaderPaths);
+        lightEyePositions = new Vec4F(Lighting.numLightsSupported);
+        ambientLightMat = new Vec4F(1);
+        diffLightMat = new Vec4F(Lighting.numLightsSupported);
+        specLightMat = new Vec4F(Lighting.numLightsSupported);
     }
 
     protected final void setViewModel()
@@ -54,20 +61,12 @@ public abstract class Technique3D extends ProgramTechnique
         setUniformValue(UniformName.PROJECTION_MATRIX, projectionMatrix.m);
     }
 
-    protected void setProjectionLinearDepth()
-    {
-        ProjectionLinearDepth projectionLinearDepth = (ProjectionLinearDepth) getPropertyValue(RenderProperty.PROJECTION_LINEAR_DEPTH);
-        setUniformValue(UniformName.PROJECTION_SCALE_X, projectionLinearDepth.scaleX);
-        setUniformValue(UniformName.PROJECTION_SCALE_Y, projectionLinearDepth.scaleY);
-        setUniformValue(UniformName.PROJECTION_MAX_DEPTH, projectionLinearDepth.maxDepth);
-    }
-
-
     protected final void setLightingConstants()
     {
         Matrix4 viewMatrix = (Matrix4) getPropertyValue(RenderProperty.VIEW_MATRIX);
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        setUniformValue(UniformName.LIGHT_POS_EYE, lighting.transformLightPositions(viewMatrix));
+        lighting.transformLightPositions(lightEyePositions, viewMatrix);
+        setUniformValue(UniformName.LIGHT_POS_EYE, lightEyePositions.getData());
         setUniformValue(UniformName.ON_STATE, lighting.getOnStates());
     }
 
@@ -86,10 +85,13 @@ public abstract class Technique3D extends ProgramTechnique
         final float alpha = temp[3];
 
         final Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        float[] ambLightMatColor = lighting.calcAmbientMatColor(matColor);
-        float[] lightDiffMatColor = lighting.calcDiffMatColor(matColor);
-        setUniformValue(UniformName.AMBIENT_LIGHTMAT_COLOR, ambLightMatColor);
-        setUniformValue(UniformName.DIFF_LIGHTMAT_COLOR, lightDiffMatColor);
+        ambientLightMat.copy(lighting.getAmbientLightColor());
+        ambientLightMat.multiplyBy(matColor);
+        diffLightMat.copyAll(lighting.getColors());
+        diffLightMat.multiplyEachBy(new Vec4F(matColor));
+
+        setUniformValue(UniformName.AMBIENT_LIGHTMAT_COLOR, ambientLightMat.getData());
+        setUniformValue(UniformName.DIFF_LIGHTMAT_COLOR, diffLightMat.getData());
         setUniformValue(UniformName.MAT_ALPHA, alpha);
 
         setSpecLightingColor();
@@ -102,8 +104,11 @@ public abstract class Technique3D extends ProgramTechnique
     {
         final Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
         final float[] specMatColor = (float[]) getPropertyValue(RenderProperty.SPEC_MAT_COLOR);
-        float[] lightSpecColor = lighting.calcSpecMatColor(specMatColor);
-        setUniformValue(UniformName.SPEC_LIGHTMAT_COLOR, lightSpecColor);
+
+        specLightMat.copyAll(lighting.getColors());
+        specLightMat.multiplyEachBy(new Vec4F(specMatColor));
+
+        setUniformValue(UniformName.SPEC_LIGHTMAT_COLOR, specLightMat.getData());
     }
 
 

@@ -1,6 +1,7 @@
 package com.pheiffware.lib.graphics.managed.light;
 
 import com.pheiffware.lib.graphics.Matrix4;
+import com.pheiffware.lib.graphics.Vec4F;
 
 /**
  * A version of the Lighting class which is customized for holographic lighting.  This allows lights to either track with the eye or with the screen.
@@ -28,25 +29,51 @@ public class HoloLighting extends Lighting
         System.arraycopy(eyeSpace, 0, this.eyeSpace, 0, eyeSpace.length);
     }
 
-    /**
-     * Don't transform lights which are attached to eye space.
-     *
-     * @param transformedLightPositions
-     * @param lightIndex                the index of the light
-     * @param lightTransform            the transform from light to eye space
-     */
-    @Override
-    protected void transformLight(float[] transformedLightPositions, int lightIndex, Matrix4 lightTransform)
+    //    /**
+//     * Don't transform lights which are attached to eye space.
+//     *
+//     * @param transformedLightPositions
+//     * @param lightIndex                the index of the light
+//     * @param lightTransform            the transform from light to eye space
+//     */
+    public void transformLightPositions(Vec4F transformedPositions, Matrix4 matrix)
     {
-        if (eyeSpace[lightIndex])
+        Vec4F positions = getPositions();
+
+        positions.setIndex(0);
+        transformedPositions.setIndex(0);
+        for (int i = 0; i < Lighting.numLightsSupported; i++)
         {
-            //If light exists in eye-space, perform standard transformation
-            super.transformLight(transformedLightPositions, lightIndex, lightTransform);
-        }
-        else
-        {
-            //Otherwise, use the raw light position (no transform)
-            System.arraycopy(getPositions(), lightIndex * 4, transformedLightPositions, lightIndex * 4, 4);
+            if (isLightOn(i))
+            {
+                if (eyeSpace[i])
+                {
+                    transformedPositions.copy(positions);
+                    transformedPositions.transformBy(matrix);
+                }
+                else
+                {
+                    transformedPositions.copy(positions);
+                }
+            }
+            positions.next();
+            transformedPositions.next();
         }
     }
+
+
+//    @Override
+//    protected void transformLight(float[] transformedLightPositions, int lightIndex, Matrix4 lightTransform)
+//    {
+//        if (eyeSpace[lightIndex])
+//        {
+//            //If light exists in eye-space, perform standard transformation
+//            super.transformLight(transformedLightPositions, lightIndex, lightTransform);
+//        }
+//        else
+//        {
+//            //Otherwise, use the raw light position (no transform)
+//            System.arraycopy(getPositions(), lightIndex * 4, transformedLightPositions, lightIndex * 4, 4);
+//        }
+//    }
 }

@@ -150,7 +150,6 @@ public class Demo4ShadowsFragment extends BaseGameFragment
 
             lighting.setCastsCubeShadow(0, 1);
             lighting.setCastsCubeShadow(1, 1);
-            lighting.setMaximumDistance(0, maximumLightDistance);
             cubeDepthTextures = new TextureCubeMap[Lighting.numLightsSupported];
             cubeDepthTextures[0] = glCache.buildCubeDepthTex(512, 512).build();
             cubeDepthTextures[1] = glCache.buildCubeDepthTex(512, 512).build();
@@ -193,7 +192,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
         protected void onDrawFrame(Projection projection, EuclideanCamera camera) throws GraphicsException
         {
             //Render light's shadows into cube-depth textures
-            float[] lightPos = lighting.getPositions();
+            float[] lightPos = lighting.getPositions().getData();
             cubeDepthRenderer.render(lightPos[0], lightPos[1], lightPos[2], cubeDepthTextures[0]);
             cubeDepthRenderer.render(lightPos[4], lightPos[5], lightPos[6], cubeDepthTextures[1]);
 
@@ -205,12 +204,12 @@ public class Demo4ShadowsFragment extends BaseGameFragment
             GLES20.glClearDepthf(1);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-            Matrix4 lightTransform = Matrix4.newTranslation(lighting.getPositions()[0], lighting.getPositions()[1], lighting.getPositions()[2]);
+            Matrix4 lightTransform = Matrix4.newTranslation(lightPos[0], lightPos[1], lightPos[2]);
             lightTransform.scaleBy(0.2f, 0.2f, 0.2f);
 
             monkeyHandle.setProperty(RenderProperty.MODEL_MATRIX, lightTransform);
 
-            lightTransform = Matrix4.newTranslation(lighting.getPositions()[4], lighting.getPositions()[5], lighting.getPositions()[6]);
+            lightTransform = Matrix4.newTranslation(lightPos[4], lightPos[5], lightPos[6]);
             lightTransform.scaleBy(0.2f, 0.2f, 0.2f);
 
             monkeyHandle2.setProperty(RenderProperty.MODEL_MATRIX, lightTransform);

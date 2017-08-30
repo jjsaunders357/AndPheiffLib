@@ -23,6 +23,11 @@ public class Projection
 
     }
 
+    public Projection(float distance)
+    {
+
+    }
+
     public Projection(float FOV, float aspect, float nearZ, float farZ, boolean flipVertical)
     {
         this.FOV = FOV;

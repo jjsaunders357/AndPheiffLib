@@ -40,7 +40,7 @@ public class Std3DTechnique extends Technique3D
         setProjection();
         setLightingConstants();
         Lighting lighting = (Lighting) getPropertyValue(RenderProperty.LIGHTING);
-        setUniformValue(UniformName.LIGHT_POS_ABS, lighting.getPositions());
+        setUniformValue(UniformName.LIGHT_POS_ABS, lighting.getPositions().getData());
         setUniformValue(UniformName.DEPTH_Z_CONST, getPropertyValue(RenderProperty.DEPTH_Z_CONST));
         setUniformValue(UniformName.DEPTH_Z_FACTOR, getPropertyValue(RenderProperty.DEPTH_Z_FACTOR));
     }
@@ -57,8 +57,8 @@ public class Std3DTechnique extends Technique3D
             setSpecLightingColor();
             Texture texture = (Texture) getPropertyValue(RenderProperty.MAT_COLOR_TEXTURE);
 
-            setUniformValue(UniformName.AMBIENT_LIGHT_COLOR, lighting.getAmbientLightColor());
-            setUniformValue(UniformName.LIGHT_COLOR, lighting.getColors());
+            setUniformValue(UniformName.AMBIENT_LIGHT_COLOR, lighting.getAmbientLightColor().getData());
+            setUniformValue(UniformName.LIGHT_COLOR, lighting.getColors().getData());
             setUniformValue(UniformName.DIFFUSE_MATERIAL_SAMPLER, texture.autoBind());
         }
         else

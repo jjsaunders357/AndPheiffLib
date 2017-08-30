@@ -489,10 +489,10 @@ public class Matrix4
      * Given a 4d coordinate at the specified offset in the inVectorData array, apply this transform in the outVectorData at the offset. inVectorData and outVectorData CAN be the
      * same array and read/write position can overlap.
      *
-     * @param inVectorData array vectors are read from
-     * @param inVectorData array transformed vectors are written to
-     * @param inOffset     offset in the in array to read at
-     * @param outOffset    offset in the out array to write to
+     * @param inVectorData  array vectors are read from
+     * @param outVectorData array transformed vectors are written to
+     * @param inOffset      offset in the in array to read at
+     * @param outOffset     offset in the out array to write to
      */
     public final void transform4DFloatVector(float[] outVectorData, int outOffset, float[] inVectorData, int inOffset)
     {
