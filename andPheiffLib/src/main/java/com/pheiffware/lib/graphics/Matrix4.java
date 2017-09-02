@@ -210,6 +210,16 @@ public class Matrix4
         System.arraycopy(matrix4.m, 0, m, 0, 16);
     }
 
+    /**
+     * Sets matrix to the given floats
+     *
+     * @param floats matrix data
+     */
+    public void set(float[] floats)
+    {
+        System.arraycopy(floats, 0, this.m, 0, 16);
+    }
+
     public final void setTranslate(float x, float y, float z)
     {
         //@formatter:off
@@ -605,4 +615,5 @@ public class Matrix4
     {
         Matrix.setLookAtM(m, 0, eyeX, eyeY, eyeZ, targetX, targetY, targetZ, upX, upY, upZ);
     }
+
 }
