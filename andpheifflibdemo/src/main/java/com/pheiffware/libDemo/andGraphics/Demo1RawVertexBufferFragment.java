@@ -87,7 +87,7 @@ public class Demo1RawVertexBufferFragment extends BaseGameFragment
                 byteBuffer.putShort(indexData[i]);
             }
 
-            float[] posData = MeshGenUtils.genSingleQuadPositionData(0, 0, 1, VertexAttribute.POSITION4);
+            float[] posData = MeshGenUtils.genSingleQuadPositionData(0, 0, 1, 1, VertexAttribute.POSITION4);
             float[] textureData = MeshGenUtils.genSingleQuadTexData();
             staticBuffer.allocateSoftwareBuffer(6 * 4 * 4);
             byteBuffer = staticBuffer.editBuffer();

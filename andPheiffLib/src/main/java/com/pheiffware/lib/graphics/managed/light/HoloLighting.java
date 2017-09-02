@@ -29,13 +29,7 @@ public class HoloLighting extends Lighting
         System.arraycopy(eyeSpace, 0, this.eyeSpace, 0, eyeSpace.length);
     }
 
-    //    /**
-//     * Don't transform lights which are attached to eye space.
-//     *
-//     * @param transformedLightPositions
-//     * @param lightIndex                the index of the light
-//     * @param lightTransform            the transform from light to eye space
-//     */
+    @Override
     public void transformLightPositions(Vec4F transformedPositions, Matrix4 matrix)
     {
         Vec4F positions = getPositions();
@@ -49,11 +43,11 @@ public class HoloLighting extends Lighting
                 if (eyeSpace[i])
                 {
                     transformedPositions.copy(positions);
-                    transformedPositions.transformBy(matrix);
                 }
                 else
                 {
                     transformedPositions.copy(positions);
+                    transformedPositions.transformBy(matrix);
                 }
             }
             positions.next();

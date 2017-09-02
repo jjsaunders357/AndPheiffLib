@@ -10,6 +10,12 @@ public class ObjectHandle
 {
     MeshHandle[] meshHandles;
 
+    //TODO: More elegant way to do this
+    public void setMeshHandles(MeshHandle[] meshHandles)
+    {
+        this.meshHandles = meshHandles;
+    }
+
     public void setProperty(RenderProperty renderProperty, Object value)
     {
         for (MeshHandle meshHandle : meshHandles)

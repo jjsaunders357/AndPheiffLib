@@ -15,6 +15,12 @@ public class Vec4F
     //4 separate offsets are maintained
     private int offset;
 
+    public Vec4F(Vec4F vec)
+    {
+        this(vec.size());
+        copyAll(vec);
+    }
+
     public Vec4F(int size)
     {
         this(new float[size * 4], 0);
@@ -202,15 +208,15 @@ public class Vec4F
     private void normalize()
     {
         float magnitude = magnitude();
-        scale(1f / magnitude);
+        scaleBy(1f / magnitude);
     }
 
-    public void scale(float scale)
+    public void scaleBy(float scale)
     {
-        setX(x() / scale);
-        setY(y() / scale);
-        setZ(z() / scale);
-        setW(w() / scale);
+        setX(x() * scale);
+        setY(y() * scale);
+        setZ(z() * scale);
+        setW(w() * scale);
     }
 
     /**

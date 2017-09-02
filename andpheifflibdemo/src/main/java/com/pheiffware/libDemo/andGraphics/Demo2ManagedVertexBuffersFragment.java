@@ -72,9 +72,9 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
             faceTexture = glCache.buildImageTex("images/face.png").build();
 
             manager = new MeshDataManager();
-            Mesh mesh1 = MeshGenUtils.genSingleQuadMeshTexColor(0, 0, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
-            Mesh mesh2 = MeshGenUtils.genSingleQuadMeshTexColor(1, 0, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
-            Mesh mesh3 = MeshGenUtils.genSingleQuadMeshTexColor(1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
+            Mesh mesh1 = MeshGenUtils.genSingleQuadMeshTexColor(0, 0, 1, 1, VertexAttribute.POSITION4, new float[]{1, 0, 0, 1});
+            Mesh mesh2 = MeshGenUtils.genSingleQuadMeshTexColor(1, 0, 1, 1, VertexAttribute.POSITION4, new float[]{0, 1, 0, 1});
+            Mesh mesh3 = MeshGenUtils.genSingleQuadMeshTexColor(1, 1, 1, 1, VertexAttribute.POSITION4, new float[]{0, 0, 1, 1});
 
             //Mesh 1 - No texture, dynamic modulated color, red to purple
             handle1 = manager.addMesh(
