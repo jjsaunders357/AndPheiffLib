@@ -67,18 +67,18 @@ public class Vec4F
 
     public void copy(float[] data)
     {
-        setX(data[0]);
-        setY(data[1]);
-        setZ(data[2]);
-        setW(data[3]);
+        x(data[0]);
+        y(data[1]);
+        z(data[2]);
+        w(data[3]);
     }
 
     public void copy(Vec4F vec)
     {
-        setX(vec.x());
-        setY(vec.y());
-        setZ(vec.z());
-        setW(vec.w());
+        x(vec.x());
+        y(vec.y());
+        z(vec.z());
+        w(vec.w());
     }
 
     public void copyMulti(Vec4F vec, int source, int dest, int num)
@@ -134,18 +134,18 @@ public class Vec4F
 
     public final void multiplyBy(float[] vec)
     {
-        setX(x() * vec[0]);
-        setY(y() * vec[1]);
-        setZ(z() * vec[2]);
-        setW(w() * vec[3]);
+        x(x() * vec[0]);
+        y(y() * vec[1]);
+        z(z() * vec[2]);
+        w(w() * vec[3]);
     }
 
     public final void multiplyBy(Vec4F vec)
     {
-        setX(x() * vec.x());
-        setY(y() * vec.y());
-        setZ(z() * vec.z());
-        setW(w() * vec.w());
+        x(x() * vec.x());
+        y(y() * vec.y());
+        z(z() * vec.z());
+        w(w() * vec.w());
     }
 
     public final void multiplyEachBy(Vec4F vec)
@@ -198,10 +198,10 @@ public class Vec4F
     public final void setPerpendicularUnit(Vec4F perpendicular)
     {
         float dot = dot(this, perpendicular);
-        setX(x() - perpendicular.x() * dot);
-        setY(y() - perpendicular.y() * dot);
-        setZ(z() - perpendicular.z() * dot);
-        setW(w() - perpendicular.w() * dot);
+        x(x() - perpendicular.x() * dot);
+        y(y() - perpendicular.y() * dot);
+        z(z() - perpendicular.z() * dot);
+        w(w() - perpendicular.w() * dot);
         normalize();
     }
 
@@ -213,10 +213,10 @@ public class Vec4F
 
     public void scaleBy(float scale)
     {
-        setX(x() * scale);
-        setY(y() * scale);
-        setZ(z() * scale);
-        setW(w() * scale);
+        x(x() * scale);
+        y(y() * scale);
+        z(z() * scale);
+        w(w() * scale);
     }
 
     /**
@@ -243,22 +243,22 @@ public class Vec4F
         data[offset + 3] = w;
     }
 
-    public final float setX(float x)
+    public final float x(float x)
     {
         return data[offset] = x;
     }
 
-    public final float setY(float y)
+    public final float y(float y)
     {
         return data[offset + 1] = y;
     }
 
-    public final float setZ(float z)
+    public final float z(float z)
     {
         return data[offset + 2] = z;
     }
 
-    public final float setW(float w)
+    public final float w(float w)
     {
         return data[offset + 3] = w;
     }
@@ -293,4 +293,43 @@ public class Vec4F
         return data;
     }
 
+    public void subMulti(Vec4F vec)
+    {
+        for (int i = 0; i < vec.size(); i++)
+        {
+            setIndex(i);
+            vec.setIndex(i);
+            subBy(vec);
+        }
+    }
+
+    public void addTo(Vec4F vec)
+    {
+        x(x() + vec.x());
+        y(y() + vec.y());
+        z(z() + vec.z());
+        w(w() + vec.w());
+    }
+
+    public void subBy(Vec4F vec)
+    {
+        x(x() - vec.x());
+        y(y() - vec.y());
+        z(z() - vec.z());
+        w(w() - vec.w());
+    }
+
+    public static Vec4F add(Vec4F vec1, Vec4F vec2)
+    {
+        Vec4F result = vec1.copy();
+        result.addTo(vec2);
+        return result;
+    }
+
+    public static Vec4F sub(Vec4F vec1, Vec4F vec2)
+    {
+        Vec4F result = vec1.copy();
+        result.subBy(vec2);
+        return result;
+    }
 }

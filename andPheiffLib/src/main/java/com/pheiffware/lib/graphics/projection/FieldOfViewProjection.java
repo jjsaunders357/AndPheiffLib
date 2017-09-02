@@ -13,12 +13,12 @@ public class FieldOfViewProjection extends Projection
     private float far;
 
     /**
-     * Converts the given field of view into a scale factor, to multiply a projected coordinate by.
+     * Converts the given field of view into a scale factor, to multiply a projected coordinate by to map it onto a screen of given field of view.
      *
      * @param FOV
      * @return
      */
-    public static float scaleFromFOV(float FOV)
+    public static float fovToScreenScaleFactor(float FOV)
     {
         return (float) (1.0 / Math.tan(Math.toRadians(FOV / 2.0)));
     }
@@ -95,7 +95,7 @@ public class FieldOfViewProjection extends Projection
 
     private void updateProjection()
     {
-        float yScale = scaleFromFOV(verticalFOV);
+        float yScale = fovToScreenScaleFactor(verticalFOV);
         float xScale = yScale / aspect;
         setProjection(xScale, yScale, 0, 0, near, far);
     }
