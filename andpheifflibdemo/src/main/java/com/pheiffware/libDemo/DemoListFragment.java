@@ -16,8 +16,7 @@ import com.pheiffware.libDemo.andGraphics.Demo1RawVertexBufferFragment;
 import com.pheiffware.libDemo.andGraphics.Demo2ManagedVertexBuffersFragment;
 import com.pheiffware.libDemo.andGraphics.Demo3ManagedRenderingFragment;
 import com.pheiffware.libDemo.andGraphics.Demo4ShadowsFragment;
-import com.pheiffware.libDemo.andGraphics.Demo5HolographicFragment;
-import com.pheiffware.libDemo.physics.Demo6PhysicsFragment;
+import com.pheiffware.libDemo.physics.Demo0PhysicsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +50,7 @@ public class DemoListFragment extends Fragment implements View.OnClickListener, 
         demos.add(new DemoData("Managed Render", Demo3ManagedRenderingFragment.class));
         demos.add(new DemoData("Managed Vertex Buffers", Demo2ManagedVertexBuffersFragment.class));
         demos.add(new DemoData("Raw Vertex Buffers", Demo1RawVertexBufferFragment.class));
-        demos.add(new DemoData("Holographic", Demo5HolographicFragment.class));
-        demos.add(new DemoData("Physics", Demo6PhysicsFragment.class));
+        demos.add(new DemoData("Physics", Demo0PhysicsFragment.class));
     }
 
     //Button expands example to full screen

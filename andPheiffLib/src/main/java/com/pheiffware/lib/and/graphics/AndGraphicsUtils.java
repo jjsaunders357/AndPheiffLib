@@ -23,6 +23,7 @@ public class AndGraphicsUtils
     //2.0
     //public static final int MINMAX_VERTEX_ATTRIBUTES = 8; //4 elements each (4 floats for example)
 
+    public static final int GL_VERSION_32 = 0x30002;
     public static final int GL_VERSION_31 = 0x30001;
     public static final int GL_VERSION_30 = 0x30000;
     public static final int GL_VERSION_20 = 0x20000;

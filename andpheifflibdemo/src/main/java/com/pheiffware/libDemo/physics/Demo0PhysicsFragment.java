@@ -30,7 +30,7 @@ import java.util.List;
  * <p/>
  * Created by Steve on 4/2/2016.
  */
-public class Demo6PhysicsFragment extends Fragment
+public class Demo0PhysicsFragment extends Fragment
 {
     private TestPhysicsView testPhysicsView;
     private SimulationRunner<List<Entity>> simulationRunner;
