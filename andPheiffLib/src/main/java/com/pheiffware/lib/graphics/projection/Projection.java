@@ -41,8 +41,8 @@ public abstract class Projection
     {
         float[] m = new float[16];
         //@formatter:off
-                m[0] = xScale;      m[4] = 0;       m[8] =  zSign * xOffset;                        m[12] = 0;
-                m[1] = 0;           m[5] = yScale;  m[9] =  zSign * yOffset;                        m[13] = 0;
+                m[0] = xScale;      m[4] = 0;       m[8] =  -zSign * xOffset;                       m[12] = 0;
+                m[1] = 0;           m[5] = yScale;  m[9] =  -zSign * yOffset;                       m[13] = 0;
                 m[2] = 0;           m[6] = 0;       m[10] = zSign * (far + near) / (far - near);    m[14] = -2 * far * near / (far - near);
                 m[3] = 0;           m[7] = 0;       m[11] = zSign;                                  m[15] = 0;
         //@formatter:on
