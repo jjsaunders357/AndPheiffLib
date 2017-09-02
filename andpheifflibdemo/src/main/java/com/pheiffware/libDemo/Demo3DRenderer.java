@@ -10,8 +10,9 @@ import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.geometry.Transform2D;
 import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
+import com.pheiffware.lib.graphics.projection.FieldOfViewProjection;
+import com.pheiffware.lib.graphics.projection.Projection;
 import com.pheiffware.lib.utils.dataContainers.MapCounterLong;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ public abstract class Demo3DRenderer extends GameRenderer
     //How far a move of a pointer on the screen scales to a translation of the camera
     private final double screenDPToCameraTranslation;
     private final EuclideanCamera camera;
-    private final Projection projection;
+    private final FieldOfViewProjection projection;
     private long profileStartTime;
     private final MapCounterLong<String> nanoTimes = new MapCounterLong<>();
     private int frameCounter;
@@ -37,7 +38,7 @@ public abstract class Demo3DRenderer extends GameRenderer
         super(minSupportedGLVersion, maxSupportedGLVersion, shaderRootPath);
         this.screenDPToCameraTranslation = screenDPToCameraTranslation;
         camera = new EuclideanCamera();
-        projection = new Projection(initialFOV, 1, nearPlane, farPlane, false);
+        projection = new FieldOfViewProjection(initialFOV, 1, nearPlane, farPlane);
     }
 
     @Override

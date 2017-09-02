@@ -4,7 +4,6 @@ import android.opengl.GLES20;
 
 import com.pheiffware.lib.graphics.EuclideanCamera;
 import com.pheiffware.lib.graphics.GraphicsException;
-import com.pheiffware.lib.graphics.Projection;
 import com.pheiffware.lib.graphics.managed.GLCache;
 import com.pheiffware.lib.graphics.managed.Technique;
 import com.pheiffware.lib.graphics.managed.engine.MeshHandle;
@@ -13,6 +12,8 @@ import com.pheiffware.lib.graphics.managed.frameBuffer.FrameBuffer;
 import com.pheiffware.lib.graphics.managed.program.RenderProperty;
 import com.pheiffware.lib.graphics.managed.techniques.CubeDepthTechnique;
 import com.pheiffware.lib.graphics.managed.texture.TextureCubeMap;
+import com.pheiffware.lib.graphics.projection.FieldOfViewProjection;
+import com.pheiffware.lib.graphics.projection.Projection;
 
 /**
  * Created by Steve on 6/28/2017.
@@ -30,7 +31,7 @@ public class CubeDepthRenderer extends Renderer
         super(glCache.buildTechnique(CubeDepthTechnique.class));
         depthCubeTechnique = getTechnique(0);
         frameBuffer = new FrameBuffer();
-        projection = new Projection(90.0f, 1.0f, near, far, false);
+        projection = new FieldOfViewProjection(90.0f, near, far);
     }
 
     public void render(float x, float y, float z, TextureCubeMap cubeDepthTexture)
