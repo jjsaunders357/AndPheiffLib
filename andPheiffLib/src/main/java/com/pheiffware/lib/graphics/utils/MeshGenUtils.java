@@ -87,4 +87,11 @@ public class MeshGenUtils
         return new Mesh(6, data, genSingleQuadIndexData());
     }
 
+    public static Mesh genSingleQuadMeshColorOnly(float x, float y, float z, float size, VertexAttribute positionType, float[] color)
+    {
+        EnumMap<VertexAttribute, float[]> data = new EnumMap<>(VertexAttribute.class);
+        data.put(positionType, genSingleQuadPositionData(x, y, z, size, positionType));
+        data.put(VertexAttribute.COLOR, genSingleQuadColorData(color));
+        return new Mesh(6, data, genSingleQuadIndexData());
+    }
 }
