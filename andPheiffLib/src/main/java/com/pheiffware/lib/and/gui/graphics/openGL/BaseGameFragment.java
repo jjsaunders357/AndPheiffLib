@@ -1,5 +1,10 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -12,10 +17,33 @@ import com.pheiffware.lib.and.gui.LoggedFragment;
  * <p/>
  * Created by Steve on 3/27/2016.
  */
-public abstract class BaseGameFragment extends LoggedFragment
+public abstract class BaseGameFragment extends LoggedFragment implements SensorEventListener
 {
+    private final int[] forwardSensorTypes;
+    private final int[] sensorSamplingPeriods;
+    private SensorManager sensorManager;
+
+    public BaseGameFragment()
+    {
+        this(new int[0], new int[0]);
+    }
+
+    public BaseGameFragment(int[] forwardSensorTypes, int[] sensorSamplingPeriods)
+    {
+        this.forwardSensorTypes = forwardSensorTypes;
+        this.sensorSamplingPeriods = sensorSamplingPeriods;
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+        sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
+    }
+
     /**
      * Must produce a view of type BaseGameView.
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -33,17 +61,51 @@ public abstract class BaseGameFragment extends LoggedFragment
     }
 
     @Override
+    public void onStart()
+    {
+        super.onStart();
+        getView().onResume();
+    }
+
+    @Override
     public void onResume()
     {
         super.onResume();
-        getView().onResume();
+        for (int i = 0; i < forwardSensorTypes.length; i++)
+        {
+            Sensor rotationSensor = sensorManager.getDefaultSensor(forwardSensorTypes[i]);
+            sensorManager.registerListener(this, rotationSensor, sensorSamplingPeriods[i]);
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event)
+    {
+        getView().forwardSensorEvent(event);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy)
+    {
+
     }
 
     @Override
     public void onPause()
     {
-        getView().onPause();
+        //Unregister all listeners
+        if (forwardSensorTypes.length > 0)
+        {
+            sensorManager.unregisterListener(this);
+        }
         super.onPause();
+    }
+
+    @Override
+    public void onStop()
+    {
+        getView().onPause();
+        super.onStop();
     }
 
     @Override
@@ -55,6 +117,7 @@ public abstract class BaseGameFragment extends LoggedFragment
     @Override
     public void onDetach()
     {
+        sensorManager = null;
         super.onDetach();
     }
 }

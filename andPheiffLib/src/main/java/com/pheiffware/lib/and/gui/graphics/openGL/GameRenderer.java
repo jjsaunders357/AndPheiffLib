@@ -1,7 +1,6 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import com.pheiffware.lib.AssetLoader;
-import com.pheiffware.lib.and.AndAssetLoader;
 import com.pheiffware.lib.and.input.TouchAnalyzer;
 import com.pheiffware.lib.graphics.FilterQuality;
 import com.pheiffware.lib.graphics.GraphicsException;
@@ -19,7 +18,7 @@ public abstract class GameRenderer
     private final String rootShaderPath;
 
     //The asset loader object for this renderer.
-    private AndAssetLoader al;
+    private AssetLoader al;
 
     //The glCache object
     private GLCache glCache;
@@ -51,7 +50,7 @@ public abstract class GameRenderer
      * @param systemInfo
      * @throws GraphicsException
      */
-    void onSurfaceCreated(AndAssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, Map<String, Object> graphicsSystemConfig, SystemInfo systemInfo) throws GraphicsException
+    void onSurfaceCreated(AssetLoader al, int deviceGLVersion, FilterQuality defaultFilterQuality, Map<String, Object> graphicsSystemConfig, SystemInfo systemInfo) throws GraphicsException
     {
         this.al = al;
         glCache = new GLCache(al, deviceGLVersion, graphicsSystemConfig, defaultFilterQuality, rootShaderPath);

@@ -38,7 +38,7 @@ public class Demo2ManagedVertexBuffersFragment extends BaseGameFragment
     @Override
     public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false, false);
+        return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false);
     }
 
     private static class Renderer extends GameRenderer

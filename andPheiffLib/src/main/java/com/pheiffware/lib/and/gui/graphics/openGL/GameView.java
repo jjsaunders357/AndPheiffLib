@@ -1,10 +1,7 @@
 package com.pheiffware.lib.and.gui.graphics.openGL;
 
 import android.content.Context;
-import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,32 +27,27 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Extension of the canned surface view for OpenGL provided by Android to perform some extra setup GameRenderer.
  */
-public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, SensorEventListener
+public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer
 {
     //Maximum time allowed for an action to be considered a tap event
     private static final double maxTouchTapTime = 0.2;
 
     private final FilterQuality filterQuality;
-    private final AndAssetLoader assetLoader;
+    private AndAssetLoader assetLoader;
     private final GameRenderer renderer;
-    private final boolean forwardRotationSensorEvents;
     private final boolean forwardTouchTransformEvents;
-    private final SensorManager sensorManager;
     private final TouchAnalyzer touchAnalyzer;
 
     //Tracks whether onSurfaceCreated has been called yet (fully initialized surface/size).  If surfaceDestroyed happens, this is reset until onSurfaceCreated is called again.
     //Prevents sensor and other messages from ever being sent to rendering thread if it has not been initialized yet.
     private boolean surfaceInitialized = false;
 
-    public GameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardRotationSensorEvents, boolean forwardTouchTransformEvents)
+    public GameView(Context context, GameRenderer renderer, FilterQuality filterQuality, boolean forwardTouchTransformEvents)
     {
         super(context);
         this.filterQuality = filterQuality;
-        this.assetLoader = new AndAssetLoader(context.getAssets());
         this.renderer = renderer;
-        this.forwardRotationSensorEvents = forwardRotationSensorEvents;
         this.forwardTouchTransformEvents = forwardTouchTransformEvents;
-        sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         DisplayMetrics metrics = getResources().getDisplayMetrics();
 
         touchAnalyzer = new TouchAnalyzer(metrics.xdpi, metrics.ydpi, maxTouchTapTime);
@@ -64,30 +56,6 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
-    private void requestOpenGLVersion(Context context)
-    {
-        int maxHardwareSupportedGLVersion = AndGraphicsUtils.getDeviceGLVersion(context);
-        if (renderer.getMinSupportedGLVersion() > maxHardwareSupportedGLVersion)
-        {
-            String errorMessage = String.format(getContext().getString(R.string.MinOpenGLVersionError), AndGraphicsUtils.glVersionString(renderer.getMinSupportedGLVersion()));
-            Log.e("Fatal", errorMessage);
-        }
-        int requestedGLVersion = Math.min(renderer.getMaxSupportedGLVersion(), maxHardwareSupportedGLVersion);
-        //Can only request major versions
-        int requestedGLMajorVersion = requestedGLVersion >> 16;
-        setEGLContextClientVersion(requestedGLMajorVersion);
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        if (forwardRotationSensorEvents)
-        {
-            Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        }
-    }
 
     @Override
     public void onSurfaceCreated(GL10 useless, EGLConfig config)
@@ -95,6 +63,7 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         AndUtils.logLC(this, "SurfaceCreated");
         try
         {
+            this.assetLoader = new AndAssetLoader(getContext().getAssets());
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             //TODO 0.25 = 1/4: Get this from loaded system state somehow
             Map<String, Object> graphicsSystemConfig = new HashMap<>();
@@ -130,18 +99,8 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
             Log.e("Fatal", "Error during surface render", e);
             throw new RuntimeException(e);
         }
-
     }
 
-    @Override
-    public void onPause()
-    {
-        if (forwardRotationSensorEvents)
-        {
-            sensorManager.unregisterListener(this);
-        }
-        super.onPause();
-    }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
@@ -154,17 +113,7 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
     }
 
 
-    @Override
-    public void onSensorChanged(SensorEvent event)
-    {
-        forwardSensorEvent(event);
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy)
-    {
-
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event)
@@ -181,7 +130,6 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
      */
     protected boolean forwardTouchTransformEvent(final MotionEvent event)
     {
-
         if (isSurfaceInitialized() && forwardTouchTransformEvents)
         {
             //Must process event in gui thread as the event object itself is modified (its not safe to pass to another thread).
@@ -228,8 +176,23 @@ public class GameView extends GLSurfaceView implements GLSurfaceView.Renderer, S
         }
     }
 
+    private void requestOpenGLVersion(Context context)
+    {
+        int maxHardwareSupportedGLVersion = AndGraphicsUtils.getDeviceGLVersion(context);
+        if (renderer.getMinSupportedGLVersion() > maxHardwareSupportedGLVersion)
+        {
+            String errorMessage = String.format(getContext().getString(R.string.MinOpenGLVersionError), AndGraphicsUtils.glVersionString(renderer.getMinSupportedGLVersion()));
+            Log.e("Fatal", errorMessage);
+        }
+        int requestedGLVersion = Math.min(renderer.getMaxSupportedGLVersion(), maxHardwareSupportedGLVersion);
+        //Can only request major versions
+        int requestedGLMajorVersion = requestedGLVersion >> 16;
+        setEGLContextClientVersion(requestedGLMajorVersion);
+    }
+
     public boolean isSurfaceInitialized()
     {
         return surfaceInitialized;
     }
+
 }

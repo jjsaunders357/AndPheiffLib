@@ -48,7 +48,7 @@ public class Demo4ShadowsFragment extends BaseGameFragment
     @Override
     public GameView onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, false, true);
+        return new GameView(getContext(), new Renderer(), FilterQuality.MEDIUM, true);
     }
 
     static class DemoColladaLoader extends ColladaLoader
