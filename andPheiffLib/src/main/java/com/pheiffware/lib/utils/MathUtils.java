@@ -1,5 +1,7 @@
 package com.pheiffware.lib.utils;
 
+import java.util.List;
+
 /**
  * Created by Steve on 3/18/2016.
  */
@@ -42,4 +44,23 @@ public class MathUtils
         return position + ((blockSize - mod) % blockSize);
     }
 
+    public static float average(float[] data)
+    {
+        float average = 0;
+        for (float f : data)
+        {
+            average += f;
+        }
+        return average / data.length;
+    }
+
+    public static float average(List<Float> data)
+    {
+        float average = 0;
+        for (float f : data)
+        {
+            average += f;
+        }
+        return average / data.size();
+    }
 }
